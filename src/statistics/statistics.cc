@@ -176,14 +176,14 @@ void statistics::finish(){
 	global_interests += cores[i]->interests;
     }
 
-    sprintf (name, "hit_rate",getIndex() );
+    sprintf (name, "hit_rate");
     recordScalar(name,global_hit * 1./(global_hit+global_miss));
     cout<<"Hit rate: "<<global_hit *1./(global_hit+global_miss)<<endl;
 
-    sprintf ( name, "interests", getIndex() );
+    sprintf ( name, "interests");
     recordScalar(name,global_interests * 1./num_nodes);
 
-    sprintf ( name, "data", getIndex() );
+    sprintf ( name, "data" );
     recordScalar(name,global_data * 1./num_nodes);
 
     for (int i = 0;i<num_clients;i++){
@@ -191,11 +191,11 @@ void statistics::finish(){
 	global_tot_downloads += clients[i]->tot_downloads;
     }
 
-    sprintf ( name, "distance", getIndex() );
+    sprintf ( name, "distance");
     recordScalar(name,global_avg_distance * 1./num_clients);
     cout<<"Distance: "<<global_avg_distance * 1./num_clients<<endl;
 
-    sprintf ( name, "downloads", getIndex() );
+    sprintf ( name, "downloads");
     recordScalar(name,global_tot_downloads);
     cout<<"Downloads: "<<global_tot_downloads<<endl;
 

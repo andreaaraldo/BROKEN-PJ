@@ -37,11 +37,12 @@ void parallel_repository::finish(){
 
 bool *parallel_repository::get_decision(cMessage *in){//check this function
 
+    bool *decision;
     if (in->getKind() == CCN_I){
 	ccn_interest *interest = (ccn_interest *)in;
-	bool *decision = exploit(interest);
-	return decision;
+	decision = exploit(interest);
     }
+    return decision;
 
 }
 
@@ -49,8 +50,7 @@ bool *parallel_repository::get_decision(cMessage *in){//check this function
 
 bool *parallel_repository::exploit(ccn_interest *interest){
 
-    int repository,
-	outif,
+    int outif,
 	gsize;
 
     gsize = getOuterInterfaces();

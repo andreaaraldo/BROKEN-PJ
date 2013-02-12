@@ -36,7 +36,7 @@ void zipf_distribution::zipf_initialize(){
 	return;
 
     double c = 0;
-    int q = 0;
+    //int q = 0;
 
     cout<<"Initializing Zipf..."<<endl;
     //Otherwise initialize it
@@ -45,7 +45,7 @@ void zipf_distribution::zipf_initialize(){
 
     //Normalization constant computation
     c = 0;          
-    for (unsigned int i=1; i<=F; i++){
+    for (int i=1; i<=F; i++){
 	c += (1.0 /  pow(i,alpha));
 	cdfZipf[i] = c; 
     }

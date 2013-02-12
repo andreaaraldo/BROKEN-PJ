@@ -40,11 +40,12 @@ void nearest_repository::finish(){
 
 bool *nearest_repository::get_decision(cMessage *in){
 
+    bool *decision;
     if (in->getKind() == CCN_I){
 	ccn_interest *interest = (ccn_interest *)in;
-	bool *decision = exploit(interest);
-	return decision;
+	decision = exploit(interest);
     }
+    return decision;
 
 }
 

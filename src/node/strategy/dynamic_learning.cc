@@ -36,8 +36,7 @@ void dynamic_learning::finish(){
 }
 
 bool *dynamic_learning::get_decision(cMessage *in){//check this function
-    int arrival_gate = 0,
-	target;
+    int target;
     bool *decision;
     ccn_interest *interest;
 
@@ -81,8 +80,7 @@ bool *dynamic_learning::explore(ccn_interest *interest){
 bool *dynamic_learning::exploit(ccn_interest *interest){
 
     bool *decision;
-    int repository,
-	outif,
+    int outif,
 	gsize,
 	target;
 

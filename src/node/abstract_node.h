@@ -29,7 +29,7 @@
 class AbstractNode : public cSimpleModule{
     public:
 	AbstractNode();
-	virtual cModule *findSibling(char *);
+	virtual cModule *findSibling(string);
 	virtual int getOuterInterfaces();
 	virtual int getIndex();
 	virtual bool check_client(uint32_t);

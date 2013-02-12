@@ -42,13 +42,13 @@ typedef uint32_t name_t; //represents the name part of the chunk
 #define __chunk(h) ( ( h & CHUNK_MSK )  >> NUMBER_OFFSET )// get chunk number
 #define __id(h)    ( ( h & ID_MSK )     >> ID_OFFSET) //get chunk id
 
-#define __schunk(h,c) h = ( h & ~CHUNK_MSK | ( (unsigned long) c  << NUMBER_OFFSET)) //set chunk number
-#define __sid(h,id)   h = ( h & ~ ID_MSK   | ( (unsigned long) id << ID_OFFSET)) //set chunk id
+#define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (unsigned long) c  << NUMBER_OFFSET)) //set chunk number
+#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (unsigned long) id << ID_OFFSET)) //set chunk id
 
 inline uint64_t next_chunk (uint64_t c){
 
     uint32_t n = __chunk(c);
-    __schunk(c,n+1);
+    __schunk(c, (n+1) );
     return c;
 
 }

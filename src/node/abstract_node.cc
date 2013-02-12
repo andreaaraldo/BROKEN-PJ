@@ -28,8 +28,8 @@ AbstractNode::AbstractNode():cSimpleModule(){
     ;
 }
 
-cModule *AbstractNode::findSibling(char *mod_name){
-    return getParentModule()->getModuleByRelativePath(mod_name);
+cModule *AbstractNode::findSibling(string mod_name){
+    return getParentModule()->getModuleByRelativePath(mod_name.c_str());
 }
 
 int AbstractNode::getOuterInterfaces(){

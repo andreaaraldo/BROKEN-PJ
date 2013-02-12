@@ -65,7 +65,7 @@ class strategy_layer: public AbstractNode {
 
 	//FIB (available to all subclasses, for sake of utilization)
 	unordered_map <uint32_t,int_f> FIB;
-	uint32_t n;
+	int nodes;
     private:
 	uint32_t R;
 	static ofstream routing_file;

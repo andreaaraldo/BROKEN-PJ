@@ -28,7 +28,7 @@ ofstream strategy_layer::routing_file ;
 
 void strategy_layer::initialize(){
 
-    n = getAncestorPar("n");
+    nodes = getAncestorPar("n");
     populate_routing_table(); //Building forwarding table 
 
 }
@@ -51,7 +51,7 @@ void strategy_layer::populate_routing_table(){
     cTopology::Node *node = topo.getNode( getParentModule()->getIndex() ); //iterator node
 
     int rand_out;
-    for (uint32_t d = 0; d < n; d++){
+    for (int d = 0; d < nodes; d++){
 	if (d!=getParentModule()->getIndex()){
 
 	    cTopology::Node *to   = topo.getNode( d ); //destination node
@@ -70,7 +70,7 @@ void strategy_layer::compose_next_hop_matrix(){
     if (!routing_file.is_open())
 	routing_file.open("model/routing_table",ios::out);
 
-    for (int f = 1; f < content_distribution::catalog.size();f++){
+    for (uint32_t f = 1; f < content_distribution::catalog.size();f++){
 	int rep = __repo(f);
 	int next_hop = ( rep == getIndex()? -1 : getParentModule()->gate("face$o",FIB[rep].id)->getNextGate()->getOwnerModule()->getIndex()+1);
 	routing_file<<next_hop<<" ";

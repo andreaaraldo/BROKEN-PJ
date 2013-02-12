@@ -134,7 +134,7 @@ void content_distribution::init_content(){
     //with exactly degree ones
     vector<int> repo_strings = binary_strings(degree, num_repos);
 
-    for (uint32_t d = 1; d <= cardF; d++){
+    for (int d = 1; d <= cardF; d++){
 	//Reset the information field of a given content
 	__info(d) = 0;
 
@@ -166,12 +166,12 @@ void content_distribution::init_content(){
 */
 uint32_t *content_distribution::init_repos(vector<int> node_repos){
 
-    if (node_repos.size() > num_repos)
+    if (node_repos.size() > (uint32_t) num_repos)
 	error("You try to distribute too much repositories.");
 
     uint32_t *repositories = new uint32_t[num_repos];
 
-    uint32_t i = 0;
+    int i = 0;
     while (node_repos.size()){
 	uint32_t r = node_repos[i];
 	node_repos.pop_back();
@@ -196,7 +196,7 @@ uint32_t *content_distribution::init_repos(vector<int> node_repos){
 */
 uint32_t *content_distribution::init_clients(vector<int> node_clients){
 
-    if (node_clients.size() > num_clients)
+    if (node_clients.size() > (uint32_t) num_clients)
 	error("You try to distribute too much clientsitories.");
 
     uint32_t *clients = new uint32_t[num_clients];
@@ -209,7 +209,7 @@ uint32_t *content_distribution::init_clients(vector<int> node_clients){
     }
 
     int new_c;
-    while ( i < num_clients  ){
+    while ( i < (uint32_t) num_clients  ){
 	new_c = intrand(nodes);
 	//NOTE: in this way a client can be attached to a node
 	//where a repository is already attached.

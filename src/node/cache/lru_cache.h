@@ -62,11 +62,11 @@ class lru_cache:public base_cache{
 	    }
 	}
     private:
+	uint32_t actual_size; //actual size of the cache
 	lru_pos* lru; //least recently used item
 	lru_pos* mru; //most recently used item
 
 	unordered_map<chunk_t, lru_pos*> cache; //cache of values
-	int actual_size; //actual size of the cache
 
 };
 #endif
