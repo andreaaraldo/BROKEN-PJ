@@ -1,0 +1,134 @@
+/*
+ * ccnSim is a scalable chunk-level simulator for Content Centric
+ * Networks (CCN), that we developed in the context of ANR Connect
+ * (http://www.anr-connect.org/)
+ *
+ * People:
+ *    Giuseppe Rossini (lead developer, mailto giuseppe.rossini@enst.fr)
+ *    Raffaele Chiocchetti (developer, mailto raffaele.chiocchetti@gmail.com)
+ *    Dario Rossi (occasional debugger, mailto dario.rossi@enst.fr)
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#include "base_cache.h"
+#include "node/core_layer.h"
+#include "statistics/statistics.h"
+#include "content/content_distribution.h"
+#include "statistics/stat_util.h"
+#include "packets/ccn_data_m.h"
+
+#include "policy/fix_policy.h"
+#include "policy/lcd_policy.h"
+#include "policy/never_policy.h"
+#include "policy/always_policy.h"
+#include "policy/decision_policy.h"
+#include "policy/betweenness_centrality.h"
+
+#define __betweenness (((core_layer *) findSibling("core_layer") )->get_betweenness())
+//Initialization function
+void base_cache::initialize(){
+
+    nodes      = getAncestorPar("n");
+    cache_size = par("C");  //cache size
+
+
+    string decision_policy = par("CD");
+    //Initialize the storage policy
+    if (decision_policy.compare("lcd")==0){
+	decisor = new LCD();
+    } else if (decision_policy.find("fix")==0){
+	string p = decision_policy.substr(3);
+	double _p = atof(p.c_str());
+	decisor = new Fix(_p);
+    } else if (decision_policy.find("btw")==0){
+	decisor = new Betweenness(__betweenness );
+    }else if (decision_policy.compare("never")==0)
+	decisor = new Never();
+    else 
+	decisor = new Always();
+
+
+    //Cache statistics
+    //Average
+    miss = 0;
+    hit = 0;
+    //Per file
+    cache_stats = new cache_stat_entry[content_distribution::perfile_bulk];
+
+}
+
+void base_cache::finish(){
+    char name [30];
+    sprintf ( name, "hit_rate[%d]", getIndex());
+    //Average hit rate
+    recordScalar (name, hit * 1./(hit+miss));
+
+    //Per file hit rate
+    sprintf ( name, "node[%d]", getIndex());
+    cOutVector hit_vector(name);
+    for (uint32_t f = 1; f <= content_distribution::perfile_bulk; f++)
+        hit_vector.recordWithTimestamp(f, cache_stats[f].rate() );
+
+
+}
+
+
+
+//Base class function: a data has been received:
+void base_cache::received_data(cMessage *in){
+
+    if (decisor->data_to_cache((ccn_data*)in ) )
+	store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
+}
+
+
+
+//Base class function: lookup for a given data
+//it wraps statistics on misses and hits
+bool base_cache::lookup(uint64_t chunk ){
+    bool found = false;
+    name_t name = __id(chunk);
+
+    if (data_lookup(chunk)){
+        found = true;
+	//Average cache statistics(hit)
+	hit++;
+
+	//Per file cache statistics(hit)
+	if (name < content_distribution::perfile_bulk)
+	    cache_stats[name].hit++;
+
+    }else{
+        found = false;
+
+	//Average cache statistics(miss)
+	miss++;
+	//Per file cache statistics(miss)
+	if (name < content_distribution::perfile_bulk)
+	    cache_stats[name].miss++;
+    }
+
+    return found;
+
+}
+
+
+
+//Clear all the statistics
+void base_cache::clear_stat(){
+    hit = miss = 0; //local statistics
+    delete cache_stats;
+    cache_stats = new cache_stat_entry[content_distribution::perfile_bulk];
+}
