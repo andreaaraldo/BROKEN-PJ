@@ -43,7 +43,9 @@ class statistics : public cSimpleModule{
     protected:
 	virtual void initialize();
 	//Handle message deals with timers for checking cache states and stable
-	//time
+	//time. No statistics are retained from this class during the
+	//simulation.  Indeed, at the end it pings each component a gather the
+	//final statistics(look at the method finish, below)
 	virtual void handleMessage(cMessage *);
 	virtual void finish();
 

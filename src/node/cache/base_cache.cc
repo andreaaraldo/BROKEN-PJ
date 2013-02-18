@@ -92,8 +92,6 @@ void base_cache::received_data(cMessage *in){
     if (decisor->data_to_cache((ccn_data*)in ) )
 	store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
 
-    if (getIndex() == 10)
-	dump();
 }
 
 
@@ -119,7 +117,7 @@ bool base_cache::lookup(uint64_t chunk ){
 	//Average cache statistics(miss)
 	miss++;
 	//Per file cache statistics(miss)
-	if (name < content_distribution::perfile_bulk)
+	if (name <= content_distribution::perfile_bulk)
 	    cache_stats[name].miss++;
     }
 

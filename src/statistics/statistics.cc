@@ -96,7 +96,7 @@ void statistics::handleMessage(cMessage *in){
             for (int i = 0; i < num_nodes;i++)
         	full += (int)caches[i]->full();
 
-            if (full == partial_n){
+            if (full >= partial_n){
         	cout<<"Caches filled at time "<<simTime()<<endl;
 		//endSimulation();
         	clear_stat();
@@ -113,7 +113,7 @@ void statistics::handleMessage(cMessage *in){
             for (int i = 0;i<num_nodes;i++)
         	stables += (int) stable(i);
 
-            if (stables == num_nodes){
+            if ( stables >= partial_n ){
         	scheduleAt(simTime() + time_steady, new cMessage("end", END));
         	clear_stat();
         	delete in;
@@ -157,6 +157,7 @@ bool statistics::stable(int n){
 
 
 void statistics::finish(){
+
     char name[30];
 
     uint32_t global_hit = 0;
@@ -165,18 +166,21 @@ void statistics::finish(){
     uint32_t global_data      = 0;
 
     double global_avg_distance = 0;
-    uint32_t global_tot_downloads = 0;
+    double global_tot_downloads = 0;
 
     for (int i = 0; i<num_nodes; i++){
-	global_hit  += caches[i]->hit;
-	global_miss += caches[i]->miss;
-	global_data += cores[i]->data;
-	global_interests += cores[i]->interests;
+	if (cores[i]->interests){//Check if the given node got involved within the interest/data process
+	    global_hit  += caches[i]->hit;
+	    global_miss += caches[i]->miss;
+	    global_data += cores[i]->data;
+	    global_interests += cores[i]->interests;
+	}
     }
 
+    //Print and store global statistics
     sprintf (name, "hit_rate");
     recordScalar(name,global_hit * 1./(global_hit+global_miss));
-    cout<<"Hit rate: "<<global_hit *1./(global_hit+global_miss)<<endl;
+    cout<<"Hit rate/cache: "<<global_hit *1./(global_hit+global_miss)<<endl;
 
     sprintf ( name, "interests");
     recordScalar(name,global_interests * 1./num_nodes);
@@ -191,13 +195,14 @@ void statistics::finish(){
 
     sprintf ( name, "distance");
     recordScalar(name,global_avg_distance * 1./num_clients);
-    cout<<"Distance: "<<global_avg_distance * 1./num_clients<<endl;
+    cout<<"Distance/client: "<<global_avg_distance * 1./num_clients<<endl;
 
     sprintf ( name, "downloads");
     recordScalar(name,global_tot_downloads);
-    cout<<"Downloads: "<<global_tot_downloads<<endl;
+    cout<<"Downloads/client: "<<global_tot_downloads * 1./num_clients<<endl;
 
     
+    //TODO global statistics per file
     //double hit_rate;
     // for (uint32_t f = 1; f <=content_distribution::perfile_bulk; f++){
     //     hit_rate = 0;

@@ -142,7 +142,7 @@ void client::request_file(){
 
     uint32_t name = content_distribution::zipf.value(dblrand());
     //uint32_t name =1;
-    cout<<"client request for "<<name<<endl;
+    //cout<<"client request for "<<name<<endl;
     current_downloads.insert(pair<uint32_t,file_entry>(name, file_entry (0,simTime() ) ) );
     send_interest(name, 0 ,-1);
 
