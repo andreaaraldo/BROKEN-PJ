@@ -23,6 +23,7 @@
  *
  */
 #include "core_layer.h"
+#include "ccn_data.h"
 
 Register_Class(core_layer);
 

@@ -117,6 +117,15 @@ bool lru_cache::data_lookup(chunk_t elem){
     return true;
 }
 
+void lru_cache::dump(){
+    lru_pos *it = mru;
+    int p = 1;
+    while (it){
+	cout<<p++<<" ]"<< __id(it->k)<<"/"<<__chunk(it->k)<<endl;
+	it = it->older;
+    }
+}
+
 bool lru_cache::full(){
     return (actual_size==get_size());
 }

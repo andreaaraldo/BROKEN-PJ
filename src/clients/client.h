@@ -27,8 +27,10 @@
 
 #include <omnetpp.h>
 #include <boost/unordered_map.hpp>
-#include "statistics/statistics.h"
-#include "packets/ccn_data.h"
+#include "definitions.h"
+class statistics;
+class ccn_data;
+
 
 using namespace boost;
 using namespace std;
@@ -37,10 +39,10 @@ using namespace std;
 
 //Each of these entries contains information about the current downloads
 struct file_entry{
-    uint32_t missing_chunks;
+    uint32_t missing_chunks; //number of chunks that still miss within the file
 
-    simtime_t start;
-    simtime_t last;
+    simtime_t start; //start time (for statistic purposes)
+    simtime_t last; //last time a chunk has been downloaded
 
     file_entry(double m = 0,simtime_t t = 0):missing_chunks(m),start(t),last(t){;}
 };
@@ -49,7 +51,7 @@ struct file_entry{
 struct client_stat_entry{
     double avg_distance;
     double avg_time;
-    uint64_t tot_downloads;
+    double tot_downloads;//double type due to the chunkization in CCN. See below.
     uint64_t tot_chunks;
 
     client_stat_entry():avg_distance(0),avg_time(0),tot_downloads(0),tot_chunks(0){;}
@@ -85,8 +87,9 @@ class client : public cSimpleModule {
 	//Single file statistics
 	client_stat_entry* client_stats;
 
-	//Average statistics
-	double tot_downloads;
+	//Average statistics (on the whole set of files downloaded by this client)
+	double tot_downloads; // Here the "double" type arises when you consider
+	                      // that a given download might be not yet completed at all. 
 	uint64_t tot_chunks;
 
 	double avg_time;

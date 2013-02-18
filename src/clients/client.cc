@@ -141,7 +141,8 @@ void client::handle_timers(cMessage *timer){
 void client::request_file(){
 
     uint32_t name = content_distribution::zipf.value(dblrand());
-    //cout<<"client request for "<<name<<endl;
+    //uint32_t name =1;
+    cout<<"client request for "<<name<<endl;
     current_downloads.insert(pair<uint32_t,file_entry>(name, file_entry (0,simTime() ) ) );
     send_interest(name, 0 ,-1);
 
@@ -171,17 +172,15 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     uint32_t name      = data_message -> get_name();
     uint32_t size      = data_message -> get_size();
 
-
-
-    //Average node statistics
+    // Average node statistics
     avg_distance = (tot_chunks*avg_distance+data_message->getHops())/(tot_chunks+1);
     tot_chunks++;
     tot_downloads+=1./size;
 
-    //Client aggregate statistics (global statistics)
-    //stat -> aggregate (it->second.distance, name, simTime() - it->second.start);
 
-    //File statistics
+    // File statistics. Doing statistics for all files would be tremendously
+    // slow for huge catalog size, and at the same time quite useless
+    // (statistics for the 12345234th file are not so meaningful at all)
     if (name <= content_distribution::perfile_bulk){
 	client_stats[name].avg_distance = (client_stats[name].tot_chunks*avg_distance+data_message->getHops())/(client_stats[name].tot_chunks+1);
 	client_stats[name].tot_chunks++;
@@ -191,7 +190,7 @@ void client::handle_incoming_chunk (ccn_data *data_message){
 
 
 
-    //client handling part
+    //Handling the download list (TODO put this piece of code within a virtual method, in this way implementing new strategies should be direct).
     ii = current_downloads.equal_range(name);
     it = ii.first;
 

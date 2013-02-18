@@ -38,10 +38,10 @@ class DecisionPolicy;
 //
 
 struct cache_stat_entry{
-    uint32_t miss;
-    uint32_t hit;
+    uint32_t miss; //Total number of misses
+    uint32_t hit; //Totatle number of hit
     cache_stat_entry():miss(0),hit(0){;}
-    double rate(){ return hit *1./(hit+miss);}
+    double rate(){ return hit *1./(hit+miss);} //return the miss rate of the class
 };
 
 class base_cache : public AbstractNode {
@@ -49,9 +49,15 @@ class base_cache : public AbstractNode {
     protected:
 
 
-	virtual void initialize();
-	virtual void handleMessage (cMessage *){;}
-	virtual void finish();
+	void initialize();
+	void handleMessage (cMessage *){;}
+	void finish();
+
+	//Inteface function (depending by internal data structures of each cache)
+	virtual void store (uint64_t) = 0; 
+	virtual bool data_lookup(uint64_t)=0;
+	virtual bool full()=0;
+	virtual void dump(){cout<<"Not implemented"<<endl;;}
 	
 
 
@@ -63,10 +69,6 @@ class base_cache : public AbstractNode {
 	void received_data (cMessage *);
 	uint32_t get_size() { return cache_size; }
 
-	//Inteface function (depending by internal data structures of each cache)
-	virtual void store (uint64_t) = 0; 
-	virtual bool data_lookup(uint64_t)=0;
-	virtual bool full()=0;
 
 
     private:

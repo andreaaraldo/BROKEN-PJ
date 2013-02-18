@@ -65,7 +65,7 @@ void base_cache::initialize(){
     miss = 0;
     hit = 0;
     //Per file
-    cache_stats = new cache_stat_entry[content_distribution::perfile_bulk];
+    cache_stats = new cache_stat_entry[content_distribution::perfile_bulk + 1];
 
 }
 
@@ -91,6 +91,9 @@ void base_cache::received_data(cMessage *in){
 
     if (decisor->data_to_cache((ccn_data*)in ) )
 	store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
+
+    if (getIndex() == 10)
+	dump();
 }
 
 
@@ -107,7 +110,7 @@ bool base_cache::lookup(uint64_t chunk ){
 	hit++;
 
 	//Per file cache statistics(hit)
-	if (name < content_distribution::perfile_bulk)
+	if (name <= content_distribution::perfile_bulk)
 	    cache_stats[name].hit++;
 
     }else{
@@ -130,5 +133,5 @@ bool base_cache::lookup(uint64_t chunk ){
 void base_cache::clear_stat(){
     hit = miss = 0; //local statistics
     delete cache_stats;
-    cache_stats = new cache_stat_entry[content_distribution::perfile_bulk];
+    cache_stats = new cache_stat_entry[content_distribution::perfile_bulk+1];
 }

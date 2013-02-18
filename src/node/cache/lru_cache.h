@@ -54,13 +54,7 @@ class lru_cache:public base_cache{
 	bool data_lookup(chunk_t);
 	bool full();
 
-	void dump_cache(){
-	    lru_pos *it = mru;
-	    while (it){
-	        cout<<it->k<<endl;
-	        it = it->older;
-	    }
-	}
+	void dump();
     private:
 	uint32_t actual_size; //actual size of the cache
 	lru_pos* lru; //least recently used item
