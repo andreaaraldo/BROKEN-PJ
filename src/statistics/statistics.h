@@ -32,18 +32,32 @@ class base_cache;
 
 using namespace std;
 
+/*
+ * This class defines the central class for collecting statistics. Its first
+ * goal is resetting nodes (i.e., clients, caches, and so forth) statistics in
+ * order when some events occurs, like the complete filling of the caches, or
+ * the stabilization of all the hit rate of all nodes. 
+ *
+ */
 class statistics : public cSimpleModule{
     protected:
 	virtual void initialize();
+	//Handle message deals with timers for checking cache states and stable
+	//time
 	virtual void handleMessage(cMessage *);
 	virtual void finish();
+
+	//Stable checks if the system is in a stable state.
 	virtual bool stable(int);
+
+	//Ask to each worth component (e.g., clients or caches)  of clearing
+	//its internal statistics
 	void clear_stat();
 
 
     private:
-	//Vector for accessing different modules statistics
 
+	//Vector for accessing different modules statistics
 	client** clients;
 	core_layer** cores;
 	base_cache** caches;
@@ -59,6 +73,7 @@ class statistics : public cSimpleModule{
 	double time_steady;
 	double stabilization_time;
 
+	//Stabilization samples
 	vector< vector <double> > samples;
 
 };

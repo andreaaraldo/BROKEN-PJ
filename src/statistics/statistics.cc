@@ -52,12 +52,8 @@ void statistics::initialize(){
 
     //Extracting clients
     clients = new client* [num_clients];
-    //cStringTokenizer tokenizer (getAncestorPar("node_clients"),",");
-    //vector<int> active_clients = tokenizer.asIntVector();
     vector<string> clients_vec(1,"modules.clients.client");
     topo.extractByNedTypeName(clients_vec);
-
-
     int k = 0;
     for (int i = 0;i<topo.getNumNodes();i++){
         int c = ((client *)topo.getNode(i)->getModule())->getNodeIndex();
