@@ -37,7 +37,7 @@ using namespace std;
 void statistics::initialize(){
     //Node property
     num_nodes 	= getAncestorPar("n");
-    num_clients     = getAncestorPar("num_clients");
+    num_clients = getAncestorPar("num_clients");
 
     cTopology topo;
     
@@ -46,22 +46,24 @@ void statistics::initialize(){
     window      = par("window");
     time_steady = par("steady");
     partial_n 	= par("partial_n");
-
     if (partial_n == -1)
 	partial_n = num_nodes;
 
 
     //Extracting clients
     clients = new client* [num_clients];
+    //cStringTokenizer tokenizer (getAncestorPar("node_clients"),",");
+    //vector<int> active_clients = tokenizer.asIntVector();
     vector<string> clients_vec(1,"modules.clients.client");
-    cStringTokenizer tokenizer (getAncestorPar("node_clients"),",");
-    vector<int> active_clients = tokenizer.asIntVector();
     topo.extractByNedTypeName(clients_vec);
 
+
+    int k = 0;
     for (int i = 0;i<topo.getNumNodes();i++){
         int c = ((client *)topo.getNode(i)->getModule())->getNodeIndex();
-	if (find (active_clients.begin(),active_clients.end(),c) != active_clients.end()){
-	    clients[i] = (client *)topo.getNode(i)->getModule();
+	if ( find (content_distribution::clients, content_distribution::clients + num_clients, c) 
+		!= content_distribution::clients + num_clients)  {
+	    clients[k++] = (client *)topo.getNode(i)->getModule();
 	}
     }
 
@@ -95,10 +97,10 @@ void statistics::handleMessage(cMessage *in){
 
     switch (in->getKind()){
         case FULL_CHECK:
-            for (int i = 0;i<num_nodes;i++)
+            for (int i = 0; i < num_nodes;i++)
         	full += (int)caches[i]->full();
 
-            if (full == num_nodes){
+            if (full == partial_n){
         	cout<<"Caches filled at time "<<simTime()<<endl;
 		//endSimulation();
         	clear_stat();
@@ -213,7 +215,8 @@ void statistics::finish(){
 
 void statistics::clear_stat(){
     for (int i = 0;i<num_clients;i++)
-	clients[i]->clear_stat();
+	if (clients[i]->active)
+	    clients[i]->clear_stat();
 
     for (int i = 0;i<num_nodes;i++)
 	cores[i]->clear_stat();

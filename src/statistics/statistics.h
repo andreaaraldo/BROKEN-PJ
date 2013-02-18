@@ -40,6 +40,7 @@ class statistics : public cSimpleModule{
 	virtual bool stable(int);
 	void clear_stat();
 
+
     private:
 	//Vector for accessing different modules statistics
 

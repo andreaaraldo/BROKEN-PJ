@@ -64,7 +64,6 @@ void content_distribution::initialize(){
     //
     //Zipf initialization
     //
-
     zipf = zipf_distribution(alpha,cardF);
     zipf.zipf_initialize();
 
@@ -188,6 +187,33 @@ uint32_t *content_distribution::init_repos(vector<int> node_repos){
     return repositories;
 }
 
+
+/*
+ * Generate a random bit-vector. If the i-th position of this vector is 1, then
+ * the given content is stored within repositories[i].
+ */
+uint32_t content_distribution::compose_random_vector(int num_repos){
+
+    uint32_t sel_id, repo;
+    boost::unordered_map<int,bool> cache;
+    repo = 0;
+
+
+    for (int i = 0; i < degree; i++){
+
+	sel_id = intrand(num_repos);
+	while (cache[sel_id]) sel_id = intrand(num_repos);
+
+	cache[sel_id] = 1;
+
+	repo |= (1 << sel_id);
+    }
+
+    return repo;
+
+}
+
+
 /*
 * Initialize the clients vector. This vector is composed by the clients
 * specified into the ini file.  In addition, some random clients are added if
@@ -219,30 +245,3 @@ uint32_t *content_distribution::init_clients(vector<int> node_clients){
     return clients;
 
 }
-
-/*
- * Generate a random bit-vector. If the i-th position of this vector is 1, then
- * the given content is stored within repositories[i].
- */
-uint32_t content_distribution::compose_random_vector(int num_repos){
-
-    uint32_t sel_id, repo;
-    boost::unordered_map<int,bool> cache;
-    repo = 0;
-
-
-    for (int i = 0; i < degree; i++){
-
-	sel_id = intrand(num_repos);
-	while (cache[sel_id]) sel_id = intrand(num_repos);
-
-	cache[sel_id] = 1;
-
-	repo |= (1 << sel_id);
-    }
-
-    return repo;
-
-}
-
-
