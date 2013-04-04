@@ -140,7 +140,7 @@ bool statistics::stable(int n){
     }else 
         samples[n].push_back(0);
 
-    if (samples[n].size() == window / ts ){ //variance each window seconds
+    if (samples[n].size() == (uint32_t) window / ts ){ //variance each window seconds
 
 	var =variance(samples[n]); 
         cout<<n<<"] variance = "<<var<<endl;

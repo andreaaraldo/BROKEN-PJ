@@ -138,7 +138,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         send(data_msg,"face$o", int_msg->getArrivalGate()->getIndex());
 
     } else if ( check_ownership( int_msg->get_repos() ) ){
-    //} else if ( getIndex() == nodes-1 ){
 	//
 	//b) Look locally (only if you own a repository)
 	// we are mimicking a message sent to the repository

@@ -76,7 +76,7 @@ void base_cache::finish(){
     recordScalar (name, hit * 1./(hit+miss));
 
     //Per file hit rate
-    sprintf ( name, "node[%d]", getIndex());
+    sprintf ( name, "hit_node[%d]", getIndex());
     cOutVector hit_vector(name);
     for (uint32_t f = 1; f <= content_distribution::perfile_bulk; f++)
         hit_vector.recordWithTimestamp(f, cache_stats[f].rate() );
