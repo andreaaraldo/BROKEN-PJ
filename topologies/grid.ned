@@ -8,39 +8,31 @@ network grid_network {
         //Number of ccn nodes
     	int n = 16;
 
-        //Number of clients
-	string node_clients=default("");
-
 	//Number of repositories
+	string node_repos = default("0");
 	int num_repos = default(1);
-	string node_repos = default("{;}");
 	int replicas = default(1);
 
+        //Number of clients
+	string node_clients = default("1");
+	int num_clients = default(1);
+
+
     submodules:
- 	statistics: statistics{
-	    parameters:
-	        @display("p=400,200");
-	}
     	content_distribution: content_distribution{
 	    parameters:
-	        @display("p=400,300");
+	        @display("p=900,200");
 	}
-	client[n]: client{
+ 	statistics: statistics{
 	    parameters:
-		@display("p=80,80,m,4,50,50");
+	        @display("p=900,100");
 	}
 
-        node [n]: node {
-            parameters:
-		@display("p=100,100,m,4,50,50");
-        }
+        node [n]: node ;
+	client[n]: client;
 
 connections allowunconnected:
 
-    for i = 0..n-1{
-        node[i].face++ <-->  { delay = 1ms; } <--> client[i].client_port;
-    }
-   
     node[0].face++ <--> { delay = 1ms; } <--> node[1].face++;
     node[1].face++ <--> { delay = 1ms; } <--> node[2].face++;
     node[2].face++ <--> { delay = 1ms; } <--> node[3].face++;
@@ -66,6 +58,10 @@ connections allowunconnected:
     node[7].face++ <--> { delay = 1ms; } <--> node[11].face++;
     node[11].face++ <--> { delay = 1ms; } <--> node[15].face++;
     node[11].face++ <--> { delay = 10ms; } <--> node[0].face++;
+
+    for i = 0..n-1{
+	node[i].face++ <--> { delay = 1ms; } <--> client[i].client_port;
+    }
 
 	    
 

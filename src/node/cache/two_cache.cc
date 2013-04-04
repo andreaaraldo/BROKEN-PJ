@@ -26,23 +26,23 @@
 
 Register_Class(two_cache);
 
-void two_cache::store(uint64_t chunk){
+void two_cache::store(chunk_t chunk){
 
    cache[chunk] = true;
 
    if (deq.size() == get_size()){
 
        //Random extraction of two elements
-       uint32_t pos1 = intrand( deq.size() );
-       uint32_t pos2 = intrand( deq.size() );
-       uint32_t pos;
+       unsigned int  pos1 = intrand( deq.size() );
+       unsigned int  pos2 = intrand( deq.size() );
+       unsigned int  pos;
 
-       uint64_t toErase1 = deq.at(pos1);
-       uint64_t toErase2 = deq.at(pos2);
-       uint64_t toErase;
+       chunk_t  toErase1 = deq.at(pos1);
+       chunk_t  toErase2 = deq.at(pos2);
+       chunk_t  toErase;
 
-       uint32_t name1 = __id(toErase1);
-       uint32_t name2 = __id(toErase2);
+       name_t name1 = __id(toErase1);
+       name_t name2 = __id(toErase2);
 
 
        //Comparing content popularity (a realistic implementation can employ a the freq map
@@ -74,7 +74,7 @@ void two_cache::store(uint64_t chunk){
 }
 
 
-bool two_cache::data_lookup(uint64_t chunk){
+bool two_cache::data_lookup(chunk_t chunk){
     return (cache.find(chunk)!=cache.end());
 }
 

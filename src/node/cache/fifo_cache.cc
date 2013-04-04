@@ -26,7 +26,7 @@
 
 Register_Class(fifo_cache);
 
-void fifo_cache::store(uint64_t chunk){
+void fifo_cache::store(chunk_t chunk){
 
    cache[chunk] = true;
    deq.push_back(chunk);
@@ -41,7 +41,7 @@ void fifo_cache::store(uint64_t chunk){
 }
 
 
-bool fifo_cache::data_lookup(uint64_t chunk){
+bool fifo_cache::data_lookup(chunk_t chunk){
     return (cache.find(chunk)!=cache.end());
 }
 

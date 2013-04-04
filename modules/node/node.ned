@@ -6,6 +6,7 @@ module node {
     parameters:
 	string CR = default("random_cache");
 	string SL = default("nearest_repository");
+	double betweenness = default (-1);
 	@display("i=device/router;is=s");
     gates:
 	inout face[];	
@@ -14,8 +15,6 @@ module node {
     submodules:
 	core_layer : core_layer;
 	strategy_layer : < "modules.node.strategy." + SL > like strategy;
-	//strategy_layer : nearest_repository;
-	//local_statistics : local_statistics;
 	cache : < "modules.node.cache." + CR > like cache;
 
     connections :

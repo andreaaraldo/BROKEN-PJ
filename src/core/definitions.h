@@ -15,14 +15,16 @@
 #define END 4000
 
 //Typedefs
-typedef uint32_t info_t; //representation for a catalog  entry [size|repos]
-typedef uint16_t filesize_t; //representation for the size part within the catalog entry
-typedef uint16_t repo_t; //representation for the repository part within the catalog entry
-typedef uint8_t  interface_t; //representation of a PIT entry (containing interface information)
+//Catalogs fields
+typedef unsigned int info_t; //representation for a catalog  entry [size|repos]
+typedef unsigned short filesize_t; //representation for the size part within the catalog entry
+typedef unsigned short repo_t; //representation for the repository part within the catalog entry
+typedef unsigned char interface_t; //representation of a PIT entry (containing interface information)
 
-typedef uint64_t chunk_t; //representation for any chunk flying within the system. It represents a pair [name|number]
-typedef uint32_t cnumber_t; //represents the number part of the chunk
-typedef uint32_t name_t; //represents the name part of the chunk
+//Chunk fields
+typedef unsigned long long  chunk_t; //representation for any chunk flying within the system. It represents a pair [name|number]
+typedef unsigned int cnumber_t; //represents the number part of the chunk
+typedef unsigned int name_t; //represents the name part of the chunk
 
 
 //Macros
@@ -42,8 +44,8 @@ typedef uint32_t name_t; //represents the name part of the chunk
 #define __chunk(h) ( ( h & CHUNK_MSK )  >> NUMBER_OFFSET )// get chunk number
 #define __id(h)    ( ( h & ID_MSK )     >> ID_OFFSET) //get chunk id
 
-#define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (unsigned long) c  << NUMBER_OFFSET)) //set chunk number
-#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (unsigned long) id << ID_OFFSET)) //set chunk id
+#define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (unsigned long long ) c  << NUMBER_OFFSET)) //set chunk number
+#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (unsigned long long ) id << ID_OFFSET)) //set chunk id
 
 inline uint64_t next_chunk (uint64_t c){
 

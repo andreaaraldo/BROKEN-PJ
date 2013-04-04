@@ -42,8 +42,8 @@ class random_cache: public base_cache{
     protected:
 	virtual void initialize();
 
-	virtual bool data_lookup(uint64_t);
-	virtual void store(uint64_t);
+	virtual bool data_lookup(chunk_t);
+	virtual void store(chunk_t);
 	virtual bool full();
 	bool warmup();
 

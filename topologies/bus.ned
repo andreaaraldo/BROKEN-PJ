@@ -20,10 +20,12 @@ network bus_network {
 	string node_clients = "0";
 
     submodules:
+
     	content_distribution: content_distribution{
 	    parameters:
 	        @display("p=900,200");
 	}
+
  	statistics: statistics{
 	    parameters:
 	        @display("p=900,100");
@@ -36,6 +38,7 @@ network bus_network {
 
 connections allowunconnected:
     node[0].face++ <--> { delay = 1ms; } <--> client[0].client_port;
+
     for  i = 0..n-2{
 	node[i].face++ <--> {delay = 1ms;} <--> node[i+1].face++;
     }

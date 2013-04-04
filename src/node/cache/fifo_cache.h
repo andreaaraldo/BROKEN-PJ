@@ -37,8 +37,8 @@ using namespace std;
 //and the last element is evicted
 class fifo_cache: public base_cache{
     public:
-	virtual void store (uint64_t);
-	virtual bool data_lookup (uint64_t);
+	virtual void store (chunk_t);
+	virtual bool data_lookup (chunk_t);
 	virtual bool full();
     private:
 	deque<uint64_t> deq;

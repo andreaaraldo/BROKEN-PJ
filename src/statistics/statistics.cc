@@ -27,7 +27,6 @@
 #include "core/definitions.h"
 #include "content/content_distribution.h"
 #include "node/core_layer.h"
-
 Register_Class(statistics);
 
 
@@ -140,7 +139,7 @@ bool statistics::stable(int n){
     }else 
         samples[n].push_back(0);
 
-    if (samples[n].size() == window / ts ){ //variance each window seconds
+    if (samples[n].size() - window * 1./ts <= 0.001 ){ //variance each window seconds
 
 	var =variance(samples[n]); 
         cout<<n<<"] variance = "<<var<<endl;

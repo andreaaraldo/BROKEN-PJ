@@ -35,12 +35,13 @@ void  core_layer::initialize(){
     vector<string> types;
     types.push_back("modules.node.node");
     topo.extractByNedTypeName( types );
-    cTopology::Node *current = topo.getNode( getIndex() );
+    //cTopology::Node *current = topo.getNode( getIndex() );
 
     //-------------------
     //Central calculations
-    topo.betweenness_centrality();
-    this->btw = current->get_betweenness();
+    //topo.betweenness_centrality();
+    //this->btw = current->get_betweenness();
+    this->btw = par("betweenness");
     //-------------------
 
     RTT = par("RTT");
@@ -48,7 +49,7 @@ void  core_layer::initialize(){
 
     //Getting the content store
     ContentStore = (base_cache *) gate("cache_port$o")->getNextGate()->getOwner();
-    strategy = (strategy_layer *)gate("strategy_port$o")->getNextGate()->getOwner();
+    strategy = (strategy_layer *) gate("strategy_port$o")->getNextGate()->getOwner();
 
     //Statistics
     interests = 0;
@@ -177,7 +178,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
 
 	if (PIT.size()>max_pit)
-	
 	    max_pit = PIT.size();
 
     }

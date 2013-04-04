@@ -47,7 +47,6 @@ using namespace boost;
 //This structure takes care of data forwarding
 struct pit_entry {//new pit table
     interface_t interfaces;
-
     //simtime_t  timeout;
     //pit_entry (simtime_t t=0):timeout(t){;}
 };

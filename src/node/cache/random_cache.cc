@@ -33,7 +33,7 @@ void random_cache::initialize(){
     warmup();
 }
 
-void random_cache::store(uint64_t chunk){
+void random_cache::store(chunk_t chunk){
     ;
     //cache[chunk] = true;
     //if (deq.size() == get_size() ){
@@ -50,7 +50,7 @@ void random_cache::store(uint64_t chunk){
 }
 
 
-bool random_cache::data_lookup(uint64_t chunk){
+bool random_cache::data_lookup(chunk_t chunk){
 
     bool ret = (cache.find(chunk) != cache.end());
     return ret;

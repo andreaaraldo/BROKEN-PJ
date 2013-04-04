@@ -54,8 +54,8 @@ class base_cache : public AbstractNode {
 	void finish();
 
 	//Inteface function (depending by internal data structures of each cache)
-	virtual void store (uint64_t) = 0; 
-	virtual bool data_lookup(uint64_t)=0;
+	virtual void store (chunk_t) = 0; 
+	virtual bool data_lookup(chunk_t)=0;
 	virtual bool full()=0;
 	virtual void dump(){cout<<"Not implemented"<<endl;;}
 	

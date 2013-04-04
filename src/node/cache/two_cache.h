@@ -40,8 +40,8 @@ using namespace std;
 class two_cache: public base_cache{
     public:
 
-	virtual void store(uint64_t);
-	virtual bool data_lookup(uint64_t);
+	virtual void store(chunk_t);
+	virtual bool data_lookup(chunk_t);
 	virtual bool full();
 
     private:
