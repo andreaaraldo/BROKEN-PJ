@@ -22,18 +22,11 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include <omnetpp.h>
 #include "dynamic_learning.h"
+#include "packets/ccn_interest.h"
 Register_Class(dynamic_learning);
 
-
-void dynamic_learning::initialize(){
-
-    strategy_layer::initialize(); 
-}
-
-void dynamic_learning::finish(){
-    ;
-}
 
 bool *dynamic_learning::get_decision(cMessage *in){//check this function
     int target;
@@ -66,11 +59,8 @@ bool *dynamic_learning::explore(ccn_interest *interest){
     arrival_gate = interest->getArrivalGate()->getIndex();
     decision = new bool[gsize];
 
-    for (int i =0; i < gsize; i++)
-	if (i != arrival_gate && !check_client(i))
-	    decision[i] = true;
-	else
-	    decision[i] = false;
+    memset(decision,0,gsize);
+    decision[arrival_gate] = true;
     return decision;
 }
 
@@ -90,8 +80,7 @@ bool *dynamic_learning::exploit(ccn_interest *interest){
     outif = FIB[target].id;
 
     decision = new bool[gsize];
-    for (int i =0;i<gsize;i++)
-	decision[i]=false;
+    memset(decision,0,gsize);
     decision[outif]=true;
 
     return decision;

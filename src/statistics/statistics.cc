@@ -22,11 +22,13 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include <cmath>
 #include "statistics.h"
-#include "statistics/stat_util.h"
-#include "core/definitions.h"
-#include "content/content_distribution.h"
 #include "node/core_layer.h"
+#include "core/definitions.h"
+#include "statistics/stat_util.h"
+#include "node/cache/base_cache.h"
+#include "content/content_distribution.h"
 Register_Class(statistics);
 
 
@@ -139,7 +141,7 @@ bool statistics::stable(int n){
     }else 
         samples[n].push_back(0);
 
-    if (samples[n].size() - window * 1./ts <= 0.001 ){ //variance each window seconds
+    if ( fabs( samples[n].size() - window * 1./ts ) <= 0.001 ){ //variance each window seconds
 
 	var =variance(samples[n]); 
         cout<<n<<"] variance = "<<var<<endl;

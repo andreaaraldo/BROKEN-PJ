@@ -22,18 +22,10 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include <omnetpp.h>
 #include "parallel_repository.h"
+#include "packets/ccn_interest.h"
 Register_Class(parallel_repository);
-
-void parallel_repository::initialize(){
-
-    strategy_layer::initialize();
-    
-}
-
-void parallel_repository::finish(){
-    ;
-}
 
 bool *parallel_repository::get_decision(cMessage *in){//check this function
 
@@ -55,8 +47,7 @@ bool *parallel_repository::exploit(ccn_interest *interest){
 
     gsize = getOuterInterfaces();
     bool *decision = new bool[gsize];
-    for (int i =0;i<gsize;i++)
-	decision[i]=false;
+    memset(decision,0,gsize);
 
     vector<int> repos = (interest->get_repos());
     for (vector<int>::iterator it = repos.begin(); it!=repos.end();it++){

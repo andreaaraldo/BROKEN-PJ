@@ -27,13 +27,10 @@
 
 #include "decision_policy.h"
 
-//
-//Live copy down policy: cache only within the 
-//first cache(s) downstream the one in which 
-//an hit has manifested (we can regard as a partucularization
-// of distance policy in which the probability funtion is 
-// a unitarty step start at D = 1
-//
+/*
+* Live copy down policy: cache only within the first downstream cache(s). 
+* In other words the cache  where the hit occurred.
+*/
 class LCD: public DecisionPolicy{
     public:
 	virtual bool data_to_cache(ccn_data *msg){

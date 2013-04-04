@@ -23,30 +23,28 @@
  *
  */
 #include "core_layer.h"
-#include "ccn_data.h"
+#include <algorithm>
+#include "content/content_distribution.h"
+#include "strategy/strategy_layer.h"
+#include "packets/ccn_interest.h"
+#include "packets/ccn_data.h"
+#include "core/definitions.h"
+#include "cache/base_cache.h"
 
 Register_Class(core_layer);
 
 
 void  core_layer::initialize(){
     nodes = getAncestorPar("n"); //Number of nodes
-    
-    cTopology topo;
-    vector<string> types;
-    types.push_back("modules.node.node");
-    topo.extractByNedTypeName( types );
-    //cTopology::Node *current = topo.getNode( getIndex() );
+    my_btw = getAncestorPar("betweenness");
+    int num_repos = getAncestorPar("num_repos");
 
-    //-------------------
-    //Central calculations
-    //topo.betweenness_centrality();
-    //this->btw = current->get_betweenness();
-    this->btw = par("betweenness");
-    //-------------------
-
-    RTT = par("RTT");
-
-
+    int i = 0;
+    my_bitmask = 0;
+    for (i = 0;i<num_repos;i++)
+	if (content_distribution::repositories[i] == getIndex())
+	    break;
+    my_bitmask = (1<<i) & REPO_MSK;
     //Getting the content store
     ContentStore = (base_cache *) gate("cache_port$o")->getNextGate()->getOwner();
     strategy = (strategy_layer *) gate("strategy_port$o")->getNextGate()->getOwner();
@@ -58,12 +56,14 @@ void  core_layer::initialize(){
 
 }
 
-double core_layer::get_betweenness(){
-    return btw;
-}
 
 
-//Core function of a core_layer
+/*
+ * Core layer core function. Here the incoming packet is classified,
+ * determining if it is an interest or a data packet (the corresponding
+ * counters are increased). The two auxiliar functions handle_interest() and
+ * handle_data() have the task of dealing with interest and data processing.
+ */
 void core_layer::handleMessage(cMessage *in){
 
     ccn_data *data_msg;
@@ -112,20 +112,15 @@ void core_layer::finish(){
 
 
 
-//Handling incoming interests:
-//if an interest for a data file arrives: 
-//
-//
-//     a) Check in your Content Store
-//     
-//     b) Check if you are the source for that data. 
-//     
-//     c) Put the interface within the PIT.
-//
-//
+/* Handling incoming interests:
+*  if an interest for a given content comes up: 
+*     a) Check in your Content Store
+*     b) Check if you are the source for that data. 
+*     c) Put the interface within the PIT.
+*/
 void core_layer::handle_interest(ccn_interest *int_msg){
-    uint64_t chunk = int_msg->getChunk();
-    double h_btw = int_msg->getBtw();
+    chunk_t chunk = int_msg->getChunk();
+    double int_btw = int_msg->getBtw();
 
     if (ContentStore->lookup(chunk)){
         //
@@ -133,13 +128,10 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         //
         ccn_data* data_msg = compose_data(chunk);
         data_msg->setTarget(getIndex());
-        data_msg->setHops(0);
-        data_msg->setTimestamp(simTime());
-        data_msg->setBtw(h_btw); //Copy the highest betweenness
+        data_msg->setBtw(int_btw); //Copy the highest betweenness
         send(data_msg,"face$o", int_msg->getArrivalGate()->getIndex());
 
-    } else if ( check_ownership( int_msg->get_repos() ) ){
-    //} else if ( getIndex() == nodes-1 ){
+    } else if ( my_bitmask & __repo(int_msg->get_name() ) ){
 	//
 	//b) Look locally (only if you own a repository)
 	// we are mimicking a message sent to the repository
@@ -147,12 +139,7 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         ccn_data* data_msg = compose_data(chunk);
         data_msg->setTarget(getIndex());
         data_msg->setHops(1);
-        data_msg->setTimestamp(simTime());
-
-	if ( btw > h_btw )
-	    data_msg ->setBtw(btw);
-	else 
-	    data_msg->setBtw(h_btw);
+	data_msg->setBtw(std::max(my_btw,int_btw));
 
         ContentStore->received_data(data_msg);
         send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
@@ -166,7 +153,7 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	if (int_msg->getTarget() == getIndex())//failure
 	    int_msg->setTarget(-1);
 
-	unordered_map < uint64_t, pit_entry >::iterator pitIt = PIT.find(chunk);
+	unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 	if (pitIt==PIT.end()){
 	    int_msg->setIif(int_msg->getArrivalGate()->getIndex());
 	    bool * decision = strategy->get_decision(int_msg);
@@ -185,15 +172,20 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 
 
-//Manage incoming data
+/*
+ * Handle incoming data packets. First check within the PIT if there are
+ * interfaces interested for the given content, then (try to) store the object
+ * within your content store. Finally propagate the interests towards all the
+ * interested interfaces.
+ */
 void core_layer::handle_data(ccn_data *data_msg){
 
 
     int i = 0;
     interface_t interfaces = 0;
-    uint64_t chunk = data_msg -> getChunk(); //Get information about the file
+    chunk_t chunk = data_msg -> getChunk(); //Get information about the file
 
-    unordered_map < uint64_t, pit_entry >::iterator pitIt = PIT.find(chunk);
+    unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
     //If someone had previously requested the data 
     if ( pitIt != PIT.end() ){
@@ -207,15 +199,14 @@ void core_layer::handle_data(ccn_data *data_msg){
 	    i++;
 	    interfaces >>= 1;
 	}
-
-
     }
     PIT.erase(chunk); //erase pending interests for that data file
 }
 
+
 void core_layer::handle_decision(bool* decision,ccn_interest *interest){
-    if (btw > interest->getBtw())
-	interest->setBtw(btw);
+    if (my_btw > interest->getBtw())
+	interest->setBtw(my_btw);
 
     for (int i = 0; i < getOuterInterfaces(); i++)
 	if (decision[i] == true && !check_client(i))
@@ -232,17 +223,21 @@ bool core_layer::check_ownership(vector<int> repositories){
 
 
 
-//Compose a data response packet
+/*
+ * Compose a data response packet
+ */
 ccn_data* core_layer::compose_data(uint64_t response_data){
     ccn_data* data = new ccn_data("data",CCN_D);
     data -> setChunk (response_data);
     data -> setHops(0);
+    data->setTimestamp(simTime());
     return data;
 }
 
-//Clear local statistics
+/*
+ * Clear local statistics
+ */
 void core_layer::clear_stat(){
     interests = 0;
     data = 0;
-    return;
 }

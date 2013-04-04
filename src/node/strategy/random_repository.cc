@@ -22,19 +22,11 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include <omnetpp.h>
 #include "random_repository.h"
+#include "packets/ccn_interest.h"
 
 Register_Class(random_repository);
-
-void random_repository::initialize(){
-
-    strategy_layer::initialize();
-    
-}
-
-void random_repository::finish(){
-    ;
-}
 
 bool *random_repository::get_decision(cMessage *in){//check this function
     bool *decision;
@@ -59,9 +51,7 @@ bool *random_repository::exploit(ccn_interest *interest){
     outif = FIB[repository].id;
 
     bool *decision = new bool[gsize];
-    for (int i = 0; i < gsize ; i++)
-	decision[i]=false;
-
+    memset(decision,0,gsize);
     decision[outif]=true;
 
     return decision;

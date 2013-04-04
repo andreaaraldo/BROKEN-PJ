@@ -26,19 +26,16 @@
 #define STRATEGY_H_
 
 #include <omnetpp.h>
-#include <fstream>
 
 #include "node/abstract_node.h"
-#include "packets/ccn_interest.h"
-#include "core/definitions.h"
 #include <boost/unordered_map.hpp>
 
 using namespace std;
 using namespace boost;
 
 struct int_f{
-    uint32_t id;
-    uint32_t len;
+    unsigned short id;
+    unsigned short len;
 };
 
 
@@ -58,17 +55,12 @@ class strategy_layer: public AbstractNode {
 	virtual void initialize();
 	virtual void finish();
 
-
 	//FIB initialization functions
 	void populate_routing_table();
-	void compose_next_hop_matrix();
 
 	//FIB (available to all subclasses, for sake of utilization)
 	unordered_map <uint32_t,int_f> FIB;
 	int nodes;
-    private:
-	uint32_t R;
-	static ofstream routing_file;
 
 };
 #endif

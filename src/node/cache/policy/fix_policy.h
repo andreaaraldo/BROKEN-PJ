@@ -27,9 +27,12 @@
 
 #include "decision_policy.h"
 
+/* Fixed probability policy: store a given chunk with a given (fixed)
+ * probability. 
+ */
 class Fix: public DecisionPolicy{
     public:
-	Fix(double pc):p(pc){;}
+	Fix(double pc):p(pc){;}//Store the caching probability
 
 	virtual bool data_to_cache(ccn_data *){
 

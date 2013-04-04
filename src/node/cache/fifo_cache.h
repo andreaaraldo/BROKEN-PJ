@@ -32,17 +32,20 @@
 using namespace boost;
 using namespace std;
 
-//FIFO replacement algorithm: 
-//each new arrivals is pushed in front of the cache
-//and the last element is evicted
+
+/*
+ * FIFO replacement cache: each new chunk is pushed in front of the cache and
+ * the back element is evicted.
+ */
 class fifo_cache: public base_cache{
     public:
+	//Polymorphic methods
 	virtual void store (chunk_t);
 	virtual bool data_lookup (chunk_t);
 	virtual bool full();
     private:
-	deque<uint64_t> deq;
-	unordered_map<uint64_t,bool> cache;
+	deque<chunk_t> deq;//Deque for the order 
+	unordered_map<chunk_t,bool> cache;//Map for a look up
 
 
 };

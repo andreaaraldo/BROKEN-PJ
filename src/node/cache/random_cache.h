@@ -27,7 +27,6 @@
 
 #include "base_cache.h"
 #include <omnetpp.h>
-
 #include <deque>
 #include <boost/unordered_map.hpp>
 
@@ -35,22 +34,25 @@
 using namespace boost;
 using namespace std;
 
-//Random cache: new elements are pushed back in the cache
-//a random element is replaces in case of cache filling
+/* Random cache: new elements are pushed back in the cache when the cache is not
+ * full.  Otherwise an element is randomly replaced by the incoming one.
+ */
 
 class random_cache: public base_cache{
     protected:
 	virtual void initialize();
 
-	virtual bool data_lookup(chunk_t);
-	virtual void store(chunk_t);
-	virtual bool full();
+	//Polymorphic functions
+	bool data_lookup(chunk_t);
+	void store(chunk_t);
+	bool full();
+
+	//Deprecated
 	bool warmup();
 
     private:
-	deque<uint64_t> deq;
-	unordered_map<uint64_t,bool> cache;
+	deque<chunk_t> deq;
+	unordered_map<chunk_t, bool> cache;
 
 };
-
 #endif

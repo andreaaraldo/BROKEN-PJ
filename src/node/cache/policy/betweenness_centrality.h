@@ -27,24 +27,21 @@
 
 #include "decision_policy.h"
 
-//
-//The most simple (and used) policy: cache data always
-//
+//Betwenness centrality policy.
 class Betweenness : public DecisionPolicy{
     public:
-	Betweenness(double btw){
-	    this->btw = btw;
-	}
+	Betweenness(double b):btw(b){;}//Store node betweenness
 
 	virtual bool data_to_cache(ccn_data *data_pkt){
 	    bool decision = false;
+	    //Store the chunk only if you are the node with the highest betweennees 
 	    if (data_pkt->getBtw()==btw)
 		decision = true;
 
 	    return decision; 
 	}
     private:
-	double btw;
+	double btw;//node betweenness
 };
 
 #endif

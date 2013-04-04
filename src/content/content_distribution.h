@@ -55,23 +55,21 @@ class content_distribution : public cSimpleModule{
 
     public:
 	void init_content();
-	uint32_t *init_repos(vector<int>);
-	uint32_t *init_clients(vector<int>);
+	int *init_repos(vector<int>);
+	int *init_clients(vector<int>);
 
 	static vector<file> catalog;
 	static zipf_distribution zipf;
 
-	static uint32_t perfile_bulk;
-	static uint32_t stabilization_bulk; 
-	static uint32_t cut_off;
-	static uint32_t *repositories;
-	static uint32_t *clients;
+	static name_t perfile_bulk;
+	static name_t stabilization_bulk; 
+	static name_t cut_off;
+	static int  *repositories;
+	static int  *clients;
 
 
     private:
-	void print_content_info(uint32_t);
 	vector<int> binary_strings(int,int);
-	uint32_t compose_random_vector(int);
 
 	//INI parameters
 	int num_repos;
@@ -82,7 +80,6 @@ class content_distribution : public cSimpleModule{
 	int F;
 
 	double alpha;
-	double fibperc;
 
 
 };

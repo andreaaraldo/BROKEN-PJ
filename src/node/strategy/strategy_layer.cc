@@ -24,13 +24,9 @@
  */
 #include "strategy_layer.h"
 
-ofstream strategy_layer::routing_file ;
 
 void strategy_layer::initialize(){
-
-    nodes = getAncestorPar("n");
     populate_routing_table(); //Building forwarding table 
-
 }
 
 void strategy_layer::finish(){
@@ -51,7 +47,9 @@ void strategy_layer::populate_routing_table(){
     cTopology::Node *node = topo.getNode( getParentModule()->getIndex() ); //iterator node
 
     int rand_out;
-    for (int d = 0; d < nodes; d++){
+    //As the node topology is defined as a vector of nodes (see Omnet++ manual), cTopology 
+    //associates the node i with the node whose Index is i.
+    for (int d = 0; d < topo.getNumNodes(); d++){
 	if (d!=getParentModule()->getIndex()){
 
 	    cTopology::Node *to   = topo.getNode( d ); //destination node
@@ -66,17 +64,6 @@ void strategy_layer::populate_routing_table(){
 }
 
 
-void strategy_layer::compose_next_hop_matrix(){
-    if (!routing_file.is_open())
-	routing_file.open("model/routing_table",ios::out);
-
-    for (uint32_t f = 1; f < content_distribution::catalog.size();f++){
-	int rep = __repo(f);
-	int next_hop = ( rep == getIndex()? -1 : getParentModule()->gate("face$o",FIB[rep].id)->getNextGate()->getOwnerModule()->getIndex()+1);
-	routing_file<<next_hop<<" ";
-    }
-    routing_file<<endl;
-}
 
 
 

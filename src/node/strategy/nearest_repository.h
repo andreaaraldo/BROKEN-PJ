@@ -25,7 +25,6 @@
 #ifndef NEAREST_H_
 #define NEAREST_H_
 
-#include <omnetpp.h>
 #include "strategy_layer.h"
 
 class ccn_interest;
@@ -36,12 +35,7 @@ class nearest_repository: public strategy_layer{
     public:
 	bool* get_decision(cMessage *);
     protected:
-	//Omnet base functions
-	void initialize();
-	void finish();
-
 	//Exploration and exploitation functions
 	bool *exploit(ccn_interest *);
-	uint32_t nearest_rep(vector<int>);
 };
 #endif

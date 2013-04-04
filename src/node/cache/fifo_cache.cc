@@ -33,7 +33,7 @@ void fifo_cache::store(chunk_t chunk){
 
    if ( deq.size() > get_size() ) {
    //Eviction of the last element
-       uint64_t toErase = deq.front();
+       chunk_t toErase = deq.front();
        deq.pop_front();
        cache.erase(toErase);
    }

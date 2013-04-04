@@ -36,11 +36,11 @@ Register_Class(content_distribution);
 vector<file> content_distribution::catalog;
 zipf_distribution  content_distribution::zipf;
 
-uint32_t content_distribution::stabilization_bulk = 0;
-uint32_t content_distribution::perfile_bulk = 0;
-uint32_t content_distribution::cut_off = 0;
-uint32_t *content_distribution::repositories = 0;
-uint32_t *content_distribution::clients = 0;
+name_t  content_distribution::stabilization_bulk = 0;
+name_t  content_distribution::perfile_bulk = 0;
+name_t  content_distribution::cut_off = 0;
+int  *content_distribution::repositories = 0;
+int  *content_distribution::clients = 0;
 
 
 
@@ -106,6 +106,10 @@ void content_distribution::initialize(){
     cout<<"Content initialized"<<endl;
 }
 
+/* 
+ * Generate all possible combinations of binary strings of a given length with
+ * a given number of bits set.
+*/
 vector<int> content_distribution::binary_strings(int num_ones,int len){
     vector<int> bins;
     int ones,bin;
@@ -148,7 +152,6 @@ void content_distribution::init_content(){
 	if (num_repos==1){
 	    __srepo ( d , 1 );
 	} else {
-	    //repo_t repos = compose_random_vector(num_repos);
 	    repo_t repos = repo_strings[intrand(repo_strings.size())];
 	    __srepo (d ,repos);
 	 }
@@ -163,16 +166,16 @@ void content_distribution::init_content(){
 * are added if one wished more repositories than the fixed number specified
 * (see omnet.ini for further comments).
 */
-uint32_t *content_distribution::init_repos(vector<int> node_repos){
+int *content_distribution::init_repos(vector<int> node_repos){
 
     if (node_repos.size() > (uint32_t) num_repos)
 	error("You try to distribute too much repositories.");
 
-    uint32_t *repositories = new uint32_t[num_repos];
+    int *repositories = new int[num_repos];
 
     int i = 0;
     while (node_repos.size()){
-	uint32_t r = node_repos[i];
+	int r = node_repos[i];
 	node_repos.pop_back();
 	repositories[i++] = r;
     }
@@ -188,31 +191,6 @@ uint32_t *content_distribution::init_repos(vector<int> node_repos){
 }
 
 
-/*
- * Generate a random bit-vector. If the i-th position of this vector is 1, then
- * the given content is stored within repositories[i].
- */
-uint32_t content_distribution::compose_random_vector(int num_repos){
-
-    uint32_t sel_id, repo;
-    boost::unordered_map<int,bool> cache;
-    repo = 0;
-
-
-    for (int i = 0; i < degree; i++){
-
-	sel_id = intrand(num_repos);
-	while (cache[sel_id]) sel_id = intrand(num_repos);
-
-	cache[sel_id] = 1;
-
-	repo |= (1 << sel_id);
-    }
-
-    return repo;
-
-}
-
 
 /*
 * Initialize the clients vector. This vector is composed by the clients
@@ -220,22 +198,25 @@ uint32_t content_distribution::compose_random_vector(int num_repos){
 * one wished more repositories than the fixed number specified (see omnet.ini
 * for further comments).
 */
-uint32_t *content_distribution::init_clients(vector<int> node_clients){
+int *content_distribution::init_clients(vector<int> node_clients){
 
     if (node_clients.size() > (uint32_t) num_clients)
 	error("You try to distribute too much clientsitories.");
 
-    uint32_t *clients = new uint32_t[num_clients];
+    if (clients != 0)
+	return clients;
 
-    uint32_t i = 0;
+    int *clients = new int [num_clients];
+
+    int i = 0;
     while (node_clients.size()){
-	uint32_t r = node_clients[i];
+	int r = node_clients[i];
 	node_clients.pop_back();
 	clients[i++] = r;
     }
 
     int new_c;
-    while ( i < (uint32_t) num_clients  ){
+    while ( i <  num_clients  ){
 	new_c = intrand(nodes);
 	//NOTE: in this way a client can be attached to a node
 	//where a repository is already attached.

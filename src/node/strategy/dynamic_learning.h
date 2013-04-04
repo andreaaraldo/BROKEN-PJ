@@ -25,20 +25,15 @@
 #ifndef DLEARNING_H_
 #define DLEARNING_H_
 
-#include <omnetpp.h>
-#include "packets/ccn_interest.h"
 #include "strategy_layer.h"
+class ccn_interest;
 
 using namespace std;
 
 class dynamic_learning: public strategy_layer{
     public:
-	virtual bool* get_decision(cMessage *);
+	bool* get_decision(cMessage *);
     protected:
-	//Omnet base functions
-	virtual void initialize();
-	virtual void finish();
-
 	//Exploration and exploitation functions
 	bool *exploit(ccn_interest *);
 	bool *explore(ccn_interest *);

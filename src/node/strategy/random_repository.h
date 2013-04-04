@@ -25,21 +25,16 @@
 #ifndef RANDOM_REP_H_
 #define RANDOM_REP_H_
 
-#include <omnetpp.h>
 #include "strategy_layer.h"
-#include "packets/ccn_interest.h"
 
 using namespace std;
+class ccn_interest;
 
 
 class random_repository : public strategy_layer{
     public:
-	virtual bool* get_decision(cMessage *);
+	bool* get_decision(cMessage *);
     protected:
-	//Omnet base functions
-	virtual void initialize();
-	virtual void finish();
-
 	//Exploration and exploitation functions
 	bool *exploit(ccn_interest *);
 	uint32_t random_rep(vector<int>);

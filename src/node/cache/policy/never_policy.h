@@ -26,10 +26,9 @@
 #define NEVER_POLICY_H_
 
 #include "decision_policy.h"
-//
-//Simple policy useful in order to disable caching without the 
-//network
-//
+/*
+ * Policy useful to disable caching within the network
+ */
 class Never: public DecisionPolicy{
     public:
 	virtual bool data_to_cache(ccn_data *){return false;}

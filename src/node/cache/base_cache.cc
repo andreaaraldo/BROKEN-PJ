@@ -22,6 +22,7 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include <cmath>
 #include "base_cache.h"
 #include "node/core_layer.h"
 #include "statistics/statistics.h"
@@ -36,8 +37,8 @@
 #include "policy/decision_policy.h"
 #include "policy/betweenness_centrality.h"
 
-#define __betweenness (((core_layer *) findSibling("core_layer") )->get_betweenness())
 //Initialization function
+#define __bulk (content_distribution::perfile_bulk)
 void base_cache::initialize(){
 
     nodes      = getAncestorPar("n");
@@ -49,11 +50,14 @@ void base_cache::initialize(){
     if (decision_policy.compare("lcd")==0){
 	decisor = new LCD();
     } else if (decision_policy.find("fix")==0){
-	string p = decision_policy.substr(3);
-	double _p = atof(p.c_str());
-	decisor = new Fix(_p);
+	string sp = decision_policy.substr(3);
+	double dp = atof(sp.c_str());
+	decisor = new Fix(dp);
     } else if (decision_policy.find("btw")==0){
-	decisor = new Betweenness(__betweenness );
+	double db = getAncestorPar("betweenness");
+	if (fabs(db - 1)<=0.001)
+	    error ("Node %i betwenness not defined.",getIndex());
+	decisor = new Betweenness(db);
     }else if (decision_policy.compare("never")==0)
 	decisor = new Never();
     else 
@@ -61,11 +65,11 @@ void base_cache::initialize(){
 
 
     //Cache statistics
-    //Average
+    //--Average
     miss = 0;
     hit = 0;
-    //Per file
-    cache_stats = new cache_stat_entry[content_distribution::perfile_bulk + 1];
+    //--Per file
+    cache_stats = new cache_stat_entry[__bulk + 1];
 
 }
 
@@ -78,7 +82,7 @@ void base_cache::finish(){
     //Per file hit rate
     sprintf ( name, "node[%d]", getIndex());
     cOutVector hit_vector(name);
-    for (uint32_t f = 1; f <= content_distribution::perfile_bulk; f++)
+    for (uint32_t f = 1; f <= __bulk; f++)
         hit_vector.recordWithTimestamp(f, cache_stats[f].rate() );
 
 
@@ -98,7 +102,7 @@ void base_cache::received_data(cMessage *in){
 
 //Base class function: lookup for a given data
 //it wraps statistics on misses and hits
-bool base_cache::lookup(uint64_t chunk ){
+bool base_cache::lookup(chunk_t chunk ){
     bool found = false;
     name_t name = __id(chunk);
 
@@ -108,7 +112,7 @@ bool base_cache::lookup(uint64_t chunk ){
 	hit++;
 
 	//Per file cache statistics(hit)
-	if (name <= content_distribution::perfile_bulk)
+	if (name <= __bulk)
 	    cache_stats[name].hit++;
 
     }else{
@@ -117,7 +121,7 @@ bool base_cache::lookup(uint64_t chunk ){
 	//Average cache statistics(miss)
 	miss++;
 	//Per file cache statistics(miss)
-	if (name <= content_distribution::perfile_bulk)
+	if ( name <= __bulk )
 	    cache_stats[name].miss++;
     }
 
@@ -131,5 +135,5 @@ bool base_cache::lookup(uint64_t chunk ){
 void base_cache::clear_stat(){
     hit = miss = 0; //local statistics
     delete cache_stats;
-    cache_stats = new cache_stat_entry[content_distribution::perfile_bulk+1];
+    cache_stats = new cache_stat_entry[__bulk+1];
 }
