@@ -41,7 +41,7 @@ void  core_layer::initialize(){
 
     int i = 0;
     my_bitmask = 0;
-    for (i = 0;i<num_repos;i++)
+    for (i = 0; i < num_repos; i++)
 	if (content_distribution::repositories[i] == getIndex())
 	    break;
     my_bitmask = (1<<i) & REPO_MSK;
@@ -155,7 +155,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 	unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 	if (pitIt==PIT.end()){
-	    int_msg->setIif(int_msg->getArrivalGate()->getIndex());
 	    bool * decision = strategy->get_decision(int_msg);
 	    handle_decision(decision,int_msg);
 	    delete [] decision;//free memory for the decision array

@@ -168,7 +168,7 @@ void content_distribution::init_content(){
 */
 int *content_distribution::init_repos(vector<int> node_repos){
 
-    if (node_repos.size() > (uint32_t) num_repos)
+    if (node_repos.size() > (unsigned) num_repos)
 	error("You try to distribute too much repositories.");
 
     int *repositories = new int[num_repos];
@@ -200,7 +200,7 @@ int *content_distribution::init_repos(vector<int> node_repos){
 */
 int *content_distribution::init_clients(vector<int> node_clients){
 
-    if (node_clients.size() > (uint32_t) num_clients)
+    if (node_clients.size() > (unsigned) num_clients)
 	error("You try to distribute too much clientsitories.");
 
     if (clients != 0)

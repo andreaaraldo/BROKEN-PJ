@@ -39,7 +39,7 @@ using namespace std;
 
 //Each of these entries contains information about the current downloads
 struct file_entry{
-    uint32_t missing_chunks; //number of chunks that still miss within the file
+    filesize_t missing_chunks; //number of chunks that still miss within the file
 
     simtime_t start; //start time (for statistic purposes)
     simtime_t last; //last time a chunk has been downloaded
@@ -50,9 +50,9 @@ struct file_entry{
 //Each of these entries contains information about statistics for each single file
 struct client_stat_entry{
     double avg_distance;
-    double avg_time;
+    simtime_t avg_time;
     double tot_downloads;//double type due to the chunkization in CCN. See below.
-    uint64_t tot_chunks;
+    unsigned int tot_chunks;
 
     client_stat_entry():avg_distance(0),avg_time(0),tot_downloads(0),tot_chunks(0){;}
 
@@ -69,20 +69,18 @@ class client : public cSimpleModule {
 
 	virtual void handle_incoming_chunk(ccn_data *);
 	virtual void request_file();
+	virtual void handle_timers(cMessage*);
+
 	void send_interest(name_t, cnumber_t, int);
 
-	void handle_timers(cMessage*);
-
 	int  getNodeIndex();
-	bool check_full();
-
 	void clear_stat();
 
 
     private:
 
 	//List of current downloads for a given file
-	multimap <uint32_t, file_entry> current_downloads;
+	multimap <name_t, file_entry> current_downloads;
 
 	//Single file statistics
 	client_stat_entry* client_stats;
@@ -90,23 +88,19 @@ class client : public cSimpleModule {
 	//Average statistics (on the whole set of files downloaded by this client)
 	double tot_downloads; // Here the "double" type arises when you consider
 	                      // that a given download might be not yet completed at all. 
-	uint64_t tot_chunks;
+	unsigned int tot_chunks;
 
-	double avg_time;
+	simtime_t avg_time;
 	double avg_distance;
-
-
 
 	//INI parameters
 	double lambda;
-	uint32_t n;
 	double RTT;
-	double check_time;
+	simtime_t check_time;
 
 	//Set if the client actively sends interests for files
 	bool active;
 
 
 };
-
 #endif

@@ -36,29 +36,25 @@ Register_Class (client);
 
 
 void client::initialize(){
-
-    //Parameters initialization
-    n               = getAncestorPar("n");
-    lambda          = par ("lambda");
-    RTT             = par("RTT");
-    check_time      = par("check_time");
     int num_clients = getAncestorPar("num_clients");
-
-
-    //Allocating file statistics
-    client_stats = new client_stat_entry[content_distribution::perfile_bulk + 1];
-
-
-    //Initialize average stats
-    avg_distance = 0;
-    avg_time = 0;
-    tot_downloads = 0;
-    tot_chunks = 0;
-	
-
     if (find(content_distribution::clients , content_distribution::clients + num_clients ,getNodeIndex()) 
 	    != content_distribution::clients + num_clients){
+
 	active = true;
+
+	//Parameters initialization
+	check_time      = par("check_time");
+	lambda          = par ("lambda");
+	RTT             = par("RTT");
+
+	//Allocating file statistics
+	client_stats = new client_stat_entry[__file_bulk];
+
+	//Initialize average stats
+	avg_distance = 0;
+	avg_time = 0;
+	tot_downloads = 0;
+	tot_chunks = 0;
 
 	scheduleAt( simTime() , new cMessage("arrival", ARRIVAL ) );
 	scheduleAt( simTime() + check_time, new cMessage("timer", TIMER) );
@@ -82,6 +78,8 @@ void client::handleMessage(cMessage *in){
 	    handle_incoming_chunk (data_message);
 	}
     }
+
+    //Incoming interests are deleted
     delete in;
 
 
@@ -104,7 +102,7 @@ void client::finish(){
     //Output per file statistics
     sprintf ( name, "node[%d]", getNodeIndex());
     cOutVector distance_vector(name);
-    for (uint32_t f = 1; f <= content_distribution::perfile_bulk; f++)
+    for (name_t f = 1; f <= __file_bulk; f++)
         distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
 }
 
@@ -112,19 +110,17 @@ void client::finish(){
 void client::handle_timers(cMessage *timer){
     switch(timer->getKind()){
 	case ARRIVAL:
-	    //cout<<getNodeIndex()<<"] arrival at " << simTime()<< endl;
 	    request_file();
-
 	    scheduleAt( simTime() + exponential(1/lambda), new cMessage("arrival", ARRIVAL ) );
 	    delete timer;
 	    break;
 	case TIMER:
-	    for (multimap<uint32_t,file_entry>::iterator i = current_downloads.begin();i != current_downloads.end();i++){
+	    for (multimap<name_t ,file_entry>::iterator i = current_downloads.begin();i != current_downloads.end();i++){
 		if ( simTime() - i->second.last > RTT ){
 		    //resend the request for the given chunk
 		    send_interest(i->first,i->second.missing_chunks,-1);
 		    cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
-		    cout<<i->first<<"(waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
+		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
 		}
 	    }
 	    scheduleAt( simTime() + check_time, new cMessage("timer", TIMER) );
@@ -140,16 +136,14 @@ void client::handle_timers(cMessage *timer){
 //Generate interest requests 
 void client::request_file(){
 
-    uint32_t name = content_distribution::zipf.value(dblrand());
-    //uint32_t name =1;
-    //cout<<"client request for "<<name<<endl;
-    current_downloads.insert(pair<uint32_t,file_entry>(name, file_entry (0,simTime() ) ) );
+    name_t name = content_distribution::zipf.value(dblrand());
+    current_downloads.insert(pair<name_t, file_entry>(name, file_entry (0,simTime() ) ) );
     send_interest(name, 0 ,-1);
 
 }
 
 void client::send_interest(name_t name,cnumber_t number, int toward){
-    uint64_t chunk = 0;
+    chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
 
     __sid(chunk, name);
@@ -165,14 +159,12 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
 
 void client::handle_incoming_chunk (ccn_data *data_message){
 
-    pair< multimap<uint32_t,file_entry>::iterator, multimap<uint32_t,file_entry>::iterator > ii;
-    multimap<uint32_t, file_entry>::iterator it; 
+    cnumber_t chunk_num = data_message -> get_chunk_num();
+    name_t name      = data_message -> get_name();
+    filesize_t size      = data_message -> get_size();
 
-    uint32_t chunk_num = data_message -> get_chunk_num();
-    uint32_t name      = data_message -> get_name();
-    uint32_t size      = data_message -> get_size();
-
-    // Average node statistics
+    //----------Statistics-----------------
+    // Average clients statistics
     avg_distance = (tot_chunks*avg_distance+data_message->getHops())/(tot_chunks+1);
     tot_chunks++;
     tot_downloads+=1./size;
@@ -181,7 +173,7 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     // File statistics. Doing statistics for all files would be tremendously
     // slow for huge catalog size, and at the same time quite useless
     // (statistics for the 12345234th file are not so meaningful at all)
-    if (name <= content_distribution::perfile_bulk){
+    if (name <= __file_bulk){
 	client_stats[name].avg_distance = (client_stats[name].tot_chunks*avg_distance+data_message->getHops())/(client_stats[name].tot_chunks+1);
 	client_stats[name].tot_chunks++;
 	client_stats[name].tot_downloads+=1./size;
@@ -190,7 +182,11 @@ void client::handle_incoming_chunk (ccn_data *data_message){
 
 
 
+    //-----------Handling downloads------
     //Handling the download list (TODO put this piece of code within a virtual method, in this way implementing new strategies should be direct).
+    pair< multimap<name_t, file_entry>::iterator, multimap<name_t, file_entry>::iterator > ii;
+    multimap<name_t, file_entry>::iterator it; 
+
     ii = current_downloads.equal_range(name);
     it = ii.first;
 
@@ -198,12 +194,12 @@ void client::handle_incoming_chunk (ccn_data *data_message){
         if ( it->second.missing_chunks == chunk_num ){
             it->second.missing_chunks++;
 
-            if (it->second.missing_chunks < __size(name) ){ //if the file is not yet completed
+            if (it->second.missing_chunks < __size(name) ){ 
 		it->second.last = simTime();
+		//if the file is not yet completed send the next interest
         	send_interest(name, it->second.missing_chunks,data_message->getTarget());
-            } else { //if the file is completed
-
-        	//Delete the entry from the pendent file list
+            } else { 
+		//if the file is completed delete the entry from the pendent file list
         	if (current_downloads.count(name)==1){
         	    current_downloads.erase(name);
         	    break;
@@ -225,5 +221,5 @@ void client::clear_stat(){
     tot_downloads = 0;
     tot_chunks = 0;
     delete client_stats;
-    client_stats = new client_stat_entry[content_distribution::perfile_bulk + 1];
+    client_stats = new client_stat_entry[__file_bulk];
 }

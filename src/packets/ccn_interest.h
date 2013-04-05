@@ -65,7 +65,7 @@ public:
 
 	virtual vector<int> get_repos(){
 
-	    uint32_t repo;
+	    repo_t repo;
 	    vector<int> repos;
 	    int i;
 

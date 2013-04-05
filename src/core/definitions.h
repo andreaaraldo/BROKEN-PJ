@@ -79,6 +79,8 @@ inline uint64_t next_chunk (uint64_t c){
 #define __ssize(f,s) ( __info(f) = (__info(f) & ~SIZE_MSK ) | s << SIZE_OFFSET )
 #define __srepo(f,r) ( __info(f) = (__info(f) & ~REPO_MSK ) | r << REPO_OFFSET )
 
+#define __file_bulk (content_distribution::perfile_bulk + 1)
+
 
 
 //-----------
