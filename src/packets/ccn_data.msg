@@ -1,8 +1,13 @@
+cplusplus {{
+#include "definitions.h"
+}}
+
+class noncobject chunk_t;
 packet ccn_data{
+	chunk_t chunk;
 	@customize(true);
-	unsigned long chunk;
-	short hops = 0;
+
 	int target = -1;
-	int iif;
+	short hops = 0;
 	double btw = 0;
 }

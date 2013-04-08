@@ -22,21 +22,14 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include <omnetpp.h>
+#include <algorithm>
 #include "nearest_repository.h"
 #include "packets/ccn_interest.h"
 
 Register_Class(nearest_repository);
 
-void nearest_repository::initialize(){
 
-    strategy_layer::initialize();
-    
-}
-
-
-void nearest_repository::finish(){
-    ;
-}
 
 bool *nearest_repository::get_decision(cMessage *in){
 
@@ -59,31 +52,32 @@ bool *nearest_repository::exploit(ccn_interest *interest){
 	gsize;
 
     gsize = getOuterInterfaces();
-    repository = nearest_rep(interest->get_repos());
-    //repository = n-1;
+
+    vector<int> repos = interest->get_repos();
+    repository = nearest(repos);
+
     outif = FIB[repository].id;
 
     bool *decision = new bool[gsize];
-    for (int i =0;i<gsize;i++)
-	decision[i]=false;
+    std::fill(decision,decision+gsize,0);
     decision[outif]=true;
 
     return decision;
 
 }
-
-
-//Return the nearest repostiory for a a given content
-uint32_t nearest_repository::nearest_rep(vector<int> repositories){
-    uint32_t path_len = 10000;
-    uint32_t target;
+int nearest_repository::nearest(vector<int>& repositories){
+    int  min_len = 10000;
+    vector<int> targets;
 
     for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ //Find the shortest (the minimum)
-	if (FIB[ *i ].len < path_len){
-	    path_len = FIB[ *i ].len;
-	    target = *i;
-	}
-    }
+        if (FIB[ *i ].len < min_len ){
+            min_len = FIB[ *i ].len;
+	    targets.clear();
+            targets.push_back(*i);
+        }else if (FIB[*i].len == min_len)
+	    targets.push_back(*i);
 
-    return target;
+    }
+    return targets[intrand(targets.size())];
 }
+

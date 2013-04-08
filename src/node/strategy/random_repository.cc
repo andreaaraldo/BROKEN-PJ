@@ -22,19 +22,11 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include <omnetpp.h>
 #include "random_repository.h"
+#include "packets/ccn_interest.h"
 
 Register_Class(random_repository);
-
-void random_repository::initialize(){
-
-    strategy_layer::initialize();
-    
-}
-
-void random_repository::finish(){
-    ;
-}
 
 bool *random_repository::get_decision(cMessage *in){//check this function
     bool *decision;
@@ -55,13 +47,18 @@ bool *random_repository::exploit(ccn_interest *interest){
 	gsize;
 
     gsize = getOuterInterfaces();
-    repository = random_rep (interest->get_repos());
+
+    if (interest->getRep_target()<0){
+	vector<int> repos = interest->get_repos();
+	repository = random(repos);
+	cout<<repository<<endl;
+	interest->setRep_target(repository);
+    }else 
+	repository = interest->getRep_target();
+
     outif = FIB[repository].id;
-
     bool *decision = new bool[gsize];
-    for (int i = 0; i < gsize ; i++)
-	decision[i]=false;
-
+    std::fill(decision,decision+gsize,0);
     decision[outif]=true;
 
     return decision;
@@ -69,6 +66,6 @@ bool *random_repository::exploit(ccn_interest *interest){
 }
 
 
-uint32_t random_repository::random_rep(vector<int> repositories){
+int random_repository::random(vector<int>& repositories){
     return repositories[intrand(repositories.size())];
 }

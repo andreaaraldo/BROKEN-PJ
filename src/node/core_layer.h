@@ -28,36 +28,27 @@
 
 #include <omnetpp.h>
 
-//#include "abstract_node.h"
-//#include "packets/ccn_interest.h"
-//#include "packets/ccn_data_m.h"
-//#include "content/content_distribution.h"
-//#include "core/definitions.h"
-//#include <boost/unordered_map.hpp>
-
-#include "strategy/strategy_layer.h"
-#include "cache/base_cache.h"
-#include "core/definitions.h"
-
+#include "abstract_node.h"
+#include <boost/unordered_map.hpp>
 
 using namespace std;
 using namespace boost;
 
+class ccn_interest;
+class ccn_data;
+
+class strategy_layer;
+class base_cache;
+
 
 //This structure takes care of data forwarding
-struct pit_entry {//new pit table
+struct pit_entry {
     interface_t interfaces;
-
-    //simtime_t  timeout;
-    //pit_entry (simtime_t t=0):timeout(t){;}
 };
 
 
 class core_layer : public AbstractNode {
     friend class statistics;
-
-    public:
-	double get_betweenness();
 
     protected:
     //Standard node Omnet++ functions
@@ -75,16 +66,15 @@ class core_layer : public AbstractNode {
 	ccn_data *compose_data(uint64_t);	
 	void clear_stat();
 
-
-	
     private:
-	uint32_t nodes;
-	double RTT;
-	double btw;
 	unsigned long max_pit;
+	unsigned short nodes;
+	unsigned int my_bitmask;
+	double my_btw;
+	
 
 	//Architecture data structures
-	unordered_map <uint64_t, pit_entry > PIT;
+	boost::unordered_map <chunk_t, pit_entry > PIT;
 	base_cache *ContentStore;
 	strategy_layer *strategy;
 

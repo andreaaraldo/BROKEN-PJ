@@ -59,13 +59,13 @@ public:
 	    return front;
 	}
 
-	virtual uint32_t get_name(){return __id(chunk_var);}
-	virtual uint32_t get_chunk_number(){return __chunk(chunk_var);}
+	virtual name_t get_name(){return __id(chunk_var);}
+	virtual name_t get_chunk_number(){return __chunk(chunk_var);}
 
 
 	virtual vector<int> get_repos(){
 
-	    uint32_t repo;
+	    repo_t repo;
 	    vector<int> repos;
 	    int i;
 

@@ -25,10 +25,13 @@
 #ifndef DECISION_POLICY_H_
 #define DECISION_POLICY_H_
 #include "packets/ccn_data.h"
-//
-//This class contains a function which dictates if the actual 
-//data message contains useful data to cache
-//
+/* A Decision policy is an interface with only one function: 
+ * 
+ * -- data_to_cache()
+ *
+ * This functions returns a boolean value which says if the given data chunk
+ * needs to be cached or not.
+ */
 class DecisionPolicy {
     public:
 	virtual bool data_to_cache (ccn_data *)=0;

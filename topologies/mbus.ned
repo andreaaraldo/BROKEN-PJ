@@ -4,16 +4,16 @@ import modules.statistics.statistics;
 import modules.clients.client;
 import modules.node.node;
 
-network bus_network {
+network mbus_network {
 
     parameters:
         //Number of ccn nodes
-    	int n = 4;
+    	int n = 8;
 
 	//Number of repositories
-	string node_repos = "3";//n-1
-	int num_repos = 1;
-	int replicas = 1;
+	string node_repos = "4,7";//n-1
+	int num_repos = 2;
+	int replicas  = 2;
 
 	//Number of clients 
 	int num_clients = 1;
@@ -39,9 +39,16 @@ network bus_network {
 connections allowunconnected:
     node[0].face++ <--> { delay = 1ms; } <--> client[0].client_port;
 
-    for  i = 0..n-2{
+    for  i = 1..3{
 	node[i].face++ <--> {delay = 1ms;} <--> node[i+1].face++;
     }
+
+    for  i = 1..2{
+	node[i+4].face++ <--> {delay = 1ms;} <--> node[i+5].face++;
+    }
+
+    node[0].face++ <--> {delay = 1ms;} <--> node[1].face++;
+    node[0].face++ <--> {delay = 1ms;} <--> node[5].face++;
 
     for i = 1..n-1{
 	node[i].face++ <--> { delay = 1ms; } <--> client[i].client_port;

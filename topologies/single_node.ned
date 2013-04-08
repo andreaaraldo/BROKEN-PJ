@@ -4,14 +4,14 @@ import modules.statistics.statistics;
 import modules.clients.client;
 import modules.node.node;
 
-network bus_network {
+network single_network {
 
     parameters:
         //Number of ccn nodes
-    	int n = 4;
+    	int n = 1;
 
 	//Number of repositories
-	string node_repos = "3";//n-1
+	string node_repos = "0";//n-1
 	int num_repos = 1;
 	int replicas = 1;
 
@@ -20,12 +20,10 @@ network bus_network {
 	string node_clients = "0";
 
     submodules:
-
     	content_distribution: content_distribution{
 	    parameters:
 	        @display("p=900,200");
 	}
-
  	statistics: statistics{
 	    parameters:
 	        @display("p=900,100");
@@ -38,13 +36,4 @@ network bus_network {
 
 connections allowunconnected:
     node[0].face++ <--> { delay = 1ms; } <--> client[0].client_port;
-
-    for  i = 0..n-2{
-	node[i].face++ <--> {delay = 1ms;} <--> node[i+1].face++;
-    }
-
-    for i = 1..n-1{
-	node[i].face++ <--> { delay = 1ms; } <--> client[i].client_port;
-    }
-
 }

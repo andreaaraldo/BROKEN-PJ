@@ -22,29 +22,24 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include <omnetpp.h>
 #include "dynamic_learning.h"
+#include "packets/ccn_interest.h"
 Register_Class(dynamic_learning);
 
-
-void dynamic_learning::initialize(){
-
-    strategy_layer::initialize(); 
-}
-
-void dynamic_learning::finish(){
-    ;
-}
 
 bool *dynamic_learning::get_decision(cMessage *in){//check this function
     int target;
     bool *decision;
     ccn_interest *interest;
 
+
     if (in->getKind() == CCN_I){
 	interest = (ccn_interest *)in; //safely cast
 	target = interest->getTarget();
 
-	if (target != -1 && target != getIndex() ){
+	if (target != -1  ){
+	//if (target != -1 && target != getIndex() ){
 	    //exploit the target
 	    decision = exploit(interest);
 	}else{
@@ -57,6 +52,10 @@ bool *dynamic_learning::get_decision(cMessage *in){//check this function
 }
 
 
+/*
+ * Explore the network if the target is not yet defined. The target is the node
+ * (repository or cache) which stores the nearest copy of the data.
+ */
 bool *dynamic_learning::explore(ccn_interest *interest){
     int arrival_gate,
 	gsize;
@@ -66,18 +65,22 @@ bool *dynamic_learning::explore(ccn_interest *interest){
     arrival_gate = interest->getArrivalGate()->getIndex();
     decision = new bool[gsize];
 
-    for (int i =0; i < gsize; i++)
-	if (i != arrival_gate && !check_client(i))
-	    decision[i] = true;
-	else
-	    decision[i] = false;
+    std::fill(decision,decision+gsize,1);
+    decision[arrival_gate] = false;
     return decision;
 }
 
 
 
 
+/*
+ * Exploit the knowledge of the network acquired during the exploration phase.
+ * Of course, the given target may withdraw the content. In this case is the
+ * given target that explores again the network looking for content close to
+ * himself.
+ */
 bool *dynamic_learning::exploit(ccn_interest *interest){
+
 
     bool *decision;
     int outif,
@@ -87,16 +90,18 @@ bool *dynamic_learning::exploit(ccn_interest *interest){
     gsize = getOuterInterfaces();
     target = interest->getTarget();
 
+    if (interest->getTarget() == getIndex()){//failure
+	interest->setTarget(-1);
+	return explore(interest);
+    }
+
     outif = FIB[target].id;
 
     decision = new bool[gsize];
-    for (int i =0;i<gsize;i++)
-	decision[i]=false;
+    std::fill(decision,decision+gsize,0);
     decision[outif]=true;
 
     return decision;
 
 }
-
-
 

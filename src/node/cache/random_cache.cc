@@ -23,45 +23,41 @@
  *
  */
 #include "random_cache.h"
-#include "content/content_distribution.h"
 Register_Class (random_cache);
 
 
 
 void random_cache::initialize(){
     base_cache::initialize();
-    warmup();
 }
 
-void random_cache::store(uint64_t chunk){
-    ;
-    //cache[chunk] = true;
-    //if (deq.size() == get_size() ){
-    //    //Replacing a random element
-    //    uint32_t pos = intrand(  deq.size() );
-    //    uint64_t toErase = deq.at(pos);
+void random_cache::store(chunk_t chunk){
+    cache[chunk] = true;
+    if (deq.size() == get_size() ){
+        //Replacing a random element
+        unsigned int pos = intrand(  deq.size() );
+        chunk_t toErase = deq.at(pos);
 
-    //    deq.at(pos) = chunk;
-    //    cache.erase(toErase);
+        deq.at(pos) = chunk;
+        cache.erase(toErase);
 
-    //} else
-    //    deq.push_back(chunk);
+    } else
+        deq.push_back(chunk);
 
 }
 
 
-bool random_cache::data_lookup(uint64_t chunk){
-
+bool random_cache::data_lookup(chunk_t chunk){
     bool ret = (cache.find(chunk) != cache.end());
     return ret;
 
 }
 
 bool random_cache::full(){
-    return true;
-    //return (deq.size()==get_size());
+    return (deq.size()==get_size());
 }
 
+/*Deprecated: used in order to fill up caches with random chunks*/
 bool random_cache::warmup(){
     int C = get_size();
     int k = getIndex();

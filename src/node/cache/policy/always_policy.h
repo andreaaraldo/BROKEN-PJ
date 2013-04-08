@@ -27,12 +27,10 @@
 
 #include "decision_policy.h"
 
-//
 //The most simple (and used) policy: cache data always
-//
 class Always: public DecisionPolicy{
     public:
-	virtual bool data_to_cache(ccn_data *){return true;}
+	bool data_to_cache(ccn_data *){return true;}
 };
 
 #endif

@@ -11,13 +11,13 @@ network geant_network {
     	int n = 22;
 
 	//Number of repositories
-	string node_repos = default("0,4,17,14,12");
-	int num_repos = default(5);
-	int replicas = default(3);
+	string node_repos = default("0");
+	int num_repos = default(1);
+	int replicas = default(1);
 
         //Number of clients
 	int num_clients = default(1);
-	string node_clients = default("");
+	string node_clients = default("1");
 
 
     submodules:

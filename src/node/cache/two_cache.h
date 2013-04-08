@@ -32,25 +32,20 @@
 using namespace boost;
 using namespace std;
 
-//Power of two replacement: elements are pushed back into the cache
-//If the cache if filled replacement is fulfilled in this way:
-// a) two random elements are taken from the cache 
-// b) the "more popular" element is replaced
-//
+/*Power of two replacement: elements are pushed back into the cache If the
+ * cache if filled replacement is fulfilled in this way:
+ *    a) two random elements are taken from the cache 
+ *    b) the "most popular" (out of the two) element is replaced.
+*/
 class two_cache: public base_cache{
     public:
 
-	virtual void store(uint64_t);
-	virtual bool data_lookup(uint64_t);
+	virtual void store(chunk_t);
+	virtual bool data_lookup(chunk_t);
 	virtual bool full();
 
     private:
 	deque<uint64_t> deq;
 	unordered_map<uint64_t,bool> cache;
 };
-
-
-
-
-
 #endif
