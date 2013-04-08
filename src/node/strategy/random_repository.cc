@@ -47,11 +47,18 @@ bool *random_repository::exploit(ccn_interest *interest){
 	gsize;
 
     gsize = getOuterInterfaces();
-    repository = random_rep (interest->get_repos());
-    outif = FIB[repository].id;
 
+    if (interest->getRep_target()<0){
+	vector<int> repos = interest->get_repos();
+	repository = random(repos);
+	cout<<repository<<endl;
+	interest->setRep_target(repository);
+    }else 
+	repository = interest->getRep_target();
+
+    outif = FIB[repository].id;
     bool *decision = new bool[gsize];
-    memset(decision,0,gsize);
+    std::fill(decision,decision+gsize,0);
     decision[outif]=true;
 
     return decision;
@@ -59,6 +66,6 @@ bool *random_repository::exploit(ccn_interest *interest){
 }
 
 
-uint32_t random_repository::random_rep(vector<int> repositories){
+int random_repository::random(vector<int>& repositories){
     return repositories[intrand(repositories.size())];
 }

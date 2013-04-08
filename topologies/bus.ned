@@ -8,7 +8,7 @@ network bus_network {
 
     parameters:
         //Number of ccn nodes
-    	int n = default(4);
+    	int n = 4;
 
 	//Number of repositories
 	string node_repos = "3";//n-1

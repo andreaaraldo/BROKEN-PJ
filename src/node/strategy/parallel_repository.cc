@@ -47,7 +47,7 @@ bool *parallel_repository::exploit(ccn_interest *interest){
 
     gsize = getOuterInterfaces();
     bool *decision = new bool[gsize];
-    memset(decision,0,gsize);
+    std::fill(decision,decision+gsize,0);
 
     vector<int> repos = (interest->get_repos());
     for (vector<int>::iterator it = repos.begin(); it!=repos.end();it++){

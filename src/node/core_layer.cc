@@ -44,7 +44,8 @@ void  core_layer::initialize(){
     for (i = 0; i < num_repos; i++)
 	if (content_distribution::repositories[i] == getIndex())
 	    break;
-    my_bitmask = (1<<i) & REPO_MSK;
+    my_bitmask = (1<<i);//recall that the width of the repository bitset is only num_repos
+    //cout<<getIndex()<<"]"<<my_bitmask<<endl;
     //Getting the content store
     ContentStore = (base_cache *) gate("cache_port$o")->getNextGate()->getOwner();
     strategy = (strategy_layer *) gate("strategy_port$o")->getNextGate()->getOwner();
@@ -149,9 +150,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	//
         //c) Put the interface within the PIT (and follow your FIB)
 	//
-
-	if (int_msg->getTarget() == getIndex())//failure
-	    int_msg->setTarget(-1);
 
 	unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 	if (pitIt==PIT.end()){

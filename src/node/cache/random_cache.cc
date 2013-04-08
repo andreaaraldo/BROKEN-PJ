@@ -48,7 +48,6 @@ void random_cache::store(chunk_t chunk){
 
 
 bool random_cache::data_lookup(chunk_t chunk){
-
     bool ret = (cache.find(chunk) != cache.end());
     return ret;
 

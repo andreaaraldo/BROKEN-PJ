@@ -48,7 +48,7 @@ void client::initialize(){
 	RTT             = par("RTT");
 
 	//Allocating file statistics
-	client_stats = new client_stat_entry[__file_bulk];
+	client_stats = new client_stat_entry[__file_bulk+1];
 
 	//Initialize average stats
 	avg_distance = 0;
@@ -92,18 +92,20 @@ int client::getNodeIndex(){
 
 void client::finish(){
     //Output average local statistics
-    char name [30];
-    sprintf ( name, "avg_distance[%d]", getNodeIndex());
-    recordScalar (name, avg_distance);
+    if (active){
+	char name [30];
+	sprintf ( name, "avg_distance[%d]", getNodeIndex());
+	recordScalar (name, avg_distance);
 
-    sprintf ( name, "downloads[%d]",getNodeIndex());
-    recordScalar (name, tot_downloads );
+	sprintf ( name, "downloads[%d]",getNodeIndex());
+	recordScalar (name, tot_downloads );
 
-    //Output per file statistics
-    sprintf ( name, "node[%d]", getNodeIndex());
-    cOutVector distance_vector(name);
-    for (name_t f = 1; f <= __file_bulk; f++)
-        distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
+	//Output per file statistics
+	sprintf ( name, "node[%d]", getNodeIndex());
+	cOutVector distance_vector(name);
+	for (name_t f = 1; f <= __file_bulk; f++)
+	    distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
+    }
 }
 
 
@@ -112,7 +114,6 @@ void client::handle_timers(cMessage *timer){
 	case ARRIVAL:
 	    request_file();
 	    scheduleAt( simTime() + exponential(1/lambda), new cMessage("arrival", ARRIVAL ) );
-	    delete timer;
 	    break;
 	case TIMER:
 	    for (multimap<name_t ,file_entry>::iterator i = current_downloads.begin();i != current_downloads.end();i++){
@@ -124,11 +125,9 @@ void client::handle_timers(cMessage *timer){
 		}
 	    }
 	    scheduleAt( simTime() + check_time, new cMessage("timer", TIMER) );
-	    delete timer;
 	    break;
-
-
     }
+    delete timer;
 }
 
 
@@ -174,9 +173,9 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     // slow for huge catalog size, and at the same time quite useless
     // (statistics for the 12345234th file are not so meaningful at all)
     if (name <= __file_bulk){
-	client_stats[name].avg_distance = (client_stats[name].tot_chunks*avg_distance+data_message->getHops())/(client_stats[name].tot_chunks+1);
-	client_stats[name].tot_chunks++;
-	client_stats[name].tot_downloads+=1./size;
+        client_stats[name].avg_distance = (client_stats[name].tot_chunks*avg_distance+data_message->getHops())/(client_stats[name].tot_chunks+1);
+        client_stats[name].tot_chunks++;
+        client_stats[name].tot_downloads+=1./size;
     }
 
 
@@ -193,23 +192,22 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     while (it != ii.second){
         if ( it->second.missing_chunks == chunk_num ){
             it->second.missing_chunks++;
-
             if (it->second.missing_chunks < __size(name) ){ 
-		it->second.last = simTime();
-		//if the file is not yet completed send the next interest
+        	it->second.last = simTime();
+        	//if the file is not yet completed send the next interest
         	send_interest(name, it->second.missing_chunks,data_message->getTarget());
             } else { 
-		//if the file is completed delete the entry from the pendent file list
+        	//if the file is completed delete the entry from the pendent file list
         	if (current_downloads.count(name)==1){
         	    current_downloads.erase(name);
         	    break;
         	} else{
         	    current_downloads.erase(it++);
-		    continue;
-		}
+        	    continue;
+        	}
             }
         }
-	++it;
+        ++it;
     }
 
 
@@ -221,5 +219,5 @@ void client::clear_stat(){
     tot_downloads = 0;
     tot_chunks = 0;
     delete client_stats;
-    client_stats = new client_stat_entry[__file_bulk];
+    client_stats = new client_stat_entry[__file_bulk+1];
 }

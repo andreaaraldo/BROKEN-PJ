@@ -37,5 +37,6 @@ class nearest_repository: public strategy_layer{
     protected:
 	//Exploration and exploitation functions
 	bool *exploit(ccn_interest *);
+	int nearest(vector<int>&);
 };
 #endif

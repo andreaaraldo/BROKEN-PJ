@@ -54,15 +54,30 @@ bool *nearest_repository::exploit(ccn_interest *interest){
     gsize = getOuterInterfaces();
 
     vector<int> repos = interest->get_repos();
-    repository = *min_element(repos.begin(),repos.end());
+    repository = nearest(repos);
 
     outif = FIB[repository].id;
 
     bool *decision = new bool[gsize];
-    memset(decision,0,gsize);
+    std::fill(decision,decision+gsize,0);
     decision[outif]=true;
 
     return decision;
 
+}
+int nearest_repository::nearest(vector<int>& repositories){
+    int  min_len = 10000;
+    vector<int> targets;
+
+    for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ //Find the shortest (the minimum)
+        if (FIB[ *i ].len < min_len ){
+            min_len = FIB[ *i ].len;
+	    targets.clear();
+            targets.push_back(*i);
+        }else if (FIB[*i].len == min_len)
+	    targets.push_back(*i);
+
+    }
+    return targets[intrand(targets.size())];
 }
 

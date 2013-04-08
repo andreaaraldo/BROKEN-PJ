@@ -201,7 +201,7 @@ int *content_distribution::init_repos(vector<int> node_repos){
 int *content_distribution::init_clients(vector<int> node_clients){
 
     if (node_clients.size() > (unsigned) num_clients)
-	error("You try to distribute too much clientsitories.");
+	error("You try to distribute too much clients.");
 
     if (clients != 0)
 	return clients;

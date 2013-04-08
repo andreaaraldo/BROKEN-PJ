@@ -36,6 +36,10 @@ using namespace boost;
 struct int_f{
     unsigned short id;
     unsigned short len;
+
+    bool operator<(int_f other){
+	return (other.len > this->len);
+    }
 };
 
 
@@ -59,7 +63,7 @@ class strategy_layer: public AbstractNode {
 	void populate_routing_table();
 
 	//FIB (available to all subclasses, for sake of utilization)
-	unordered_map <uint32_t,int_f> FIB;
+	unordered_map <int ,int_f> FIB;
 	int nodes;
 
 };

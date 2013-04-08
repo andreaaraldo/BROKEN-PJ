@@ -37,6 +37,6 @@ class random_repository : public strategy_layer{
     protected:
 	//Exploration and exploitation functions
 	bool *exploit(ccn_interest *);
-	uint32_t random_rep(vector<int>);
+	int random(vector<int>&);
 };
 #endif
