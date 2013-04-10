@@ -51,7 +51,6 @@ bool *random_repository::exploit(ccn_interest *interest){
     if (interest->getRep_target()<0){
 	vector<int> repos = interest->get_repos();
 	repository = random(repos);
-	cout<<repository<<endl;
 	interest->setRep_target(repository);
     }else 
 	repository = interest->getRep_target();
