@@ -22,13 +22,10 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "ccnsim.h"
 #include "content_distribution.h"
-#include "content/zipf.h"
-#include "core/definitions.h"
-
-#include <boost/unordered_map.hpp>
+#include "zipf.h"
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
 
 Register_Class(content_distribution);
 

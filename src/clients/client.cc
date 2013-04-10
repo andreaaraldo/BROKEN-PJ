@@ -22,14 +22,14 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "content/content_distribution.h"
+#include "content_distribution.h"
 
-#include "statistics/statistics.h"
+#include "statistics.h"
 
-#include "packets/ccn_interest.h"
-#include "packets/ccn_data.h"
+#include "ccn_interest.h"
+#include "ccn_data.h"
 
-#include "core/definitions.h"
+#include "ccnsim.h"
 #include "client.h"
 
 Register_Class (client);

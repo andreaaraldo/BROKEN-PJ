@@ -25,7 +25,7 @@
 #include <omnetpp.h>
 #include <algorithm>
 #include "nearest_repository.h"
-#include "packets/ccn_interest.h"
+#include "ccn_interest.h"
 
 Register_Class(nearest_repository);
 

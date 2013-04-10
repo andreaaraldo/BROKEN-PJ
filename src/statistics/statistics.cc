@@ -24,11 +24,12 @@
  */
 #include <cmath>
 #include "statistics.h"
-#include "node/core_layer.h"
-#include "core/definitions.h"
-#include "statistics/stat_util.h"
-#include "node/cache/base_cache.h"
-#include "content/content_distribution.h"
+#include "core_layer.h"
+#include "stat_util.h"
+#include "base_cache.h"
+#include "content_distribution.h"
+
+#include "ccnsim.h"
 Register_Class(statistics);
 
 

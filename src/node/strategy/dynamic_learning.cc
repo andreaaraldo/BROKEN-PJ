@@ -24,7 +24,7 @@
  */
 #include <omnetpp.h>
 #include "dynamic_learning.h"
-#include "packets/ccn_interest.h"
+#include "ccn_interest.h"
 Register_Class(dynamic_learning);
 
 

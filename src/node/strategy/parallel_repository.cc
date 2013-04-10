@@ -24,7 +24,8 @@
  */
 #include <omnetpp.h>
 #include "parallel_repository.h"
-#include "packets/ccn_interest.h"
+#include "ccn_interest.h"
+
 Register_Class(parallel_repository);
 
 bool *parallel_repository::get_decision(cMessage *in){//check this function

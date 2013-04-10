@@ -1,8 +1,11 @@
 \documentclass{article}
 \usepackage{url}
+\usepackage{fancyvrb}
 \newcommand{\ccnsim}{ccn$\mathcal{S}$im}
 
 \begin{document}
+\tableofcontents
+\newpage
 \section{Introduction}
 \subsection{What is \ccnsim?}
 \ccnsim\ is a scalable chunk-level simulator of Content Centric Networks (CCN)\cite{jacobson09conext}, that we developed in the context of the ANR Project Connect.  
@@ -22,190 +25,61 @@ This manual is organized as follows:
 \end{itemize}
 
 
-\section{Compiling \ccnsim}
-We assume that you have downloaded and installed Omnetpp (version $\geq$ 4.1) in your home directory. In order to run \ccnsim, it is first necessary to patch Omnetpp (in order to use the multi-path extension described in [1]), as follows:
+\section{Downloading and installing \ccnsim}
+You can freely download \ccnsim\ from the project site: \url{http://code.google.com/p/ccnsim/}. 
+
+Moreover, we assume that you have downloaded and installed Omnetpp (version $\geq$ 4.1) on your machine. In order to install \ccnsim, it is first necessary to patch Omnetpp. Then you can compile the \ccnsim\ sources. These steps are as follows:
+
+\begin{Verbatim}[frame=single]
+    john:~$ cd CCNSIM_DIR
+    john:CCNSIM_DIR$ cp ./patch/ctopology.h OMNET_DIR/include/
+    john:CCNSIM_DIR$ cp ./patch/ctopology.cc OMNET_DIR/src/sim
+    john:CCNSIM_DIR$ cd  OMNET_DIR && make && cd CCNSIM
+    john:CCNSIM_DIR$ ./scripts/makemake
+    john:CCNSIM_DIR$ make
+\end{Verbatim}
+We suppose that \verb|CCNSIM_DIR| and \verb|OMNET_DIR| contain the installation directory of \ccnsim\ and Omnet++ respectively. 
 \section{Overview}
+\subsection{Overall structure of \ccnsim}
+In order to better understand the organization of \ccnsim, the best is to look at its internal organization. In the following we reproduce the basic directory organization of \ccnsim. 
+\begin{Verbatim}[frame=single]
+|-- topologies
+|-- modules
+|   |-- clients
+|   |-- content
+|   |-- node
+|   |   |-- cache
+|   |   |-- strategy
+|   |-- statistics
+|-- packets
+|-- include
+|-- src
+|   |-- clients
+|   |-- content
+|   |-- node
+|   |   |-- cache
+|   |   |-- strategy
+|   |-- statistics
+\end{Verbatim}
+As said within the introduction, \ccnsim\ is a package built over the top of Omnet++. As such, we can divide its implementation in two different subunits. One subunit is represented by the \verb|.ned| description of the modules used by \ccnsim, and included within the directory \verb|modules| and \verb|topologies|. The first directory, is basically the \verb|.ned| description of the modules employed by \ccnsim, like clients, nodes, and so forth. Within the \verb|topologies| directory there are some sample topologies (always descripted in \verb|.ned| format) ready to be used. 
+
+The real implementation of these modules lie within the \verb|src| and \verb|include| directory, that contain sources and header files, respectively.  Within the rest of this section we summarily  describe the features of these components, together with a brief overview of their most important parameters.
+
+\subsection{Nodes, caches, and strategy layers}
+Nodes are the core part of the \ccnsim. They form the core network and can be connected each other by the means of \verb|faces|(see \cite{jacobson09conext} for better understanding what a \emph{face} is). However, nodes own not a real C++ implementation. A node is just a compound module, composed by three parts: the Core Layer, the Strategy Layer, and the Content Store.
+\subsubsection{Core Layer} 
+The core layer implements the basic tasks of a CCN node. Indeed, it handles the PIT, sending data back to the interested interfaces. In handles the incoming interest by replying to it (in the case of a \emph{cache hit}), or by  appending the interest to the existent PIT entry. In the case no entry exists yet it dispatches it to the \emph{Strategy layer} in order to get a decision about where (i.e., on which interface) sending it. 
+\subsubsection{Strategy Layer}
+The strategy layer receives an interest for which no PIT entry exists yet. Then, it has to \emph{decide} where sending the given interest over the network. 
+\subsubsection{Content Store}
+
+\subsection{The clients}
+\subsection{The content distribution}
+\subsection{Statistics}
+\subsection{Global parameters}
+
 \section{Run your first simulation}
 \section{Extending \ccnsim}
-%• Note 1: the version 0.1 of \ccnsim\ requires a 64bit kernel. We have suc-
-%cessfully built and run \ccnsim\-0.1 with Ubuntu versions as old as 8.04
-%(provided that the parallelism is architecture 64bits) and use a Linux
-%2.6.32 kernel on a Ubuntu 10.04LTS for our simulations. We have not
-%tested 32bits architectures, nor will support them (see Note 2).
-%• Note 2: future versions of \ccnsim\ (currently under testing) will remove
-%the 64bits limitation by making use of the Boost libraries.
-%3
-%Hello, (CCN) world!
-%Once you compiled the simulator, you’re able to run your first CCN simulation.
-%The syntax to invoke the simulator execution is the following:
-%\ccnsim\@sushi:~/\ccnsim\-0.1$ ./\ccnsim\-0.1
-%%-u Cmdenv
-%%youtube.ini
-%%To start, we provide a youtube.ini settings file, that specify a VoD catalog as
-%%in [1, 2, 4]. out0.node_local
-%%• Note 1: In the above syntax, you can omit the configuration file name in
-%%case you store your settings in omnetpp.ini rather than youtube.ini.
-%%• Note 2: The youtube.ini file contains comments about the variables
-%%involved, to which we refer the reader for more detailed comments.
-%%• Note 3: For indication, running a 1800 seconds of simulated time of
-%%YouTube catalog on a Geant network (i.e., the default scenario in youtube.ini)
-%%takes about 2400 seconds of real time on an Intel Xeon E5620 @ 2.40GHz
-%%equipped with 12MB cache and 24GB ram.
-%%4
-%%Simulation input
-%%In omnetpp the scenario is described through “ini” files. We report here the
-%%example youtube.ini shipped along with the simulator sources, containing de-
-%%tailed and hopefully useful comments to modify the scenario description.
-%%#===============================================
-%%#YouTube-like catalog configuration for \ccnsim\
-%%#-----------------------------------------------
-%%# Topologies of CCN network.
-%%[General]
-%%network = topologies.geant_network
-%%#===============================================
-%%# output
-%%#-----------------------------------------------
-%%2
-%%# By default, output in results/
-%%output-vector-file = ${resultdir}/out${repetition}.vec
-%%output-scalar-file = ${resultdir}/out${repetition}.sca
-%%# number of runs
-%%repeat = 1
-%%seed-set = ${repetition}
-%%#===============================================
-%%# simulation duration
-%%#-----------------------------------------------
-%%# There are three simulation states:
-%%# 1) filling caches
-%%# 2) transient
-%%# 3) steady-state
-%%#
-%%# 1) you can start with empty caches (warmup=false,default) or
-%%# with caches already filled with randomized content (warmup=true).
-%%# Starting with filled caches is useful only when Zipf exponent
-%%# s very large (say >1.5) so that caches may not even fill up
-%%# due to very skewed requests.
-%%#
-%%**.warmup = false
-%%# 2) parameters tuning intervals of confidence estimation for hit
-%%# rate of individual caches, affecting convergence speed;
-%%#
-%%# We implement two convergence methods (avg|wc):
-%%# -Average (avg): we require the convergence of the network hit rate
-%%# -Worst Case(wc): we require the convergence of all individual nodes
-%%#
-%%**.convergence_type = "wc"
-%%# Zipf percentile limit for stabilization node; i.e., we require the
-%%# convergence statistics only for the bulk of the catalog (90% by default)
-%%**.convergence_zipf_percentile = 0.9
-%%# threshold of variance hit rate (wc=per node, avg=over all nodes)
-%%**.convergence_threshold_wc = 0.001
-%%**.convergence_threshold_avg = 0.1
-%%# 3) simulated time to spend in steady state after transient ended
-%%**.sim_time = 1800
-%%3
-%%#===============================================
-%%# Catalog
-%%#-----------------------------------------------
-%%# Global request rate, in Hz (over all network nodes).
-%%**.lambda = 50
-%%# Client requests can be geographically skweked (see [2] in HOWTO).
-%%# When D==-1 uniform requests are considered (default).
-%%**.D = -1
-%%# Content popularity: Mandelbrot-Zipf distribution parameters
-%%# Mandelbrot-Zipf exponent
-%%**.alpha = 1
-%%# Mandelbrot-Zipf plateau
-%%**.q = 0
-%%# Catalog size, in files
-%%**.F = 10^8
-%%# Average file size in chunks, geometrically distributed
-%%**.avgC = 1000
-%%# Number of replicas of original (ie, non-cached) content.
-%%**.repository_num = 1
-%%# Repository placement policy
-%%# There are two policies (ugc,pop)
-%%# -ugc = user generated content,
-%%# Multiple replicas may exist, but there is no single repository
-%%# storing the whole catalog. Rather, individual files are randomly
-%%# assigned to a repository, that can be located behind any
-%%# CCN router (i.e., in practice we have as many repositories
-%%# as CCN nodes).
-%%# -pop = point of presence,
-%%# The number of repositories equal the number of replicas, and
-%%# the original replicas of the whole catalog are stored in each
-%%# repository.
-%%#
-%%#
-%%**.repository_policy = "pop"
-%%#===============================================
-%%# CCN node
-%%#-----------------------------------------------
-%%4
-%%# Cache size (in chunks)
-%%**.S = 10^6
-%%# Caching Replacement Policy {(lru)|rnd|fifo|two}, see [1] in HOWTO
-%%**.cache_replacement_policy = "lru"
-%%# Decision Policy {(always)|never|distance|lcd|fixP}, see [1] in HOWTO
-%%**.decision_policy = "always"
-%%# Strategy layer policy {closest|all}, see [1] in HOWTO;
-%%# other interest forwarding policies will be available in
-%%# future releases of \ccnsim\
-%%**.strategy_layer = "closest"
-%%# Multipath cardinality,
-%%# M=1 => shortest path routing
-%%# M=2 => two disjoint paths, valid only for strategy_layer=closest, see [1] in HOWTO
-%%**.M = 1
-%%# Multipath performance,
-%%# Flag determining if paths are precomputed and stored in an external file
-%%# (under the directory "optimal") or if they have to be calculated on demand.
-%%# Path stored in file are faster, but they need to be computed once for any
-%%# new topology.
-%%**.fromFile = true
-%%# Discouraged parameter, will be removed from future versions of \ccnsim\.
-%%# (do not modify but do not delete either).
-%%**.c = 0
-%%5
-%%Simulation output
-%%Once you have run the simulation as in the previous paragraph, you will find
-%%the following statistics. Output is organized in a number of files, following
-%%an outID.extension naming notation where ID is the repetition number and
-%%extension can be among the following:
-%%In file out0.sca:
-%%• DATA[i], INT[i]: number of data/interest messages handled by node i
-%%during the simulation;
-%%• hl[i]: chunk-level hit rate at different distances with respect to the request
-%%originator (i.e., tied with the distance at which the chunk has been found);
-%%5
-%%• stretch: normalized distance with respect to the server storing persistent
-%%replicas, see [1, 2];
-%%• cache hit: average cache hit rate over all CCN nodes (see out0.node_local
-%%for individual hit rates);
-%%• full time: time to fill all caches (i.e., after which the transient starts);
-%%• transient time: time at which the transient ends (and the steady state
-%%starts, that lasts for the amount of time specified in youtube.ini);
-%%• div ratio: cache diversity ratio (see [1]).
-%%In file out0.node_local:
-%%• List of repositories with cardinality (i.e., number of replicas)
-%%• For each CCN node i the correspondent final HitRate achieved at the end
-%%of the simulation.
-%%In file out0.node_stat:
-%%• For each file k downloaded from node i, the log contains three values,
-%%namely k, the effort η (see definition in [2]) i.
-%%In file out0.vec:
-%%• If the convergence criterion of the simulation is the average global hit rate
-%%(see youtube.ini), this file reports the time evolution of the average hit
-%%rate (0.1 second steps) until the stabilization.
-%%6
-%%Extending \ccnsim\
-%%As our main effort is devoted to extending \ccnsim\, please consider that we have
-%%limited effort to spend on its support (e.g., manual, code comments, etc.),
-%%Hence, you should consider \ccnsim\ is a “PhD-grade” simulator rather than
-%%a “turnkey” simulator. This means that (at least) MSc- (or better) PhD-grade
-%%skills may be necessary to run and modify the simulator, and inspection of the
-%%code may help over the lack of documentation (blame on us).
-%%For any questions, comments, suggestions, please use the \ccnsim\ mailing list
-%%ccnsim@lincs.fr rather than our personal addresses.
 \bibliographystyle{plain}
 \bibliography{manual.bib}
 \end{document}

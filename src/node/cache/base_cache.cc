@@ -24,21 +24,22 @@
  */
 #include <cmath>
 #include "base_cache.h"
-#include "node/core_layer.h"
-#include "statistics/statistics.h"
-#include "content/content_distribution.h"
-#include "statistics/stat_util.h"
-#include "packets/ccn_data_m.h"
+#include "core_layer.h"
+#include "statistics.h"
+#include "content_distribution.h"
+#include "stat_util.h"
+#include "ccn_data_m.h"
 
-#include "policy/fix_policy.h"
-#include "policy/lcd_policy.h"
-#include "policy/never_policy.h"
-#include "policy/always_policy.h"
-#include "policy/decision_policy.h"
-#include "policy/betweenness_centrality.h"
+#include "fix_policy.h"
+#include "lcd_policy.h"
+#include "never_policy.h"
+#include "always_policy.h"
+#include "decision_policy.h"
+#include "betweenness_centrality.h"
+
+#include "ccnsim.h"
 
 //Initialization function
-#define __bulk (content_distribution::perfile_bulk)
 void base_cache::initialize(){
 
     nodes      = getAncestorPar("n");
@@ -69,7 +70,7 @@ void base_cache::initialize(){
     miss = 0;
     hit = 0;
     //--Per file
-    cache_stats = new cache_stat_entry[__bulk + 1];
+    cache_stats = new cache_stat_entry[__file_bulk + 1];
 
 }
 
@@ -82,7 +83,7 @@ void base_cache::finish(){
     //Per file hit rate
     sprintf ( name, "hit_node[%d]", getIndex());
     cOutVector hit_vector(name);
-    for (uint32_t f = 1; f <= __bulk; f++)
+    for (uint32_t f = 1; f <= __file_bulk; f++)
         hit_vector.recordWithTimestamp(f, cache_stats[f].rate() );
 
 
@@ -112,7 +113,7 @@ bool base_cache::lookup(chunk_t chunk ){
 	hit++;
 
 	//Per file cache statistics(hit)
-	if (name <= __bulk)
+	if (name <= __file_bulk)
 	    cache_stats[name].hit++;
 
     }else{
@@ -121,7 +122,7 @@ bool base_cache::lookup(chunk_t chunk ){
 	//Average cache statistics(miss)
 	miss++;
 	//Per file cache statistics(miss)
-	if ( name <= __bulk )
+	if ( name <= __file_bulk )
 	    cache_stats[name].miss++;
     }
 
@@ -135,5 +136,5 @@ bool base_cache::lookup(chunk_t chunk ){
 void base_cache::clear_stat(){
     hit = miss = 0; //local statistics
     delete cache_stats;
-    cache_stats = new cache_stat_entry[__bulk+1];
+    cache_stats = new cache_stat_entry[__file_bulk+1];
 }

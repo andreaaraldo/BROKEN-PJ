@@ -23,13 +23,14 @@
  *
  */
 #include "core_layer.h"
+#include "ccnsim.h"
 #include <algorithm>
-#include "content/content_distribution.h"
-#include "strategy/strategy_layer.h"
-#include "packets/ccn_interest.h"
-#include "packets/ccn_data.h"
-#include "core/definitions.h"
-#include "cache/base_cache.h"
+
+#include "content_distribution.h"
+#include "strategy_layer.h"
+#include "ccn_interest.h"
+#include "ccn_data.h"
+#include "base_cache.h"
 
 Register_Class(core_layer);
 
