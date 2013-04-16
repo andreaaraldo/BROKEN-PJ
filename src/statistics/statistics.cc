@@ -25,7 +25,6 @@
 #include <cmath>
 #include "statistics.h"
 #include "core_layer.h"
-#include "stat_util.h"
 #include "base_cache.h"
 #include "content_distribution.h"
 
@@ -180,9 +179,9 @@ void statistics::finish(){
     }
 
     //Print and store global statistics
-    sprintf (name, "hit_rate");
+    sprintf (name, "p_hit");
     recordScalar(name,global_hit * 1./(global_hit+global_miss));
-    cout<<"Hit rate/cache: "<<global_hit *1./(global_hit+global_miss)<<endl;
+    cout<<"p_hit/cache: "<<global_hit *1./(global_hit+global_miss)<<endl;
 
     sprintf ( name, "interests");
     recordScalar(name,global_interests * 1./num_nodes);
@@ -195,7 +194,7 @@ void statistics::finish(){
 	global_tot_downloads += clients[i]->tot_downloads;
     }
 
-    sprintf ( name, "distance");
+    sprintf ( name, "hdistance");
     recordScalar(name,global_avg_distance * 1./num_clients);
     cout<<"Distance/client: "<<global_avg_distance * 1./num_clients<<endl;
 

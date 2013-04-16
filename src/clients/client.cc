@@ -94,14 +94,14 @@ void client::finish(){
     //Output average local statistics
     if (active){
 	char name [30];
-	sprintf ( name, "avg_distance[%d]", getNodeIndex());
+	sprintf ( name, "hdistance[%d]", getNodeIndex());
 	recordScalar (name, avg_distance);
 
 	sprintf ( name, "downloads[%d]",getNodeIndex());
 	recordScalar (name, tot_downloads );
 
 	//Output per file statistics
-	sprintf ( name, "node[%d]", getNodeIndex());
+	sprintf ( name, "hdistance[%d]", getNodeIndex());
 	cOutVector distance_vector(name);
 	for (name_t f = 1; f <= __file_bulk; f++)
 	    distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);

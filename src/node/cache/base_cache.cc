@@ -27,7 +27,6 @@
 #include "core_layer.h"
 #include "statistics.h"
 #include "content_distribution.h"
-#include "stat_util.h"
 #include "ccn_data_m.h"
 
 #include "fix_policy.h"
