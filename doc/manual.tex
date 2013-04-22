@@ -3,6 +3,8 @@
 \usepackage{fancyvrb}
 \usepackage{definitions}
 \newcommand{\ccnsim}{ccn$\mathcal{S}$im}
+\newcommand{\ned}{\texttt{ned}}
+\newcommand{\ini}{verb|omnetpp.ini|}
 
 \begin{document}
 \tableofcontents
@@ -19,28 +21,18 @@
 \ccnsim\ extends Omnet++ as to provide a modular environment in order to simulate CCN networks. Mainly,  \ccnsim\ models the forwarding aspects of a CCN network, namely the caching strategies, and the forwarding layer of a CCN node. However, it is fairly modular, and simple to . We hope that you enjoy \ccnsim\, in which case we ask you to please cite our paper \cite{ccn12icc}. 
 \ccnsim\ is able to simulate content stores up to 106 chunks and catalog sizes up to 108 files in a reasonable time.  
 %for CCN content stores and Internet catalog sizes On a PC equipped with 24GB of RAM, 
-\subsection{Organization of this manual}
-This manual is organized as follows:
+\subsection{\ccnsim\ and Oment++}
+Omnet++ is a C++ based event-driven simulator engine. Omnet++ is only an engine. It provides a set of core C++ classes to extend, in order to design the behaviour of a custom simulator. 
+Moreover, it provides a network description language (\verb|ned|) in order to describe how the custom modules interact each other. 
+
+A \ccnsim\ simulation comes across three steps:
 \begin{itemize}
-    \item Organization.
+    \item Compile \ccnsim\ source files with the Omnet++ core classes.
+    \item Write the description of the topology (usually the user will need only to set up connections, and defining the cardinality of the network graph).
+    \item Initialize parameters of each module. This can be done either directly from the \ned\ files or from the \ini\ file. 
 \end{itemize}
+We report the aforementioned steps in \figR{omnet}.
 
-
-\section{Downloading and installing \ccnsim}
-You can freely download \ccnsim\ from the project site: \url{http://code.google.com/p/ccnsim/}. 
-
-Moreover, we assume that you have downloaded and installed Omnetpp (version $\geq$ 4.1) on your machine. In order to install \ccnsim, it is first necessary to patch Omnetpp. Then you can compile the \ccnsim\ sources. These steps are as follows:
-
-\begin{Verbatim}[frame=single]
-    john:~$ cd CCNSIM_DIR
-    john:CCNSIM_DIR$ cp ./patch/ctopology.h OMNET_DIR/include/
-    john:CCNSIM_DIR$ cp ./patch/ctopology.cc OMNET_DIR/src/sim
-    john:CCNSIM_DIR$ cd  OMNET_DIR && make && cd CCNSIM
-    john:CCNSIM_DIR$ ./scripts/makemake
-    john:CCNSIM_DIR$ make
-\end{Verbatim}
-We suppose that \verb|CCNSIM_DIR| and \verb|OMNET_DIR| contain the installation directory of \ccnsim\ and Omnet++ respectively. 
-\section{Overview}
 \subsection{Overall structure of \ccnsim}
 In order to better understand the organization of \ccnsim, the best is to look at its internal organization. In the following we reproduce the basic directory organization of \ccnsim. 
 \begin{Verbatim}[frame=single]
@@ -65,6 +57,29 @@ In order to better understand the organization of \ccnsim, the best is to look a
 As said within the introduction, \ccnsim\ is a package built over the top of Omnet++. As such, we can divide its implementation in two different subunits. One subunit is represented by the \verb|.ned| description of the modules used by \ccnsim, and included within the directory \verb|modules| and \verb|topologies|. The first directory, is basically the \verb|.ned| description of the modules employed by \ccnsim, like clients, nodes, and so forth. Within the \verb|topologies| directory there are some sample topologies (always descripted in \verb|.ned| format) ready to be used. 
 
 The real implementation of these modules lie within the \verb|src| and \verb|include| directory, that contain sources and header files, respectively.  Within the rest of this section we summarily  describe the features of these components, together with a brief overview of their most important parameters.
+
+\subsection{Downloading and installing \ccnsim}
+You can freely download \ccnsim\ from the project site: \url{http://ccnsim.googlecode.com}. 
+
+We assume that you have downloaded and installed Omnet++ (version $\geq$ 4.1) on your machine. The new version of \ccnsim\ makes use of the boost libraries, thus you should have a minimal boost installation on your system. 
+
+In order to install \ccnsim, it is first necessary to patch Omnetpp. Then you can compile the \ccnsim\ sources. These steps are as follows:
+
+\begin{Verbatim}[frame=single]
+    john:~$ cd CCNSIM_DIR
+    john:CCNSIM_DIR$ cp ./patch/ctopology.h OMNET_DIR/include/
+    john:CCNSIM_DIR$ cp ./patch/ctopology.cc OMNET_DIR/src/sim
+    john:CCNSIM_DIR$ cd  OMNET_DIR && make && cd CCNSIM
+    john:CCNSIM_DIR$ ./scripts/makemake
+    john:CCNSIM_DIR$ make
+\end{Verbatim}
+In this snippet of code we suppose that \verb|CCNSIM_DIR| and \verb|OMNET_DIR| contain the installation directory of \ccnsim\ and Omnet++ respectively. 
+\subsection{Organization of this manual}
+This manual is organized as follows:
+\begin{itemize}
+    \item Organization.
+\end{itemize}
+
 
 \section{\ccnsim\ in details}
 \subsection{Packets and chunks}
@@ -155,7 +170,7 @@ The output is collected in standard Omnet++ files. In particular, coarse grained
 \subsection{Summary}
 In this section we report the whole \verb|.ini| file used to run simulation. In the next section we will see how to implement a simple simulation on a bus network, with one client and one repository placed at the extremity of the bus. Request arrives at a rate of We recall that the symbol \verb|**.parameters| is syntactic sugar for indicating that the parameter is applied for each node who supports it (e.g., doing \verb|**.C=1000| is the same of writing \verb|node[i].cache.C = 1000| for \verb|i| representing each node of the network). 
 \include{omnet}
-\section{Run your first simulation}
+\subsection{Run your first simulation}
 It's time for practice. In this section you will learn how to run a simple simulation. We will focus on a simple bus network of fours nodes as shown in \figR{bus}, in which the client is placed on node 0, and the repository is placed within the node 3.
 
 \begin{itemize}
