@@ -27,6 +27,7 @@
 
 void strategy_layer::initialize(){
     populate_routing_table(); //Building forwarding table 
+
 }
 
 void strategy_layer::finish(){
