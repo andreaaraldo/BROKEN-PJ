@@ -26,37 +26,35 @@
 #define B_CACHE_H_
 
 
-#include "abstract_node.h"
+#include "ccnsim.h"
 class DecisionPolicy;
 
 
 
 //Base cache class: it implements the basic behaviour of every cache by the mean of two abstract functions:
 //
-//-) storeData: stores chunks within the cache with a given policy
-//-) lookup: return if the given chunk exists within the cache
+//-) data_store: stores chunks within the cache with a given policy
+//-) data_lookup: return if the given chunk exists within the cache
 //
-
 struct cache_stat_entry{
-    uint32_t miss; //Total number of misses
-    uint32_t hit; //Totatle number of hit
+    unsigned int  miss; //Total number of misses
+    unsigned int  hit; //Totatle number of hit
     cache_stat_entry():miss(0),hit(0){;}
     double rate(){ return hit *1./(hit+miss);} //return the miss rate of the class
 };
 
-class base_cache : public AbstractNode {
+class base_cache : public abstract_node{
     friend class statistics;
     protected:
-
 
 	void initialize();
 	void handleMessage (cMessage *){;}
 	void finish();
 
 	//Inteface function (depending by internal data structures of each cache)
-	virtual void store (chunk_t) = 0; 
-	virtual bool data_lookup(chunk_t)=0;
-	virtual bool full()=0;
+	virtual void data_store (chunk_t) = 0; 
+	virtual bool data_lookup(chunk_t) = 0;
+	virtual bool full() = 0;
 	virtual void dump(){cout<<"Not implemented"<<endl;}
 	
 
@@ -66,7 +64,7 @@ class base_cache : public AbstractNode {
 	//Outside function behaviour
 	void clear_stat();
 	bool lookup(chunk_t);
-	void received_data (cMessage *);
+	void store (cMessage *);
 	uint32_t get_size() { return cache_size; }
 
     private:

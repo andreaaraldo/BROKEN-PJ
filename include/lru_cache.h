@@ -50,7 +50,7 @@ class lru_cache:public base_cache{
     public:
 	lru_cache():base_cache(),actual_size(0),lru(0),mru(0){;}
     protected:
-	void store(chunk_t);
+	void data_store(chunk_t);
 	bool data_lookup(chunk_t);
 	bool full();
 

@@ -31,7 +31,7 @@ void random_cache::initialize(){
     base_cache::initialize();
 }
 
-void random_cache::store(chunk_t chunk){
+void random_cache::data_store(chunk_t chunk){
     cache[chunk] = true;
     if (deq.size() == get_size() ){
         //Replacing a random element

@@ -26,7 +26,7 @@
 
 Register_Class(fifo_cache);
 
-void fifo_cache::store(chunk_t chunk){
+void fifo_cache::data_store(chunk_t chunk){
 
    cache[chunk] = true;
    deq.push_back(chunk);

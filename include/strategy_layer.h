@@ -25,9 +25,7 @@
 #ifndef STRATEGY_H_
 #define STRATEGY_H_
 
-#include <omnetpp.h>
-
-#include "abstract_node.h"
+#include "ccnsim.h"
 #include <boost/unordered_map.hpp>
 
 using namespace std;
@@ -49,7 +47,7 @@ struct int_f{
 //which returns an array of booleans. The i-th bool value
 //indicates if the message should be sent on the i-th interface.
 //
-class strategy_layer: public AbstractNode {
+class strategy_layer: public abstract_node{
     public:
 	//The only interface function. Cores should be call this function in
 	//order to get the interfaces on which sending the current interest

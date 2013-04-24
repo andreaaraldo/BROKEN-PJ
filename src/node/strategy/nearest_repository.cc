@@ -51,7 +51,7 @@ bool *nearest_repository::exploit(ccn_interest *interest){
 	outif,
 	gsize;
 
-    gsize = getOuterInterfaces();
+    gsize = __get_outer_interfaces();
 
     vector<int> repos = interest->get_repos();
     repository = nearest(repos);

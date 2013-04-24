@@ -27,8 +27,8 @@
 #define CCN_NODE_H
 
 #include <omnetpp.h>
+#include "ccnsim.h"
 
-#include "abstract_node.h"
 #include <boost/unordered_map.hpp>
 
 using namespace std;
@@ -47,7 +47,7 @@ struct pit_entry {
 };
 
 
-class core_layer : public AbstractNode {
+class core_layer : public abstract_node{
     friend class statistics;
 
     protected:

@@ -40,7 +40,7 @@ using namespace std;
 class two_cache: public base_cache{
     public:
 
-	virtual void store(chunk_t);
+	virtual void data_store(chunk_t);
 	virtual bool data_lookup(chunk_t);
 	virtual bool full();
 

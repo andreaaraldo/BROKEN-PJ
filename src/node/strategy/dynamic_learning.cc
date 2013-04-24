@@ -22,7 +22,7 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include <omnetpp.h>
+#include "ccnsim.h"
 #include "dynamic_learning.h"
 #include "ccn_interest.h"
 Register_Class(dynamic_learning);
@@ -61,7 +61,7 @@ bool *dynamic_learning::explore(ccn_interest *interest){
 	gsize;
     bool *decision;
 
-    gsize = getOuterInterfaces();
+    gsize = __get_outer_interfaces();
     arrival_gate = interest->getArrivalGate()->getIndex();
     decision = new bool[gsize];
 
@@ -87,7 +87,7 @@ bool *dynamic_learning::exploit(ccn_interest *interest){
 	gsize,
 	target;
 
-    gsize = getOuterInterfaces();
+    gsize = __get_outer_interfaces();
     target = interest->getTarget();
 
     if (interest->getTarget() == getIndex()){//failure

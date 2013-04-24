@@ -143,7 +143,7 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         data_msg->setHops(1);
 	data_msg->setBtw(std::max(my_btw,int_btw));
 
-        ContentStore->received_data(data_msg);
+        ContentStore->store(data_msg);
         send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
 
 
@@ -188,7 +188,7 @@ void core_layer::handle_data(ccn_data *data_msg){
     //If someone had previously requested the data 
     if ( pitIt != PIT.end() ){
 
-	ContentStore->received_data(data_msg);
+	ContentStore->store(data_msg);
 	interfaces = (pitIt->second).interfaces;//get interface list
 	i = 0;
 	while (interfaces){
@@ -206,8 +206,8 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
     if (my_btw > interest->getBtw())
 	interest->setBtw(my_btw);
 
-    for (int i = 0; i < getOuterInterfaces(); i++)
-	if (decision[i] == true && !check_client(i))
+    for (int i = 0; i < __get_outer_interfaces(); i++)
+	if (decision[i] == true && !__check_client(i))
 	    send(interest->dup(),"face$o",i);
 }
 

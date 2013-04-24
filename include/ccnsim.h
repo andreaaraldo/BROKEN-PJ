@@ -1,6 +1,8 @@
-#ifndef DEFS_H
-#define DEFS_H
+#ifndef __CCNSIM_H___
+#define __CCNSIM_H___
+
 #include <vector>
+#include <omnetpp.h>
 
 //System packets
 #define CCN_I 100   //ccn interest 
@@ -27,9 +29,35 @@ typedef unsigned long long  chunk_t; //representation for any chunk flying withi
 typedef unsigned int cnumber_t; //represents the number part of the chunk
 typedef unsigned int name_t; //represents the name part of the chunk
 
+//Useful data structure. Use that instead of cSimpleModule, when you deal with caches, strategy_layers, and core_layers
+#include "client.h"
+class abstract_node: public cSimpleModule{
+    public:
+	abstract_node():cSimpleModule(){;}
 
+	virtual cModule *__find_sibling(std::string mod_name){
+	    return getParentModule()->getModuleByRelativePath(mod_name.c_str());
+	}
+
+	virtual int __get_outer_interfaces(){
+	    return getParentModule()->gateSize("face");
+	}
+
+	bool __check_client(int interface){
+	    client *c;
+	    bool check= false;
+	    c = dynamic_cast<client *>(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
+	    if (c)
+		check=true;
+	    return check;
+	}
+
+	virtual int getIndex(){
+	    return getParentModule()->getIndex();
+	}
+
+};
 //Macros
-
 //--------------
 //Chunk handling
 //--------------
@@ -95,7 +123,7 @@ inline chunk_t next_chunk (chunk_t c){
 #define __face(f,b)   ( f & (1<<b) ) //Check the b-th bit
 //
 //
-
+//
 
 //---------------------------
 //Statistics utility functions

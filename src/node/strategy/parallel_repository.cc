@@ -46,7 +46,7 @@ bool *parallel_repository::exploit(ccn_interest *interest){
     int outif,
 	gsize;
 
-    gsize = getOuterInterfaces();
+    gsize = __get_outer_interfaces();
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
 

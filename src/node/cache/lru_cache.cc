@@ -29,7 +29,7 @@
 Register_Class(lru_cache);
 
 
-void lru_cache::store(chunk_t elem){
+void lru_cache::data_store(chunk_t elem){
     //When the element is already stored within the cache, simply update the 
     //position of the element within the list and exit
     if (data_lookup(elem))

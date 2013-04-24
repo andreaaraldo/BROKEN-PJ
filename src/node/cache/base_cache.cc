@@ -91,10 +91,10 @@ void base_cache::finish(){
 
 
 //Base class function: a data has been received:
-void base_cache::received_data(cMessage *in){
+void base_cache::store(cMessage *in){
 
     if (decisor->data_to_cache((ccn_data*)in ) )
-	store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
+	data_store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
 
 }
 

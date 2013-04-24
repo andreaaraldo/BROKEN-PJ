@@ -22,10 +22,8 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include <omnetpp.h>
 #include "random_repository.h"
 #include "ccn_interest.h"
-
 Register_Class(random_repository);
 
 bool *random_repository::get_decision(cMessage *in){//check this function
@@ -46,7 +44,7 @@ bool *random_repository::exploit(ccn_interest *interest){
 	outif,
 	gsize;
 
-    gsize = getOuterInterfaces();
+    gsize = __get_outer_interfaces();
 
     if (interest->getRep_target()<0){
 	vector<int> repos = interest->get_repos();

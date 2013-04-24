@@ -26,7 +26,7 @@
 
 Register_Class(two_cache);
 
-void two_cache::store(chunk_t chunk){
+void two_cache::data_store(chunk_t chunk){
 
    cache[chunk] = true;
 
