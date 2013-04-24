@@ -64,6 +64,7 @@ class base_cache : public AbstractNode {
 
     public:
 	//Outside function behaviour
+	virtual bool fake_lookup(chunk_t);
 	void clear_stat();
 	bool lookup(chunk_t);
 	void received_data (cMessage *);

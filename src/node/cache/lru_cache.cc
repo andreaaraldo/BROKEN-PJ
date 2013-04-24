@@ -80,6 +80,18 @@ void lru_cache::store(chunk_t elem){
 
 }
 
+
+bool lru_cache::fake_lookup(chunk_t elem){
+    unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(elem);
+    //look for the elements
+    if (it==cache.end()){
+	//if not found return false and do nothing
+	return false;
+
+    }else 
+	return true;
+}
+
 bool lru_cache::data_lookup(chunk_t elem){
     //updating an element is just a matter of manipulating the list
     unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(elem);

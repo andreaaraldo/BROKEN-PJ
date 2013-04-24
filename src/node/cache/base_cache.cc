@@ -129,6 +129,10 @@ bool base_cache::lookup(chunk_t chunk ){
 
 }
 
+bool base_cache::fake_lookup(chunk_t chunk){
+    return data_lookup(chunk);
+}
+
 
 
 //Clear all the statistics

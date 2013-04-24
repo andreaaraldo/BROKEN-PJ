@@ -25,20 +25,32 @@
 #include <omnetpp.h>
 #include <algorithm>
 #include "greedy.h"
+#include "ccnsim.h"
 #include "ccn_interest.h"
+#include "base_cache.h"
 
 Register_Class(greedy);
+
+struct lookup{
+    chunk_t elem;
+    lookup(chunk_t e):elem(e){;}
+    bool operator() (centry c) const { return c.cache->fake_lookup(elem); }
+};
 
 
 void greedy::initialize(){
     strategy_layer::initialize();
+    vector<string> ctype;
+    ctype.push_back("modules.node.node");
+
     cTopology topo;
-    topo.extractByNedTypes("modules.node.cache");
-    for (int i = 0;i<topo.getNodes();i++){
+    topo.extractByNedTypeName(ctype);
+    for (int i = 0;i<topo.getNumNodes();i++){
 	if (i==getIndex()) continue;
-	caches.push_back( (base_cache)topo.getNode(i)->getModule());
+	base_cache *cptr = (base_cache *)topo.getNode(i)->getModule()->getModuleByRelativePath("cache");
+	cfib.push_back( centry ( cptr, FIB[i].len ) );
     }
-    sort(caches.begin(), cache.end(),cmp);
+    sort(cfib.begin(), cfib.end());
 }
 
 bool *greedy::get_decision(cMessage *in){
@@ -58,20 +70,51 @@ bool *greedy::get_decision(cMessage *in){
 bool *greedy::exploit(ccn_interest *interest){
 
     int repository,
+	node,
 	outif,
 	gsize;
 
     gsize = getOuterInterfaces();
+    bool *decision = new bool[gsize];
+    std::fill(decision,decision+gsize,0);
+
+    //find the first occurrence in the sorted vector of caches.
+    vector<centry>::iterator it = std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()));
 
     vector<int> repos = interest->get_repos();
     repository = nearest(repos);
 
-    outif = FIB[repository].id;
+    node = -1;
+    if (it!=cfib.end())
+	node = it->cache->getIndex();
+    if (node!=-1 && FIB[node].len < FIB[repository].len)
+	outif = FIB[node].id;
+    else
+	outif = FIB[repository].id;
 
-    bool *decision = new bool[gsize];
-    std::fill(decision,decision+gsize,0);
-    decision[outif]=true;
-
+    decision[outif] = true;
     return decision;
 
 }
+
+int greedy::nearest(vector<int>& repositories){
+    int  min_len = 10000;
+    vector<int> targets;
+
+    for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ //Find the shortest (the minimum)
+        if (FIB[ *i ].len < min_len ){
+            min_len = FIB[ *i ].len;
+	    targets.clear();
+            targets.push_back(*i);
+        }else if (FIB[*i].len == min_len)
+	    targets.push_back(*i);
+
+    }
+    return targets[intrand(targets.size())];
+}
+
+void greedy::finish(){
+    ;
+    //string id = "nodegetIndex()+"]";
+}
+

@@ -35,3 +35,7 @@ simple dynamic_learning extends strategy_layer{
 	int cut_off = default(1);
     @class(dynamic_learning);
 }
+
+simple greedy extends strategy_layer{
+    @class(greedy);
+}

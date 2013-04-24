@@ -99,7 +99,6 @@ void statistics::handleMessage(cMessage *in){
 
             if (full >= partial_n){
         	cout<<"Caches filled at time "<<simTime()<<endl;
-		//endSimulation();
         	clear_stat();
         	scheduleAt(simTime() + ts, new cMessage("check_stability", STABLE_CHECK));
         	delete in;

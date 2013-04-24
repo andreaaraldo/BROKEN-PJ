@@ -24,54 +24,32 @@
  */
 #include <omnetpp.h>
 #include <algorithm>
-#include "greedy.h"
+#include "strategy_layer.h"
 #include "ccn_interest.h"
+class base_cache;
+struct centry{
+    base_cache *cache;
+    int len;
+    centry(base_cache *c, int l):cache(c),len(l){;}
+    centry():cache(0),len(0){;}
 
-Register_Class(greedy);
 
+};
 
-void greedy::initialize(){
-    strategy_layer::initialize();
-    cTopology topo;
-    topo.extractByNedTypes("modules.node.cache");
-    for (int i = 0;i<topo.getNodes();i++){
-	if (i==getIndex()) continue;
-	caches.push_back( (base_cache)topo.getNode(i)->getModule());
-    }
-    sort(caches.begin(), cache.end(),cmp);
-}
-
-bool *greedy::get_decision(cMessage *in){
-
-    bool *decision;
-    if (in->getKind() == CCN_I){
-	ccn_interest *interest = (ccn_interest *)in;
-	decision = exploit(interest);
-    }
-    return decision;
-
+bool operator<(const centry &a,const centry &b){
+    return (a.len < b.len);
 }
 
 
+class greedy: public strategy_layer{
+    public:
+	void initialize();
+	void finish();
+	bool *get_decision(cMessage *in);
+	bool *exploit(ccn_interest *interest);
+	int nearest(vector<int>&);
 
-//The nearest repository just exploit the host-centric FIB. 
-bool *greedy::exploit(ccn_interest *interest){
+    private:
+	vector<centry> cfib;
+};
 
-    int repository,
-	outif,
-	gsize;
-
-    gsize = getOuterInterfaces();
-
-    vector<int> repos = interest->get_repos();
-    repository = nearest(repos);
-
-    outif = FIB[repository].id;
-
-    bool *decision = new bool[gsize];
-    std::fill(decision,decision+gsize,0);
-    decision[outif]=true;
-
-    return decision;
-
-}
