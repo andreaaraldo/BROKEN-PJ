@@ -83,7 +83,7 @@ This manual is organized as follows:
 
 \section{\ccnsim\ in details}
 \subsection{Packets and chunks}
-Data and interests packets are the only type of messages implemented within \ccnsim. Each of them carries a 64-bit identifier, named \emph{chunk}. The name of the file carried by the packet is stored as a 32-bit flat identifier within the most significant 4-byte of the chunk. Instead, the chunk identifier is carried within the lowest significant 4-bytes as a 16-bit unsigned integer. Other fields within the packets depend by different factors, like caching, or the strategy layer.
+Data and interests packets are the only type of messages implemented within \ccnsim. Each of them carries a 64-bit identifier, which represents the  \emph{chunk}. The chunk is split in two 32bit fields. The most significant bytes represent he name of the content. Instead, the chunk number is represented  within the lowest significant part. Other fields within the packets depend by different factors, like caching, or the strategy layer.
 
 \subsection{The Content Distribution}
 The content distribution is a node which takes no part in the architecture itself, but accomplishes many different tasks crucial for the correct working of the simulation. 
