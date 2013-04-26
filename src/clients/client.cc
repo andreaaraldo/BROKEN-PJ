@@ -56,8 +56,10 @@ void client::initialize(){
 	tot_downloads = 0;
 	tot_chunks = 0;
 
-	scheduleAt( simTime() , new cMessage("arrival", ARRIVAL ) );
-	scheduleAt( simTime() + check_time, new cMessage("timer", TIMER) );
+	arrival = new cMessage("arrival", ARRIVAL );
+	timer = new cMessage("timer", TIMER);
+	scheduleAt( simTime() + exponential(1./lambda), arrival);
+	scheduleAt( simTime() + check_time, timer  );
 
     }
 
@@ -76,13 +78,9 @@ void client::handleMessage(cMessage *in){
 	{
 	    ccn_data *data_message = (ccn_data *) in;
 	    handle_incoming_chunk (data_message);
+	    delete  data_message;
 	}
     }
-
-    //Incoming interests are deleted
-    delete in;
-
-
 }
 
 int client::getNodeIndex(){
@@ -103,8 +101,13 @@ void client::finish(){
 	//Output per file statistics
 	sprintf ( name, "hdistance[%d]", getNodeIndex());
 	cOutVector distance_vector(name);
+
 	for (name_t f = 1; f <= __file_bulk; f++)
 	    distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
+
+	cancelAndDelete(timer);
+	cancelAndDelete(arrival);
+	
     }
 }
 
@@ -113,7 +116,7 @@ void client::handle_timers(cMessage *timer){
     switch(timer->getKind()){
 	case ARRIVAL:
 	    request_file();
-	    scheduleAt( simTime() + exponential(1/lambda), new cMessage("arrival", ARRIVAL ) );
+	    scheduleAt( simTime() + exponential(1/lambda), arrival );
 	    break;
 	case TIMER:
 	    for (multimap<name_t ,file_entry>::iterator i = current_downloads.begin();i != current_downloads.end();i++){
@@ -124,10 +127,9 @@ void client::handle_timers(cMessage *timer){
 		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
 		}
 	    }
-	    scheduleAt( simTime() + check_time, new cMessage("timer", TIMER) );
+	    scheduleAt( simTime() + check_time, timer );
 	    break;
     }
-    delete timer;
 }
 
 
@@ -218,6 +220,6 @@ void client::clear_stat(){
     avg_time = 0;
     tot_downloads = 0;
     tot_chunks = 0;
-    delete client_stats;
+    delete [] client_stats;
     client_stats = new client_stat_entry[__file_bulk+1];
 }

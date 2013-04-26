@@ -79,8 +79,12 @@ void statistics::initialize(){
     //Store samples for stabilization
     samples.resize(num_nodes);
 
+    full_check = new cMessage("full_check", FULL_CHECK);
+    stable_check = new cMessage("stable_check",STABLE_CHECK);
+    end = new cMessage("end",END);
+
     //Start checking for full
-    scheduleAt(simTime() + ts, new cMessage("check_lfull",FULL_CHECK));
+    scheduleAt(simTime() + ts, full_check);
 
 }
 
@@ -99,12 +103,11 @@ void statistics::handleMessage(cMessage *in){
 
             if (full >= partial_n){
         	cout<<"Caches filled at time "<<simTime()<<endl;
-		//endSimulation();
         	clear_stat();
-        	scheduleAt(simTime() + ts, new cMessage("check_stability", STABLE_CHECK));
-        	delete in;
+		delete full_check;
+        	scheduleAt(simTime() + ts, stable_check);
             } else
-        	scheduleAt(simTime() + ts, in);
+        	scheduleAt(simTime() + ts, full_check);
 
             break;
 
@@ -115,15 +118,15 @@ void statistics::handleMessage(cMessage *in){
         	stables += (int) stable(i);
 
             if ( stables >= partial_n ){
-        	scheduleAt(simTime() + time_steady, new cMessage("end", END));
+		delete stable_check;
+        	scheduleAt(simTime() + time_steady, end );
         	clear_stat();
-        	delete in;
             } else 
-        	scheduleAt(simTime() + ts, in);
+        	scheduleAt(simTime() + ts, stable_check);
 
             break;
         case END:
-            delete in;
+	    delete end;
             endSimulation();
     }
 

@@ -74,6 +74,8 @@ class client : public cSimpleModule {
 
 
     private:
+	cMessage *timer;
+	cMessage *arrival;
 
 	//List of current downloads for a given file
 	multimap <name_t, file_entry> current_downloads;

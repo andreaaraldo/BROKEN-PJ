@@ -58,6 +58,9 @@ class statistics : public cSimpleModule{
 
 
     private:
+	cMessage *full_check;
+	cMessage *stable_check;
+	cMessage *end;
 
 	//Vector for accessing different modules statistics
 	client** clients;
