@@ -30,6 +30,7 @@
 
 #include "abstract_node.h"
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 using namespace std;
 using namespace boost;
@@ -44,6 +45,7 @@ class base_cache;
 //This structure takes care of data forwarding
 struct pit_entry {
     interface_t interfaces;
+    unordered_set<int> nonces;
 };
 
 

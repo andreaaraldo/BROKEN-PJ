@@ -60,6 +60,8 @@ void lru_cache::store(chunk_t elem){
         //if the cache is full, delete the last element
         //
         chunk_t k = lru->k;
+	//if (getIndex()==12 && __id(k)==92)
+	//    cout<<"erasing 92 at time "<<simTime()<<endl;
         lru_pos *tmp = lru;
         lru = tmp->newer;//the new lru is the element before the least recently used
 

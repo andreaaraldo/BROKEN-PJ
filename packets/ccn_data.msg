@@ -4,10 +4,15 @@ cplusplus {{
 
 class noncobject chunk_t;
 packet ccn_data{
-	chunk_t chunk;
 	@customize(true);
+	chunk_t chunk;
 
 	int target = -1;
-	short hops = 0;
+	int hops = 0;
+
+	int TSB = 0;
+	int TSI = 0;
+	int capacity;
+
 	double btw = 0;
 }

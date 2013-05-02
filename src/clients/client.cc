@@ -122,6 +122,7 @@ void client::handle_timers(cMessage *timer){
 		    send_interest(i->first,i->second.missing_chunks,-1);
 		    cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
 		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
+		    endSimulation();
 		}
 	    }
 	    scheduleAt( simTime() + check_time, new cMessage("timer", TIMER) );
@@ -142,6 +143,7 @@ void client::request_file(){
 }
 
 void client::send_interest(name_t name,cnumber_t number, int toward){
+    static int nonce = 0;
     chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
 
@@ -151,6 +153,7 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
     interest->setChunk(chunk);
     interest->setHops(-1);
     interest->setTarget(toward);
+    interest->setNonce(nonce++ % 1000000000);
     send(interest, "client_port$o");
 }
 

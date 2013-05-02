@@ -35,8 +35,10 @@
 #include "always_policy.h"
 #include "decision_policy.h"
 #include "betweenness_centrality.h"
+#include "prob_cache.h"
 
 #include "ccnsim.h"
+
 
 //Initialization function
 void base_cache::initialize(){
@@ -58,11 +60,12 @@ void base_cache::initialize(){
 	if (fabs(db - 1)<=0.001)
 	    error ("Node %i betwenness not defined.",getIndex());
 	decisor = new Betweenness(db);
-    }else if (decision_policy.compare("never")==0)
+    }else if (decision_policy.find("prob_cache")==0){
+	decisor = new prob_cache(cache_size);
+    } else if (decision_policy.find("never")==0)
 	decisor = new Never();
     else 
 	decisor = new Always();
-
 
     //Cache statistics
     //--Average

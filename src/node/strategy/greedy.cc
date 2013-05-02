@@ -85,13 +85,25 @@ bool *greedy::exploit(ccn_interest *interest){
     repository = nearest(repos);
 
     node = -1;
+
     if (it!=cfib.end())
 	node = it->cache->getIndex();
-    if (node!=-1 && FIB[node].len < FIB[repository].len)
-	outif = FIB[node].id;
-    else
-	outif = FIB[repository].id;
 
+    bool c;
+    if (node!=-1 && FIB[node].len < FIB[repository].len){
+	outif = FIB[node].id;
+	c=false;
+    }else{
+	c = true;
+	outif = FIB[repository].id;
+    }
+
+//    if (interest->get_name()==92){
+//	cout<<getIndex()<<"]Sending 92 toward "<<(c?repository:node)<<" at time "<<simTime()<<endl;
+//    }
+//
+//    if (outif == interest->getArrivalGate()->getIndex())
+//	cout<<"Capitoooooooooooo"<<endl;
     decision[outif] = true;
     return decision;
 
