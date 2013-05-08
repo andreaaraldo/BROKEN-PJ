@@ -71,7 +71,7 @@ void statistics::initialize(){
     topo.extractByNedTypeName(nodes_vec);
 
     for (int i = 0;i<topo.getNumNodes();i++){
-	caches[i] = (base_cache *) (topo.getNode(i)->getModule()->getModuleByRelativePath("cache"));
+	caches[i] = (base_cache *) (topo.getNode(i)->getModule()->getModuleByRelativePath("content_store"));
 	cores [i] = (core_layer *) (topo.getNode(i)->getModule()->getModuleByRelativePath("core_layer"));
     }
 

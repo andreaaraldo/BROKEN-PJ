@@ -1,7 +1,9 @@
-\documentclass{article}
+\documentclass{book}
 \usepackage{url}
 \usepackage{fancyvrb}
 \usepackage{definitions}
+\usepackage{graphicx}
+\usepackage{epstopdf}
 \newcommand{\ccnsim}{ccn$\mathcal{S}$im}
 \newcommand{\ned}{\texttt{ned}}
 \newcommand{\ini}{\texttt{omnetpp.ini}}
@@ -11,12 +13,13 @@
 \newcommand{\client}{\texttt{client}}
 \newcommand{\node}{\texttt{node}}
 
+\title{\ccnsim\ user manual}
 
 \begin{document}
+\maketitle
 \tableofcontents
-\newpage
-\section{Introduction}
-\subsection{What is \ccnsim?}
+\chapter{Introduction}
+\section{What is \ccnsim?}
 \ccnsim\ is a scalable chunk-level simulator of Content Centric Networks (CCN)\cite{jacobson09conext}, that we developed in the context of the ANR Project Connect.  
 
 \begin{itemize}
@@ -25,7 +28,15 @@
     \item It is distributed as free software, available at \url{http://site}.
 \end{itemize}
 \ccnsim\ extends Omnet++ as to provide a modular environment in order to simulate CCN networks. Mainly,  \ccnsim\ models the forwarding aspects of a CCN network, namely the caching strategies, and the forwarding layer of a CCN node. However, it is fairly modular, and simple to . We hope that you enjoy \ccnsim\, in which case we ask you to please cite our paper \cite{ccn12icc}. 
-\subsection{\ccnsim\ and Oment++}
+\section{\ccnsim\ and Oment++}
+\begin{figure}[t]
+    \begin{center}
+	\includegraphics[width = 0.80\textwidth]{./omnet_overview.eps}
+    \end{center}
+    \caption{Overview of the whole compilation/execution process of \ccnsim. }
+    \label{fig:omnet}
+\end{figure}
+
 Omnet++ is a C++ based event-driven simulator engine. Omnet++ is only an engine. It provides a set of core C++ classes to extend, in order to design the behaviour of a custom simulator.  Besides, it provides \ned,  a network description language   used  to describe the simulation modules and how these modules interact each other (e.g., connections, module composition, end hence forth). During the rest of this manual, we refer to \emph{modules} to indicate Omnet++ \ned\ modules, while we talk of  \emph{class} to indicate the C++ data structures which implements the behaviour of these modules. 
 
 Our simulator, \ccnsim\ comes as a set of custom modules and classes that extend the Omnet++ core in order to simulate a CCN network. A \ccnsim\ simulation steps across three phases:  
@@ -35,7 +46,7 @@ Our simulator, \ccnsim\ comes as a set of custom modules and classes that extend
     \item Initializing the  parameters of each module. This can be done either directly from the \ned\ files or from the \ini\ initialization file. 
 \end{itemize}
 We report the aforementioned steps in \figR{omnet}.
-\subsection{Overall structure of \ccnsim}
+\section{Overall structure of \ccnsim}
 In order to better understand the organization of \ccnsim, the best is to look at its internal organization. In the following we reproduce the basic directory organization of \ccnsim:
 \begin{Verbatim}[frame=single]
 |-- topologies
@@ -61,7 +72,7 @@ As said within the introduction, \ccnsim\ is a package built over the top of Omn
 Instead, within the \verb|topologies| directory there are some sample topologies (in \verb|.ned| format) ready to be used. 
 
 The real implementation of the Omnet++ modules lie into the \verb|src| and \verb|include| directory, which contain sources and header files, respectively.  
-\subsection{Downloading and installing \ccnsim}
+\section{Downloading and installing \ccnsim}
 You can freely download \ccnsim\ from the project site: \url{http://ccnsim.googlecode.com}. 
 
 We assume that you have downloaded and installed Omnet++ (version $\geq$ 4.1) on your machine. Indeed, the new version of \ccnsim\ makes use of the boost libraries, thus you should have a minimal boost installation on your system. 
@@ -77,59 +88,59 @@ In order to install \ccnsim, it is first necessary to patch Omnet. Then, you can
     john:CCNSIM_DIR$ make
 \end{Verbatim}
 In this snippet of code we suppose that \verb|CCNSIM_DIR| and \verb|OMNET_DIR| contain the installation directory of \ccnsim\ and Omnet++ respectively. 
-\subsection{Organization of this manual}
+\section{Organization of this manual}
 This manual is organized as follows:
 \begin{itemize}
-    \item  In \secR{details} we give a description of the module organization of \ccnsim\ together with a brief description of the most important parameters that describe the simulation.
-    \item In \secR{extend}  there is a more technical description of \ccnsim, in terms of class implementation and design choices. 
-    \item \secR{practice} reports a brief \ccnsim\ tutorial. We will show how to simulate and extending \ccnsim. 
-    \item Finally, \secR{perf} shows some performance of the tool, its current issues, and further developments.
+    \item  In \chR{details}  we give a description of the module organization of \ccnsim\ together with a brief description of the most important parameters that describe the simulation.
+    \item In \chR{hood}  there is a more technical description of \ccnsim, in terms of class implementation and design choices. 
+    \item \chR{practice} reports a brief \ccnsim\ tutorial. We will show how to simulate and extending \ccnsim. 
+    \item Finally, \chR{perf} shows some performance of the tool, its current issues, and further developments.
 \end{itemize}
 
 
-\section{The \ccnsim\ simulator}\label{sec:detalils}
-\subsection{Topologies}
-The \texttt{network} represents the top level module of a \ccnsim\ simulation. There, the user can define the connections between different CCN nodes. \emph{Each network module, has to extend the \texttt{base\_network}}, in which the other modules as clients, statistics, and so forth, are defined. Besides, by the means of the \texttt{network} module users can specify the placement of clients and repositories.
+\chapter{The \ccnsim\ simulator}\label{ch:details}
+\section{Topology definition}
+The \texttt{network} represents the top level module of a \ccnsim\ simulation. There, the user can define the connections between different CCN \verb|node|s modules. \emph{Each network, has to extend the \texttt{base\_network}}, in which the other modules (i.e., clients, statistics, and so forth)  are defined. Besides, a topology specifies the placement of clients and repositories.
 \begin{description}
-    \item[Clients placement] Clients represent an aggregate of users: thus, at most one client is connected and active on a given node. Indeed, in \ccnsim\ clients are connected to each node of the network. The placement consists in saying how many of them are active. The basic parameters for client placement are the following:
+    \item[Clients placement] Clients represent an aggregate of users: thus, at most one client is connected and active on a given node. Indeed, in \ccnsim\ clients are connected to each node of the network. The placement consists in specifying how many (and which) of them are active. The basic parameters for client placement are the following:
 	\begin{itemize}
 	    \item \verb|number_clients|: this integer value specifies how many clients are active over the network. 
-	    \item \verb|nodes_client|: (,)-separated string that specifies which CCN node has an active client connected to itself.  The number of clients specified should be $\leq$ \verb|number_clients|. If the number of clients specified is $<$ \verb|number_clients| (this includes the case of an empty string) the remaining clients are distributed randomly across the network. 
+	    \item \verb|nodes_client|: comma separated string that specifies which CCN node has an active client connected to itself.  The number of clients specified should be $\leq$ \verb|number_clients|. If the number of clients specified is $<$ \verb|number_clients| (this includes the case of an empty string) the remaining clients are distributed randomly across the network. 
 	\end{itemize}
     \item[Repositories initialization]  In \ccnsim\ there is no real node representing a repository. A CCN node just  \emph{knows} owning a repository connected to itself. The distribution of repositories basically depends by two parameters:
 	\begin{itemize}
 	    \item \verb|number_repos|: integer value that specifies how many repositories should be distributed over the network.
-	    \item \verb|nodes_repos|: ``,''-separated string that specifies which CCN node has a repository connected to itself.  The number of repositories specified should be at most \verb|number_repos|. If the number of repositories specified is $\leq$ \verb|number_repos| (this includes the case of an empty string) the remaining repositories are distributed randomly across the network. 
+	    \item \verb|nodes_repos|: comma separated string that specifies which CCN node has a repository connected to itself.  The number of repositories specified should be at most \verb|number_repos|. If the number of repositories specified is $\leq$ \verb|number_repos| (this includes the case of an empty string) the remaining repositories are distributed randomly across the network. 
 	\end{itemize}
 \end{description}
 
 
-\subsection{The Content Distribution}
-The content distribution is a node which takes no part in the architecture itself, but accomplishes many different tasks crucial for the correct working of the simulation. 
+\section{Content handling}
+The \verb|content_distribution| module takes no part in the architecture itself, but accomplishes many crucial tasks for the correct working of the simulation. 
 \begin{description}
-    \item[Catalog initialization] The \emph{catalog} is a set of contents. Each content is described by these parameters.
+    \item[Catalog initialization] The \emph{catalog} is a table of contents. Each content is described by these parameters.
 	\begin{itemize}
 	    \item \verb|cardF|: represents the cardinality of the catalog, expressed in number of contents. 
 	    \item \verb|F|: as the contents are distributed like a geometric distribution, this parameters represents the average size of the file, in chunks. Moreover, if \verb|F| is set to one, whole objects are considered (each one composed by a single chunk).
 	    \item \verb|replicas|: this parameters indicates the degree of replication of each content, and has to be less $<$ \verb|num_repos|. In other words, the i-th content will be (randomly) replicated over exactly \verb|replicas| repositories.
 	\end{itemize}
-    \item[Popularity distribution initialization] Lastly, the \content\ has the task of generating the CDF of the content popularity distribution. For the time being, the only distribution implemented is a Mandelbrodt-Zipf. Besides the \verb|cardF|, there are other two parameters which affect this CDF: \verb|alpha| is the shaping factor of the MZipf, and \verb|q| represents the MZipf plateau.
+    \item[CDF initialization] Lastly, the \content\ has the task of generating the CDF of the content popularity distribution. For the time being, the only distribution implemented is a Mandelbrodt-Zipf. Besides the \verb|cardF|, there are other two parameters which affect this CDF: \verb|alpha| is the shaping factor of the MZipf, and \verb|q| represents the MZipf plateau.
 \end{description}
 
-\subsection{Nodes, Content Store, and Strategy Layers}
-The \verb|node| module is the core part of the \ccnsim. \verb|node|s form the core network and can be connected each other by the means of Omnet connections. A \verb|node| is a compound module, composed by three parts: the Core Layer, the Strategy Layer, and the Content Store. Each of these submodules are  described below. 
-\subsubsection{Core Layer} 
-The \verb|core_layer| module implements the basic tasks of a CCN node, and the communication with the other node's submodules. It handles the PIT, sending data back to the interested interfaces. In handles the incoming interests by sending back data (in the case of a \emph{cache hit} within the Content Store), or by  appending the interest to the existent PIT entry. In the case no entry exists yet it query  the \emph{Strategy layer} in order to get the correct output interface. We could say that the \verb|core_layer| takes the charge of the CCN hourglass  thin waist.
-\subsubsection{Content Store}
-The Content Store represents the caching part of a CCN node. The content replacement algorithm fully characterizes a cache. In that sense, we can say that a cache ``is'' an LRU cache, an LFU cache and so on. Thus, within the \verb|node| module, the user can choose which type of caching using. This choice is fulfilled by the means of the  \verb|CR| parameter of the node compound module. The following is a brief description of the algorithms currently available  within \ccnsim. In \secR{practice} we will show how to implement new kind of replacement algorithms.
+\section{Nodes, Content Store, and Strategy Layers}
+The \verb|node| module represents the \ccnsim\ core. It is a compound module, composed by three parts: the Core Layer, the Strategy Layer, and the Content Store. Each of these submodules are  described below. 
+\subsection{Core Layer} 
+The \verb|core_layer| module implements the basic tasks of a CCN node, and the communication with the other node's submodules. It handles the PIT, sending data toward the interested interfaces. It handles the incoming interests by sending back data (in the case of a \emph{cache hit} within the Content Store), or by  appending the interest to the existent PIT entry. In the case no entry exists yet it queries the \emph{Strategy layer} in order to get the correct output interface(s). We could say that the \verb|core_layer| takes the charge of the CCN hourglass  thin waist.
+\subsection{Content Store}
+The Content Store represents the caching part of a CCN node. A Content Store is implemented by the means of a cache and its replacing algorithm. Thus, within the \verb|node| module, the user can choose which type of caching using. This choice is fulfilled by the means of the  \verb|CS| parameter of the node compound module. The following is a brief description of the algorithms currently available  within \ccnsim. 
 \begin{itemize}
-    \item\verb|CR = lru_cache| implements an LRU replacement cache. It is the most used algorithm within the literature, and simply replaces the least recently used item stored within its cache. 
-    \item\verb|CR = lfu_cache| implements an LFU replacement cache. By the means of counters an LFU cache may establish which is the leas popular content, and deleting it when the cache is full. 
-    \item\verb|CR = random_cache| implements a random replacement cache. When the cache is full the canonical behaviour of a random replacement is to choice at random an element to evict. 
-    \item\verb|CR = two_cache| implements an extension of LFU and random replacement. It takes two random elements, and then evicts the \emph{least} popular one. 
-    \item\verb|CR = fifo_cache| implement a basic First In First Out replacement. The first element entered in the cache is the first to be evicted, once the cache is full. 
+    \item\verb|CS = lru_cache| implements an LRU replacement cache. It is the most used algorithm within the literature, and simply replaces the least recently used item stored within its cache. 
+    \item\verb|CS = lfu_cache| implements an LFU replacement cache. By the means of counters an LFU cache may establish which is the leas popular content, and deleting it when the cache is full. 
+    \item\verb|CS = random_cache| implements a random replacement cache. When the cache is full the canonical behaviour of a random replacement is to choice at random an element to evict. 
+    \item\verb|CS = two_cache| implements an extension of LFU and random replacement. It takes two random elements, and then evicts the \emph{least} popular one. 
+    \item\verb|CS = fifo_cache| implement a basic First In First Out replacement. The first element entered in the cache is the first to be evicted, once the cache is full. 
 \end{itemize}
-In the case of path of caches, the mere replacement algorithm is not enough. Indeed, connecting more caches arises the problem of caching coordination (who caches what?). Thus, a cache ``uses'' a decision algorithm (or meta caching algorithm) in order to decide if storing or not the incoming data. The \verb|cache| parameter \verb|CD| sets which decision algorithm employing for the given cache. 
+In the case of path of caches, the mere replacement algorithm is not enough. Indeed, connecting more caches arises the problem of caching coordination (who caches what?). Thus, a cache ``uses'' a decision algorithm (or meta caching algorithm) in order to decide if storing or not the incoming data. The \verb|cache| parameter \verb|CD| sets which decision algorithm employing for the given cache. In \secR{practice} we will show how to implement new kind of decision policies.
 \begin{itemize}
     \item \verb|CD = lce| implements the Leave Copy Everywhere policy. Store each incoming chunk within the cache. 
     \item \verb|CD = lcd| implements the Leave Copy Down policy. Store each incoming chunk only if is the downstream node of the (permanent or temporary) retrieved copy.
@@ -138,28 +149,32 @@ In the case of path of caches, the mere replacement algorithm is not enough. Ind
     \item \verb|CD = never| disable caching within the network (useful only for debugging).
 \end{itemize}
 
-While decision policies basically decide \emph{on a given path}, who caches what, the choice of deciding which path exploiting is left to the forwarding policy. In CCN the forwarding policy is said Srategy Layer. The module that implements this part of the architecture is described in the next section.
+While decision policies basically decide \emph{on a given path}, who caches what, the choice of deciding which path exploiting is left to the forwarding policy. In CCN a forwarding policy is named Srategy Layer. The module that implements this part of the architecture is described within the next section.
 
-\subsubsection{Strategy Layer}
+\subsection{Strategy Layer}
 The strategy layer receives an interest for which no PIT entry exists yet. Then, it \emph{decides} on which output face the interest should be sent. We suppose that each node knows both the network topology and the repositories which store permanent copies of the content (see also \secR{hood}). Recall that the repositories for a given content are stored within the catalog. There are different strategies actually implemented within \ccnsim. One particular repository can be chosen by setting the \verb|SL| parameter of a \verb|node| module. 
 \begin{itemize}
     \item \verb|SL = nearest_repository| The strategy layer choses the best out of the given set of repositories and then forwards among the right interface. 
     \item \verb|SL = random_repository|  The strategy layer choses one repository at random out of the given set of repository. Note that this strategy requires that the core nodes follow the path chosen by the edge node (the node to which the client is attached to). Thus, we need a field within the interest message for setting the given \emph{target} repository. Thus, it's only the edge node who chooses at random. The subsequent one follow the path by looking at the target within the message (i.e., we are just emulating a sort of source routing). 
     \item \verb|SL = dynamic_learning| In this last case, a node which receives an interest sets up an exploration phase, in which the node learns (by flooding the network) where the content is stored (it needs not to be a permanent copy, but even a \emph{cached copy}). Then, when the content is found, the content is downloaded in unicast by the target node. Indeed, we use the same packet field as before, this time set by the target node. 
 \end{itemize}
-\subsection{Clients}
-As said above, a \verb|client| represents an aggregate of users modeled as a Poisson process. In the current implementation, a client asks for files chunk by chunk (i.e., the \emph{chunk window} W is fixed to one). The only parameter that characterizes a client is \verb|lambda|, i.e., the (total) arrival rate of the Poisson process. Of course, this parameter can be set different for each client. 
-\subsection{Statistics}
-The way in which statistics are taken in \ccnsim\ is rather complex. The first issue in taking statistics within a network of caches, is ``when'' starting to collect samples. One could start at time $t = 0$, taking  into account the period of time in which the caches are still empty (cold start). Otherwise, we could wait for caches that fill up (hot start). 
 
-Moreover, when comparing simulations with models, often the system is supposed to be \emph{stable}. In other words, often statistics should be considered only after that the transient phase of the system is vanished. Identifying the transient of the system is not a simple task. In \ccnsim\ things work in the following way. First, we wait that the nodes (or a subset of them) is completely full. After that, we wait for the system to be stable. Stabilization happens when the variance of the \emph{hit probability} of each node goes below a threshold. This is implemented by sampling the hit probability of each node, and then calculating the variance of the samples collected.  The parameters that affects the statistics calculations are:
+\section{Clients}
+As said above, a \verb|client| represents an aggregate of users modeled as a Poisson process. In the current implementation, a client asks for files chunk by chunk (i.e., the \emph{chunk window} W is fixed to one). The only parameter that characterizes a client is \verb|lambda|, i.e., the (total) arrival rate of the Poisson process. Of course, this parameter can be set different for each client. 
+\section{Statistics}
+The way in which statistics are taken in \ccnsim\ is rather complex. More in general, one of  issue in taking statistics within a network of caches, is ``when'' starting to collect samples. One could start at time $t = 0$, taking  into account the period of time in which the caches are still empty (\emph{cold start}). Otherwise, we could wait for caches that fill up (\emph{hot start}). 
+
+Moreover, when comparing simulations with models, often the system is supposed to be \emph{stable}. In other words, statistics should be considered only after that the transient phase of the system is vanished. Identifying the transient of the system is not a simple task. In \ccnsim\ things work in the following way. 
+
+First, we wait that the nodes (or a subset of them) is completely full. After that, we wait for the system to be stable. Stabilization happens when the variance of the \emph{hit probability} of each node goes below a threshold. This is implemented by sampling the hit probability of each node, and then calculating the variance of the samples collected.  The parameters that affects the statistics calculations are:
 \begin{itemize}
-    \item \verb|ts|
-    \item \verb|window|
-    \item \verb|steady|
-    \item \verb|partial_n|
+    \item \verb|ts|: the sampling time of the stabilization metric (i.e., the hit probability). 
+    \item \verb|window|: the window of samples for which the variance is calculated. 
+    \item \verb|partial_n|: the set of nodes for which waiting for filling and stabilization.
+    \item \verb|steady|: real duration of the simulation.
 \end{itemize}
-Beside the hit probability, the other statistics are handled per single module (e.g., per client or per CCN node). 
+All the time variables here are expressed in seconds. For the sake of the example, let's suppose \verb|window|=60s and \verb|ts|=0.1s. That means: each 100ms a sample is collected. When 60s of samples are collected (i.e., 600 samples) the variance is calculated and tested against the threshold. The \verb|partial_n| parameter is useful in the case which there are few clients and shortest path is used. In this case, some node could remain empty, and waiting for it would mean a infinite simulation.
+Besides the hit probability, the other statistics are handled per single module (e.g., per client or per CCN node). 
 \begin{itemize}
     \item \verb|p_hit|  ($p_{hit} = \frac{n_{hit}}{n_{miss}+n_{hit}}$): it defines the probability of finding a content within the node.
     \item \verb|hdistance|:represents the number of hops that an interest travels before hitting a copy of the requested chunk.
@@ -167,33 +182,34 @@ Beside the hit probability, the other statistics are handled per single module (
     \item \verb|downloads|: the average number of downloads terminated by a given client.
     \item \verb|interest| and \verb|data|: the average number of Interest and Data messages (respectively) handled by a node of the network. 
 \end{itemize}
-The \verb|statistics| module at the end of simulations query the different nodes and collect the different statistics: Besides, for most of these statistics it's possible to average on the different contents and/or on the different nodes within the network:
+
+For most of these statistics it's possible to average on the different contents and/or on the different nodes within the network:
 \begin{itemize}
-    \item Per network: we output one single statistic averaged on every content and for every node (coarse grained statistics).
-    \item Per node: we output $n$ statistics (where $n$ represents the number of nodes of the network) for each node averaged on every content.
-    \item Per content: we output $N$ statistics (where $N$ represents the number of contents in the catalog) for each content averaged on all nodes of the network.
-    \item Per content and per node: we output $Nn$ statistics (fine grained statistics). 
+    \item Corse grained statistics: we output one single statistic averaged on every content and for every node (coarse grained statistics).
+    \item Per node statistics: we output $n$ statistics (where $n$ represents the number of nodes of the network) for each node averaged on every content.
+    \item Per content statistics: we output $N$ statistics (where $N$ represents the number of contents in the catalog) for each content averaged on all nodes of the network.
+    \item Fine grained statistics: we output $Nn$ statistics (fine grained statistics). 
 \end{itemize}
-The output is collected in standard Omnet++ files. In particular, coarse grained, and per node statistics, are collected within the corresponding \verb|.vec| vector file. Instead, fine grained and per content statistics are collected within the \verb|.sca| file. 
+The output is collected in standard Omnet++ files. In particular, coarse grained, and per node statistics, are collected within the corresponding \verb|.sca| vector file. Instead, fine grained and per content statistics are collected within the \verb|.vec| file. 
 
-
-\subsection{Summary}
+\section{Summary}
 In this section we report the whole \verb|.ini| file used to run simulation. In the next section we will see how to implement a simple simulation on a bus network, with one client and one repository placed at the extremity of the bus. Request arrives at a rate of We recall that the symbol \verb|**.parameters| is syntactic sugar for indicating that the parameter is applied for each node who supports it (e.g., doing \verb|**.C=1000| is the same of writing \verb|node[i].cache.C = 1000| for \verb|i| representing each node of the network). 
 \include{omnet}
-\section{\ccnsim\ under the hood}\label{sec:hood}
-\subsection{Packets and chunks}
-Data and interests packets are the only packets defined in \ccnsim. Each of them carries a 64-bit identifier, which represents the  \emph{chunk}. The chunk is split in two 32bit fields. The most significant bytes represent he name of the content. Instead, the chunk number is represented  within the lowest significant part. Other fields within the packets depend by different factors, like caching, or the strategy layer.
-\subsection{The client class}
-The basic design is the following. \ccnsim\ clients are connected by default to each node of the network. \ccnsim\ users may specify which client is active and which is not, and the rate of the incoming requests (distributed like a Poisson process, as we will see later). 
-\subsection{The \texttt{content\_distribution} class}
+\chapter{\ccnsim\ under the hood}\label{ch:hood}
+In this chapter we go deeper within the description of \ccnsim. At the end of this section the user will be able to grasp the \ccnsim\ source code, extending and customizing the simulator for her needs. This could be seen as a more programming perspective of \ccnsim. Indeed, in \chR{details} we just described the \ned\ part of \ccnsim. Recall that in \chR{intro} we mentioned as every Omnet \ned\ module has a C++ class counterpart. Of course, we don't dive into about 10.000 lines of codes. We just give to the user what she needs in order to understand how things work. This knowledge will be sufficient for extending the basic \ccnsim. 
+\section{Packets and chunks}
+Let's start the journey by the packets implemented in \ccnsim. Although Omnet follows the rule that \emph{each event is a message}, data and interests packets are the only packets defined in \ccnsim. Each of them carries a 64-bit identifier, which represents the  \emph{chunk}. The chunk is split in two 32bit fields. The most significant bytes represent \emph{the name} of the content. Instead, the \emph{chunk number} is represented  within the lowest significant part. Other fields within the packets may depend by different factors, like caching, or the strategy layer.
+\section{The client class}
+The basic design is the following. \ccnsim\ clients are connected by default to each node of the network. \ccnsim\ users may specify which client is active and which is not, and the rate of the incoming requests (distributed like a Poisson process, as we saw in \chR{details}).  
+\section{The \texttt{content\_distribution} class}
 	\emph{The repositories are represented as a static array allocated by the Content Distribution class}. Thus, at each moment each node knows where the repositories are located within the network (this will be relevant for the forwarding process, as we will see later on).
 32-bits elements. Each elements is divided in two 16-bit entries. The most significant 16-bits of the i-th entry represents the size of the i-th file in chunks. The least significant 16-bits indicate the repositories which store a permanent copy of the content. This information is represented as  a string of \verb|num_repos| bits, where a 1 at the j-th positions means that the j-th repositories actually store the i-th content. In this sense the array of repositories acts like a look-up table which associates the value within the bit string to the right repository. Three parameters affects the catalog initialization:
 We implement the aforementioned CDF as another static array, and use binary search in order to retrieve elements with a given probability. In addition to \verb|cardF| the other parameters that affects the behaviour of the Content Distribution class is \verb|alpha| which represents the shaping factor of the Zipf distribution. 
 
-\section{Practical \ccnsim}\label{sec:practice}\label{sec:practice}
-\subsection{Run your first simulation}
+\chapter{Practical \ccnsim}\label{ch:practice}
+\section{Run your first simulation}
 It's time for practice. In this section you will learn how to run a simple simulation. We will focus on a simple bus network of fours nodes as shown in \figR{bus}, in which the client is placed on node 0, and the repository is placed within the node 3.
-\subsection{First step: defining the network}
+\section{First step: defining the network}
 As the bus is a standard topology, we define the parameters that specify clients and repositories directly within the file \verb|bus.ned|. 
 \begin{Verbatim}[frame=single]
 package networks;
@@ -218,14 +234,22 @@ connections allowunconnected:
 }
 \end{Verbatim}
 Note that the \verb|bus_network| simply extends the \verb|base_network|. Indeed, \verb|base_network| represents a simple single node network, and it's there where modules like nodes, clients, and statistics get initialized. It's mandatory that every new network topology extends this base network, otherwise basic modules do not get initialized, and the simulations would probably die. 
-\subsection{Extending \ccnsim}
+\section{Extending \ccnsim}
+\begin{figure}[h]
+    \begin{center}
+	\includegraphics[width=\textwidth]{./omnet_classes2.png}
+    \end{center}
+    \caption{Essential class organization of \ccnsim.}
+    \label{fig:class}
+\end{figure}
+
 
 \begin{itemize}
     \item The total arrival rate of the client is of $\lambda=1req/s$. The catalog is composed by 1000 items, each one single sized, their popularity distributed like a Zipf with shaping factor $\alpha=1$. 
     \item Caches are of 10 to 100 chunks or objects (in this case these two quantities are the same), which represent the 1\% and th 10\% of the catalog, respectively. We will use LRU caches, which store every data they receive (LCE caching decision). 
     \item We want to see how the (coarse grained) distance varies as function of the cache size. 
 \end{itemize}
-\section{\ccnsim\ performance}
+\chapter{\ccnsim\ performance}\label{ch:perf}
 \bibliographystyle{plain}
 \bibliography{manual.bib}
 \end{document}
