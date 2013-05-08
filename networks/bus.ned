@@ -4,10 +4,10 @@ network bus_network extends base_network{
 
     parameters:
         //Number of ccn nodes
-    	n = 4;
+    	n = 101;
 
 	//Number of repositories
-	node_repos = "3";
+	node_repos = default("3");
 	num_repos = 1;
 	replicas = 1;
 

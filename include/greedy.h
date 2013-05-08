@@ -51,5 +51,6 @@ class greedy: public strategy_layer{
 
     private:
 	vector<centry> cfib;
+	int average_dist;
 };
 

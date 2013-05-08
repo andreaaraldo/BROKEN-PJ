@@ -42,6 +42,7 @@ void greedy::initialize(){
     strategy_layer::initialize();
     vector<string> ctype;
     ctype.push_back("modules.node.node");
+    average_dist = 0;
 
     cTopology topo;
     topo.extractByNedTypeName(ctype);
@@ -104,6 +105,7 @@ bool *greedy::exploit(ccn_interest *interest){
 //
 //    if (outif == interest->getArrivalGate()->getIndex())
 //	cout<<"Capitoooooooooooo"<<endl;
+
     decision[outif] = true;
     return decision;
 
