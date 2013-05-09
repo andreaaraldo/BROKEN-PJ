@@ -205,9 +205,6 @@ void statistics::finish(){
     recordScalar(name,global_tot_downloads);
     cout<<"Downloads/client: "<<global_tot_downloads * 1./num_clients<<endl;
 
-    cancelAndDelete( full_check);
-    cancelAndDelete(stable_check);
-    cancelAndDelete(end);
     
     //TODO per content statistics
     //double hit_rate;
