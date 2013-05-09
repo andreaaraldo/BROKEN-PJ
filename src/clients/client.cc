@@ -105,8 +105,8 @@ void client::finish(){
 	for (name_t f = 1; f <= __file_bulk; f++)
 	    distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
 
-	cancelAndDelete(timer);
-	cancelAndDelete(arrival);
+	//cancelAndDelete(timer);
+	//cancelAndDelete(arrival);
 	
     }
 }
