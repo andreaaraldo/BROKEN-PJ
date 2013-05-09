@@ -9,7 +9,7 @@ moduleinterface strategy
 simple strategy_layer like strategy
 {
     parameters:
-    	@display("i=abstract/dispatcher;is=l");
+    	@display("i=block/dispatch;is=l");
     gates:
 	inout strategy_port;
 }

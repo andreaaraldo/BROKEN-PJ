@@ -205,8 +205,11 @@ void statistics::finish(){
     recordScalar(name,global_tot_downloads);
     cout<<"Downloads/client: "<<global_tot_downloads * 1./num_clients<<endl;
 
+    cancelAndDelete( full_check);
+    cancelAndDelete(stable_check);
+    cancelAndDelete(end);
     
-    //TODO global statistics per file
+    //TODO per content statistics
     //double hit_rate;
     // for (uint32_t f = 1; f <=content_distribution::perfile_bulk; f++){
     //     hit_rate = 0;
