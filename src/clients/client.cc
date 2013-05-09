@@ -119,12 +119,12 @@ void client::handle_timers(cMessage *timer){
 	    scheduleAt( simTime() + exponential(1/lambda), arrival );
 	    break;
 	case TIMER:
-	    for (multimap<name_t ,file_entry>::iterator i = current_downloads.begin();i != current_downloads.end();i++){
+	    for (multimap<name_t, download >::iterator i = current_downloads.begin();i != current_downloads.end();i++){
 		if ( simTime() - i->second.last > RTT ){
 		    //resend the request for the given chunk
-		    send_interest(i->first,i->second.missing_chunks,-1);
+		    send_interest(i->first,i->second.chunk, -1);
 		    cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
-		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
+		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
 		}
 	    }
 	    scheduleAt( simTime() + check_time, timer );
@@ -138,7 +138,7 @@ void client::handle_timers(cMessage *timer){
 void client::request_file(){
 
     name_t name = content_distribution::zipf.value(dblrand());
-    current_downloads.insert(pair<name_t, file_entry>(name, file_entry (0,simTime() ) ) );
+    current_downloads.insert(pair<name_t, download >(name, download (0,simTime() ) ) );
     send_interest(name, 0 ,-1);
 
 }
@@ -185,19 +185,19 @@ void client::handle_incoming_chunk (ccn_data *data_message){
 
     //-----------Handling downloads------
     //Handling the download list (TODO put this piece of code within a virtual method, in this way implementing new strategies should be direct).
-    pair< multimap<name_t, file_entry>::iterator, multimap<name_t, file_entry>::iterator > ii;
-    multimap<name_t, file_entry>::iterator it; 
+    pair< multimap<name_t, download>::iterator, multimap<name_t, download>::iterator > ii;
+    multimap<name_t, download>::iterator it; 
 
     ii = current_downloads.equal_range(name);
     it = ii.first;
 
     while (it != ii.second){
-        if ( it->second.missing_chunks == chunk_num ){
-            it->second.missing_chunks++;
-            if (it->second.missing_chunks < __size(name) ){ 
+        if ( it->second.chunk == chunk_num ){
+            it->second.chunk++;
+            if (it->second.chunk< __size(name) ){ 
         	it->second.last = simTime();
         	//if the file is not yet completed send the next interest
-        	send_interest(name, it->second.missing_chunks,data_message->getTarget());
+        	send_interest(name, it->second.chunk, data_message->getTarget());
             } else { 
         	//if the file is completed delete the entry from the pendent file list
         	if (current_downloads.count(name)==1){

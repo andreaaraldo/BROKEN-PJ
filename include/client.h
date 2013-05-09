@@ -34,13 +34,13 @@ using namespace std;
 
 
 //Each of these entries contains information about the current downloads
-struct file_entry{
-    filesize_t missing_chunks; //number of chunks that still miss within the file
+struct download {
+    filesize_t chunk; //number of chunks that still miss within the file
 
     simtime_t start; //start time (for statistic purposes)
     simtime_t last; //last time a chunk has been downloaded
 
-    file_entry(double m = 0,simtime_t t = 0):missing_chunks(m),start(t),last(t){;}
+    download (double m = 0,simtime_t t = 0):chunk(m),start(t),last(t){;}
 };
 
 //Each of these entries contains information about statistics for each single file
@@ -78,7 +78,7 @@ class client : public cSimpleModule {
 	cMessage *arrival;
 
 	//List of current downloads for a given file
-	multimap <name_t, file_entry> current_downloads;
+	multimap < name_t, download > current_downloads;
 
 	//Single file statistics
 	client_stat_entry* client_stats;
