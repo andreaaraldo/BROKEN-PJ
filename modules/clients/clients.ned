@@ -2,7 +2,7 @@ package modules.clients;
 
 simple client{
     parameters:
-    	@display("i=block/source;is=s");
+    	@display("i=abstract/people;is=l");
     	double lambda = default(1);
 	double W = default(1); //TODO
 	double check_time = default(0.1);

@@ -7,7 +7,7 @@ module node {
 	string CS = default("random_cache");
 	string SL = default("nearest_repository");
 	double betweenness = default (-1);
-	@display("i=device/router;is=s");
+	@display("i=abstract/router;is=s");
     gates:
 	inout face[];	
 	inout client_port;
