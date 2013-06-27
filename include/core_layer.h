@@ -60,6 +60,7 @@ class core_layer : public AbstractNode {
 
     //Custom functions
 	void handle_interest(ccn_interest *);
+	void handle_ghost(ccn_interest *);
 	void handle_data(ccn_data *);
 	void handle_decision(bool *, ccn_interest *);
 
@@ -73,6 +74,7 @@ class core_layer : public AbstractNode {
 	unsigned short nodes;
 	unsigned int my_bitmask;
 	double my_btw;
+	static int repo_interest;
 	
 
 	//Architecture data structures

@@ -54,12 +54,26 @@ void strategy_layer::populate_routing_table(){
 
 	    cTopology::Node *to   = topo.getNode( d ); //destination node
 	    topo.weightedMultiShortestPathsTo( to ); 
-	    rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths()-1);
+	    //cout<<node->getNumPaths()<<endl;
+	    rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths());
 
 	    FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
 	    FIB[d].len = node->getDistanceToTarget();
-	}
+	    //cout<<FIB[d].len<<" ";
+	}else
+	    ;//cout<<0<<" ";
     }
+    //cout<<FIB[topo.getNumNodes()-1].len+1;
+
+    //if (getIndex()==topo.getNumNodes()-1){
+    //    cout<<";"<<endl;
+    //    for (int d = 0; d<topo.getNumNodes();d++){
+    //        cout<<FIB[d].len+1<<" ";
+    //    }
+    //    cout<<0;
+    //}
+
+    //cout<<";"<<endl;
 
 }
 

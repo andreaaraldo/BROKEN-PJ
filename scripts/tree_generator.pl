@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 use Getopt::Long;
-$N = shift;
+$l = shift;
 $d = shift;
+$N = ($d**$l -1)/($d-1);
 
 my $clients = '';
 GetOptions('clients'=> \$clients);
@@ -20,8 +21,8 @@ while (@queue){
     push @leafs, $current if $i ==0;
 }
 
-&generate_core();
 &generate_clients() if $clients;
+&generate_core();
 
 
 sub generate_core(){
@@ -38,13 +39,11 @@ sub generate_core(){
 
 sub generate_clients(){
     print "\n";
-    print qq|//Clients at leaves|, "\n";
     my $k=0;
-    for $l (@leafs){
-	#node[i].face++ <--> { delay = 1ms; } <--> client[i].client_port;
-	print "node[$l].face++<--> { delay = 1ms; } <-->client[$k].client_port;\n";
-	$k++;
-    }
+    print "num_clients = ", $#leafs+1,";\n";
+    print "node_clients = \"";
+    $"=",";
+    print "@leafs\";\n";
 }
     
 

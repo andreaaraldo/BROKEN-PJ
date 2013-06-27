@@ -24,37 +24,38 @@
  */
 #include <omnetpp.h>
 #include <algorithm>
-#include "greedy.h"
+#include "nrr.h"
 #include "ccnsim.h"
 #include "ccn_interest.h"
 #include "base_cache.h"
 
-Register_Class(greedy);
+Register_Class(nrr);
 
 struct lookup{
     chunk_t elem;
     lookup(chunk_t e):elem(e){;}
-    bool operator() (centry c) const { return c.cache->fake_lookup(elem); }
+    bool operator() (Centry c) const { return c.cache->fake_lookup(elem); }
 };
 
 
-void greedy::initialize(){
+void nrr::initialize(){
     strategy_layer::initialize();
     vector<string> ctype;
     ctype.push_back("modules.node.node");
-    average_dist = 0;
+    TTL = par("TTL");
 
     cTopology topo;
     topo.extractByNedTypeName(ctype);
     for (int i = 0;i<topo.getNumNodes();i++){
 	if (i==getIndex()) continue;
 	base_cache *cptr = (base_cache *)topo.getNode(i)->getModule()->getModuleByRelativePath("cache");
-	cfib.push_back( centry ( cptr, FIB[i].len ) );
+	if (FIB[i].len <= TTL)
+	    cfib.push_back( Centry ( cptr, FIB[i].len ) );
     }
     sort(cfib.begin(), cfib.end());
 }
 
-bool *greedy::get_decision(cMessage *in){
+bool *nrr::get_decision(cMessage *in){
 
     bool *decision;
     if (in->getKind() == CCN_I){
@@ -68,7 +69,7 @@ bool *greedy::get_decision(cMessage *in){
 
 
 //The nearest repository just exploit the host-centric FIB. 
-bool *greedy::exploit(ccn_interest *interest){
+bool *nrr::exploit(ccn_interest *interest){
 
     int repository,
 	node,
@@ -80,38 +81,44 @@ bool *greedy::exploit(ccn_interest *interest){
     std::fill(decision,decision+gsize,0);
 
     //find the first occurrence in the sorted vector of caches.
-    vector<centry>::iterator it = std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()));
+    if (interest->getTarget()==-1 || interest->getTarget() == getIndex() ){
+	//if (interest->getTarget()==getIndex()){
+	//    cout<<"ugugugugugu"<<endl;
+	//}
 
-    vector<int> repos = interest->get_repos();
-    repository = nearest(repos);
+	vector<Centry>::iterator it = std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()));
+	vector<Centry>matches;
 
-    node = -1;
+	vector<int> repos = interest->get_repos();
+	repository = nearest(repos);
 
-    if (it!=cfib.end())
-	node = it->cache->getIndex();
+	node = -1;
 
-    bool c;
-    if (node!=-1 && FIB[node].len < FIB[repository].len){
-	outif = FIB[node].id;
-	c=false;
-    }else{
-	c = true;
-	outif = FIB[repository].id;
+	if (it!=cfib.end())
+	    node = it->cache->getIndex();
+
+	bool c;
+	if (node!=-1 && FIB[node].len <= FIB[repository].len+1){
+	    outif = FIB[node].id;
+	    interest->setTarget(node);
+	    c=false;
+	}else{
+	    c = true;
+	    outif = FIB[repository].id;
+	    interest->setTarget(repository);
+	}
+
+    }else {
+	outif = FIB[interest->getTarget()].id;
     }
 
-//    if (interest->get_name()==92){
-//	cout<<getIndex()<<"]Sending 92 toward "<<(c?repository:node)<<" at time "<<simTime()<<endl;
-//    }
-//
-//    if (outif == interest->getArrivalGate()->getIndex())
-//	cout<<"Capitoooooooooooo"<<endl;
 
     decision[outif] = true;
     return decision;
 
 }
 
-int greedy::nearest(vector<int>& repositories){
+int nrr::nearest(vector<int>& repositories){
     int  min_len = 10000;
     vector<int> targets;
 
@@ -127,7 +134,7 @@ int greedy::nearest(vector<int>& repositories){
     return targets[intrand(targets.size())];
 }
 
-void greedy::finish(){
+void nrr::finish(){
     ;
     //string id = "nodegetIndex()+"]";
 }

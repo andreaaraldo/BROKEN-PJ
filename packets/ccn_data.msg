@@ -8,6 +8,7 @@ packet ccn_data{
 	chunk_t chunk;
 
 	int target = -1;
+	int origin = -1;
 	int hops = 0;
 
 	int TSB = 0;
@@ -15,4 +16,6 @@ packet ccn_data{
 	int capacity;
 
 	double btw = 0;
+	bool ghost = 0;
+	bool found = 0;
 }

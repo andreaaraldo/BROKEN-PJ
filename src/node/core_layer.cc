@@ -33,11 +33,13 @@
 #include "base_cache.h"
 
 Register_Class(core_layer);
+int core_layer::repo_interest = 0;
 
 
 void  core_layer::initialize(){
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
+    cout<<getIndex()<<" "<<my_btw<<endl;
     int num_repos = getAncestorPar("num_repos");
 
     int i = 0;
@@ -93,7 +95,6 @@ void core_layer::handleMessage(cMessage *in){
 
 	data_msg = (ccn_data* ) in; //One hop more from the last caching node (useful for distance policy)
 	data_msg->setHops(data_msg -> getHops() + 1);
-
 	handle_data(data_msg);
 
 	break;
@@ -113,7 +114,15 @@ void core_layer::finish(){
     sprintf ( name, "data[%d]", getIndex());
     recordScalar (name, data);
 
+    if (repo_interest != 0){
+	sprintf ( name, "repo_int[%d]", getIndex());
+	recordScalar(name, repo_interest);
+	repo_interest = 0;
+    }
+
+
 }
+
 
 
 
@@ -136,6 +145,7 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         data_msg->setHops(0);
         data_msg->setBtw(int_btw); //Copy the highest betweenness
         data_msg->setTarget(getIndex());
+	data_msg->setFound(true);
 
 	data_msg->setCapacity(int_msg->getCapacity());
 	data_msg->setTSI(int_msg->getHops());
@@ -149,6 +159,7 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	// we are mimicking a message sent to the repository
 	//
         ccn_data* data_msg = compose_data(chunk);
+	repo_interest++;
 
         data_msg->setHops(1);
         data_msg->setTarget(getIndex());
@@ -157,6 +168,7 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	data_msg->setCapacity(int_msg->getCapacity());
 	data_msg->setTSI(int_msg->getHops() + 1);
 	data_msg->setTSB(1);
+	data_msg->setFound(true);
 
         ContentStore->received_data(data_msg);
         send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
@@ -170,24 +182,22 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 
 	int nonce = int_msg->getNonce();
+	unordered_set <int> *nonces = &(pitIt->second.nonces);
+
 	if (pitIt==PIT.end()){
 	    bool * decision = strategy->get_decision(int_msg);
 	    handle_decision(decision,int_msg);
 	    delete [] decision;//free memory for the decision array
 	} else {
-	    unordered_set <int> *nonces = &(pitIt->second.nonces);
 	    if (nonces->find(nonce) != nonces->end()){
 		bool * decision = strategy->get_decision(int_msg);
 		handle_decision(decision,int_msg);
 		delete [] decision;//free memory for the decision array
 	    }
-	}
-
+	} 
 	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
 	PIT[chunk].nonces.insert(nonce);
 
-	if (PIT.size()>max_pit)
-	    max_pit = PIT.size();
 
     }
 }
@@ -201,7 +211,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
  * interested interfaces.
  */
 void core_layer::handle_data(ccn_data *data_msg){
-
 
     int i = 0;
     interface_t interfaces = 0;
@@ -222,7 +231,7 @@ void core_layer::handle_data(ccn_data *data_msg){
 	    interfaces >>= 1;
 	}
     }
-	PIT.erase(chunk); //erase pending interests for that data file
+    PIT.erase(chunk); //erase pending interests for that data file
 }
 
 
@@ -231,7 +240,9 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 	interest->setBtw(my_btw);
 
     for (int i = 0; i < getOuterInterfaces(); i++)
-	if (decision[i] == true && !check_client(i))
+	if (decision[i] == true && 
+		!check_client(i))
+		//&& interest->getArrivalGate()->getIndex() != i)
 	    send(interest->dup(),"face$o",i);
 }
 
@@ -260,6 +271,7 @@ ccn_data* core_layer::compose_data(uint64_t response_data){
  * Clear local statistics
  */
 void core_layer::clear_stat(){
+    repo_interest = 0;
     interests = 0;
     data = 0;
 }

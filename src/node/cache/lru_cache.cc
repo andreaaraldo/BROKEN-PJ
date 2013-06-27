@@ -30,6 +30,7 @@ Register_Class(lru_cache);
 
 
 void lru_cache::store(chunk_t elem){
+    simtime_t tau = 0.0;
     //When the element is already stored within the cache, simply update the 
     //position of the element within the list and exit
     if (data_lookup(elem))
@@ -38,6 +39,7 @@ void lru_cache::store(chunk_t elem){
     lru_pos *p = (lru_pos *)malloc (sizeof(lru_pos)); //position for the new element
     //lru_pos *p = new lru_pos();
     p->k = elem;
+    p->hit_time = simTime();
     p->newer = 0;
     p->older = 0;
 
@@ -60,19 +62,18 @@ void lru_cache::store(chunk_t elem){
         //if the cache is full, delete the last element
         //
         chunk_t k = lru->k;
-	//if (getIndex()==12 && __id(k)==92)
-	//    cout<<"erasing 92 at time "<<simTime()<<endl;
         lru_pos *tmp = lru;
         lru = tmp->newer;//the new lru is the element before the least recently used
 
         lru->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
         tmp->older = 0;
         tmp->newer = 0;
-        //cout<<"before freeing:"<<tmp->k<<endl;
+	//output the characteristic time of the cache
+	tau = simTime() - tmp->hit_time;
+	//cout<<getIndex()<<"\t"<<simTime()<<"\t"<<tau<<endl;
+
         free(tmp);
-        //cout<<"after freeing:"<<tmp->k<<endl;
         cache.erase(k); //erase from the cache the most unused element
-        //(tmp); //delete its position
     }else
         //otherwise do nothing, just update the actual_size of the cache
         actual_size++;
@@ -84,6 +85,8 @@ void lru_cache::store(chunk_t elem){
 
 
 bool lru_cache::fake_lookup(chunk_t elem){
+//    if (getIndex()==12)
+//	return true;
     unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(elem);
     //look for the elements
     if (it==cache.end()){
@@ -128,6 +131,7 @@ bool lru_cache::data_lookup(chunk_t elem){
 
     //update the mru
     mru = pos_elem;
+    mru->hit_time = simTime();
     return true;
 }
 

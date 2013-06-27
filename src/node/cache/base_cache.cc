@@ -110,9 +110,9 @@ bool base_cache::lookup(chunk_t chunk ){
     name_t name = __id(chunk);
 
     if (data_lookup(chunk)){
-        found = true;
 	//Average cache statistics(hit)
 	hit++;
+	found = true;
 
 	//Per file cache statistics(hit)
 	if (name <= __file_bulk)

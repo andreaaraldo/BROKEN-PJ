@@ -36,6 +36,12 @@ simple dynamic_learning extends strategy_layer{
     @class(dynamic_learning);
 }
 
-simple greedy extends strategy_layer{
-    @class(greedy);
+simple inrr extends strategy_layer{
+    @class(inrr);
+}
+
+simple nrr extends strategy_layer{
+    parameters:
+	int TTL = default(2);
+    @class(nrr);
 }

@@ -5,6 +5,7 @@
 //System packets
 #define CCN_I 100   //ccn interest 
 #define CCN_D 200   //ccn data 
+#define GHOST 5    //ghost interest
 
 //Clients timers
 #define ARRIVAL 300 //arrival of a request 

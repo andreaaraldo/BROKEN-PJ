@@ -97,12 +97,14 @@ void statistics::handleMessage(cMessage *in){
             for (int i = 0; i < num_nodes;i++)
         	full += (int)caches[i]->full();
 
-            if (full >= partial_n){
+            if (full >= partial_n ){
         	cout<<"Caches filled at time "<<simTime()<<endl;
         	clear_stat();
         	scheduleAt(simTime() + ts, new cMessage("check_stability", STABLE_CHECK));
         	delete in;
-            } else
+            } else if ( simTime()>=3*3600)
+		scheduleAt(simTime() + time_steady, new cMessage("end", END));
+	    else
         	scheduleAt(simTime() + ts, in);
 
             break;

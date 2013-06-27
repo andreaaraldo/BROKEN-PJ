@@ -1,3 +1,5 @@
+#ifndef NRR_H_
+#define NRR_H_
 /*
  * ccnSim is a scalable chunk-level simulator for Content Centric
  * Networks (CCN), that we developed in the context of ANR Connect
@@ -24,33 +26,34 @@
  */
 #include <omnetpp.h>
 #include <algorithm>
+#include <boost/unordered_set.hpp>
 #include "strategy_layer.h"
 #include "ccn_interest.h"
 class base_cache;
-struct centry{
+
+struct Centry{
     base_cache *cache;
     int len;
-    centry(base_cache *c, int l):cache(c),len(l){;}
-    centry():cache(0),len(0){;}
-
-
+    Centry(base_cache *c, int l):cache(c),len(l){;}
+    Centry():cache(0),len(0){;}
 };
 
-bool operator<(const centry &a,const centry &b){
+bool operator<(const Centry &a, const Centry &b){
     return (a.len < b.len);
+
 }
-
-
-class greedy: public strategy_layer{
+class nrr: public strategy_layer{
     public:
 	void initialize();
-	void finish();
 	bool *get_decision(cMessage *in);
 	bool *exploit(ccn_interest *interest);
 	int nearest(vector<int>&);
-
+	void finish();
     private:
-	vector<centry> cfib;
-	int average_dist;
-};
+	unordered_map<name_t,int_f> dynFIB;
+	unordered_set<chunk_t> ghost_list;
+	vector<Centry> cfib;
+	int TTL;
 
+};
+#endif
