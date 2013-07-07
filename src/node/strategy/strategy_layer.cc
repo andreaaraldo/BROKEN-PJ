@@ -23,14 +23,37 @@
  *
  */
 #include "strategy_layer.h"
+#include <sstream>
+ifstream strategy_layer::fdist;
+ifstream strategy_layer::frouting;
 
 
 void strategy_layer::initialize(){
-    populate_routing_table(); //Building forwarding table 
+
+    for (int i = 0; i<getParentModule()->gateSize("face$o");i++){
+	int index ;
+	if (!check_client(i))
+	    index = getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
+        gatelu[index] = i;
+    }
+    
+    
+    string fileradix = par("routing_file").stringValue();
+    string filerout = fileradix+".rou";
+    string filedist = fileradix+".dist";
+    if (fileradix!= ""){
+	if (!fdist.is_open()){
+	    fdist.open(filedist.c_str());
+	    frouting.open(filerout.c_str());
+	}
+	populate_from_file(); //Building forwarding table 
+    }else 
+	populate_routing_table(); //Building forwarding table 
 }
 
 void strategy_layer::finish(){
-    ;
+    fdist.close();
+    frouting.close();
 }
 
 //Common to each strategy layer. Populate the host-centric routing table.
@@ -59,11 +82,14 @@ void strategy_layer::populate_routing_table(){
 
 	    FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
 	    FIB[d].len = node->getDistanceToTarget();
-	    //cout<<FIB[d].len<<" ";
+	    cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
 	}else
-	    ;//cout<<0<<" ";
+	    cout<<getParentModule()->getIndex()+1<<" ";
     }
-    //cout<<FIB[topo.getNumNodes()-1].len+1;
+    if (getIndex()==FIB[topo.getNumNodes()-1].id)
+	cout<<getIndex()<<";"<<endl;
+    else
+	cout<<getParentModule()->gate("face$o",FIB[topo.getNumNodes()-1].id)->getNextGate()->getOwnerModule()->getIndex()+1<<";"<<endl;;
 
     //if (getIndex()==topo.getNumNodes()-1){
     //    cout<<";"<<endl;
@@ -77,8 +103,27 @@ void strategy_layer::populate_routing_table(){
 
 }
 
+void strategy_layer::populate_from_file(){
+    string rline, dline;
+    getline(frouting, rline);
+    getline(fdist, dline);
 
+    istringstream diis (dline);
+    istringstream riis (rline);
+    int n = getAncestorPar("n");
 
+    int cell;
+    int k = 0;
 
+    while (k<n){
+	riis>>cell;
+	FIB[k++].id = gatelu[cell-1];
+    }
 
+    k = 0;
+    while (k<n){
+	diis>>cell;
+	FIB[k++].len = cell;
+    }
 
+}

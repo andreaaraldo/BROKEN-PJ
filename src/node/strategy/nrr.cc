@@ -37,6 +37,13 @@ struct lookup{
     bool operator() (Centry c) const { return c.cache->fake_lookup(elem); }
 };
 
+struct lookup_len{
+    chunk_t elem;
+    int len;
+    lookup_len(chunk_t e,int l):elem(e),len(l){;}
+    bool operator() (Centry c) const { return c.cache->fake_lookup(elem) && c.len ==len; }
+};
+
 
 void nrr::initialize(){
     strategy_layer::initialize();
@@ -74,7 +81,8 @@ bool *nrr::exploit(ccn_interest *interest){
     int repository,
 	node,
 	outif,
-	gsize;
+	gsize,
+	times;
 
     gsize = getOuterInterfaces();
     bool *decision = new bool[gsize];
@@ -82,31 +90,43 @@ bool *nrr::exploit(ccn_interest *interest){
 
     //find the first occurrence in the sorted vector of caches.
     if (interest->getTarget()==-1 || interest->getTarget() == getIndex() ){
-	//if (interest->getTarget()==getIndex()){
-	//    cout<<"ugugugugugu"<<endl;
-	//}
-
 	vector<Centry>::iterator it = std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()));
-	vector<Centry>matches;
 
 	vector<int> repos = interest->get_repos();
 	repository = nearest(repos);
 
-	node = -1;
+	if (it!=cfib.end() && it->len <= FIB[repository].len+1){
 
-	if (it!=cfib.end())
+	    times = std::count_if (cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
+	    if (times>0){
+		int select = intrand(times);
+		while (select) {
+		    it++;
+		    select--;
+		}
+	    }
 	    node = it->cache->getIndex();
-
-	bool c;
-	if (node!=-1 && FIB[node].len <= FIB[repository].len+1){
 	    outif = FIB[node].id;
 	    interest->setTarget(node);
-	    c=false;
+
 	}else{
-	    c = true;
 	    outif = FIB[repository].id;
 	    interest->setTarget(repository);
 	}
+
+	//if (it!=cfib.end())
+	//    node = it->cache->getIndex();
+
+	//bool c;
+	//if (node!=-1 && FIB[node].len <= FIB[repository].len+1){
+	//    outif = FIB[node].id;
+	//    interest->setTarget(node);
+	//    c=false;
+	//}else{
+	//    c = true;
+	//    outif = FIB[repository].id;
+	//    interest->setTarget(repository);
+	//}
 
     }else {
 	outif = FIB[interest->getTarget()].id;

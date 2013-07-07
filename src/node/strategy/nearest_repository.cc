@@ -58,6 +58,7 @@ bool *nearest_repository::exploit(ccn_interest *interest){
 
     outif = FIB[repository].id;
 
+
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
     decision[outif]=true;

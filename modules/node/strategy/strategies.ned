@@ -10,6 +10,7 @@ simple strategy_layer like strategy
 {
     parameters:
     	@display("i=block/buffer2;is=l");
+	string routing_file=default("");
     gates:
 	inout strategy_port;
 }

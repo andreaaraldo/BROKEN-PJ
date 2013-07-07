@@ -102,12 +102,12 @@ void statistics::handleMessage(cMessage *in){
         	clear_stat();
         	scheduleAt(simTime() + ts, new cMessage("check_stability", STABLE_CHECK));
         	delete in;
-            } else if ( simTime()>=3*3600)
-		scheduleAt(simTime() + time_steady, new cMessage("end", END));
-	    else
+            } 	    else
         	scheduleAt(simTime() + ts, in);
 
             break;
+//else if ( simTime()>=3*3600)
+//		scheduleAt(simTime() + time_steady, new cMessage("end", END));
 
 
         case STABLE_CHECK:

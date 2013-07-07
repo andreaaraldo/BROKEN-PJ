@@ -95,7 +95,7 @@ bool *inrr::exploit(ccn_interest *interest){
     vector<int> repos = interest->get_repos();
     repository = nearest(repos);
 
-    if (it!=cfib.end() && it->len <= FIB[repository].len+1){
+    if (it!=cfib.end() && it->len <= FIB[repository].len){
 
 	times = std::count_if (cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
 	if (times>0){

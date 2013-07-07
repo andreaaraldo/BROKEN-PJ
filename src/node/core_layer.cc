@@ -39,7 +39,6 @@ int core_layer::repo_interest = 0;
 void  core_layer::initialize(){
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
-    cout<<getIndex()<<" "<<my_btw<<endl;
     int num_repos = getAncestorPar("num_repos");
 
     int i = 0;
@@ -178,25 +177,25 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         //c) Put the interface within the PIT (and follow your FIB)
 	//
 
-	unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
+	//unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
 
-	int nonce = int_msg->getNonce();
-	unordered_set <int> *nonces = &(pitIt->second.nonces);
+	//int nonce = int_msg->getNonce();
+	//unordered_set <int> *nonces = &(pitIt->second.nonces);
 
-	if (pitIt==PIT.end()){
+	//if (pitIt==PIT.end()){
 	    bool * decision = strategy->get_decision(int_msg);
 	    handle_decision(decision,int_msg);
 	    delete [] decision;//free memory for the decision array
-	} else {
-	    if (nonces->find(nonce) != nonces->end()){
-		bool * decision = strategy->get_decision(int_msg);
-		handle_decision(decision,int_msg);
-		delete [] decision;//free memory for the decision array
-	    }
-	} 
+	//} else {
+	//    if (nonces->find(nonce) != nonces->end()){
+	//	bool * decision = strategy->get_decision(int_msg);
+	//	handle_decision(decision,int_msg);
+	//	delete [] decision;//free memory for the decision array
+	//    }
+	//} 
 	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
-	PIT[chunk].nonces.insert(nonce);
+	//PIT[chunk].nonces.insert(nonce);
 
 
     }
