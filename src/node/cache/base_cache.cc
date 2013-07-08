@@ -82,6 +82,14 @@ void base_cache::finish(){
     //Average hit rate
     recordScalar (name, hit * 1./(hit+miss));
 
+
+    sprintf ( name, "hits[%d]", getIndex());
+    recordScalar (name, hit );
+
+
+    sprintf ( name, "misses[%d]", getIndex());
+    recordScalar (name, miss);
+
     //Per file hit rate
     sprintf ( name, "hit_node[%d]", getIndex());
     cOutVector hit_vector(name);
