@@ -37,6 +37,7 @@ Register_Class (client);
 
 void client::initialize(){
     int num_clients = getAncestorPar("num_clients");
+    active = false;
     if (find(content_distribution::clients , content_distribution::clients + num_clients ,getNodeIndex()) 
 	    != content_distribution::clients + num_clients){
 
