@@ -1,13 +1,22 @@
 #!/usr/bin/perl
+
+#Getting parameters
 use Getopt::Long;
 $l = shift;
 $d = shift;
-$N = ($d**$l -1)/($d-1);
-$p_uncle = 1;
-$p_broth = 1;
 
-my $clients = '';
-GetOptions('clients'=> \$clients);
+$N = ($d**$l -1)/($d-1);
+
+my $net_name = 'tree';
+my $p_uncle = 0;
+my $p_bro = 0;
+
+GetOptions('bro:f'=> \$p_bro,
+           'unc:f'=> \$p_uncle,
+           'name:s'=> \$net_name);
+
+
+
 
 @T = 0..$N-1;
 push @queue, shift @T;
@@ -41,10 +50,11 @@ foreach $n (0..$N-1){
     }
 }
 
-#&generate_clients() if $clients;
+&generate_header();
 &generate_core();
 print "//Uncle-nephew redundancy\n";
-#&redundancy_level();
+
+&redundancy_level();
 print "//Brothers redundancy\n";
 &redundancy_peer();
 
@@ -55,19 +65,17 @@ sub generate_core(){
     for $i( sort{$a<=>$b} keys %childs ) { 
 
 	foreach $j ( @{ $childs{$i} }){
-	    print "node[$i].face++ <--> { delay = 1ms; } <-->node[$j].face++;\n";
+	    print "\tnode[$i].face++ <--> { delay = 1ms; } <-->node[$j].face++;\n";
 	}
 
     }
 }
 
 sub redundancy_peer(){
-    $n=1;
-    while ($n < $N-1){
+    foreach $n(1..$N-1){
 	foreach $b (@{$brothers{$n}}){
-	    print "node[$n].face++ <--> { delay = 1ms; } <-->node[$b].face++;\n" if rand() < $p_broth;
+	    print "\tnode[$n].face++ <--> { delay = 1ms; } <-->node[$b].face++;\n" if rand() < $p_bro && $b>$n;
 	}
-	$n+=$d;
     }
 }
 
@@ -75,18 +83,30 @@ sub redundancy_level(){
     foreach $n (0..$N-1){
 	foreach $u (@{$uncles{$n}}){
 	    #print $u,"\n";
-	    print "node[$n].face++ <--> { delay = 1ms; } <-->node[$u].face++;\n" if rand() < $p_uncle;
+	    print "\tnode[$n].face++ <--> { delay = 1ms; } <-->node[$u].face++;\n" if rand() < $p_uncle;
 	}
     }
 }
 
-sub generate_clients(){
-    print "\n";
-    my $k=0;
-    print "num_clients = ", $#leafs+1,";\n";
-    print "node_clients = \"";
+sub generate_header(){
+    my $num_clients = $#leafs+1;
+    my $head_net = $net_name."_network";
     $"=",";
-    print "@leafs\";\n";
+    print <<NED
+package networks;
+network $head_net extends base_network{
+    parameters:
+        //Number of ccn nodes
+    	n = $N;
+	//Number of repositories
+	node_repos = "0";
+	num_repos = 1;
+	replicas = 1;
+        //Number of clients
+	num_clients = $num_clients;
+	node_clients = "@leafs";
+connections allowunconnected:
+NED
 }
     
 
