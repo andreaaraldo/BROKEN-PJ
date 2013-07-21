@@ -29,23 +29,22 @@ Register_Class(dynamic_learning);
 
 
 bool *dynamic_learning::get_decision(cMessage *in){//check this function
-    int target;
     bool *decision;
     ccn_interest *interest;
+    int dyn_TTL = par("dyn_TTL");
 
 
     if (in->getKind() == CCN_I){
-	interest = (ccn_interest *)in; //safely cast
-	target = interest->getTarget();
-
-	if (target != -1  ){
-	//if (target != -1 && target != getIndex() ){
-	    //exploit the target
-	    decision = exploit(interest);
-	}else{
-	    //explore the network
-	    decision = explore(interest);
-	}
+        interest = (ccn_interest *)in; //safely cast
+	if (interest->getNfound()){
+	    decision = exploit_nearest(interest);
+	}else if (interest->getHops() >= dyn_TTL){
+	    int gsize = getOuterInterfaces();
+	    decision = new bool[gsize];
+	    std::fill(decision,decision+gsize,0);
+	}else {
+            decision  = explore(interest);
+        }
     }
     return decision;
 
@@ -58,7 +57,7 @@ bool *dynamic_learning::get_decision(cMessage *in){//check this function
  */
 bool *dynamic_learning::explore(ccn_interest *interest){
     int arrival_gate,
-	gsize;
+        gsize;
     bool *decision;
 
     gsize = getOuterInterfaces();
@@ -91,8 +90,8 @@ bool *dynamic_learning::exploit(ccn_interest *interest){
     target = interest->getTarget();
 
     if (interest->getTarget() == getIndex()){//failure
-	interest->setTarget(-1);
-	return explore(interest);
+        interest->setTarget(-1);
+        return explore(interest);
     }
 
     outif = FIB[target].id;
@@ -103,5 +102,43 @@ bool *dynamic_learning::exploit(ccn_interest *interest){
 
     return decision;
 
+}
+
+bool *dynamic_learning::exploit_nearest(ccn_interest *interest){
+
+    int repository,
+        outif,
+        gsize;
+
+    gsize = getOuterInterfaces();
+
+    vector<int> repos = interest->get_repos();
+    repository = nearest(repos);
+
+    outif = FIB[repository].id;
+
+
+    bool *decision = new bool[gsize];
+    std::fill(decision,decision+gsize,0);
+    decision[outif]=true;
+
+    return decision;
+
+}
+
+int dynamic_learning::nearest(vector<int>& repositories){
+    int  min_len = 10000;
+    vector<int> targets;
+
+    for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ //Find the shortest (the minimum)
+        if (FIB[ *i ].len < min_len ){
+            min_len = FIB[ *i ].len;
+	    targets.clear();
+            targets.push_back(*i);
+        }else if (FIB[*i].len == min_len)
+	    targets.push_back(*i);
+
+    }
+    return targets[intrand(targets.size())];
 }
 

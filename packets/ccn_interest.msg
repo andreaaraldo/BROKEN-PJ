@@ -18,8 +18,7 @@ packet ccn_interest{
 
 	int capacity = 0;;
 
-	bool ghost = 0;
-	bool found = 0;
+	bool nfound = false;
 	int origin = -1;
 	int TTL;
 }

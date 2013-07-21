@@ -68,6 +68,7 @@ class client : public cSimpleModule {
 	virtual void handle_timers(cMessage*);
 
 	void send_interest(name_t, cnumber_t, int);
+	void resend_interest(name_t,cnumber_t,int);
 
 	int  getNodeIndex();
 	void clear_stat();

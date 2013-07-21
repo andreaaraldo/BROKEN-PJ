@@ -120,10 +120,9 @@ void client::handle_timers(cMessage *timer){
 	    for (multimap<name_t ,file_entry>::iterator i = current_downloads.begin();i != current_downloads.end();i++){
 		if ( simTime() - i->second.last > RTT ){
 		    //resend the request for the given chunk
-		    send_interest(i->first,i->second.missing_chunks,-1);
-		    cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
-		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
-		    endSimulation();
+		    resend_interest(i->first,i->second.missing_chunks,-1);
+		    //cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
+		    //cout<<i->first<<"(while waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
 		}
 	    }
 	    scheduleAt( simTime() + check_time, new cMessage("timer", TIMER) );
@@ -138,9 +137,26 @@ void client::handle_timers(cMessage *timer){
 void client::request_file(){
 
     name_t name = content_distribution::zipf.value(dblrand());
+    //name_t name = 1;
     current_downloads.insert(pair<name_t, file_entry>(name, file_entry (0,simTime() ) ) );
     send_interest(name, 0 ,-1);
 
+}
+
+void client::resend_interest(name_t name,cnumber_t number, int toward){
+    static int nonce = 0;
+    chunk_t chunk = 0;
+    ccn_interest* interest = new ccn_interest("interest",CCN_I);
+
+    __sid(chunk, name);
+    __schunk(chunk, number);
+
+    interest->setChunk(chunk);
+    interest->setHops(-1);
+    interest->setTarget(toward);
+    interest->setNonce(nonce++ % 1000000000);
+    interest->setNfound(true);
+    send(interest, "client_port$o");
 }
 
 void client::send_interest(name_t name,cnumber_t number, int toward){

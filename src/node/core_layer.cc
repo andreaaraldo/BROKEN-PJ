@@ -190,17 +190,23 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	int nonce = int_msg->getNonce();
 	unordered_set <int> *nonces = &(pitIt->second.nonces);
 
-	if (pitIt==PIT.end()){
+	if (pitIt==PIT.end() || 
+		(pitIt != PIT.end() && int_msg->getNfound()) ){
 	  bool * decision = strategy->get_decision(int_msg);
 	  handle_decision(decision,int_msg);
 	  delete [] decision;//free memory for the decision array
-	} else {
-	    if (nonces->find(nonce) != nonces->end()){
-		bool * decision = strategy->get_decision(int_msg);
-		handle_decision(decision,int_msg);
-		delete [] decision;//free memory for the decision array
-	    }
-	} 
+
+	  if (int_msg->getNfound()){
+	      PIT.erase(chunk);
+	  }
+	} //else {
+	  //  
+	  //  if (nonces->find(nonce) != nonces->end()){
+	  //      bool * decision = strategy->get_decision(int_msg);
+	  //      handle_decision(decision,int_msg);
+	  //      delete [] decision;//free memory for the decision array
+	  //  }
+	  //} 
 	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
 	PIT[chunk].nonces.insert(nonce);
 

@@ -81,14 +81,14 @@ void strategy_layer::populate_routing_table(){
 
 	    FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
 	    FIB[d].len = node->getDistanceToTarget();
-	    cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
+	    //cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
 	    //cout<<FIB[d].len<<" ";
 	}else
-	    cout<<getParentModule()->getIndex()+1<<" ";
+	    ;//cout<<getParentModule()->getIndex()+1<<" ";
 	    //cout<<0<<" ";
     }
     //cout<<FIB[0].len+1<<";"<<endl;
-    cout<<getParentModule()->gate("face$o",FIB[0].id)->getNextGate()->getOwnerModule()->getIndex()+1<<";"<<endl;;
+    //cout<<getParentModule()->gate("face$o",FIB[0].id)->getNextGate()->getOwnerModule()->getIndex()+1<<";"<<endl;;
 
     //if (getIndex()==0){
     //    cout<<"}}";

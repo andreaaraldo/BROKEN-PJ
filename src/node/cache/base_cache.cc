@@ -68,6 +68,13 @@ void base_cache::initialize(){
     else 
 	decisor = new Always();
 
+    //if (getIndex()==5){
+    //    chunk_t dummy=0;
+    //    __sid(dummy,1);
+    //    store(dummy);
+    //}
+
+
     //Cache statistics
     //--Average
     miss = 0;
