@@ -81,6 +81,10 @@ void core_layer::handleMessage(cMessage *in){
 	int_msg = (ccn_interest *) in;
 	int_msg->setHops(int_msg -> getHops() + 1);
 
+	if (int_msg->getHops() == int_msg->getTTL()){
+	    break;
+	}
+
 	handle_interest (int_msg);
 
 	break;
@@ -153,7 +157,11 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	//
 
 	unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
-	if (pitIt==PIT.end()){
+
+	if (pitIt==PIT.end() || 
+		pitIt->second.timer > TTL //Timer is expired
+		
+		){
 	    bool * decision = strategy->get_decision(int_msg);
 	    handle_decision(decision,int_msg);
 	    delete [] decision;//free memory for the decision array
@@ -162,8 +170,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
 
-	if (PIT.size()>max_pit)
-	    max_pit = PIT.size();
 
     }
 }

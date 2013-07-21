@@ -12,5 +12,7 @@ packet ccn_interest{
 	int rep_target = -1; //repository target (should be set to a repository)
 	short hops = 0;
 	double btw = 0;
+	bool nfound = false;
+	int TTL = 10000;
 
 }

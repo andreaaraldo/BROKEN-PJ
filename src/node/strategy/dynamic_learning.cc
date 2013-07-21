@@ -29,23 +29,27 @@ Register_Class(dynamic_learning);
 
 
 bool *dynamic_learning::get_decision(cMessage *in){//check this function
-    int target;
     bool *decision;
+    int gsize = __get_outer_interfaces();
+    decision = new bool[gsize];
+    std::fill(decision,decision+gsize,0);
     ccn_interest *interest;
 
 
     if (in->getKind() == CCN_I){
 	interest = (ccn_interest *)in; //safely cast
-	target = interest->getTarget();
+	if (interest->getNfound()){
 
-	if (target != -1  ){
-	//if (target != -1 && target != getIndex() ){
-	    //exploit the target
-	    decision = exploit(interest);
+	    vector<int> repos = interest->get_repos();
+	    int repository = nearest(repos);
+	    int outif = FIB[repository].id;
+
+	    decision[outif]=true;
+
 	}else{
-	    //explore the network
 	    decision = explore(interest);
 	}
+
     }
     return decision;
 
@@ -103,5 +107,21 @@ bool *dynamic_learning::exploit(ccn_interest *interest){
 
     return decision;
 
+}
+
+int dynamic_learning::nearest(vector<int>& repositories){
+    int  min_len = 10000;
+    vector<int> targets;
+
+    for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ //Find the shortest (the minimum)
+        if (FIB[ *i ].len < min_len ){
+            min_len = FIB[ *i ].len;
+	    targets.clear();
+            targets.push_back(*i);
+        }else if (FIB[*i].len == min_len)
+	    targets.push_back(*i);
+
+    }
+    return targets[intrand(targets.size())];
 }
 

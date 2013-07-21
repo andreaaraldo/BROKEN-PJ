@@ -37,6 +37,7 @@ class dynamic_learning: public strategy_layer{
 	//Exploration and exploitation functions
 	bool *exploit(ccn_interest *);
 	bool *explore(ccn_interest *);
+	int nearest(vector<int> &);
 
     private:
 	uint32_t cut_off;
