@@ -73,6 +73,7 @@ class base_cache : public AbstractNode {
     private:
 	int  cache_size;
 	int  nodes;
+	int level;
 
 	DecisionPolicy *decisor;
 

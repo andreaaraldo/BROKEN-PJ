@@ -77,27 +77,26 @@ void strategy_layer::populate_routing_table(){
 
 	    cTopology::Node *to   = topo.getNode( d ); //destination node
 	    topo.weightedMultiShortestPathsTo( to ); 
-	    //cout<<node->getNumPaths()<<endl;
 	    rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths());
 
 	    FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
 	    FIB[d].len = node->getDistanceToTarget();
-	    //cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
-	    cout<<FIB[d].len<<" ";
+	    cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
+	    //cout<<FIB[d].len<<" ";
 	}else
-	    //cout<<getParentModule()->getIndex()+1<<" ";
-	    cout<<0<<" ";
+	    cout<<getParentModule()->getIndex()+1<<" ";
+	    //cout<<0<<" ";
     }
-    cout<<FIB[0].len+1<<";"<<endl;
-    //cout<<getParentModule()->gate("face$o",FIB[0].id)->getNextGate()->getOwnerModule()->getIndex()+1<<";"<<endl;;
+    //cout<<FIB[0].len+1<<";"<<endl;
+    cout<<getParentModule()->gate("face$o",FIB[0].id)->getNextGate()->getOwnerModule()->getIndex()+1<<";"<<endl;;
 
-    if (getIndex()==0){
-	cout<<"}}";
-        for (int d = 0; d<topo.getNumNodes();d++){
-            cout<<FIB[d].len+1<<" ";
-        }
-        cout<<0<<";"<<endl;;
-    }
+    //if (getIndex()==0){
+    //    cout<<"}}";
+    //    for (int d = 0; d<topo.getNumNodes();d++){
+    //        cout<<FIB[d].len+1<<" ";
+    //    }
+    //    cout<<0<<";"<<endl;;
+    //}
 
     //cout<<";"<<endl;
 

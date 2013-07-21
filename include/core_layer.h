@@ -75,6 +75,7 @@ class core_layer : public AbstractNode {
 	unsigned int my_bitmask;
 	double my_btw;
 	static int repo_interest;
+	int repo_load;
 	
 
 	//Architecture data structures

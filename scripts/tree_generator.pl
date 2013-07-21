@@ -57,6 +57,8 @@ print "//Uncle-nephew redundancy\n";
 &redundancy_level();
 print "//Brothers redundancy\n";
 &redundancy_peer();
+&header_end();
+&generate_levels();
 
 
 sub generate_core(){
@@ -109,6 +111,32 @@ connections allowunconnected:
 NED
 }
     
+
+sub header_end(){
+    print "}\n";
+}
+
+
+sub generate_levels(){
+    my %l,$c;
+    $c = 0;
+    $level{$c} = 0;
+    $nl = 1;
+
+    foreach $i (1..$l-1){
+	$nl = $d*$nl;
+	for $j ($c+1..$c+$nl){
+	    $level{$j} = $i;
+	}
+	$c = $c+$nl;
+    }
+    $file_ini ="levels_tree_".$l."_".$d.".ini"; 
+    open (INI,">$file_ini");
+    foreach $m (sort {$a<=> $b}keys %level){
+	print INI "**.node[$m].level=", "  ", $level{$m},"\n";
+    }
+    close INI;
+}
 
 
 
