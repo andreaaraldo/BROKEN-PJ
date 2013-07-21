@@ -44,6 +44,7 @@
 void base_cache::initialize(){
 
     nodes      = getAncestorPar("n");
+    level = getAncestorPar("level");
     cache_size = par("C");  //cache size
 
 
@@ -103,6 +104,8 @@ void base_cache::finish(){
 
 //Base class function: a data has been received:
 void base_cache::received_data(cMessage *in){
+    if (cache_size ==0)
+	return;
 
     if (decisor->data_to_cache((ccn_data*)in ) )
 	store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function

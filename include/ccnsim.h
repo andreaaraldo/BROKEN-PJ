@@ -21,7 +21,7 @@
 typedef unsigned int info_t; //representation for a catalog  entry [size|repos]
 typedef unsigned short filesize_t; //representation for the size part within the catalog entry
 typedef unsigned short repo_t; //representation for the repository part within the catalog entry
-typedef unsigned char interface_t; //representation of a PIT entry (containing interface information)
+typedef unsigned int interface_t; //representation of a PIT entry (containing interface information)
 
 //Chunk fields
 typedef unsigned long long  chunk_t; //representation for any chunk flying within the system. It represents a pair [name|number]

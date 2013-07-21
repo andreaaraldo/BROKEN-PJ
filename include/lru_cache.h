@@ -48,6 +48,7 @@ struct lru_pos{
 
 //Defines a simple lru cache composed by a map and a list of position within the map.
 class lru_cache:public base_cache{
+    friend class statistics;
     public:
 	lru_cache():base_cache(),actual_size(0),lru(0),mru(0){;}
     protected:
