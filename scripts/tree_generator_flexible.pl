@@ -7,13 +7,15 @@ use Getopt::Long;
 
 $l = shift; # levels of the tree
 $d = shift; # arity of the tree (how many child each non-leaf node has)
+$p_sibling = shift;
+$p_uncle = shift;
+
+
 $N = ($d**$l -1)/($d-1); # number of nodes
 
 # To activate or deactivate debug messages
 $debug_msg =0;
 
-$p_sibling = 1;
-$p_uncle = 1;
 $seed = 1;
 # srand($seed);
 srand();
