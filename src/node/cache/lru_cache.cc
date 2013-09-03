@@ -67,9 +67,6 @@ void lru_cache::data_store(chunk_t elem){
         lru->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
         tmp->older = 0;
         tmp->newer = 0;
-	//output the characteristic time of the cache
-	tau = simTime() - tmp->hit_time;
-	//cout<<getIndex()<<"\t"<<simTime()<<"\t"<<tau<<endl;
 
         free(tmp);
         cache.erase(k); //erase from the cache the most unused element

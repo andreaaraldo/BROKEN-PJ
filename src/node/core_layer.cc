@@ -205,7 +205,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	}
 
 	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
-	PIT[chunk].nonces.insert(nonce);
 
 
     }
@@ -248,17 +247,10 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
     if (my_btw > interest->getBtw())
 	interest->setBtw(my_btw);
 
-<<<<<<< HEAD
     for (int i = 0; i < __get_outer_interfaces(); i++)
-	if (decision[i] == true && !__check_client(i))
-	    send(interest->dup(),"face$o",i);
-=======
-    for (int i = 0; i < getOuterInterfaces(); i++)
-	if (decision[i] == true && 
-		!check_client(i))
-		//&& interest->getArrivalGate()->getIndex() != i)
+	if (decision[i] == true && !__check_client(i)
+		&& interest->getArrivalGate()->getIndex() != i)
 	    sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
->>>>>>> infocom2014
 }
 
 

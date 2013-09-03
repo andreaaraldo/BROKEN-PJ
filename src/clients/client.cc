@@ -134,15 +134,9 @@ void client::handle_timers(cMessage *timer){
 	    for (multimap<name_t, download >::iterator i = current_downloads.begin();i != current_downloads.end();i++){
 		if ( simTime() - i->second.last > RTT ){
 		    //resend the request for the given chunk
-<<<<<<< HEAD
-		    send_interest(i->first,i->second.chunk, -1);
 		    cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
 		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
-=======
-		    resend_interest(i->first,i->second.missing_chunks,-1);
-		    //cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
-		    //cout<<i->first<<"(while waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
->>>>>>> infocom2014
+		    resend_interest(i->first,i->second.chunk,-1);
 		}
 	    }
 	    scheduleAt( simTime() + check_time, timer );
@@ -156,12 +150,7 @@ void client::handle_timers(cMessage *timer){
 void client::request_file(){
 
     name_t name = content_distribution::zipf.value(dblrand());
-<<<<<<< HEAD
     current_downloads.insert(pair<name_t, download >(name, download (0,simTime() ) ) );
-=======
-    //name_t name = 1;
-    current_downloads.insert(pair<name_t, file_entry>(name, file_entry (0,simTime() ) ) );
->>>>>>> infocom2014
     send_interest(name, 0 ,-1);
 
 }

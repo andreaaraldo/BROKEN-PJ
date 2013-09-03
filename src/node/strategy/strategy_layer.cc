@@ -32,7 +32,7 @@ void strategy_layer::initialize(){
 
     for (int i = 0; i<getParentModule()->gateSize("face$o");i++){
 	int index ;
-	if (!check_client(i))
+	if (!__check_client(i))
 	    index = getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
         gatelu[index] = i;
     }
@@ -87,18 +87,6 @@ void strategy_layer::populate_routing_table(){
 	    ;//cout<<getParentModule()->getIndex()+1<<" ";
 	    //cout<<0<<" ";
     }
-    //cout<<FIB[0].len+1<<";"<<endl;
-    //cout<<getParentModule()->gate("face$o",FIB[0].id)->getNextGate()->getOwnerModule()->getIndex()+1<<";"<<endl;;
-
-    //if (getIndex()==0){
-    //    cout<<"}}";
-    //    for (int d = 0; d<topo.getNumNodes();d++){
-    //        cout<<FIB[d].len+1<<" ";
-    //    }
-    //    cout<<0<<";"<<endl;;
-    //}
-
-    //cout<<";"<<endl;
 
 }
 

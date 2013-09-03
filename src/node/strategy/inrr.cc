@@ -84,7 +84,7 @@ bool *inrr::exploit(ccn_interest *interest){
 	gsize,
 	times;
 
-    gsize = getOuterInterfaces();
+    gsize = __get_outer_interfaces();
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
 

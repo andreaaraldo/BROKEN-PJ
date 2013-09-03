@@ -48,7 +48,7 @@ void base_cache::initialize(){
     cache_size = par("C");  //cache size
 
 
-    string decision_policy = par("CD");
+    string decision_policy = par("DS");
     //Initialize the storage policy
     if (decision_policy.compare("lcd")==0){
 	decisor = new LCD();
@@ -68,11 +68,6 @@ void base_cache::initialize(){
     else 
 	decisor = new Always();
 
-    //if (getIndex()==5){
-    //    chunk_t dummy=0;
-    //    __sid(dummy,1);
-    //    store(dummy);
-    //}
 
 
     //Cache statistics

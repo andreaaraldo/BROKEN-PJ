@@ -15,9 +15,9 @@ simple strategy_layer like strategy
 	inout strategy_port;
 }
 
-simple nearest_repository extends strategy_layer
+simple spr extends strategy_layer
 {
-    @class(nearest_repository);
+    @class(spr);
 }
 
 simple random_repository extends strategy_layer
@@ -31,19 +31,14 @@ simple parallel_repository extends strategy_layer
 }
 
 
-simple dynamic_learning extends strategy_layer{
+simple nrr1 extends strategy_layer{
     parameters:
 	int cut_off = default(1);
 	int dyn_TTL = default(1000);
-    @class(dynamic_learning);
+    @class(nrr1);
 }
 
 simple inrr extends strategy_layer{
     @class(inrr);
 }
 
-simple nrr extends strategy_layer{
-    parameters:
-	int TTL = default(2);
-    @class(nrr);
-}

@@ -29,7 +29,7 @@
 #include <omnetpp.h>
 #include <fstream>
 
-#include "abstract_node.h"
+//#include "abstract_node.h"
 #include <boost/unordered_map.hpp>
 
 using namespace std;
