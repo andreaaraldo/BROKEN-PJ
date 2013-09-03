@@ -34,11 +34,13 @@ simple parallel_repository extends strategy_layer
 simple nrr1 extends strategy_layer{
     parameters:
 	int cut_off = default(1);
-	int dyn_TTL = default(1000);
+	int TTL1 = default(1000);
     @class(nrr1);
 }
 
-simple inrr extends strategy_layer{
-    @class(inrr);
+simple nrr extends strategy_layer{
+    parameters:
+	int TTL2 = default(1000);
+    @class(nrr);
 }
 

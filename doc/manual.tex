@@ -1,4 +1,5 @@
 \documentclass{book}
+\usepackage{float}
 \usepackage{url}
 \usepackage{fancyvrb}
 \usepackage{definitions}
@@ -13,6 +14,8 @@
 \newcommand{\client}{\texttt{client}}
 \newcommand{\node}{\texttt{node}}
 
+\newfloat{program}{thp}{lop}
+\floatname{program}{Program}
 \title{\ccnsim\ user manual}
 
 \begin{document}
@@ -45,25 +48,27 @@ Our simulator, \ccnsim\ comes as a set of custom modules and classes that extend
 We report the aforementioned steps in \figR{omnet}.
 \section{Overall structure of \ccnsim}
 In order to better understand the organization of \ccnsim, the best is to look at its internal organization. In the following we reproduce the basic directory organization of \ccnsim:
-\begin{Verbatim}[frame=single]
-|-- topologies
-|-- modules
-|   |-- clients
-|   |-- content
-|   |-- node
-|   |   |-- cache
-|   |   |-- strategy
-|   |-- statistics
-|-- packets
-|-- include
-|-- src
-|   |-- clients
-|   |-- content
-|   |-- node
-|   |   |-- cache
-|   |   |-- strategy
-|   |-- statistics
-\end{Verbatim}
+\begin{program}
+    \begin{Verbatim}[frame=single]
+    |-- topologies
+    |-- modules
+    |   |-- clients
+    |   |-- content
+    |   |-- node
+    |   |   |-- cache
+    |   |   |-- strategy
+    |   |-- statistics
+    |-- packets
+    |-- include
+    |-- src
+    |   |-- clients
+    |   |-- content
+    |   |-- node
+    |   |   |-- cache
+    |   |   |-- strategy
+    |   |-- statistics
+    \end{Verbatim}
+\end{program}
 As said within the introduction, \ccnsim\ is a package built over the top of Omnet++. As such, we can divide its implementation in two different subunits. One subunit is represented by the \ned\ description of the Omnet++ modules, and included within the directory \verb|modules| and \verb|topologies|. The first directory, is basically the description of the operational modules employed by \ccnsim, like clients, nodes, and so forth. 
 
 Instead, within the \verb|topologies| directory there are some sample topologies (in \verb|.ned| format) ready to be used. 

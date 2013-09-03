@@ -34,7 +34,7 @@ bool *nrr1::get_decision(cMessage *in){//check this function
     decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
     ccn_interest *interest;
-    int dyn_TTL = par("dyn_TTL");
+    int dyn_TTL = par("TTL1");
 
 
     if (in->getKind() == CCN_I){

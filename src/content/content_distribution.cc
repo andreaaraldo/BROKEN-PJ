@@ -50,8 +50,8 @@ void content_distribution::initialize(){
     num_repos = getAncestorPar("num_repos"); //Number of repositories (specifically ccn_node(s) who a repository is connected to)
     num_clients = getAncestorPar ("num_clients");
     alpha = par("alpha");
-    cardF = par("cardF"); //Number of files within the system
-    F = par("F"); //Average chunk size
+    cardF = par("objects"); //Number of files within the system
+    F = par("file_size"); //Average chunk size
     degree = getAncestorPar("replicas");
 
 

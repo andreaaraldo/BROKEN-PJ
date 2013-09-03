@@ -49,7 +49,7 @@ void nrr::initialize(){
     strategy_layer::initialize();
     vector<string> ctype;
     ctype.push_back("modules.node.node");
-    TTL = par("TTL");
+    TTL = par("TTL2");
 
     cTopology topo;
     topo.extractByNedTypeName(ctype);

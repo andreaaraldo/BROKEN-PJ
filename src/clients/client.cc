@@ -166,7 +166,6 @@ void client::resend_interest(name_t name,cnumber_t number, int toward){
     interest->setChunk(chunk);
     interest->setHops(-1);
     interest->setTarget(toward);
-    interest->setNonce(nonce++ % 1000000000);
     interest->setNfound(true);
     send(interest, "client_port$o");
 }
@@ -182,7 +181,6 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
     interest->setChunk(chunk);
     interest->setHops(-1);
     interest->setTarget(toward);
-    interest->setNonce(nonce++ % 1000000000);
     send(interest, "client_port$o");
 }
 

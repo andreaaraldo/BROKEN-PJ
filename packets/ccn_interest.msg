@@ -7,19 +7,18 @@ packet ccn_interest{
 	@customize(true);
 	abstract int path[];//for source routed path (@deprecated)
 
-	chunk_t chunk;
-	int nonce = 0;
-	int hops = 0;
+	chunk_t chunk; //Actual downloading chunk (name+chunk number=64 bit)
+	int hops = 0; //Hop counter
 
 
-	int target = -1; //generic target (can be a repository or a generic node)
-	int rep_target = -1; //repository target (should be set to a repository)
-	double btw = 0;
-	bool nfound = false;
-	int TTL = 10000;
+	int target = -1; //Generic target of the interest (can be a repository or a generic node)
+	int rep_target = -1; //Repository target (it MUST be a repository)
 
-	int capacity = 0;;
+	double btw = 0; //Maximum betweenness centrality along the traveled path (used by the btw DS).
+	int TTL = 10000; //Maximum number of hops (after the packet is discarded)
+	bool nfound = false; //Set by a client once the timer for a given object is expired, and used by the core in order to invalidate PIT's entries)
 
-	int origin = -1;
-	double delay=0;
+	int capacity = 0;
+	int origin = -1; //Origin of the interest (rarely used)
+	double Delay = 0; //Delay used by nodes for delay-sending the given packet (useful for simulate any sort of delays)
 }
