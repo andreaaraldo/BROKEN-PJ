@@ -95,7 +95,7 @@ bool *nrr::exploit(ccn_interest *interest){
 	vector<int> repos = interest->get_repos();
 	repository = nearest(repos);
 
-	if (it!=cfib.end() && it->len <= FIB[repository].len+1){
+	if (it!=cfib.end() && it->len <= FIB[repository].len+1){//found!!!
 
 	    times = std::count_if (cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
 	    if (times>0){
@@ -108,10 +108,12 @@ bool *nrr::exploit(ccn_interest *interest){
 	    node = it->cache->getIndex();
 	    outif = FIB[node].id;
 	    interest->setTarget(node);
+	    //interest->setDelay(2*FIB[node].len*0.001);
 
-	}else{
+	}else{//not found
 	    outif = FIB[repository].id;
 	    interest->setTarget(repository);
+	    //interest->setDelay(2*TTL*0.001);
 	}
 
 	//if (it!=cfib.end())

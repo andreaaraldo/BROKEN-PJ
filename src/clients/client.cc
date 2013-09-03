@@ -34,8 +34,11 @@
 
 Register_Class (client);
 
+ofstream client::distance_pdf;
 
 void client::initialize(){
+
+
     int num_clients = getAncestorPar("num_clients");
     active = false;
     if (find(content_distribution::clients , content_distribution::clients + num_clients ,getNodeIndex()) 
@@ -56,6 +59,11 @@ void client::initialize(){
 	avg_time = 0;
 	tot_downloads = 0;
 	tot_chunks = 0;
+	if (!distance_pdf.is_open()){
+	    string str_dist_pdf = ev.getConfig()->getConfigValue("output-vector-file");
+	    str_dist_pdf.replace(str_dist_pdf.find(".vec"),10,".pdf");
+	    distance_pdf.open( str_dist_pdf.c_str());
+	}
 
 	scheduleAt( simTime() , new cMessage("arrival", ARRIVAL ) );
 	scheduleAt( simTime() + check_time, new cMessage("timer", TIMER) );
@@ -100,6 +108,9 @@ void client::finish(){
 
 	sprintf ( name, "downloads[%d]",getNodeIndex());
 	recordScalar (name, tot_downloads );
+
+	sprintf ( name, "avg_time[%d]",getNodeIndex());
+	recordScalar (name, avg_time);
 
 	//Output per file statistics
 	sprintf ( name, "hdistance[%d]", getNodeIndex());
@@ -185,7 +196,8 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     //----------Statistics-----------------
     // Average clients statistics
     avg_distance = (tot_chunks*avg_distance+data_message->getHops())/(tot_chunks+1);
-    tot_chunks++;
+    //tot_chunks++;
+    distance_pdf<<getIndex()<<"  "<<name<<"  "<<data_message->getHops()<<endl;
     tot_downloads+=1./size;
 
 
@@ -218,6 +230,8 @@ void client::handle_incoming_chunk (ccn_data *data_message){
         	send_interest(name, it->second.missing_chunks,data_message->getTarget());
             } else { 
         	//if the file is completed delete the entry from the pendent file list
+		simtime_t completion_time = simTime()-it->second.start;
+		avg_time = (tot_chunks*avg_time+completion_time )*1./(tot_chunks+1);
         	if (current_downloads.count(name)==1){
         	    current_downloads.erase(name);
         	    break;
@@ -229,11 +243,17 @@ void client::handle_incoming_chunk (ccn_data *data_message){
         }
         ++it;
     }
+    tot_chunks++;
 
 
 }
 
 void client::clear_stat(){
+    distance_pdf.close();
+    string str_dist_pdf = ev.getConfig()->getConfigValue("output-vector-file");
+    str_dist_pdf.replace(str_dist_pdf.find(".vec"),10,".pdf");
+    distance_pdf.open(str_dist_pdf.c_str(), std::fstream::out | std::fstream::trunc);
+
     avg_distance = 0;
     avg_time = 0;
     tot_downloads = 0;

@@ -46,6 +46,7 @@ class base_cache;
 struct pit_entry {
     interface_t interfaces;
     unordered_set<int> nonces;
+    simtime_t time;
 };
 
 
@@ -74,6 +75,7 @@ class core_layer : public AbstractNode {
 	unsigned short nodes;
 	unsigned int my_bitmask;
 	double my_btw;
+	double RTT;
 	static int repo_interest;
 	int repo_load;
 	

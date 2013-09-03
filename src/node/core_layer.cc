@@ -37,6 +37,7 @@ int core_layer::repo_interest = 0;
 
 
 void  core_layer::initialize(){
+    RTT = par("RTT");
     repo_load = 0;
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
@@ -191,15 +192,18 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	unordered_set <int> *nonces = &(pitIt->second.nonces);
 
 	if (pitIt==PIT.end() || 
-		(pitIt != PIT.end() && int_msg->getNfound()) ){
-	  bool * decision = strategy->get_decision(int_msg);
-	  handle_decision(decision,int_msg);
-	  delete [] decision;//free memory for the decision array
+		(pitIt != PIT.end() && int_msg->getNfound()) ||
+		    simTime() - PIT[chunk].time > 2*RTT ){
+	    bool * decision = strategy->get_decision(int_msg);
+	    handle_decision(decision,int_msg);
+	    delete [] decision;//free memory for the decision array
 
-	  if (int_msg->getNfound()){
-	      PIT.erase(chunk);
-	  }
-	} //else {
+	    if (pitIt!=PIT.end())
+		PIT.erase(chunk);
+	    PIT[chunk].time = simTime();
+
+	}
+	  //else {
 	  //  
 	  //  if (nonces->find(nonce) != nonces->end()){
 	  //      bool * decision = strategy->get_decision(int_msg);
@@ -255,7 +259,7 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 	if (decision[i] == true && 
 		!check_client(i))
 		//&& interest->getArrivalGate()->getIndex() != i)
-	    send(interest->dup(),"face$o",i);
+	    sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
 }
 
 

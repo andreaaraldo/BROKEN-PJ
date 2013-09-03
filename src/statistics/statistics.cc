@@ -169,6 +169,7 @@ void statistics::finish(){
     uint32_t global_data      = 0;
 
     double global_avg_distance = 0;
+    simtime_t global_avg_time = 0;
     double global_tot_downloads = 0;
 
     for (int i = 0; i<num_nodes; i++){
@@ -232,11 +233,16 @@ void statistics::finish(){
     for (int i = 0;i<num_clients;i++){
 	global_avg_distance += clients[i]->avg_distance;
 	global_tot_downloads += clients[i]->tot_downloads;
+	global_avg_time  += clients[i]->avg_time;
     }
 
     sprintf ( name, "hdistance");
     recordScalar(name,global_avg_distance * 1./num_clients);
     cout<<"Distance/client: "<<global_avg_distance * 1./num_clients<<endl;
+
+    sprintf ( name, "avg_time");
+    recordScalar(name,global_avg_time * 1./num_clients);
+    cout<<"Time/client: "<<global_avg_time * 1./num_clients<<endl;
 
     sprintf ( name, "downloads");
     recordScalar(name,global_tot_downloads);

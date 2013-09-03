@@ -20,5 +20,6 @@ packet ccn_interest{
 
 	bool nfound = false;
 	int origin = -1;
+	double delay=0;
 	int TTL;
 }

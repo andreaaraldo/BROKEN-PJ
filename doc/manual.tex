@@ -11,19 +11,20 @@
 \newpage
 \section{Introduction}
 \subsection{What is \ccnsim?}
-\ccnsim\ is a scalable chunk-level simulator of Content Centric Networks (CCN)\cite{jacobson09conext}, that we developed in the context of the ANR Project Connect.  
+\ccnsim\ is a scalable chunk-level simulator for Content Centric Networks (CCN)\cite{jacobson09conext}, that we developed in the context of the Connect  ANR Project.
 
 \begin{itemize}
     \item It is written in C++ under the Omnet++ framework.
     \item It  allows to simulate CCN networks in scenarios with large orders of magnitude.
-    \item It is distributed as free software, downloadable at \url{http://site}.
+    \item It is distributed as free software, downloadable at \url{http://www.enst.fr/~drossi/ccnsim}
 \end{itemize}
-\ccnsim\ extends Omnet++ as to provide a modular environment in order to simulate CCN networks. Mainly,  \ccnsim\ models the forwarding aspects of a CCN network, namely the caching strategies, and the forwarding layer of a CCN node. However, it is fairly modular, and simple to . We hope that you enjoy \ccnsim\, in which case we ask you to please cite our paper \cite{ccn12icc}. 
-\ccnsim\ is able to simulate content stores up to 106 chunks and catalog sizes up to 108 files in a reasonable time.  
-%for CCN content stores and Internet catalog sizes On a PC equipped with 24GB of RAM, 
+
+\ccnsim\ extends Omnet++ as to provide a modular environment in order to simulate CCN networks. Mainly,  \ccnsim\ models the forwarding aspects of a CCN network, namely the caching strategies, and the forwarding layer of a CCN node. However, it is fairly modular, and simple to extend. We hope that you enjoy \ccnsim\, in which case we ask you to please cite our paper \cite{ccn12icc}. 
+
+\ccnsim\ is able to simulate content stores up to 10$^6$ chunks and catalog sizes up to 10$^8$ files in a reasonable time.  
+
 \subsection{\ccnsim\ and Oment++}
-Omnet++ is a C++ based event-driven simulator engine. Omnet++ is only an engine. It provides a set of core C++ classes to extend, in order to design the behaviour of a custom simulator. 
-Moreover, it provides a network description language (\verb|ned|) in order to describe how the custom modules interact each other. 
+Omnet++ is a C++ based event-driven simulator engine. Omnet++ is a bare environment. It provides a set of core C++ classes to extend, in order to design the behaviour of a custom simulator.  Moreover, it provides a network description language (\verb|ned|) in order to describe how the custom modules interact each other. 
 
 A \ccnsim\ simulation comes across three steps:
 \begin{itemize}
