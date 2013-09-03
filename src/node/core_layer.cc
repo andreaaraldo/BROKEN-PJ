@@ -33,9 +33,12 @@
 #include "base_cache.h"
 
 Register_Class(core_layer);
+int core_layer::repo_interest = 0;
 
 
 void  core_layer::initialize(){
+    RTT = par("RTT");
+    repo_load = 0;
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
     int num_repos = getAncestorPar("num_repos");
@@ -46,7 +49,7 @@ void  core_layer::initialize(){
 	if (content_distribution::repositories[i] == getIndex())
 	    break;
     my_bitmask = (1<<i);//recall that the width of the repository bitset is only num_repos
-    //cout<<getIndex()<<"]"<<my_bitmask<<endl;
+
     //Getting the content store
     ContentStore = (base_cache *) gate("cache_port$o")->getNextGate()->getOwner();
     strategy = (strategy_layer *) gate("strategy_port$o")->getNextGate()->getOwner();
@@ -84,6 +87,7 @@ void core_layer::handleMessage(cMessage *in){
 	if (int_msg->getHops() == int_msg->getTTL()){
 	    break;
 	}
+	int_msg->setCapacity (int_msg->getCapacity() + ContentStore->get_size());
 
 	handle_interest (int_msg);
 
@@ -94,7 +98,6 @@ void core_layer::handleMessage(cMessage *in){
 
 	data_msg = (ccn_data* ) in; //One hop more from the last caching node (useful for distance policy)
 	data_msg->setHops(data_msg -> getHops() + 1);
-
 	handle_data(data_msg);
 
 	break;
@@ -110,11 +113,24 @@ void core_layer::finish(){
     sprintf ( name, "interests[%d]", getIndex());
     recordScalar (name, interests);
 
+    if (repo_load != 0){
+	sprintf ( name, "repo_load[%d]", getIndex());
+	recordScalar(name,repo_load);
+    }
+
     //Total data
     sprintf ( name, "data[%d]", getIndex());
     recordScalar (name, data);
 
+    if (repo_interest != 0){
+	sprintf ( name, "repo_int[%d]", getIndex());
+	recordScalar(name, repo_interest);
+	repo_interest = 0;
+    }
+
+
 }
+
 
 
 
@@ -133,8 +149,16 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         //a) Check in your Content Store
         //
         ccn_data* data_msg = compose_data(chunk);
-        data_msg->setTarget(getIndex());
+
+        data_msg->setHops(0);
         data_msg->setBtw(int_btw); //Copy the highest betweenness
+        data_msg->setTarget(getIndex());
+	data_msg->setFound(true);
+
+	data_msg->setCapacity(int_msg->getCapacity());
+	data_msg->setTSI(int_msg->getHops());
+	data_msg->setTSB(1);
+
         send(data_msg,"face$o", int_msg->getArrivalGate()->getIndex());
 
     } else if ( my_bitmask & __repo(int_msg->get_name() ) ){
@@ -143,13 +167,21 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	// we are mimicking a message sent to the repository
 	//
         ccn_data* data_msg = compose_data(chunk);
-        data_msg->setTarget(getIndex());
+	repo_interest++;
+	repo_load++;
+
         data_msg->setHops(1);
+        data_msg->setTarget(getIndex());
 	data_msg->setBtw(std::max(my_btw,int_btw));
 
-        ContentStore->store(data_msg);
-        send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
+	data_msg->setCapacity(int_msg->getCapacity());
+	data_msg->setTSI(int_msg->getHops() + 1);
+	data_msg->setTSB(1);
+	data_msg->setFound(true);
 
+        ContentStore->store(data_msg);
+
+        send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
 
     } else {
 	//
@@ -158,17 +190,22 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 	unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
+
 	if (pitIt==PIT.end() || 
-		pitIt->second.timer > TTL //Timer is expired
-		
-		){
+		(pitIt != PIT.end() && int_msg->getNfound()) ||
+		    simTime() - PIT[chunk].time > 2*RTT ){
 	    bool * decision = strategy->get_decision(int_msg);
 	    handle_decision(decision,int_msg);
 	    delete [] decision;//free memory for the decision array
+
+	    if (pitIt!=PIT.end())
+		PIT.erase(chunk);
+	    PIT[chunk].time = simTime();
+
 	}
 
-
 	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
+	PIT[chunk].nonces.insert(nonce);
 
 
     }
@@ -183,7 +220,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
  * interested interfaces.
  */
 void core_layer::handle_data(ccn_data *data_msg){
-
 
     int i = 0;
     interface_t interfaces = 0;
@@ -212,9 +248,17 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
     if (my_btw > interest->getBtw())
 	interest->setBtw(my_btw);
 
+<<<<<<< HEAD
     for (int i = 0; i < __get_outer_interfaces(); i++)
 	if (decision[i] == true && !__check_client(i))
 	    send(interest->dup(),"face$o",i);
+=======
+    for (int i = 0; i < getOuterInterfaces(); i++)
+	if (decision[i] == true && 
+		!check_client(i))
+		//&& interest->getArrivalGate()->getIndex() != i)
+	    sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
+>>>>>>> infocom2014
 }
 
 
@@ -242,6 +286,7 @@ ccn_data* core_layer::compose_data(uint64_t response_data){
  * Clear local statistics
  */
 void core_layer::clear_stat(){
+    repo_interest = 0;
     interests = 0;
     data = 0;
 }

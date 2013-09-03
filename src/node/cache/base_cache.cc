@@ -35,13 +35,16 @@
 #include "always_policy.h"
 #include "decision_policy.h"
 #include "betweenness_centrality.h"
+#include "prob_cache.h"
 
 #include "ccnsim.h"
+
 
 //Initialization function
 void base_cache::initialize(){
 
     nodes      = getAncestorPar("n");
+    level = getAncestorPar("level");
     cache_size = par("C");  //cache size
 
 
@@ -58,10 +61,18 @@ void base_cache::initialize(){
 	if (fabs(db - 1)<=0.001)
 	    error ("Node %i betwenness not defined.",getIndex());
 	decisor = new Betweenness(db);
-    }else if (decision_policy.compare("never")==0)
+    }else if (decision_policy.find("prob_cache")==0){
+	decisor = new prob_cache(cache_size);
+    } else if (decision_policy.find("never")==0)
 	decisor = new Never();
     else 
 	decisor = new Always();
+
+    //if (getIndex()==5){
+    //    chunk_t dummy=0;
+    //    __sid(dummy,1);
+    //    store(dummy);
+    //}
 
 
     //Cache statistics
@@ -79,6 +90,14 @@ void base_cache::finish(){
     //Average hit rate
     recordScalar (name, hit * 1./(hit+miss));
 
+
+    sprintf ( name, "hits[%d]", getIndex());
+    recordScalar (name, hit );
+
+
+    sprintf ( name, "misses[%d]", getIndex());
+    recordScalar (name, miss);
+
     //Per file hit rate
     sprintf ( name, "hit_node[%d]", getIndex());
     cOutVector hit_vector(name);
@@ -92,6 +111,8 @@ void base_cache::finish(){
 
 //Base class function: a data has been received:
 void base_cache::store(cMessage *in){
+    if (cache_size ==0)
+	return;
 
     if (decisor->data_to_cache((ccn_data*)in ) )
 	data_store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
@@ -107,9 +128,9 @@ bool base_cache::lookup(chunk_t chunk ){
     name_t name = __id(chunk);
 
     if (data_lookup(chunk)){
-        found = true;
 	//Average cache statistics(hit)
 	hit++;
+	found = true;
 
 	//Per file cache statistics(hit)
 	if (name <= __file_bulk)
@@ -127,6 +148,10 @@ bool base_cache::lookup(chunk_t chunk ){
 
     return found;
 
+}
+
+bool base_cache::fake_lookup(chunk_t chunk){
+    return data_lookup(chunk);
 }
 
 

@@ -26,11 +26,15 @@
 #define STATISTICS_H_
 #include <omnetpp.h>
 #include <ctopology.h>
+#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
+
 class client;
 class core_layer;
 class base_cache;
 
 using namespace std;
+using namespace boost;
 
 /*
  * This class defines the central class for collecting statistics. Its first
@@ -80,6 +84,8 @@ class statistics : public cSimpleModule{
 
 	//Stabilization samples
 	vector< vector <double> > samples;
+	unordered_map <int, unordered_set <int> > level_union;
+	unordered_map <int, int> level_same;
 
 };
 #endif

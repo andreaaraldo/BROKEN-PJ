@@ -7,6 +7,7 @@
 //System packets
 #define CCN_I 100   //ccn interest 
 #define CCN_D 200   //ccn data 
+#define GHOST 5    //ghost interest
 
 //Clients timers
 #define ARRIVAL 300 //arrival of a request 
@@ -22,7 +23,7 @@
 typedef unsigned int info_t; //representation for a catalog  entry [size|repos]
 typedef unsigned short filesize_t; //representation for the size part within the catalog entry
 typedef unsigned short repo_t; //representation for the repository part within the catalog entry
-typedef unsigned char interface_t; //representation of a PIT entry (containing interface information)
+typedef unsigned int interface_t; //representation of a PIT entry (containing interface information)
 
 //Chunk fields
 typedef unsigned long long  chunk_t; //representation for any chunk flying within the system. It represents a pair [name|number]

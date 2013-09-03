@@ -26,10 +26,15 @@
 #define STRATEGY_H_
 
 #include "ccnsim.h"
+#include <omnetpp.h>
+#include <fstream>
+
+#include "abstract_node.h"
 #include <boost/unordered_map.hpp>
 
 using namespace std;
 using namespace boost;
+
 
 struct int_f{
     int  id;
@@ -52,6 +57,8 @@ class strategy_layer: public abstract_node{
 	//The only interface function. Cores should be call this function in
 	//order to get the interfaces on which sending the current interest
 	virtual bool* get_decision(cMessage *)=0;
+	static ifstream fdist;
+	static ifstream frouting;
     protected:
 	//Omnet base functions
 	virtual void initialize();
@@ -59,9 +66,11 @@ class strategy_layer: public abstract_node{
 
 	//FIB initialization functions
 	void populate_routing_table();
+	void populate_from_file();
 
 	//FIB (available to all subclasses, for sake of utilization)
 	unordered_map <int ,int_f> FIB;
+	unordered_map <int, int> gatelu;
 	int nodes;
 
 };

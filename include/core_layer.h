@@ -30,6 +30,7 @@
 #include "ccnsim.h"
 
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 using namespace std;
 using namespace boost;
@@ -44,6 +45,8 @@ class base_cache;
 //This structure takes care of data forwarding
 struct pit_entry {
     interface_t interfaces;
+    unordered_set<int> nonces;
+    simtime_t time;
 };
 
 
@@ -58,6 +61,7 @@ class core_layer : public abstract_node{
 
     //Custom functions
 	void handle_interest(ccn_interest *);
+	void handle_ghost(ccn_interest *);
 	void handle_data(ccn_data *);
 	void handle_decision(bool *, ccn_interest *);
 
@@ -71,6 +75,9 @@ class core_layer : public abstract_node{
 	unsigned short nodes;
 	unsigned int my_bitmask;
 	double my_btw;
+	double RTT;
+	static int repo_interest;
+	int repo_load;
 	
 
 	//Architecture data structures

@@ -27,6 +27,7 @@
 #include "core_layer.h"
 #include "base_cache.h"
 #include "content_distribution.h"
+#include "lru_cache.h"
 
 #include "ccnsim.h"
 Register_Class(statistics);
@@ -101,15 +102,17 @@ void statistics::handleMessage(cMessage *in){
             for (int i = 0; i < num_nodes;i++)
         	full += (int)caches[i]->full();
 
-            if (full >= partial_n){
+            if (full >= partial_n || simTime()>=10*3600){
         	cout<<"Caches filled at time "<<simTime()<<endl;
         	clear_stat();
-		delete full_check;
-        	scheduleAt(simTime() + ts, stable_check);
-            } else
-        	scheduleAt(simTime() + ts, full_check);
+        	scheduleAt(simTime() + ts, new cMessage("check_stability", STABLE_CHECK));
+        	delete in;
+            }else
+        	scheduleAt(simTime() + ts, in);
 
             break;
+//else if ( simTime()>=3*3600)
+//		scheduleAt(simTime() + time_steady, new cMessage("end", END));
 
 
         case STABLE_CHECK:
@@ -122,11 +125,10 @@ void statistics::handleMessage(cMessage *in){
         	scheduleAt(simTime() + time_steady, end );
         	clear_stat();
             } else 
-        	scheduleAt(simTime() + ts, stable_check);
-
-            break;
+        	scheduleAt(simTime() + ts, in);
+	    break;
         case END:
-	    delete end;
+            delete in;
             endSimulation();
     }
 
@@ -170,6 +172,7 @@ void statistics::finish(){
     uint32_t global_data      = 0;
 
     double global_avg_distance = 0;
+    simtime_t global_avg_time = 0;
     double global_tot_downloads = 0;
 
     for (int i = 0; i<num_nodes; i++){
@@ -180,6 +183,44 @@ void statistics::finish(){
 	    global_interests += cores[i]->interests;
 	}
     }
+
+    
+    //for (int k = 1; k<=num_nodes-2;k+=2){
+    //    for (int i = k;i<=k+1;i++){
+    //        lru_cache *lru = (lru_cache *) caches[i];
+    //        if ( lru->actual_size==0 ) break;
+    //        lru_pos *element = lru->lru;
+    //        while (element != lru->mru){
+    //    	level_union[k].insert(element->k);
+    //    	level_same[k]++;
+    //    	element = element->newer;
+    //        }
+    //        level_union[k].insert(element->k);
+    //        level_same[k]++;
+    //    }
+    //}
+    //
+    //for (int i = 0;i<num_nodes;i++){
+    //    lru_cache *lru = (lru_cache *) caches[i];
+    //    int l = caches[i]->level;
+    //    if ( l==0 || lru->actual_size==0 ) continue;
+
+    //    lru_pos *element = lru->lru;
+    //    while (element != lru->mru){
+    //        level_union[l].insert(element->k);
+    //        level_same[l]++;
+    //        element = element->newer;
+    //    }
+    //    level_union[l].insert(element->k);
+    //    level_same[l]++;
+    //}
+
+
+    //for (unordered_map<int,int>::iterator it = level_same.begin();it!=level_same.end();it++){
+    //    sprintf (name, "diversity[%i]",it->first);
+    //    recordScalar(name,level_union[it->first].size()*1./it->second);
+    //    //cout<<it->first<<":"<<level_union[it->first].size()*1./it->second<<endl;
+    //}
 
     //Print and store global statistics
     sprintf (name, "p_hit");
@@ -195,11 +236,16 @@ void statistics::finish(){
     for (int i = 0;i<num_clients;i++){
 	global_avg_distance += clients[i]->avg_distance;
 	global_tot_downloads += clients[i]->tot_downloads;
+	global_avg_time  += clients[i]->avg_time;
     }
 
     sprintf ( name, "hdistance");
     recordScalar(name,global_avg_distance * 1./num_clients);
     cout<<"Distance/client: "<<global_avg_distance * 1./num_clients<<endl;
+
+    sprintf ( name, "avg_time");
+    recordScalar(name,global_avg_time * 1./num_clients);
+    cout<<"Time/client: "<<global_avg_time * 1./num_clients<<endl;
 
     sprintf ( name, "downloads");
     recordScalar(name,global_tot_downloads);

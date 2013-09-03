@@ -23,15 +23,37 @@
  *
  */
 #include "strategy_layer.h"
+#include <sstream>
+ifstream strategy_layer::fdist;
+ifstream strategy_layer::frouting;
 
 
 void strategy_layer::initialize(){
-    populate_routing_table(); //Building forwarding table 
 
+    for (int i = 0; i<getParentModule()->gateSize("face$o");i++){
+	int index ;
+	if (!check_client(i))
+	    index = getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
+        gatelu[index] = i;
+    }
+    
+    
+    string fileradix = par("routing_file").stringValue();
+    string filerout = fileradix+".rou";
+    string filedist = fileradix+".dist";
+    if (fileradix!= ""){
+	if (!fdist.is_open()){
+	    fdist.open(filedist.c_str());
+	    frouting.open(filerout.c_str());
+	}
+	populate_from_file(); //Building forwarding table 
+    }else 
+	populate_routing_table(); //Building forwarding table 
 }
 
 void strategy_layer::finish(){
-    ;
+    fdist.close();
+    frouting.close();
 }
 
 //Common to each strategy layer. Populate the host-centric routing table.
@@ -55,17 +77,52 @@ void strategy_layer::populate_routing_table(){
 
 	    cTopology::Node *to   = topo.getNode( d ); //destination node
 	    topo.weightedMultiShortestPathsTo( to ); 
-	    rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths()-1);
+	    rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths());
 
 	    FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
 	    FIB[d].len = node->getDistanceToTarget();
-	}
+	    //cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
+	    //cout<<FIB[d].len<<" ";
+	}else
+	    ;//cout<<getParentModule()->getIndex()+1<<" ";
+	    //cout<<0<<" ";
     }
+    //cout<<FIB[0].len+1<<";"<<endl;
+    //cout<<getParentModule()->gate("face$o",FIB[0].id)->getNextGate()->getOwnerModule()->getIndex()+1<<";"<<endl;;
+
+    //if (getIndex()==0){
+    //    cout<<"}}";
+    //    for (int d = 0; d<topo.getNumNodes();d++){
+    //        cout<<FIB[d].len+1<<" ";
+    //    }
+    //    cout<<0<<";"<<endl;;
+    //}
+
+    //cout<<";"<<endl;
 
 }
 
+void strategy_layer::populate_from_file(){
+    string rline, dline;
+    getline(frouting, rline);
+    getline(fdist, dline);
 
+    istringstream diis (dline);
+    istringstream riis (rline);
+    int n = getAncestorPar("n");
 
+    int cell;
+    int k = 0;
 
+    while (k<n){
+	riis>>cell;
+	FIB[k++].id = gatelu[cell-1];
+    }
 
+    k = 0;
+    while (k<n){
+	diis>>cell;
+	FIB[k++].len = cell;
+    }
 
+}

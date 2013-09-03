@@ -34,22 +34,20 @@ bool *dynamic_learning::get_decision(cMessage *in){//check this function
     decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
     ccn_interest *interest;
+    int dyn_TTL = par("dyn_TTL");
 
 
     if (in->getKind() == CCN_I){
-	interest = (ccn_interest *)in; //safely cast
+        interest = (ccn_interest *)in; //safely cast
 	if (interest->getNfound()){
-
-	    vector<int> repos = interest->get_repos();
-	    int repository = nearest(repos);
-	    int outif = FIB[repository].id;
-
-	    decision[outif]=true;
-
-	}else{
-	    decision = explore(interest);
-	}
-
+	    decision = exploit_nearest(interest);
+	}else if (interest->getHops() >= dyn_TTL){
+	    int gsize = getOuterInterfaces();
+	    decision = new bool[gsize];
+	    std::fill(decision,decision+gsize,0);
+	}else {
+            decision  = explore(interest);
+        }
     }
     return decision;
 
@@ -62,7 +60,7 @@ bool *dynamic_learning::get_decision(cMessage *in){//check this function
  */
 bool *dynamic_learning::explore(ccn_interest *interest){
     int arrival_gate,
-	gsize;
+        gsize;
     bool *decision;
 
     gsize = __get_outer_interfaces();
@@ -95,8 +93,8 @@ bool *dynamic_learning::exploit(ccn_interest *interest){
     target = interest->getTarget();
 
     if (interest->getTarget() == getIndex()){//failure
-	interest->setTarget(-1);
-	return explore(interest);
+        interest->setTarget(-1);
+        return explore(interest);
     }
 
     outif = FIB[target].id;
@@ -109,6 +107,31 @@ bool *dynamic_learning::exploit(ccn_interest *interest){
 
 }
 
+<<<<<<< HEAD
+=======
+bool *dynamic_learning::exploit_nearest(ccn_interest *interest){
+
+    int repository,
+        outif,
+        gsize;
+
+    gsize = getOuterInterfaces();
+
+    vector<int> repos = interest->get_repos();
+    repository = nearest(repos);
+
+    outif = FIB[repository].id;
+
+
+    bool *decision = new bool[gsize];
+    std::fill(decision,decision+gsize,0);
+    decision[outif]=true;
+
+    return decision;
+
+}
+
+>>>>>>> infocom2014
 int dynamic_learning::nearest(vector<int>& repositories){
     int  min_len = 10000;
     vector<int> targets;

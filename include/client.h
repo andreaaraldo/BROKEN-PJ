@@ -68,6 +68,7 @@ class client : public cSimpleModule {
 	virtual void handle_timers(cMessage*);
 
 	void send_interest(name_t, cnumber_t, int);
+	void resend_interest(name_t,cnumber_t,int);
 
 	int  getNodeIndex();
 	void clear_stat();
@@ -89,6 +90,7 @@ class client : public cSimpleModule {
 	unsigned int tot_chunks;
 
 	simtime_t avg_time;
+	static ofstream distance_pdf;
 	double avg_distance;
 
 	//INI parameters

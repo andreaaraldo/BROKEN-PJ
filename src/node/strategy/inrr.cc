@@ -24,14 +24,45 @@
  */
 #include <omnetpp.h>
 #include <algorithm>
-#include "nearest_repository.h"
+#include "inrr.h"
+#include "ccnsim.h"
 #include "ccn_interest.h"
+#include "base_cache.h"
 
-Register_Class(nearest_repository);
+Register_Class(inrr);
+
+struct lookup{
+    chunk_t elem;
+    lookup(chunk_t e):elem(e){;}
+    bool operator() (centry c) const { return c.cache->fake_lookup(elem); }
+};
+
+struct lookup_len{
+    chunk_t elem;
+    int len;
+    lookup_len(chunk_t e,int l):elem(e),len(l){;}
+    bool operator() (centry c) const { return c.cache->fake_lookup(elem) && c.len ==len; }
+};
 
 
 
-bool *nearest_repository::get_decision(cMessage *in){
+void inrr::initialize(){
+    strategy_layer::initialize();
+    vector<string> ctype;
+    ctype.push_back("modules.node.node");
+    average_dist = 0;
+
+    cTopology topo;
+    topo.extractByNedTypeName(ctype);
+    for (int i = 0;i<topo.getNumNodes();i++){
+	if (i==getIndex()) continue;
+	base_cache *cptr = (base_cache *)topo.getNode(i)->getModule()->getModuleByRelativePath("cache");
+	cfib.push_back( centry ( cptr, FIB[i].len ) );
+    }
+    sort(cfib.begin(), cfib.end());
+}
+
+bool *inrr::get_decision(cMessage *in){
 
     bool *decision;
     if (in->getKind() == CCN_I){
@@ -45,28 +76,48 @@ bool *nearest_repository::get_decision(cMessage *in){
 
 
 //The nearest repository just exploit the host-centric FIB. 
-bool *nearest_repository::exploit(ccn_interest *interest){
+bool *inrr::exploit(ccn_interest *interest){
 
     int repository,
+	node,
 	outif,
-	gsize;
+	gsize,
+	times;
 
-    gsize = __get_outer_interfaces();
+    gsize = getOuterInterfaces();
+    bool *decision = new bool[gsize];
+    std::fill(decision,decision+gsize,0);
+
+    //find the first occurrence in the sorted vector of caches.
+    vector<centry>::iterator it = std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()));
+	
 
     vector<int> repos = interest->get_repos();
     repository = nearest(repos);
 
-    outif = FIB[repository].id;
+    if (it!=cfib.end() && it->len <= FIB[repository].len){
+
+	times = std::count_if (cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
+	if (times>0){
+	    int select = intrand(times);
+	    while (select) {
+		it++;
+		select--;
+	    }
+	}
+	node = it->cache->getIndex();
+	outif = FIB[node].id;
+
+    }else
+	outif = FIB[repository].id;
 
 
-    bool *decision = new bool[gsize];
-    std::fill(decision,decision+gsize,0);
-    decision[outif]=true;
-
+    decision[outif] = true;
     return decision;
 
 }
-int nearest_repository::nearest(vector<int>& repositories){
+
+int inrr::nearest(vector<int>& repositories){
     int  min_len = 10000;
     vector<int> targets;
 
@@ -80,5 +131,10 @@ int nearest_repository::nearest(vector<int>& repositories){
 
     }
     return targets[intrand(targets.size())];
+}
+
+void inrr::finish(){
+    ;
+    //string id = "nodegetIndex()+"]";
 }
 

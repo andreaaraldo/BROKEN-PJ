@@ -6,6 +6,7 @@ module node {
     parameters:
 	string CS = default("random_cache");
 	string SL = default("nearest_repository");
+	int level = default (-1);
 	double betweenness = default (-1);
 	@display("i=abstract/router;is=s");
     gates:

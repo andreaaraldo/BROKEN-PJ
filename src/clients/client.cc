@@ -34,9 +34,13 @@
 
 Register_Class (client);
 
+ofstream client::distance_pdf;
 
 void client::initialize(){
+
+
     int num_clients = getAncestorPar("num_clients");
+    active = false;
     if (find(content_distribution::clients , content_distribution::clients + num_clients ,getNodeIndex()) 
 	    != content_distribution::clients + num_clients){
 
@@ -55,6 +59,11 @@ void client::initialize(){
 	avg_time = 0;
 	tot_downloads = 0;
 	tot_chunks = 0;
+	if (!distance_pdf.is_open()){
+	    string str_dist_pdf = ev.getConfig()->getConfigValue("output-vector-file");
+	    str_dist_pdf.replace(str_dist_pdf.find(".vec"),10,".pdf");
+	    distance_pdf.open( str_dist_pdf.c_str());
+	}
 
 	arrival = new cMessage("arrival", ARRIVAL );
 	timer = new cMessage("timer", TIMER);
@@ -98,6 +107,9 @@ void client::finish(){
 	sprintf ( name, "downloads[%d]",getNodeIndex());
 	recordScalar (name, tot_downloads );
 
+	sprintf ( name, "avg_time[%d]",getNodeIndex());
+	recordScalar (name, avg_time);
+
 	//Output per file statistics
 	sprintf ( name, "hdistance[%d]", getNodeIndex());
 	cOutVector distance_vector(name);
@@ -122,9 +134,15 @@ void client::handle_timers(cMessage *timer){
 	    for (multimap<name_t, download >::iterator i = current_downloads.begin();i != current_downloads.end();i++){
 		if ( simTime() - i->second.last > RTT ){
 		    //resend the request for the given chunk
+<<<<<<< HEAD
 		    send_interest(i->first,i->second.chunk, -1);
 		    cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
 		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
+=======
+		    resend_interest(i->first,i->second.missing_chunks,-1);
+		    //cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
+		    //cout<<i->first<<"(while waiting for chunk n. "<<i->second.missing_chunks<<",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
+>>>>>>> infocom2014
 		}
 	    }
 	    scheduleAt( simTime() + check_time, timer );
@@ -138,12 +156,18 @@ void client::handle_timers(cMessage *timer){
 void client::request_file(){
 
     name_t name = content_distribution::zipf.value(dblrand());
+<<<<<<< HEAD
     current_downloads.insert(pair<name_t, download >(name, download (0,simTime() ) ) );
+=======
+    //name_t name = 1;
+    current_downloads.insert(pair<name_t, file_entry>(name, file_entry (0,simTime() ) ) );
+>>>>>>> infocom2014
     send_interest(name, 0 ,-1);
 
 }
 
-void client::send_interest(name_t name,cnumber_t number, int toward){
+void client::resend_interest(name_t name,cnumber_t number, int toward){
+    static int nonce = 0;
     chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
 
@@ -153,6 +177,23 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
     interest->setChunk(chunk);
     interest->setHops(-1);
     interest->setTarget(toward);
+    interest->setNonce(nonce++ % 1000000000);
+    interest->setNfound(true);
+    send(interest, "client_port$o");
+}
+
+void client::send_interest(name_t name,cnumber_t number, int toward){
+    static int nonce = 0;
+    chunk_t chunk = 0;
+    ccn_interest* interest = new ccn_interest("interest",CCN_I);
+
+    __sid(chunk, name);
+    __schunk(chunk, number);
+
+    interest->setChunk(chunk);
+    interest->setHops(-1);
+    interest->setTarget(toward);
+    interest->setNonce(nonce++ % 1000000000);
     send(interest, "client_port$o");
 }
 
@@ -167,7 +208,8 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     //----------Statistics-----------------
     // Average clients statistics
     avg_distance = (tot_chunks*avg_distance+data_message->getHops())/(tot_chunks+1);
-    tot_chunks++;
+    //tot_chunks++;
+    distance_pdf<<getIndex()<<"  "<<name<<"  "<<data_message->getHops()<<endl;
     tot_downloads+=1./size;
 
 
@@ -200,6 +242,8 @@ void client::handle_incoming_chunk (ccn_data *data_message){
         	send_interest(name, it->second.chunk, data_message->getTarget());
             } else { 
         	//if the file is completed delete the entry from the pendent file list
+		simtime_t completion_time = simTime()-it->second.start;
+		avg_time = (tot_chunks*avg_time+completion_time )*1./(tot_chunks+1);
         	if (current_downloads.count(name)==1){
         	    current_downloads.erase(name);
         	    break;
@@ -211,11 +255,17 @@ void client::handle_incoming_chunk (ccn_data *data_message){
         }
         ++it;
     }
+    tot_chunks++;
 
 
 }
 
 void client::clear_stat(){
+    distance_pdf.close();
+    string str_dist_pdf = ev.getConfig()->getConfigValue("output-vector-file");
+    str_dist_pdf.replace(str_dist_pdf.find(".vec"),10,".pdf");
+    distance_pdf.open(str_dist_pdf.c_str(), std::fstream::out | std::fstream::trunc);
+
     avg_distance = 0;
     avg_time = 0;
     tot_downloads = 0;
