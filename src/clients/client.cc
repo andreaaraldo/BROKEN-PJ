@@ -34,7 +34,6 @@
 
 Register_Class (client);
 
-ofstream client::distance_pdf;
 
 void client::initialize(){
 
@@ -59,11 +58,6 @@ void client::initialize(){
 	avg_time = 0;
 	tot_downloads = 0;
 	tot_chunks = 0;
-	if (!distance_pdf.is_open()){
-	    string str_dist_pdf = ev.getConfig()->getConfigValue("output-vector-file");
-	    str_dist_pdf.replace(str_dist_pdf.find(".vec"),10,".pdf");
-	    distance_pdf.open( str_dist_pdf.c_str());
-	}
 
 	arrival = new cMessage("arrival", ARRIVAL );
 	timer = new cMessage("timer", TIMER);
@@ -156,7 +150,6 @@ void client::request_file(){
 }
 
 void client::resend_interest(name_t name,cnumber_t number, int toward){
-    static int nonce = 0;
     chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
 
@@ -171,7 +164,6 @@ void client::resend_interest(name_t name,cnumber_t number, int toward){
 }
 
 void client::send_interest(name_t name,cnumber_t number, int toward){
-    static int nonce = 0;
     chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
 
@@ -196,7 +188,6 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     // Average clients statistics
     avg_distance = (tot_chunks*avg_distance+data_message->getHops())/(tot_chunks+1);
     //tot_chunks++;
-    distance_pdf<<getIndex()<<"  "<<name<<"  "<<data_message->getHops()<<endl;
     tot_downloads+=1./size;
 
 
@@ -248,10 +239,6 @@ void client::handle_incoming_chunk (ccn_data *data_message){
 }
 
 void client::clear_stat(){
-    distance_pdf.close();
-    string str_dist_pdf = ev.getConfig()->getConfigValue("output-vector-file");
-    str_dist_pdf.replace(str_dist_pdf.find(".vec"),10,".pdf");
-    distance_pdf.open(str_dist_pdf.c_str(), std::fstream::out | std::fstream::trunc);
 
     avg_distance = 0;
     avg_time = 0;
@@ -259,4 +246,5 @@ void client::clear_stat(){
     tot_chunks = 0;
     delete [] client_stats;
     client_stats = new client_stat_entry[__file_bulk+1];
+
 }

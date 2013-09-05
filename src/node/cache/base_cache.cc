@@ -81,7 +81,7 @@ void base_cache::initialize(){
 
 void base_cache::finish(){
     char name [30];
-    sprintf ( name, "hit_rate[%d]", getIndex());
+    sprintf ( name, "p_hit[%d]", getIndex());
     //Average hit rate
     recordScalar (name, hit * 1./(hit+miss));
 

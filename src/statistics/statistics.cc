@@ -105,15 +105,12 @@ void statistics::handleMessage(cMessage *in){
             if (full >= partial_n || simTime()>=10*3600){
         	cout<<"Caches filled at time "<<simTime()<<endl;
         	clear_stat();
-        	scheduleAt(simTime() + ts, new cMessage("check_stability", STABLE_CHECK));
-        	delete in;
+        	scheduleAt(simTime() + ts, stable_check);
+        	delete full_check;
             }else
         	scheduleAt(simTime() + ts, in);
 
             break;
-//else if ( simTime()>=3*3600)
-//		scheduleAt(simTime() + time_steady, new cMessage("end", END));
-
 
         case STABLE_CHECK:
 
@@ -185,43 +182,6 @@ void statistics::finish(){
     }
 
     
-    //for (int k = 1; k<=num_nodes-2;k+=2){
-    //    for (int i = k;i<=k+1;i++){
-    //        lru_cache *lru = (lru_cache *) caches[i];
-    //        if ( lru->actual_size==0 ) break;
-    //        lru_pos *element = lru->lru;
-    //        while (element != lru->mru){
-    //    	level_union[k].insert(element->k);
-    //    	level_same[k]++;
-    //    	element = element->newer;
-    //        }
-    //        level_union[k].insert(element->k);
-    //        level_same[k]++;
-    //    }
-    //}
-    //
-    //for (int i = 0;i<num_nodes;i++){
-    //    lru_cache *lru = (lru_cache *) caches[i];
-    //    int l = caches[i]->level;
-    //    if ( l==0 || lru->actual_size==0 ) continue;
-
-    //    lru_pos *element = lru->lru;
-    //    while (element != lru->mru){
-    //        level_union[l].insert(element->k);
-    //        level_same[l]++;
-    //        element = element->newer;
-    //    }
-    //    level_union[l].insert(element->k);
-    //    level_same[l]++;
-    //}
-
-
-    //for (unordered_map<int,int>::iterator it = level_same.begin();it!=level_same.end();it++){
-    //    sprintf (name, "diversity[%i]",it->first);
-    //    recordScalar(name,level_union[it->first].size()*1./it->second);
-    //    //cout<<it->first<<":"<<level_union[it->first].size()*1./it->second<<endl;
-    //}
-
     //Print and store global statistics
     sprintf (name, "p_hit");
     recordScalar(name,global_hit * 1./(global_hit+global_miss));

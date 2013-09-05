@@ -90,7 +90,6 @@ class client : public cSimpleModule {
 	unsigned int tot_chunks;
 
 	simtime_t avg_time;
-	static ofstream distance_pdf;
 	double avg_distance;
 
 	//INI parameters

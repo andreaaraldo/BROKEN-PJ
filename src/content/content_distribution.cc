@@ -75,23 +75,24 @@ void content_distribution::initialize(){
     //
     cStringTokenizer tokenizer(getAncestorPar("node_repos"),",");
     repositories = init_repos(tokenizer.asIntVector());
+
+    //Useful for statitics: write out the name of each repository within the network
     for (int i = 0; i < num_repos; i++){
 	sprintf(name,"repo-%d",i);
-	//For the sake of statistics keep the list of the repositories in the output
 	recordScalar(name,repositories[i]);
     }
 
     //
     //Clients initialization
     //
-    if (num_clients < 0)
-	//If num_clients is < 0 all nodes of the network are clients
+    if (num_clients < 0) //If num_clients is < 0 all nodes of the network are clients
 	num_clients = nodes;
     tokenizer = cStringTokenizer(getAncestorPar("node_clients"),",");
     clients = init_clients (tokenizer.asIntVector());
+
+    //Useful for statitics: write out the name of each repository within the network
     for (int i = 0; i < num_clients; i++){
 	sprintf(name,"client-%d",i);
-	//For the sake of statistics keep the list of the repositories in the output
 	recordScalar(name,clients[i]);
     }
 
