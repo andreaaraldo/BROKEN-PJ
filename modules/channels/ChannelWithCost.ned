@@ -22,5 +22,5 @@ channel ChannelWithCost extends DatarateChannel
     parameters:
         @class(ChannelWithCost);        
     	@statistic[effectiveCost] (record=sum);
-        double cost;
+        double cost = default(1);
 }
