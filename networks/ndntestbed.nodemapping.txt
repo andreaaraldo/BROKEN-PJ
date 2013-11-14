@@ -1,0 +1,20 @@
+// The ndn testbed topology is taken from http://netlab.cs.memphis.edu/script/htm/html/topology.html
+// In this file, we assign to each ndn node a number that will be used to indicate that node in the ndntestbed.ned
+
+PKU	0
+PARK	1
+UCLA	2
+REMAP	3
+UCI	4
+CAIDA/UCSD 5
+SPP-SALT	6
+CSU	7
+UA 8
+SPP-KANS	9
+WashU	10
+UM	11
+SPP-HOUS	12
+UIUC	13
+SPP-ATLA	14
+SPP-WASH	15
+NEU	16
