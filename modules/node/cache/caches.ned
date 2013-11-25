@@ -13,7 +13,7 @@ simple base_cache like cache
     parameters:
     	@display("i=block/buffer2;is=l");
 
-	string DS = default("always");
+	string DS = default("lce");
 	int C = default (100);
     gates:
 	inout cache_port;

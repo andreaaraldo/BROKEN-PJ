@@ -50,6 +50,7 @@ void content_distribution::initialize(){
     num_repos = getAncestorPar("num_repos"); //Number of repositories (specifically ccn_node(s) who a repository is connected to)
     num_clients = getAncestorPar ("num_clients");
     alpha = par("alpha");
+    q = par ("q");
     cardF = par("objects"); //Number of files within the system
     F = par("file_size"); //Average chunk size
     degree = getAncestorPar("replicas");
@@ -61,7 +62,7 @@ void content_distribution::initialize(){
     //
     //Zipf initialization
     //
-    zipf = zipf_distribution(alpha,cardF);
+    zipf = zipf_distribution(alpha,q,cardF);
     zipf.zipf_initialize();
 
     cut_off = zipf.value(coff);

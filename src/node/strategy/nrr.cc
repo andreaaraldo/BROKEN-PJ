@@ -55,7 +55,7 @@ void nrr::initialize(){
     topo.extractByNedTypeName(ctype);
     for (int i = 0;i<topo.getNumNodes();i++){
 	if (i==getIndex()) continue;
-	base_cache *cptr = (base_cache *)topo.getNode(i)->getModule()->getModuleByRelativePath("cache");
+	base_cache *cptr = (base_cache *)topo.getNode(i)->getModule()->getModuleByRelativePath("content_store");
 	if (FIB[i].len <= TTL)
 	    cfib.push_back( Centry ( cptr, FIB[i].len ) );
     }
@@ -89,46 +89,24 @@ bool *nrr::exploit(ccn_interest *interest){
     std::fill(decision,decision+gsize,0);
 
     //find the first occurrence in the sorted vector of caches.
-    if (interest->getTarget()==-1 || interest->getTarget() == getIndex() ){
+    if (interest->getTarget() == -1 || interest->getTarget() == getIndex() ){
 	vector<Centry>::iterator it = std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()));
 
 	vector<int> repos = interest->get_repos();
 	repository = nearest(repos);
 
 	if (it!=cfib.end() && it->len <= FIB[repository].len+1){//found!!!
-
 	    times = std::count_if (cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
-	    if (times>0){
-		int select = intrand(times);
-		while (select) {
-		    it++;
-		    select--;
-		}
-	    }
+	    int select = intrand(times);
+	    it+=select;
 	    node = it->cache->getIndex();
 	    outif = FIB[node].id;
 	    interest->setTarget(node);
-	    //interest->setDelay(2*FIB[node].len*0.001);
-
 	}else{//not found
 	    outif = FIB[repository].id;
 	    interest->setTarget(repository);
-	    //interest->setDelay(2*TTL*0.001);
 	}
 
-	//if (it!=cfib.end())
-	//    node = it->cache->getIndex();
-
-	//bool c;
-	//if (node!=-1 && FIB[node].len <= FIB[repository].len+1){
-	//    outif = FIB[node].id;
-	//    interest->setTarget(node);
-	//    c=false;
-	//}else{
-	//    c = true;
-	//    outif = FIB[repository].id;
-	//    interest->setTarget(repository);
-	//}
 
     }else {
 	outif = FIB[interest->getTarget()].id;

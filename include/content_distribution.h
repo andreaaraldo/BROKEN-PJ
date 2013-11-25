@@ -80,6 +80,7 @@ class content_distribution : public cSimpleModule{
 	int F;
 
 	double alpha;
+	double q;
 
 
 };

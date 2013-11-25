@@ -46,7 +46,7 @@ void zipf_distribution::zipf_initialize(){
     //Normalization constant computation
     c = 0;          
     for (int i=1; i<=F; i++){
-	c += (1.0 /  pow(i,alpha));
+	c += (1.0 /  pow(i+q,alpha));
 	cdfZipf[i] = c; 
     }
     c = 1.0 / c;

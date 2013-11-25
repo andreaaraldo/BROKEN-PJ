@@ -31,12 +31,14 @@ using namespace std;
 class zipf_distribution{
     public:
 	zipf_distribution(double a, int n):alpha(a),F(n){;};
+	zipf_distribution(double a, double p, int n):alpha(a),q(p),F(n){;};
 	zipf_distribution(){zipf_distribution(0,0);}
 	void zipf_initialize();
 	unsigned int value (double);
     private:
 	vector<double> cdfZipf;
 	double alpha;
+	double q;
 	int F;
 };
 #endif

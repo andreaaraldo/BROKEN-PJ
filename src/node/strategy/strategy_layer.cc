@@ -63,21 +63,20 @@ void strategy_layer::populate_routing_table(){
     deque<int> p;
     cTopology topo;
     vector<string> types;
-
     //Extract topology map
     types.push_back("modules.node.node");
     topo.extractByNedTypeName( types );
     cTopology::Node *node = topo.getNode( getParentModule()->getIndex() ); //iterator node
-
     int rand_out;
     //As the node topology is defined as a vector of nodes (see Omnet++ manual), cTopology 
     //associates the node i with the node whose Index is i.
     for (int d = 0; d < topo.getNumNodes(); d++){
 	if (d!=getParentModule()->getIndex()){
-
 	    cTopology::Node *to   = topo.getNode( d ); //destination node
 	    topo.weightedMultiShortestPathsTo( to ); 
 	    rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths());
+
+		cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"PAY ATTENTION: insert here something to avoid the segmentation fault"<<endl;		
 
 	    FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
 	    FIB[d].len = node->getDistanceToTarget();

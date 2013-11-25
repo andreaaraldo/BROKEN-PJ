@@ -1,13 +1,17 @@
 package modules.node;
 import modules.node.strategy.*;
 import modules.node.cache.*;
+import modules.node.Inode;
 
-module node {
+
+module node like Inode{
     parameters:
 	string RS = default("lru_cache");
 	string FS = default("spr");
+
 	int level = default (-1);
 	double betweenness = default (-1);
+	content_store.DS = default("lce");
 
 	@display("i=abstract/router;is=s");
     gates:
