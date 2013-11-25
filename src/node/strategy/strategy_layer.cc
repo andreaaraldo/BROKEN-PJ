@@ -76,8 +76,11 @@ void strategy_layer::populate_routing_table(){
 	    topo.weightedMultiShortestPathsTo( to ); 
 	    rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths());
 
-		cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"PAY ATTENTION: insert here something to avoid the segmentation fault"<<endl;		
-
+		//<aa>
+		cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"PAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this"<<endl;		
+		node->getPath(rand_out);
+		cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"dopo"<<endl;		
+		//</aa>
 	    FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
 	    FIB[d].len = node->getDistanceToTarget();
 	    //cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";

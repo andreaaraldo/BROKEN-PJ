@@ -16,5 +16,5 @@ network channel_with_cost_test_network extends base_network
 
     connections allowunconnected :
         node[0].face++ <-->  node[1].face++;
-//        node[1].face++ <-->  node[2].face++;
+        node[1].face++ <-->  node[2].face++;
 }
