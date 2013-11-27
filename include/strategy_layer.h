@@ -37,7 +37,10 @@ using namespace boost;
 
 
 struct int_f{
-    int  id;
+    int  id; //<aa> Identifies an output interface </aa>
+    
+    //<aa>the distance of the path to reach the destination node passing through
+	//the specified interface </aa>
     int  len;
 
     bool operator<(int_f other){
@@ -54,24 +57,35 @@ struct int_f{
 //
 class strategy_layer: public abstract_node{
     public:
-	//The only interface function. Cores should be call this function in
-	//order to get the interfaces on which sending the current interest
-	virtual bool* get_decision(cMessage *)=0;
-	static ifstream fdist;
-	static ifstream frouting;
+		//The only interface function. Cores should be call this function in
+		//order to get the interfaces on which sending the current interest
+		virtual bool* get_decision(cMessage *)=0;
+		static ifstream fdist;
+		static ifstream frouting;
     protected:
-	//Omnet base functions
-	virtual void initialize();
-	virtual void finish();
+		//Omnet base functions
+		virtual void initialize();
+		virtual void finish();
 
-	//FIB initialization functions
-	void populate_routing_table();
-	void populate_from_file();
+		//FIB initialization functions
+		void populate_routing_table();
+		void populate_from_file();
+		void add_FIB_entry(int destination_node_index, int interface_index, 
+							int distance);
+		const int_f* get_FIB_entry(int destination_node_index);
 
-	//FIB (available to all subclasses, for sake of utilization)
-	unordered_map <int ,int_f> FIB;
-	unordered_map <int, int> gatelu;
-	int nodes;
+
+	private:
+		//FIB (available to all subclasses, for sake of utilization)
+		//<aa> Associates to each destination node,
+		// an output interface to reach it</aa>
+		unordered_map <int ,int_f> FIB; 	
+		unordered_map <int, int> gatelu;	
+		
+		//<aa> For each index identifying a client
+		//module, associates the interface through
+		//which that client can be reached</aa>
+		int nodes;
 
 };
 #endif

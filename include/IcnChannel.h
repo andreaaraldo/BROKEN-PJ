@@ -27,12 +27,12 @@
 #ifndef CCN_NODE_H
 #define CCN_NODE_H
 //<aa>
-#ifndef CHANNELWITHCOST_H_
-#define CHANNELWITHCOST_H_
+#ifndef ICNCHANNEL_H_
+#define ICNCHANNEL_H_
 
 #include <cdataratechannel.h>
 
-class ChannelWithCost: public cDatarateChannel {
+class IcnChannel: public cDatarateChannel {
     private:
         simsignal_t effectiveCostID;
 

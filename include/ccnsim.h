@@ -44,6 +44,7 @@ class abstract_node: public cSimpleModule{
 	    return getParentModule()->gateSize("face");
 	}
 
+	//<aa> Check whether the module attached to that interface is a client or not</aa>
 	bool __check_client(int interface){
 	    client *c;
 	    bool check= false;

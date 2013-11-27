@@ -53,7 +53,11 @@ bool *random_repository::exploit(ccn_interest *interest){
     }else 
 	repository = interest->getRep_target();
 
-    outif = FIB[repository].id;
+	//<aa>
+	const int_f* FIB_entry = get_FIB_entry(repository);
+	//</aa>
+
+    outif = FIB_entry->id;
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
     decision[outif]=true;

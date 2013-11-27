@@ -415,12 +415,15 @@ void cTopology::weightedMultiShortestPathsTo(Node *_target)
     for (int i=0; i<num_nodes; i++)
     {
        nodev[i].known = false;   // not really needed for unweighted
-       nodev[i].dist = INFINITY;
+       //<aa> At first, all the nodes are considered at infty distance
+       //from the target </aa>
+       nodev[i].dist = INFINITY; 
        nodev[i].out_path = NULL;
     }
-    target->dist = 0;
+    target->dist = 0; //<aa> The distace between target and iself is 0 </aa>
 
-    std::deque<Node*> q;
+	//<aa> double ended queue, a queue that can be expanded in both the ends </aa>
+    std::deque<Node*> q; 
 
     q.push_back(target);
 
@@ -442,7 +445,7 @@ void cTopology::weightedMultiShortestPathsTo(Node *_target)
 
            if (w->dist == INFINITY || (w->known==false && w->dist >  v->dist + 1  ))
            {
-	       w->out_paths.clear();
+		       w->out_paths.clear();
                w->dist = v->dist + v->in_links[i]->wgt;//1;
                w->out_paths.push_back(v->in_links[i]);
                q.push_back(w);

@@ -30,9 +30,12 @@ ifstream strategy_layer::frouting;
 
 void strategy_layer::initialize(){
 
-    for (int i = 0; i<getParentModule()->gateSize("face$o");i++){
+    for (int i = 0; i<getParentModule()->gateSize("face$o");i++)
+    {
 	int index ;
 	if (!__check_client(i))
+		//<aa> If the module attached to the ith interface is a client, 
+		//get the index that identifies that module</aa>
 	    index = getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
         gatelu[index] = i;
     }
@@ -70,24 +73,25 @@ void strategy_layer::populate_routing_table(){
     int rand_out;
     //As the node topology is defined as a vector of nodes (see Omnet++ manual), cTopology 
     //associates the node i with the node whose Index is i.
-    for (int d = 0; d < topo.getNumNodes(); d++){
-	if (d!=getParentModule()->getIndex()){
-	    cTopology::Node *to   = topo.getNode( d ); //destination node
-	    topo.weightedMultiShortestPathsTo( to ); 
-	    rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths());
+    for (int d = 0; d < topo.getNumNodes(); d++)
+    {
+    	//<aa>If the module d is not myself</aa>
+		if (d!=getParentModule()->getIndex())
+		{
+			cTopology::Node *to   = topo.getNode( d ); //destination node
+			topo.weightedMultiShortestPathsTo( to ); 
+			rand_out = node->getNumPaths() == 1 ? 0 : intrand (node->getNumPaths());
 
-		//<aa>
-		cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"PAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this"<<endl;		
-		node->getPath(rand_out);
-		cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"dopo"<<endl;		
-		//</aa>
-	    FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
-	    FIB[d].len = node->getDistanceToTarget();
-	    //cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
-	    //cout<<FIB[d].len<<" ";
-	}else
-	    ;//cout<<getParentModule()->getIndex()+1<<" ";
-	    //cout<<0<<" ";
+			//<aa>
+			cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"\nPAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this"<<endl;
+			//</aa>
+			FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
+			FIB[d].len = node->getDistanceToTarget();
+			//cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
+			//cout<<FIB[d].len<<" ";
+		}else
+			;//cout<<getParentModule()->getIndex()+1<<" ";
+			//cout<<0<<" ";
     }
 
 }
@@ -101,18 +105,35 @@ void strategy_layer::populate_from_file(){
     istringstream riis (rline);
     int n = getAncestorPar("n");
 
-    int cell;
+    int cell1, cell2;
     int k = 0;
 
     while (k<n){
-	riis>>cell;
-	FIB[k++].id = gatelu[cell-1];
+	riis>>cell1;
+	diis>>cell2;
+	int out_interface = gatelu[cell1-1];
+	int distance = cell2;
+	add_FIB_entry(k, out_interface, distance);
+	k++;
     }
-
-    k = 0;
-    while (k<n){
-	diis>>cell;
-	FIB[k++].len = cell;
-    }
-
 }
+
+//<aa>
+/**
+ * distance: the distance of the path to reach the destination node passing through
+ * the specified interface
+ */
+void strategy_layer::add_FIB_entry(
+	int destination_node_index, int interface_index, int distance)
+{
+	FIB[destination_node_index].id = interface_index;
+	FIB[destination_node_index].len = distance;
+}
+
+const int_f* strategy_layer::get_FIB_entry(int destination_node_index)
+{
+	cout<<"\n\n"<<__FILE__<<" "<<__LINE__<<" da completare qui"<<endl;
+	exit(872);
+}
+
+//</aa>

@@ -56,9 +56,19 @@ void nrr::initialize(){
     for (int i = 0;i<topo.getNumNodes();i++){
 	if (i==getIndex()) continue;
 	base_cache *cptr = (base_cache *)topo.getNode(i)->getModule()->getModuleByRelativePath("content_store");
+	//<aa>
+	const int_f* FIB_entry = get_FIB_entry(i);
+	if (FIB_entry->len <= TTL)
+	    cfib.push_back( Centry ( cptr, FIB_entry->len ) );
+    }	
+    //Commented the following if block
+	//</aa>
+	/**
 	if (FIB[i].len <= TTL)
 	    cfib.push_back( Centry ( cptr, FIB[i].len ) );
     }
+    */
+    
     sort(cfib.begin(), cfib.end());
 }
 
@@ -95,21 +105,25 @@ bool *nrr::exploit(ccn_interest *interest){
 	vector<int> repos = interest->get_repos();
 	repository = nearest(repos);
 
-	if (it!=cfib.end() && it->len <= FIB[repository].len+1){//found!!!
+	//<aa>
+	const int_f* FIB_entry = get_FIB_entry(repository);
+	//</aa>
+	if (it!=cfib.end() && it->len <= FIB_entry->len+1){//found!!!
 	    times = std::count_if (cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
 	    int select = intrand(times);
 	    it+=select;
 	    node = it->cache->getIndex();
-	    outif = FIB[node].id;
+	    outif = FIB_entry->id;
 	    interest->setTarget(node);
 	}else{//not found
-	    outif = FIB[repository].id;
+	    outif = FIB_entry->id;
 	    interest->setTarget(repository);
 	}
 
 
     }else {
-	outif = FIB[interest->getTarget()].id;
+		const int_f* FIB_entry2 = get_FIB_entry(interest->getTarget() );
+		outif = FIB_entry2->id;
     }
 
 
@@ -122,12 +136,15 @@ int nrr::nearest(vector<int>& repositories){
     int  min_len = 10000;
     vector<int> targets;
 
-    for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ //Find the shortest (the minimum)
-        if (FIB[ *i ].len < min_len ){
-            min_len = FIB[ *i ].len;
+    for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ 		//Find the shortest (the minimum)
+    	//<aa>
+    	const int_f* FIB_entry = get_FIB_entry(*i);
+    	//</aa>
+        if (FIB_entry->len < min_len ){
+            min_len = FIB_entry->len;
 	    targets.clear();
             targets.push_back(*i);
-        }else if (FIB[*i].len == min_len)
+        }else if (FIB_entry->len == min_len)
 	    targets.push_back(*i);
 
     }

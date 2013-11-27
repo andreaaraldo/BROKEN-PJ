@@ -52,7 +52,11 @@ bool *parallel_repository::exploit(ccn_interest *interest){
 
     vector<int> repos = (interest->get_repos());
     for (vector<int>::iterator it = repos.begin(); it!=repos.end();it++){
-	outif = FIB[*it].id;
+    
+    //<aa>
+    const int_f* FIB_entry = get_FIB_entry(*it);
+    //</aa>
+	outif = FIB_entry->id;
 	decision[outif]=true;
     }
 

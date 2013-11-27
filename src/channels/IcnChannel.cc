@@ -13,22 +13,22 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#include "ChannelWithCost.h"
+#include "IcnChannel.h"
 
 
-    Define_Channel(ChannelWithCost);
+Define_Channel(IcnChannel);
 
-    void ChannelWithCost::initialize()
-    {
+void IcnChannel::initialize()
+{
         EV << "ChannelWithCost initialized";
         cDatarateChannel::initialize();
         cost = par("cost");
         effectiveCostID = registerSignal("effectiveCost");
-    }
+}
 
 
-    void ChannelWithCost::processMessage(cMessage *msg, simtime_t t, result_t& result)
-    {
+void IcnChannel::processMessage(cMessage *msg, simtime_t t, result_t& result)
+{
         cDatarateChannel::processMessage(msg,t,result);
         emit(effectiveCostID,cost);
-    }
+}

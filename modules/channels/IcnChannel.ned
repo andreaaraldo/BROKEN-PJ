@@ -17,10 +17,10 @@ package modules.channels;
 
 import ned.DatarateChannel;
 
-channel ChannelWithCost extends DatarateChannel
+channel IcnChannel extends DatarateChannel
 {
     parameters:
-        @class(ChannelWithCost);        
+        @class(IcnChannel);        
     	@statistic[effectiveCost] (record=sum);
         double cost = default(0);
 }
