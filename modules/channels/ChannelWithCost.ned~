@@ -13,7 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package modules.channel;
+package modules.channels;
 
 import ned.DatarateChannel;
 
@@ -22,5 +22,5 @@ channel ChannelWithCost extends DatarateChannel
     parameters:
         @class(ChannelWithCost);        
     	@statistic[effectiveCost] (record=sum);
-        double cost;
+        double cost;// = default(0);
 }

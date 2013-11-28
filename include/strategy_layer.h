@@ -74,13 +74,11 @@ class strategy_layer: public abstract_node{
 		//<aa>
 		void add_FIB_entry(int destination_node_index, int interface_index, 
 							int distance);
-		const vector<int_f>* get_FIB_entries(int destination_node_index);
+		const vector<int_f> get_FIB_entries(int destination_node_index);
 		//</aa>
 
 
 	private:
-		int max_FIB_entries; //see strategy.ned
-	
 		//FIB (available to all subclasses, for sake of utilization)
 		//<aa> Associates to each destination node,
 		// an output interface to reach it</aa>

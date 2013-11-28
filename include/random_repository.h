@@ -25,13 +25,13 @@
 #ifndef RANDOM_REP_H_
 #define RANDOM_REP_H_
 
-#include "strategy_layer.h"
+#include "MonopathStrategyLayer.h"
 
 using namespace std;
 class ccn_interest;
 
 
-class random_repository : public strategy_layer{
+class random_repository : public MonopathStrategyLayer{
     public:
 	bool* get_decision(cMessage *);
     protected:

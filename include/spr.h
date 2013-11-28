@@ -25,13 +25,13 @@
 #ifndef NEAREST_H_
 #define NEAREST_H_
 
-#include "strategy_layer.h"
+#include "MonopathStrategyLayer.h"
 
 class ccn_interest;
 using namespace std;
 
 
-class spr : public strategy_layer{
+class spr : public MonopathStrategyLayer{
     public:
 	bool* get_decision(cMessage *);
     protected:

@@ -26,6 +26,9 @@
 #include <algorithm>
 #include "spr.h"
 #include "ccn_interest.h"
+#include "error_handling.h"
+#include <sstream>
+
 
 Register_Class(spr);
 
@@ -57,34 +60,51 @@ bool *spr::exploit(ccn_interest *interest){
     repository = nearest(repos);
 
 	//<aa>
-	const int_f* FIB_entry = get_FIB_entry(repository);
+	const int_f FIB_entry = get_FIB_entry(repository);
 	//</aa>
-    outif = FIB_entry->id;
+    outif = FIB_entry.id;
 
 
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
+    
+    //<aa>
+    std::stringstream msg; msg<<"outif="<<outif<<", gsize="<<gsize;
+    const char* mystr = msg.str().c_str();
+    const char* filename = __FILE__;
+    debug_message(filename, __LINE__, mystr );
+    //</aa>
     decision[outif]=true;
 
     return decision;
 
 }
 int spr::nearest(vector<int>& repositories){
+	#ifdef SEVERE_DEBUG
+	if (repositories.size()==0)
+		severe_error(__FILE__,__LINE__, "repositories has 0 elements");
+	#endif
+	
     int  min_len = 10000;
     vector<int> targets;
 
-    for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ 	//Find the shortest (the minimum)
+    for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++) 	{ 	//Find the shortest (the minimum)
     	//<aa>
-    	const int_f* FIB_entry = get_FIB_entry(*i);
+    	const int_f FIB_entry = get_FIB_entry(*i);
     	//</aa>
-        if (FIB_entry->len < min_len ){
-            min_len = FIB_entry->len;
-	    targets.clear();
+        if (FIB_entry.len < min_len ){
+            min_len = FIB_entry.len;
+            targets.clear();
             targets.push_back(*i);
-        }else if (FIB_entry->len == min_len)
-	    targets.push_back(*i);
-
+        }else if (FIB_entry.len == min_len)
+            targets.push_back(*i);
     }
+    #ifdef SEVERE_DEBUG
+    std::stringstream msg;
+    msg << "size of targets = "<<targets.size();
+    debug_message(__FILE__,__LINE__,msg.str().c_str() );
+    #endif
+    
     return targets[intrand(targets.size())];
 }
 

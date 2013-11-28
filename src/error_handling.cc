@@ -5,7 +5,7 @@
  *
  * People:
  *    Giuseppe Rossini (lead developer, mailto giuseppe.rossini@enst.fr)
- *    Andrea Araldo (lead developer, mailto andrea.araldo@gmail.com)
+ *    Andrea Araldo (developer, mailto andrea.araldo@gmail.com)
  *    Raffaele Chiocchetti (developer, mailto raffaele.chiocchetti@gmail.com)
  *    Dario Rossi (occasional debugger, mailto dario.rossi@enst.fr)
  *
@@ -31,8 +31,37 @@
 #include <cstdlib>
 using namespace std;
 
-void severe_error(char* source_file_name, int code_line, std::string error_message){
-	cout << source_file_name << " " << code_line << ": ERROR: " << error_message << endl;
-	//exit(3);
+void generic_message(const char* source_file_name, int code_line, const char* tag,
+			const char* message){
+	cout << source_file_name << " " << code_line <<": "<< tag<<" : " 
+			<< message << endl;
 }
+
+void severe_error(const char* source_file_name, int code_line, 
+				const char* error_message)
+{
+	generic_message(source_file_name, code_line, "ERROR", error_message);
+	exit(3);
+}
+
+void debug_message(const char* source_file_name, int code_line, 
+		const char* error_message)
+{
+	generic_message(source_file_name, code_line, "DEBUG", error_message);
+}
+
+void severe_error(const char* source_file_name, int code_line, 
+				std::stringstream error_message)
+{
+	severe_error(source_file_name, code_line, error_message.str().c_str() );
+	exit(3);
+}
+
+void debug_message(const char* source_file_name, int code_line, 
+		std::stringstream error_message)
+{
+	debug_message(source_file_name, code_line, error_message.str().c_str() );
+}
+
+
 //</aa>

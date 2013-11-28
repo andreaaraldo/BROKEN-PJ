@@ -32,6 +32,7 @@ simple parallel_repository extends MonopathStrategyLayer
 
 
 simple nrr1 extends MonopathStrategyLayer
+{
     parameters:
 	int cut_off = default(1);
 	int TTL1 = default(1000);

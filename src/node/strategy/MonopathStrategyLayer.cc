@@ -27,14 +27,36 @@
 #include <omnetpp.h>
 #include "MonopathStrategyLayer.h"
 #include "ccnsim.h"
+#include "error_handling.h"
 
-Register_Class(MonopathStrategyLayer);
+//Register_Class(MonopathStrategyLayer);
 
-const int_f* MonopathStrategyLayer::get_FIB_entry(
+const int_f MonopathStrategyLayer::get_FIB_entry(
 		int destination_node_index)
 {
-	const vector<int_f>* FIB_entries = get_FIB_entries(destination_node_index);
-	return &(FIB_entries->front() );
+	const vector<int_f> FIB_entries = get_FIB_entries(destination_node_index);
+	#ifdef SEVERE_DEBUG
+	int output_gates = getParentModule()->gateSize("face$o");
+	std::stringstream msg;
+	int_f entry = FIB_entries.front();
+	msg<<"I'm inside node with id "<< getParentModule()->getId()
+		<< " and with index " << getParentModule()->getIndex();
+	msg<<". gate size is "<<output_gates << ", node to reach is "
+		<< destination_node_index << ", the gate is "<< entry.id;
+	debug_message(__FILE__,__LINE__,msg.str().c_str() );
+	if (entry.id >= output_gates){
+		severe_error(__FILE__,__LINE__, "selected gate is invalid");
+	}
+	debug_message(__FILE__,__LINE__,"after the if" );
+	#endif
+	return FIB_entries.front();
 }
 
+void MonopathStrategyLayer::initialize(){
+	strategy_layer::initialize();
+}
+
+void MonopathStrategyLayer::finish(){
+	strategy_layer::finish();
+}
 //</aa>

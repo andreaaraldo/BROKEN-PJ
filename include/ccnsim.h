@@ -4,6 +4,13 @@
 #include <vector>
 #include <omnetpp.h>
 
+
+//<aa>
+// If enabled, overabundant checks will be performed in order to avoid inconsistent
+// state. Enable it when you modify the code.
+#define SEVERE_DEBUG 	
+//</aa>
+
 //System packets
 #define CCN_I 100   //ccn interest 
 #define CCN_D 200   //ccn data 

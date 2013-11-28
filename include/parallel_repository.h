@@ -25,13 +25,13 @@
 #ifndef PARALLEL_REP_H_
 #define PARALLEL_REP_H_
 
-#include "strategy_layer.h"
+#include "MonopathStrategyLayer.h"
 class ccn_interest;
 
 using namespace std;
 
 
-class parallel_repository: public strategy_layer{
+class parallel_repository: public MonopathStrategyLayer{
     public:
 	virtual bool* get_decision(cMessage *);
     protected:

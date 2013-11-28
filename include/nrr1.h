@@ -25,12 +25,12 @@
 #ifndef DLEARNING_H_
 #define DLEARNING_H_
 
-#include "strategy_layer.h"
+#include "MonopathStrategyLayer.h"
 class ccn_interest;
 
 using namespace std;
 
-class nrr1 : public strategy_layer{
+class nrr1 : public MonopathStrategyLayer{
     public:
 	bool* get_decision(cMessage *);
     protected:

@@ -27,7 +27,7 @@
 #include <omnetpp.h>
 #include <algorithm>
 #include <boost/unordered_set.hpp>
-#include "strategy_layer.h"
+#include "MonopathStrategyLayer.h"
 #include "ccn_interest.h"
 class base_cache;
 
@@ -42,7 +42,7 @@ bool operator<(const Centry &a, const Centry &b){
     return (a.len < b.len);
 
 }
-class nrr: public strategy_layer{
+class nrr: public MonopathStrategyLayer{
     public:
 	void initialize();
 	bool *get_decision(cMessage *in);

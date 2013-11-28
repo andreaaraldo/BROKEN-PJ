@@ -1,5 +1,3 @@
-#ifndef MONOPATHSTRATEGYLAYER_H_
-#define MONOPATHSTRATEGYLAYER_H_
 /*
  * ccnSim is a scalable chunk-level simulator for Content Centric
  * Networks (CCN), that we developed in the context of ANR Connect
@@ -7,7 +5,6 @@
  *
  * People:
  *    Giuseppe Rossini (lead developer, mailto giuseppe.rossini@enst.fr)
- *	  Andrea Araldo (developer, mailto andrea.araldo@gmail.com)
  *    Raffaele Chiocchetti (developer, mailto raffaele.chiocchetti@gmail.com)
  *    Dario Rossi (occasional debugger, mailto dario.rossi@enst.fr)
  *
@@ -25,22 +22,9 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
-//<aa>
-#include "ccnsim.h"
 #include <omnetpp.h>
-#include "strategy_layer.h"
+#include <algorithm>
+#include "MultipathStrategyLayer.h"
+#include "ccnsim.h"
 
-class MonopathStrategyLayer: public strategy_layer{
-    public:
-		virtual void initialize();
-		virtual bool *get_decision(cMessage *in)=0;
-		virtual void finish();
-		
-	protected:
-		const int_f get_FIB_entry(int destination_node_index);
-		
-
-};
-//</aa>
-#endif
+//Register_Class(MultipathStrategyLayer);

@@ -27,8 +27,16 @@
 #define ERROR_HANDLING_H_
 
 #include<iostream>
+#include<sstream>
 
-void severe_error(char* source_file_name, int code_line, std::string error_message);
+void severe_error(const char* source_file_name, int code_line, 
+				const char* error_message);
+void debug_message(const char* source_file_name, int code_line, const char* message);
+
+void severe_error(const char* source_file_name, int code_line, 
+				std::stringstream error_message);
+void debug_message(const char* source_file_name, int code_line, 
+				std::stringstream message);
 
 #endif
 

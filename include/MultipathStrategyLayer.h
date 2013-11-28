@@ -33,7 +33,7 @@
 class MultipathStrategyLayer: public strategy_layer{
     public:
 		//void initialize();
-		//bool *get_decision(cMessage *in);
+		virtual bool *get_decision(cMessage *in)=0;
 		//void finish();
 		
 

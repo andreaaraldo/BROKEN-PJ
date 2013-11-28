@@ -98,9 +98,9 @@ bool *nrr1::exploit(ccn_interest *interest){
     }
 
 	//<aa>
-	const int_f* FIB_entry = get_FIB_entry(target);
+	const int_f FIB_entry = get_FIB_entry(target);
 	//</aa>
-    outif = FIB_entry->id;
+    outif = FIB_entry.id;
 
     decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
@@ -122,9 +122,9 @@ bool *nrr1::exploit_nearest(ccn_interest *interest){
     repository = nearest(repos);
 
 	//<aa>
-	const int_f* FIB_entry = get_FIB_entry(repository);
+	const int_f FIB_entry = get_FIB_entry(repository);
 	//</aa>
-    outif = FIB_entry->id;
+    outif = FIB_entry.id;
 
 
     bool *decision = new bool[gsize];
@@ -141,13 +141,13 @@ int nrr1::nearest(vector<int>& repositories){
 
     for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ 	//Find the shortest (the minimum)
     	//<aa>
-    	const int_f* FIB_entry = get_FIB_entry(*i);
+    	const int_f FIB_entry = get_FIB_entry(*i);
     	//</aa>
-        if (FIB_entry->len < min_len ){
-            min_len = FIB_entry->len;
+        if (FIB_entry.len < min_len ){
+            min_len = FIB_entry.len;
 	    targets.clear();
             targets.push_back(*i);
-        }else if (FIB_entry->len == min_len)
+        }else if (FIB_entry.len == min_len)
 	    targets.push_back(*i);
 
     }

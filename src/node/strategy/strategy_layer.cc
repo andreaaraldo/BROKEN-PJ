@@ -136,20 +136,35 @@ void strategy_layer::populate_from_file(){
 void strategy_layer::add_FIB_entry(
 	int destination_node_index, int interface_index, int distance)
 {
-	if ( FIB[destination_node_index].size() >= max_FIB_entries ){
-		severe_error(__FILE__, __LINE__, "ERROR");
-	} //else
 	int_f FIB_entry;
 	FIB_entry.id = interface_index;
 	FIB_entry.len = distance;
-	severe_error(__FILE__, __LINE__, "Attenzione, prima di inserire roba, sei sicuro che il vettore gia' esiste li'?");
+	cout<<"\n\n"<<__FILE__<<__LINE__<< ":Attenzione, prima di inserire roba, sei sicuro che il vettore gia' esiste li'?"<<endl;
 	FIB[destination_node_index].push_back(FIB_entry);
+	cout<<"\n\n"<<__FILE__<<__LINE__<< ":Dopo il pericol"<<endl;
+	
+	#ifdef SEVERE_DEBUG
+	vector<int_f> entry_vec = FIB[destination_node_index];
+	int_f entry_just_added = entry_vec.back();
+	int output_gates = getParentModule()->gateSize("face$o");
+	if (entry_just_added.id >= output_gates){
+		std::stringstream msg; msg<<"gate "<<entry_just_added.id<<" is invalid"<<
+				". gate_size is "<< output_gates;
+		severe_error(__FILE__,__LINE__, msg.str().c_str() );
+	}
+	std::stringstream msg; msg<< "I'm inside node " << getParentModule()->getIndex()
+		<< ". To reach the node "<<destination_node_index<<
+		" the gate is "<<entry_just_added.id;
+	debug_message(__FILE__, __LINE__, msg.str().c_str() );
+	#endif
 }
 
-const vector<int_f>* MultipathStrategyLayer::get_FIB_entries(
+const vector<int_f> strategy_layer::get_FIB_entries(
 		int destination_node_index)
 {
-	retrurn FIB[destination_node_index];
+	vector<int_f> entries = FIB[destination_node_index] ;
+	return entries;
+	//return FIB[destination_node_index];
 }
 
 
