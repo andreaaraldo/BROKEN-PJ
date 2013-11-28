@@ -29,7 +29,14 @@
 //Catalogs fields
 typedef unsigned int info_t; //representation for a catalog  entry [size|repos]
 typedef unsigned short filesize_t; //representation for the size part within the catalog entry
+
+//<aa>	Each repo_t variable is used to indicate the set of repositories where
+//		a certain content is stored. A repo_t variable must be interpreted as a
+//		binary string. For a certain content, the i-th bit is 1 if and only if the
+//		content is stored in the i-th repository.
+//</aa>
 typedef unsigned short repo_t; //representation for the repository part within the catalog entry
+
 typedef unsigned int interface_t; //representation of a PIT entry (containing interface information)
 
 //Chunk fields

@@ -63,8 +63,8 @@ public:
 	virtual name_t get_chunk_number(){return __chunk(chunk_var);}
 
 
-	virtual vector<int> get_repos(){
-
+	virtual vector<int> get_repos()
+	{
 	    repo_t repo;
 	    vector<int> repos;
 	    int i;
@@ -72,16 +72,15 @@ public:
 	    repo = __repo(__id(chunk_var));
 	    i = 0;
 
-	    while (repo){
-		if (repo & 1) 
-		    repos.push_back(content_distribution::repositories[i]);
-		repo >>= 1;
-		i++;
+	    while (repo)
+	    {
+			if (repo & 1) 
+				repos.push_back(content_distribution::repositories[i]);
+			repo >>= 1;
+			i++;
 	    }
 
 	    return repos;
-
-
 	}
 
 	

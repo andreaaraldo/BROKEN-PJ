@@ -33,13 +33,13 @@ void doUnpacking(cCommBuffer *, T& t) {
 ccn_interest_Base::ccn_interest_Base(const char *name, int kind) : cPacket(name,kind)
 {
     this->hops_var = 0;
-    this->target_var = -1;
-    this->rep_target_var = -1;
+    this->target_var = this.UNDEFINED_VALUE;
+    this->rep_target_var = this.UNDEFINED_VALUE;
     this->btw_var = 0;
     this->TTL_var = 10000;
     this->nfound_var = false;
     this->capacity_var = 0;
-    this->origin_var = -1;
+    this->origin_var = this.UNDEFINED_VALUE;
     this->Delay_var = 0;
 }
 

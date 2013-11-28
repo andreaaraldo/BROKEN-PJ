@@ -22,31 +22,48 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "random_repository.h"
+#include <omnetpp.h>
+#include "ProbabilisticSplitStrategy.h"
+#include "ccnsim.h"
 #include "ccn_interest.h"
-Register_Class(random_repository);
+#include "base_cache.h"
+//<aa>
+Register_Class(ProbabilisticSplitStrategy);
 
-bool *random_repository::get_decision(cMessage *in){//check this function
+
+void ProbabilisticSplitStrategy::initialize()
+{
+    MultipathStrategyLayer::initialize();
+}
+
+bool* ProbabilisticSplitStrategy::get_decision(cMessage *in){
+
     bool *decision;
     if (in->getKind() == CCN_I){
 	ccn_interest *interest = (ccn_interest *)in;
-	 decision = exploit(interest);
+	decision = exploit(interest);
     }
     return decision;
-
 }
 
+int ProbabilisticSplitStrategy::decide_out_gate(vector<int_f> FIB_entries)
+{
+	int undecided = -1;
+	int out_gate = undecided;
+	if(FIB_entries.size() == 1)
+		out_gate = FIB_entries[0].id;
+	else{
+		while (out_gate == undecided){
+			ciao
+		}
+	}
+		
+	return out_gate;
+}
 
-
-bool *random_repository::exploit(ccn_interest *interest){
-
-    int repository,
-	outif,
-	gsize;
-
-    gsize = __get_outer_interfaces(); //<aa> number of gates</aa>
-
-    if (interest->getRep_target == ccn_interest_Base.UNDEFINED_VALUE)
+int ProbabilisticSplitStrategy::decide_target_repository(ccn_interest *interest)
+{
+   if (interest->getRep_target == ccn_interest_Base.UNDEFINED_VALUE)
     {
     	//<aa> Get all the repositories that store the content demanded by the
     	// interest </aa>
@@ -57,10 +74,19 @@ bool *random_repository::exploit(ccn_interest *interest){
 		interest->setRep_target(repository);
     }else 
 		repository = interest->getRep_target();
+	
+	return repositoiry
+}
 
-	//<aa>
-	const int_f FIB_entry = get_FIB_entry(repository);
-	//</aa>
+bool* ProbabilisticSplitStrategy::exploit(ccn_interest *interest)
+{
+    int repository,
+	outif,
+	gsize;
+
+    gsize = __get_outer_interfaces(); //number of gates
+ 	repository = decide_target_repository(ccn_interest *interest);
+	const vecotr<int_f> FIB_entries = get_FIB_entry(repository);
 
     outif = FIB_entry.id;
     bool *decision = new bool[gsize];
@@ -71,6 +97,7 @@ bool *random_repository::exploit(ccn_interest *interest){
 }
 
 
-int random_repository::random(vector<int>& repositories){
-    return repositories[intrand(repositories.size())];
+void nrr::finish(){
+    MultipathStrategyLayer::finish();
 }
+//</aa>

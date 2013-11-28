@@ -60,7 +60,15 @@ class strategy_layer: public abstract_node{
     public:
 		//The only interface function. Cores should be call this function in
 		//order to get the interfaces on which sending the current interest
+		//<aa>
+		/**
+		 * It returns an array of boolean values, one for each output gate.
+		 * If the i-th element of this array is 1, the message must be forwaded
+		 * toward gate i.
+		 */
+		//</aa>
 		virtual bool* get_decision(cMessage *)=0;
+		
 		static ifstream fdist;
 		static ifstream frouting;
     protected:

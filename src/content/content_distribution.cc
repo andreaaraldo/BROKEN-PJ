@@ -47,7 +47,7 @@ void content_distribution::initialize(){
     double coff = par("cut_off");
 
     nodes = getAncestorPar("n");
-    num_repos = getAncestorPar("num_repos"); //Number of repositories (specifically ccn_node(s) who a repository is connected to)
+    num_repos = getAncestorPar("num_repos"); //Number of repositories (specifically ccn_node(s) which have a repository connected to them)
     num_clients = getAncestorPar ("num_clients");
     alpha = par("alpha");
     q = par ("q");
@@ -130,32 +130,35 @@ vector<int> content_distribution::binary_strings(int num_ones,int len){
 }
 
 //Store information about the content:
-void content_distribution::init_content(){
+void content_distribution::init_content()
+{
     //As the repositories are represented as a string of bits, the function
     //binary_string is used for generating binary strings of length num_repos
     //with exactly degree ones
     vector<int> repo_strings = binary_strings(degree, num_repos);
 
-    for (int d = 1; d <= cardF; d++){
-	//Reset the information field of a given content
-	__info(d) = 0;
+	//<aa>cardF indicates how many objects there are into the catalog</aa>
+    for (int d = 1; d <= cardF; d++)
+    {
+    	//<aa>d is a content </aa>
+		//Reset the information field of a given content
+		__info(d) = 0;
 
-	if (F > 1){
-	    //Set the file size (distributed like a geometric)
-	    filesize_t s = geometric( 1.0 / F ) + 1;
-	    __ssize ( d, s );
-	}else 
-	    __ssize( d , 1);
+		//<aa> F is the size of a file</aa>
+		if (F > 1){
+			//Set the file size (distributed like a geometric)
+			filesize_t s = geometric( 1.0 / F ) + 1;
+			__ssize ( d, s );
+		}else 
+			__ssize( d , 1);
 
-	//Set the repositories
-	if (num_repos==1){
-	    __srepo ( d , 1 );
-	} else {
-	    repo_t repos = repo_strings[intrand(repo_strings.size())];
-	    __srepo (d ,repos);
-	 }
-	
-
+		//Set the repositories
+		if (num_repos==1){
+			__srepo ( d , 1 );
+		} else {
+			repo_t repos = repo_strings[intrand(repo_strings.size())];
+			__srepo (d ,repos);
+		}
     }
 
 }

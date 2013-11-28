@@ -67,6 +67,8 @@
  * Register_Class(ccn_interest);
  * </pre>
  */
+ 
+ 
 class ccn_interest_Base : public ::cPacket
 {
   protected:
@@ -94,6 +96,7 @@ class ccn_interest_Base : public ::cPacket
     ccn_interest_Base& operator=(const ccn_interest_Base& other);
 
   public:
+  	const static int UNDEFINED_VALUE= -1;
     virtual ~ccn_interest_Base();
     virtual ccn_interest_Base *dup() const {throw cRuntimeError("You forgot to manually add a dup() function to class ccn_interest");}
     virtual void parsimPack(cCommBuffer *b);
@@ -111,7 +114,14 @@ class ccn_interest_Base : public ::cPacket
     virtual void setHops(int hops);
     virtual int getTarget() const;
     virtual void setTarget(int target);
+    
+    //<aa>	It returns the "target" repository, i.e. the repository toward which
+    //		this interest must be sent or this.UNDEFINED if no target repository
+    //		has been estabilished yet
+    //</aa>
     virtual int getRep_target() const;
+
+    
     virtual void setRep_target(int rep_target);
     virtual double getBtw() const;
     virtual void setBtw(double btw);
