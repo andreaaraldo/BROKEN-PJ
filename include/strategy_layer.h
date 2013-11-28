@@ -5,6 +5,7 @@
  *
  * People:
  *    Giuseppe Rossini (lead developer, mailto giuseppe.rossini@enst.fr)
+ *	  Andrea Araldo (developer, mailto andrea.araldo@gmail.com)
  *    Raffaele Chiocchetti (developer, mailto raffaele.chiocchetti@gmail.com)
  *    Dario Rossi (occasional debugger, mailto dario.rossi@enst.fr)
  *
@@ -67,19 +68,23 @@ class strategy_layer: public abstract_node{
 		virtual void initialize();
 		virtual void finish();
 
-		//FIB initialization functions
+		//FIB initialization stuff
 		void populate_routing_table();
 		void populate_from_file();
+		//<aa>
 		void add_FIB_entry(int destination_node_index, int interface_index, 
 							int distance);
-		const int_f* get_FIB_entry(int destination_node_index);
+		const vector<int_f>* get_FIB_entries(int destination_node_index);
+		//</aa>
 
 
 	private:
+		int max_FIB_entries; //see strategy.ned
+	
 		//FIB (available to all subclasses, for sake of utilization)
 		//<aa> Associates to each destination node,
 		// an output interface to reach it</aa>
-		unordered_map <int ,int_f> FIB; 	
+		unordered_map <int ,vector<int_f> > FIB; 	
 		unordered_map <int, int> gatelu;	
 		
 		//<aa> For each index identifying a client

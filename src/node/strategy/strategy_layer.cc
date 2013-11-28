@@ -5,6 +5,7 @@
  *
  * People:
  *    Giuseppe Rossini (lead developer, mailto giuseppe.rossini@enst.fr)
+ *    Andrea Araldo (developer, mailto andrea.araldo@gmail.com)
  *    Raffaele Chiocchetti (developer, mailto raffaele.chiocchetti@gmail.com)
  *    Dario Rossi (occasional debugger, mailto dario.rossi@enst.fr)
  *
@@ -24,11 +25,13 @@
  */
 #include "strategy_layer.h"
 #include <sstream>
+#include "error_handling.h"
 ifstream strategy_layer::fdist;
 ifstream strategy_layer::frouting;
 
 
-void strategy_layer::initialize(){
+void strategy_layer::initialize()
+{
 
     for (int i = 0; i<getParentModule()->gateSize("face$o");i++)
     {
@@ -52,6 +55,10 @@ void strategy_layer::initialize(){
 	populate_from_file(); //Building forwarding table 
     }else 
 	populate_routing_table(); //Building forwarding table 
+	
+	//<aa>
+//	max_FIB_entries = (int) par("max_FIB_entries").longValue();
+	//</aa>
 }
 
 void strategy_layer::finish(){
@@ -84,9 +91,12 @@ void strategy_layer::populate_routing_table(){
 
 			//<aa>
 			cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"\nPAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this"<<endl;
+			int output_gate = node->getPath(rand_out)->getLocalGate()->getIndex();
+			int distance = node->getDistanceToTarget();
+			add_FIB_entry(d, output_gate, distance);
 			//</aa>
-			FIB[d].id = node->getPath(rand_out)->getLocalGate()->getIndex();
-			FIB[d].len = node->getDistanceToTarget();
+			
+
 			//cout<<getParentModule()->gate("face$o",FIB[d].id)->getNextGate()->getOwnerModule()->getIndex()+1<<" ";
 			//cout<<FIB[d].len<<" ";
 		}else
@@ -126,14 +136,21 @@ void strategy_layer::populate_from_file(){
 void strategy_layer::add_FIB_entry(
 	int destination_node_index, int interface_index, int distance)
 {
-	FIB[destination_node_index].id = interface_index;
-	FIB[destination_node_index].len = distance;
+	if ( FIB[destination_node_index].size() >= max_FIB_entries ){
+		severe_error(__FILE__, __LINE__, "ERROR");
+	} //else
+	int_f FIB_entry;
+	FIB_entry.id = interface_index;
+	FIB_entry.len = distance;
+	severe_error(__FILE__, __LINE__, "Attenzione, prima di inserire roba, sei sicuro che il vettore gia' esiste li'?");
+	FIB[destination_node_index].push_back(FIB_entry);
 }
 
-const int_f* strategy_layer::get_FIB_entry(int destination_node_index)
+const vector<int_f>* MultipathStrategyLayer::get_FIB_entries(
+		int destination_node_index)
 {
-	cout<<"\n\n"<<__FILE__<<" "<<__LINE__<<" da completare qui"<<endl;
-	exit(872);
+	retrurn FIB[destination_node_index];
 }
+
 
 //</aa>

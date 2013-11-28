@@ -15,32 +15,41 @@ simple strategy_layer like strategy
 	inout strategy_port;
 }
 
-simple spr extends strategy_layer
+simple spr extends MonopathStrategyLayer
 {
     @class(spr);
 }
 
-simple random_repository extends strategy_layer
+simple random_repository extends MonopathStrategyLayer
 {
     @class(random_repository);
 }
 
-simple parallel_repository extends strategy_layer
+simple parallel_repository extends MonopathStrategyLayer
 {
     @class(parallel_repository);
 }
 
 
-simple nrr1 extends strategy_layer{
+simple nrr1 extends MonopathStrategyLayer
     parameters:
 	int cut_off = default(1);
 	int TTL1 = default(1000);
     @class(nrr1);
 }
 
-simple nrr extends strategy_layer{
+simple nrr extends MonopathStrategyLayer{
     parameters:
 	int TTL2 = default(1000);
     @class(nrr);
 }
 
+simple MultipathStrategyLayer extends strategy_layer{
+    parameters:
+    @class(MultipathStrategyLayer);
+}
+
+simple MonopathStrategyLayer extends strategy_layer{
+    parameters:
+    @class(MultipathStrategyLayer);
+}
