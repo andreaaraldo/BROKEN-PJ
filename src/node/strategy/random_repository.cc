@@ -24,6 +24,8 @@
  */
 #include "random_repository.h"
 #include "ccn_interest.h"
+#include "error_handling.h"
+
 Register_Class(random_repository);
 
 bool *random_repository::get_decision(cMessage *in){//check this function
@@ -46,8 +48,10 @@ bool *random_repository::exploit(ccn_interest *interest){
 
     gsize = __get_outer_interfaces(); //<aa> number of gates</aa>
 
-    if (interest->getRep_target == ccn_interest_Base.UNDEFINED_VALUE)
+    //if (interest->getRep_target == ccn_interest_Base.UNDEFINED_VALUE)
+	if(1)
     {
+		severe_error(__FILE__, __LINE__, "Leva il fatto dell'1");
     	//<aa> Get all the repositories that store the content demanded by the
     	// interest </aa>
 		vector<int> repos = interest->get_repos();

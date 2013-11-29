@@ -1,5 +1,3 @@
-#ifndef NRR_H_
-#define NRR_H_
 /*
  * ccnSim is a scalable chunk-level simulator for Content Centric
  * Networks (CCN), that we developed in the context of ANR Connect
@@ -25,23 +23,33 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+//<aa>
+
+#ifndef PROBABILISTICSPLITSTRATEGY_H_
+#define PROBABILISTICSPLITSTRATEGY_H_
+
 #include <omnetpp.h>
 #include "MultipathStrategyLayer.h"
 
-class ProbabilisticSplitStrategy: public MultipathStrategyLayer{
+using namespace std;
+
+class ccn_interest;
+
+class ProbabilisticSplitStrategy: public MultipathStrategyLayer
+{
     public:
+		bool* get_decision(cMessage *);
+
+	protected:
 		void initialize();
-		bool *get_decision(cMessage *in);
-		bool *exploit(ccn_interest *interest);
-		int nearest(vector<int>&);
+		bool* exploit(ccn_interest *);
 		void finish();
-    private:
-		unordered_map<name_t,int_f> dynFIB;
-		unordered_set<chunk_t> ghost_list;
-		vector<Centry> cfib;
-		int TTL;
-		
-		float[] split_factors;
+
+	private:
+		int decide_target_repository(ccn_interest *interest);
+		int decide_out_gate(vector<int_f> FIB_entries);
+		vector<double> split_factors;
 
 };
 #endif
+//</aa>

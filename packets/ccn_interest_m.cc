@@ -12,6 +12,10 @@
 #include <sstream>
 #include "ccn_interest_m.h"
 
+//<aa>
+#include "ccnsim.h"
+//</aa>
+
 // Template rule which fires if a struct or class doesn't have operator<<
 template<typename T>
 std::ostream& operator<<(std::ostream& out,const T&) {return out;}
@@ -33,13 +37,13 @@ void doUnpacking(cCommBuffer *, T& t) {
 ccn_interest_Base::ccn_interest_Base(const char *name, int kind) : cPacket(name,kind)
 {
     this->hops_var = 0;
-    this->target_var = this.UNDEFINED_VALUE;
-    this->rep_target_var = this.UNDEFINED_VALUE;
+    this->target_var = UNDEFINED_VALUE;
+    this->rep_target_var = UNDEFINED_VALUE;
     this->btw_var = 0;
     this->TTL_var = 10000;
     this->nfound_var = false;
     this->capacity_var = 0;
-    this->origin_var = this.UNDEFINED_VALUE;
+    this->origin_var = UNDEFINED_VALUE;
     this->Delay_var = 0;
 }
 

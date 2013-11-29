@@ -96,7 +96,6 @@ class ccn_interest_Base : public ::cPacket
     ccn_interest_Base& operator=(const ccn_interest_Base& other);
 
   public:
-  	const static int UNDEFINED_VALUE= -1;
     virtual ~ccn_interest_Base();
     virtual ccn_interest_Base *dup() const {throw cRuntimeError("You forgot to manually add a dup() function to class ccn_interest");}
     virtual void parsimPack(cCommBuffer *b);

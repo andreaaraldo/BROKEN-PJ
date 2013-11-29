@@ -43,11 +43,9 @@ const int_f MonopathStrategyLayer::get_FIB_entry(
 		<< " and with index " << getParentModule()->getIndex();
 	msg<<". gate size is "<<output_gates << ", node to reach is "
 		<< destination_node_index << ", the gate is "<< entry.id;
-	debug_message(__FILE__,__LINE__,msg.str().c_str() );
 	if (entry.id >= output_gates){
 		severe_error(__FILE__,__LINE__, "selected gate is invalid");
 	}
-	debug_message(__FILE__,__LINE__,"after the if" );
 	#endif
 	return FIB_entries.front();
 }

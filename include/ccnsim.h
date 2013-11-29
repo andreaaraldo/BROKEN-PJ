@@ -9,6 +9,8 @@
 // If enabled, overabundant checks will be performed in order to avoid inconsistent
 // state. Enable it when you modify the code.
 #define SEVERE_DEBUG 	
+
+#define UNDEFINED_VALUE -1
 //</aa>
 
 //System packets

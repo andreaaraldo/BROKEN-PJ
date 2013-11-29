@@ -58,4 +58,5 @@ simple MonopathStrategyLayer extends strategy_layer{
 simple ProbabilisticSplitStrategy extends MultipathStrategyLayer{
 	parameters:
     	@class(ProbabilisticSplitStrategy);
+		string split_factors;
 }

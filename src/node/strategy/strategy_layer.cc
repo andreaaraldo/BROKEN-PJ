@@ -30,6 +30,7 @@ ifstream strategy_layer::fdist;
 ifstream strategy_layer::frouting;
 
 
+
 void strategy_layer::initialize()
 {
 

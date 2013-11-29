@@ -68,12 +68,6 @@ bool *spr::exploit(ccn_interest *interest){
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
     
-    //<aa>
-    std::stringstream msg; msg<<"outif="<<outif<<", gsize="<<gsize;
-    const char* mystr = msg.str().c_str();
-    const char* filename = __FILE__;
-    debug_message(filename, __LINE__, mystr );
-    //</aa>
     decision[outif]=true;
 
     return decision;

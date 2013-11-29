@@ -26,16 +26,31 @@
 #include "ProbabilisticSplitStrategy.h"
 #include "ccnsim.h"
 #include "ccn_interest.h"
+#include "ccn_interest_m.h"
 #include "base_cache.h"
+#include "error_handling.h"
 //<aa>
-Register_Class(ProbabilisticSplitStrategy);
+
+//Register_Class(ProbabilisticSplitStrategy);
 
 
 void ProbabilisticSplitStrategy::initialize()
 {
     MultipathStrategyLayer::initialize();
-}
+	// ref: omnet 4.3 manual, sec 4.5.4
+	const char *vstr = par("split_factors").stringValue(); // e.g. "aa bb cc";
+	split_factors = cStringTokenizer(vstr).asDoubleVector();
 
+	// Verify if split factors are correct
+	int out_gates = getParentModule()->gateSize("face$o");
+	if (split_factors.size() != out_gates )
+		severe_error(__FILE__,__LINE__, "The number of slipt factors is different from the number of output gates");
+	double sum = 0;
+	for (int i=0; i < split_factors.size() ; i++ )
+		sum += split_factors[i];
+	if (sum != 1)
+		severe_error(__FILE__,__LINE__, "The sum of slipt factors should be 1");
+}
 bool* ProbabilisticSplitStrategy::get_decision(cMessage *in){
 
     bool *decision;
@@ -46,37 +61,61 @@ bool* ProbabilisticSplitStrategy::get_decision(cMessage *in){
     return decision;
 }
 
+
 int ProbabilisticSplitStrategy::decide_out_gate(vector<int_f> FIB_entries)
 {
-	int undecided = -1;
-	int out_gate = undecided;
+	int out_gate = UNDEFINED_VALUE;
+
 	if(FIB_entries.size() == 1)
 		out_gate = FIB_entries[0].id;
 	else{
-		while (out_gate == undecided){
-			ciao
+		while (out_gate == UNDEFINED_VALUE) 
+		{	//extract an out_gate until a valid one is found
+			double r = uniform(0, 1);
+			double sum = 0; int i = 0;
+			while (sum <= r)
+			{
+				sum += split_factors[i];
+				i++;
+				#ifdef SEVERE_DEBUG
+				if (i >= split_factors.size() || sum > 1)
+					severe_error(__FILE__,__LINE__, "error");
+				#endif
+			}
+			int chosen_gate = i;
+			// If the chosen gate is included in the FIB_entries,
+			// use it. Otherwise, start again the while loop
+			for (int j=0; j < FIB_entries.size(); j++){
+				int_f entry = FIB_entries[j];
+				if (entry.id == chosen_gate){
+					out_gate = chosen_gate; break;
+				}
+			}
 		}
 	}
 		
 	return out_gate;
 }
 
+
 int ProbabilisticSplitStrategy::decide_target_repository(ccn_interest *interest)
 {
-   if (interest->getRep_target == ccn_interest_Base.UNDEFINED_VALUE)
+	int repository;
+	if (interest->getRep_target() == UNDEFINED_VALUE)
     {
-    	//<aa> Get all the repositories that store the content demanded by the
-    	// interest </aa>
+    	// Get all the repositories that store the content demanded by the
+    	// interest
 		vector<int> repos = interest->get_repos();
 		
-		//<aa> Choose one of them </aa>
-		repository = random(repos);
+		// Choose one of them
+		repository = repos[intrand(repos.size())];
 		interest->setRep_target(repository);
     }else 
 		repository = interest->getRep_target();
 	
-	return repositoiry
+	return repository;
 }
+
 
 bool* ProbabilisticSplitStrategy::exploit(ccn_interest *interest)
 {
@@ -85,19 +124,26 @@ bool* ProbabilisticSplitStrategy::exploit(ccn_interest *interest)
 	gsize;
 
     gsize = __get_outer_interfaces(); //number of gates
- 	repository = decide_target_repository(ccn_interest *interest);
-	const vecotr<int_f> FIB_entries = get_FIB_entry(repository);
+	repository = decide_target_repository(interest);
+	severe_error(__FILE__,__LINE__,"Enable the above 2 lines and return value must be bool*");
 
-    outif = FIB_entry.id;
     bool *decision = new bool[gsize];
-    std::fill(decision,decision+gsize,0);
-    decision[outif]=true;
+	std::fill(decision,decision+gsize,0);
+    	
+	const vector<int_f> FIB_entries = get_FIB_entries(repository);
+	int s = FIB_entries.size();
+	int i = 0;
+	while (i < s)
+	{
+	    outif = FIB_entries[i].id;
+	    decision[outif]=true;
+		i++;
+	}
 
     return decision;
 }
 
-
-void nrr::finish(){
+void ProbabilisticSplitStrategy::finish(){
     MultipathStrategyLayer::finish();
 }
 //</aa>
