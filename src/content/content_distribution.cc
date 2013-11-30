@@ -27,6 +27,10 @@
 #include "zipf.h"
 #include <algorithm>
 
+//<aa>
+#include <error_handling.h>
+//</aa>
+
 Register_Class(content_distribution);
 
 
@@ -183,13 +187,26 @@ int *content_distribution::init_repos(vector<int> node_repos){
     }
 
     int new_rep;
-    while ( i < num_repos  ){
-	new_rep = intrand(nodes);
-	if (find (repositories,repositories + i , new_rep) == repositories + i ){
-	    repositories[i++] = new_rep;
-	}
+    while ( i < num_repos  )
+    {
+    	//<aa> We already assigned i repositories. Now we randomly assign the rest</aa>
+		new_rep = intrand(nodes);
+		if (find (repositories,repositories + i , new_rep) == repositories + i ){
+			repositories[i++] = new_rep;
+		}
     }
     return repositories;
+    
+    //<aa>
+    #ifdef SEVERE_DEBUG
+    std:stringstream ss;
+    ss<<"The repositories are in the following nodes";
+    for (int j=0; j<i; j++)
+    	ss<<" "<<repositories[j];
+    ss<<endl;
+    debug_message(__FILE__,__LINE__, ss.str().c_str() );
+    #endif
+    //</aa>
 }
 
 

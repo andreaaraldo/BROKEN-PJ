@@ -32,6 +32,10 @@
 #include "ccnsim.h"
 #include "client.h"
 
+//<aa>
+#include "error_handling.h"
+//</aa>
+
 Register_Class (client);
 
 
@@ -66,6 +70,14 @@ void client::initialize(){
 
     }
 
+	//<aa>    
+    #ifdef SEVERE_DEBUG
+    std:stringstream ss; 
+    ss<<"The client attached to node "<<getNodeIndex()
+    	<<" is active? "<<active<<endl;
+    debug_message(__FILE__, __LINE__, ss.str().c_str());
+    #endif
+	//</aa>
 }
 
 
