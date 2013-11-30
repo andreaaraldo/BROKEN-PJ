@@ -93,11 +93,6 @@ int spr::nearest(vector<int>& repositories){
         }else if (FIB_entry.len == min_len)
             targets.push_back(*i);
     }
-    #ifdef SEVERE_DEBUG
-    std::stringstream msg;
-    msg << "size of targets = "<<targets.size();
-    debug_message(__FILE__,__LINE__,msg.str().c_str() );
-    #endif
     
     return targets[intrand(targets.size())];
 }

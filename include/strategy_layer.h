@@ -83,6 +83,7 @@ class strategy_layer: public abstract_node{
 		void add_FIB_entry(int destination_node_index, int interface_index, 
 							int distance);
 		const vector<int_f> get_FIB_entries(int destination_node_index);
+		virtual vector<int> choose_paths(int num_paths)=0;
 		//</aa>
 
 

@@ -22,6 +22,7 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+//<aa>
 #include <omnetpp.h>
 #include "ProbabilisticSplitStrategy.h"
 #include "ccnsim.h"
@@ -29,24 +30,34 @@
 #include "ccn_interest_m.h"
 #include "base_cache.h"
 #include "error_handling.h"
-//<aa>
+#include <sstream> // to use stringstream
 
-//Register_Class(ProbabilisticSplitStrategy);
+Register_Class(ProbabilisticSplitStrategy);
 
 
 void ProbabilisticSplitStrategy::initialize()
 {
-    MultipathStrategyLayer::initialize();
-	// ref: omnet 4.3 manual, sec 4.5.4
+    strategy_layer::initialize();
+    
+    
+    // ref: omnet 4.3 manual, sec 4.5.4
 	const char *vstr = par("split_factors").stringValue(); // e.g. "aa bb cc";
 	split_factors = cStringTokenizer(vstr).asDoubleVector();
 
+	int node_index = getParentModule()->getIndex();
+	std::stringstream msg; 
+	msg<<"node "<< node_index;
+	msg<<" has a  ProbabilisticSplitStrategy. Split factor string is "<<
+    	vstr;
+    debug_message(__FILE__, __LINE__, msg.str().c_str() );
+
+
 	// Verify if split factors are correct
-	int out_gates = getParentModule()->gateSize("face$o");
+	unsigned out_gates = getParentModule()->gateSize("face$o");
 	if (split_factors.size() != out_gates )
 		severe_error(__FILE__,__LINE__, "The number of slipt factors is different from the number of output gates");
 	double sum = 0;
-	for (int i=0; i < split_factors.size() ; i++ )
+	for (unsigned i=0; i < split_factors.size() ; i++ )
 		sum += split_factors[i];
 	if (sum != 1)
 		severe_error(__FILE__,__LINE__, "The sum of slipt factors should be 1");
@@ -72,28 +83,52 @@ int ProbabilisticSplitStrategy::decide_out_gate(vector<int_f> FIB_entries)
 		while (out_gate == UNDEFINED_VALUE) 
 		{	//extract an out_gate until a valid one is found
 			double r = uniform(0, 1);
-			double sum = 0; int i = 0;
-			while (sum <= r)
+			double sum = 0; unsigned i = 0;
+			
+			while (1)
 			{
 				sum += split_factors[i];
+				if (sum > r)
+					break;
 				i++;
 				#ifdef SEVERE_DEBUG
-				if (i >= split_factors.size() || sum > 1)
-					severe_error(__FILE__,__LINE__, "error");
+				if ( ( i == split_factors.size() && sum < 1 ) ||
+					  i > split_factors.size() || sum > 1  ){
+					std::stringstream msg;
+					msg<<"split_factors.size()="<<split_factors.size()<<
+						"; i="<<i<<"; sum="<<sum;
+					severe_error(__FILE__,__LINE__, msg.str().c_str() );
+				}
 				#endif
 			}
 			int chosen_gate = i;
+			#ifdef SEVERE_DEBUG
+			if (chosen_gate >= split_factors.size())
+				severe_error(__FILE__, __LINE__, "");
+			#endif
+
+						
 			// If the chosen gate is included in the FIB_entries,
 			// use it. Otherwise, start again the while loop
-			for (int j=0; j < FIB_entries.size(); j++){
+			for (unsigned j=0; j < FIB_entries.size(); j++){
 				int_f entry = FIB_entries[j];
 				if (entry.id == chosen_gate){
 					out_gate = chosen_gate; break;
 				}
 			}
+			
+			//std::stringstream msg;
+			//msg<<"chosen_gate="<<i<<" and out_gate is "<<out_gate;
+			//debug_message(__FILE__,__LINE__, msg.str().c_str() );
+
 		}
 	}
-		
+	
+	#ifdef SEVERE_DEBUG
+	if(out_gate == UNDEFINED_VALUE)
+		severe_error(__FILE__,__LINE__,"It was not possible to find an output gate");
+	#endif
+	
 	return out_gate;
 }
 
@@ -120,27 +155,31 @@ int ProbabilisticSplitStrategy::decide_target_repository(ccn_interest *interest)
 bool* ProbabilisticSplitStrategy::exploit(ccn_interest *interest)
 {
     int repository,
-	outif,
 	gsize;
 
     gsize = __get_outer_interfaces(); //number of gates
 	repository = decide_target_repository(interest);
-	severe_error(__FILE__,__LINE__,"Enable the above 2 lines and return value must be bool*");
 
     bool *decision = new bool[gsize];
 	std::fill(decision,decision+gsize,0);
     	
 	const vector<int_f> FIB_entries = get_FIB_entries(repository);
-	int s = FIB_entries.size();
-	int i = 0;
-	while (i < s)
-	{
-	    outif = FIB_entries[i].id;
-	    decision[outif]=true;
-		i++;
-	}
-
+	int out_gate = decide_out_gate(FIB_entries);
+	decision[out_gate]=true;
     return decision;
+}
+
+vector<int> ProbabilisticSplitStrategy::choose_paths(int num_paths)
+{
+	std::stringstream msg;
+	msg<<"I'm inside node with id "<< getParentModule()->getId()
+		<< " and with index " << getParentModule()->getIndex();
+	msg<<"I'm inside ProbabilisticSplitStrategy::choose_paths\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	debug_message(__FILE__,__LINE__,msg.str().c_str() );
+	vector<int> v;
+	for (int i=0; i<num_paths; i++)
+		v.push_back( i );
+	return v;
 }
 
 void ProbabilisticSplitStrategy::finish(){

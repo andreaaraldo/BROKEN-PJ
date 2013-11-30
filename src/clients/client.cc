@@ -69,15 +69,6 @@ void client::initialize(){
 	scheduleAt( simTime() + check_time, timer  );
 
     }
-
-	//<aa>    
-    #ifdef SEVERE_DEBUG
-    std:stringstream ss; 
-    ss<<"The client attached to node "<<getNodeIndex()
-    	<<" is active? "<<active<<endl;
-    debug_message(__FILE__, __LINE__, ss.str().c_str());
-    #endif
-	//</aa>
 }
 
 

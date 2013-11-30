@@ -26,5 +26,11 @@
 #include <algorithm>
 #include "MultipathStrategyLayer.h"
 #include "ccnsim.h"
+#include "error_handling.h"
 
 //Register_Class(MultipathStrategyLayer);
+
+void MultipathStrategyLayer::initialize()
+{
+    severe_error(__FILE__,__LINE__,"You must override this method");
+}

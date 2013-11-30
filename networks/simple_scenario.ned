@@ -23,6 +23,8 @@ network simple_scenario_network extends base_network
 		node[1].content_store.C =  10^2;
 		node[2].content_store.C =  10^2;
 		node[3].content_store.C =  0;
+		node[0].FS = "ProbabilisticSplitStrategy";
+		node[0].strategy_layer.split_factors = "0 0.5 0.5";
 
 
     connections allowunconnected :

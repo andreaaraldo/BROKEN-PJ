@@ -44,6 +44,7 @@ class ProbabilisticSplitStrategy: public MultipathStrategyLayer
 		void initialize();
 		bool* exploit(ccn_interest *);
 		void finish();
+		vector<int> choose_paths(int num_paths);
 
 	private:
 		int decide_target_repository(ccn_interest *interest);

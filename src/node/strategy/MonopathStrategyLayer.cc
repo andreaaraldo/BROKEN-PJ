@@ -50,6 +50,18 @@ const int_f MonopathStrategyLayer::get_FIB_entry(
 	return FIB_entries.front();
 }
 
+vector<int> MonopathStrategyLayer::choose_paths(int num_paths)
+{
+	std::stringstream msg;
+	msg<<"I'm inside node with id "<< getParentModule()->getId()
+		<< " and with index " << getParentModule()->getIndex();
+	msg<<"I'm inside MonopathStrategyLayer::choose_paths\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	debug_message(__FILE__,__LINE__,msg.str().c_str() );
+	vector<int> v;
+	v.push_back( num_paths == 1 ? 0 : intrand (num_paths) );
+	return v;
+}
+
 void MonopathStrategyLayer::initialize(){
 	strategy_layer::initialize();
 }

@@ -30,11 +30,16 @@
 #include <omnetpp.h>
 #include "strategy_layer.h"
 
+using namespace std;
+
 class MultipathStrategyLayer: public strategy_layer{
     public:
-		//void initialize();
+		virtual void initialize();
 		virtual bool *get_decision(cMessage *in)=0;
 		//void finish();
+		
+	protected:
+		virtual vector<int> choose_paths(int num_paths)=0;
 };
 //</aa>
 #endif

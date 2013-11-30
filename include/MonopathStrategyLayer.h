@@ -39,7 +39,7 @@ class MonopathStrategyLayer: public strategy_layer{
 		
 	protected:
 		const int_f get_FIB_entry(int destination_node_index);
-		
+		vector<int> choose_paths(int num_paths);
 
 };
 //</aa>
