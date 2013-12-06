@@ -5,6 +5,11 @@ simple core_layer{
     	@display("i=block/cogwheel;is=l");
 	double RTT = default(0.1);
 
+	//<aa> if true, if an interest comes and there already is an entry in the PIT
+	// for the same content, the new interest will not be forwarded. In false, The 
+	// interest will be forwarded in any case
+	bool interest_aggregation = default(true);//</aa>
+
     gates:
     	inout strategy_port;
 	inout client_port;

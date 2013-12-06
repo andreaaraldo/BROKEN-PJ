@@ -38,6 +38,7 @@ int core_layer::repo_interest = 0;
 
 void  core_layer::initialize(){
     RTT = par("RTT");
+	/*//<aa>*/interest_aggregation = par("interest_aggregation");//</aa>
     repo_load = 0;
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
@@ -191,16 +192,20 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
 
-	if (pitIt==PIT.end() || 
-		(pitIt != PIT.end() && int_msg->getNfound()) ||
-		    simTime() - PIT[chunk].time > 2*RTT ){
+	if (	pitIt==PIT.end() || //<aa> there is no such an entry in the PIT 
+								// thus I have to forward the interest</aa>
+			(pitIt != PIT.end() && int_msg->getNfound()) ||
+		    simTime() - PIT[chunk].time > 2*RTT ||			
+			/*//<aa>*/! interest_aggregation //</aa>
+	){
 	    bool * decision = strategy->get_decision(int_msg);
 	    handle_decision(decision,int_msg);
 	    delete [] decision;//free memory for the decision array
 
 	    if (pitIt!=PIT.end())
-		PIT.erase(chunk);
-	    PIT[chunk].time = simTime();
+			PIT.erase(chunk);
+		//<aa>Last time this entry has been updated is now</aa>
+	    PIT[chunk].time = simTime(); 
 
 	}
 

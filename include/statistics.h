@@ -54,6 +54,7 @@ class statistics : public cSimpleModule{
 	virtual void finish();
 
 	//Stable checks if the system is in a stable state.
+	//<aa>It checks if that cache has a stable hit rate</aa>
 	virtual bool stable(int);
 
 	//Ask to each worth component (e.g., clients or caches)  of clearing

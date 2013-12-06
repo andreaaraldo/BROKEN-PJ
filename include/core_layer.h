@@ -46,7 +46,7 @@ class base_cache;
 struct pit_entry {
     interface_t interfaces;
     unordered_set<int> nonces;
-    simtime_t time;
+    simtime_t time; //<aa> last time this entry has been updated</aa>
 };
 
 
@@ -58,6 +58,10 @@ class core_layer : public abstract_node{
 	virtual void initialize();
 	virtual void handleMessage(cMessage *);
 	virtual void finish();
+
+	//<aa> See ned file
+	bool interest_aggregation;
+	//</aa>
 
     //Custom functions
 	void handle_interest(ccn_interest *);

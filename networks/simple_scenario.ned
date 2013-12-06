@@ -19,10 +19,13 @@ network simple_scenario_network extends base_network
 		**.cost = 0;
 		node[0].face$o[1].channel.cost = 300;
 
+		//TODO: convert node[0] and node[3] into TransparentNode
 		node[0].content_store.C =  0;
-		node[1].content_store.C =  10^2;
-		node[2].content_store.C =  10^2;
+		node[0].core_layer.interest_aggregation =  false; 
+		node[1].content_store.C =  10^6;
+		node[2].content_store.C =  10^6;
 		node[3].content_store.C =  0;
+		node[3].core_layer.interest_aggregation =  false;
 		node[0].FS = "ProbabilisticSplitStrategy";
 		node[0].strategy_layer.split_factors = "0 0.5 0.5";
 
