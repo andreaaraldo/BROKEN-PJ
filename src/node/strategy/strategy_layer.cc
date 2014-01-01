@@ -33,6 +33,11 @@ ifstream strategy_layer::frouting;
 
 void strategy_layer::initialize()
 {
+	//<aa>
+	cout << __FILE__ <<":"<<__LINE__<<"\nPAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this. To see the line where the error arises, search for \"here is the error\""<<endl;
+	cout<<"\n\n"<<__FILE__<<__LINE__<< ":Attenzione, prima di inserire roba, sei sicuro che il vettore gia' esiste li'?"<<endl;
+
+	//</aa>
 
     for (int i = 0; i<getParentModule()->gateSize("face$o");i++)
     {
@@ -78,7 +83,7 @@ void strategy_layer::populate_routing_table(){
     types.push_back("modules.node.node");
     topo.extractByNedTypeName( types );
     cTopology::Node *node = topo.getNode( getParentModule()->getIndex() ); //iterator node
-    int rand_out;
+    //int rand_out; //<aa> I disabled this line</aa>
     //As the node topology is defined as a vector of nodes (see Omnet++ manual), cTopology 
     //associates the node i with the node whose Index is i.
     for (int d = 0; d < topo.getNumNodes(); d++)
@@ -94,15 +99,15 @@ void strategy_layer::populate_routing_table(){
 			vector<int> paths = choose_paths(node->getNumPaths());
 			if (getParentModule()->getIndex() == 0 && d==3)
 			{
-				std:stringstream msg; 
+				std::stringstream msg; 
 				int node_index = getParentModule()->getIndex();
 				msg<<"I'm node "<<node_index;
 				msg<<". To reach node "<<d<<" I have "<<node->getNumPaths()<<" alternatives, i.e. "
 					<<paths.size();
 				debug_message(__FILE__,__LINE__,msg.str().c_str());
 			}
-			cout << "\n\n"<<__FILE__ <<":"<<__LINE__<<"\nPAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this"<<endl;
-			for (int i=0; i<paths.size(); i++){
+			//here is the error
+			for (unsigned int i=0; i<paths.size(); i++){
 				int output_gate = node->getPath( paths[i] )->getLocalGate()->getIndex();
 				int distance = node->getDistanceToTarget();
 				add_FIB_entry(d, output_gate, distance);
@@ -152,7 +157,7 @@ void strategy_layer::add_FIB_entry(
 	int_f FIB_entry;
 	FIB_entry.id = interface_index;
 	FIB_entry.len = distance;
-	cout<<"\n\n"<<__FILE__<<__LINE__<< ":Attenzione, prima di inserire roba, sei sicuro che il vettore gia' esiste li'?"<<endl;
+	//Inserimento roba
 	FIB[destination_node_index].push_back(FIB_entry);
 	
 	#ifdef SEVERE_DEBUG

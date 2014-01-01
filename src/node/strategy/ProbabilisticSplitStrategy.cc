@@ -101,7 +101,7 @@ int ProbabilisticSplitStrategy::decide_out_gate(vector<int_f> FIB_entries)
 				}
 				#endif
 			}
-			int chosen_gate = i;
+			unsigned int chosen_gate = i;
 			#ifdef SEVERE_DEBUG
 			if (chosen_gate >= split_factors.size())
 				severe_error(__FILE__, __LINE__, "");
@@ -110,9 +110,9 @@ int ProbabilisticSplitStrategy::decide_out_gate(vector<int_f> FIB_entries)
 						
 			// If the chosen gate is included in the FIB_entries,
 			// use it. Otherwise, start again the while loop
-			for (unsigned j=0; j < FIB_entries.size(); j++){
+			for (unsigned int j=0; j < FIB_entries.size(); j++){
 				int_f entry = FIB_entries[j];
-				if (entry.id == chosen_gate){
+				if (entry.id == (int)chosen_gate){
 					out_gate = chosen_gate; break;
 				}
 			}
@@ -172,10 +172,10 @@ bool* ProbabilisticSplitStrategy::exploit(ccn_interest *interest)
 vector<int> ProbabilisticSplitStrategy::choose_paths(int num_paths)
 {
 	std::stringstream msg;
-	msg<<"I'm inside node with id "<< getParentModule()->getId()
-		<< " and with index " << getParentModule()->getIndex();
-	msg<<"I'm inside ProbabilisticSplitStrategy::choose_paths\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	debug_message(__FILE__,__LINE__,msg.str().c_str() );
+	//msg<<"I'm inside node with id "<< getParentModule()->getId()
+	//	<< " and with index " << getParentModule()->getIndex();
+	//msg<<"I'm inside ProbabilisticSplitStrategy::choose_paths\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	//debug_message(__FILE__,__LINE__,msg.str().c_str() );
 	vector<int> v;
 	for (int i=0; i<num_paths; i++)
 		v.push_back( i );
