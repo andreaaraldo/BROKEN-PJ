@@ -1,0 +1,38 @@
+file 3245 1388615940                                            
+version 2
+run General-20-20140101-23:38:44-24991
+attr D lce
+attr F spr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 10^2
+attr datetime 20140101-23:38:44
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^2"
+attr iterationvars2 "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^2, $repetition=0"
+attr measurement "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^2"
+attr net simple_scenario_cache_at_border
+attr network networks.${net=simple_scenario_cache_in_the_core,simple_scenario_cache_at_border}_network
+attr processid 24991
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 20
+attr seedset 0
+attr ttl 1000
+
+vector 120  simple_scenario_cache_at_border_network.node[0].content_store  hit_node[0]  ETV
+120	971 246 1204802 1204802 1 15 15 0 0 0 0
+vector 121  simple_scenario_cache_at_border_network.node[1].content_store  hit_node[1]  ETV
+121	1309 321 1204802 1204802 1 15 15 0.97297297297297 1 -nan -nan
+vector 122  simple_scenario_cache_at_border_network.node[2].content_store  hit_node[2]  ETV
+122	1722 261 1204802 1204802 1 15 15 0 0 -nan -nan
+vector 123  simple_scenario_cache_at_border_network.node[3].content_store  hit_node[3]  ETV
+123	2075 282 1204802 1204802 1 15 15 0 0 -nan -nan
+vector 124  simple_scenario_cache_at_border_network.node[4].content_store  hit_node[4]  ETV
+124	2449 261 1204802 1204802 1 15 15 0 0 -nan -nan
+vector 125  simple_scenario_cache_at_border_network.client[0]  hdistance[0]  ETV
+125	2791 454 1204802 1204802 1 15 15 2.3640401365085 2.3654709115461 35.474268072839 83.894916061279

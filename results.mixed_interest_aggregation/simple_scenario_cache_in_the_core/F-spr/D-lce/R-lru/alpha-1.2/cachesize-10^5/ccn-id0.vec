@@ -1,0 +1,121 @@
+version 2
+run General-11-20140101-23:34:33-24991
+attr D lce
+attr F spr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 10^5
+attr datetime 20140101-23:34:33
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario_cache_in_the_core, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5"
+attr iterationvars2 "$net=simple_scenario_cache_in_the_core, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5, $repetition=0"
+attr measurement "$net=simple_scenario_cache_in_the_core, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5"
+attr net simple_scenario_cache_in_the_core
+attr network networks.${net=simple_scenario_cache_in_the_core,simple_scenario_cache_at_border}_network
+attr processid 24991
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 11
+attr seedset 0
+attr ttl 1000
+
+vector 66  simple_scenario_cache_in_the_core_network.node[0].content_store  hit_node[0]  ETV
+66	5437927	1	1
+66	5437927	2	1
+66	5437927	3	1
+66	5437927	4	1
+66	5437927	5	1
+66	5437927	6	1
+66	5437927	7	1
+66	5437927	8	1
+66	5437927	9	1
+66	5437927	10	1
+66	5437927	11	1
+66	5437927	12	1
+66	5437927	13	1
+66	5437927	14	1
+66	5437927	15	1
+vector 67  simple_scenario_cache_in_the_core_network.node[1].content_store  hit_node[1]  ETV
+67	5437927	1	-nan
+67	5437927	2	-nan
+67	5437927	3	-nan
+67	5437927	4	-nan
+67	5437927	5	-nan
+67	5437927	6	-nan
+67	5437927	7	-nan
+67	5437927	8	-nan
+67	5437927	9	-nan
+67	5437927	10	-nan
+67	5437927	11	-nan
+67	5437927	12	-nan
+67	5437927	13	-nan
+67	5437927	14	-nan
+67	5437927	15	-nan
+vector 68  simple_scenario_cache_in_the_core_network.node[2].content_store  hit_node[2]  ETV
+68	5437927	1	-nan
+68	5437927	2	-nan
+68	5437927	3	-nan
+68	5437927	4	-nan
+68	5437927	5	-nan
+68	5437927	6	-nan
+68	5437927	7	-nan
+68	5437927	8	-nan
+68	5437927	9	-nan
+68	5437927	10	-nan
+68	5437927	11	-nan
+68	5437927	12	-nan
+68	5437927	13	-nan
+68	5437927	14	-nan
+68	5437927	15	-nan
+vector 69  simple_scenario_cache_in_the_core_network.node[3].content_store  hit_node[3]  ETV
+69	5437927	1	-nan
+69	5437927	2	-nan
+69	5437927	3	-nan
+69	5437927	4	-nan
+69	5437927	5	-nan
+69	5437927	6	-nan
+69	5437927	7	-nan
+69	5437927	8	-nan
+69	5437927	9	-nan
+69	5437927	10	-nan
+69	5437927	11	-nan
+69	5437927	12	-nan
+69	5437927	13	-nan
+69	5437927	14	-nan
+69	5437927	15	-nan
+vector 70  simple_scenario_cache_in_the_core_network.node[4].content_store  hit_node[4]  ETV
+70	5437927	1	-nan
+70	5437927	2	-nan
+70	5437927	3	-nan
+70	5437927	4	-nan
+70	5437927	5	-nan
+70	5437927	6	-nan
+70	5437927	7	-nan
+70	5437927	8	-nan
+70	5437927	9	-nan
+70	5437927	10	-nan
+70	5437927	11	-nan
+70	5437927	12	-nan
+70	5437927	13	-nan
+70	5437927	14	-nan
+70	5437927	15	-nan
+vector 71  simple_scenario_cache_in_the_core_network.client[0]  hdistance[0]  ETV
+71	5437927	1	0.14828559725086
+71	5437927	2	0.14828808736539
+71	5437927	3	0.14827637520832
+71	5437927	4	0.14827493279975
+71	5437927	5	0.14826184893736
+71	5437927	6	0.14825608726766
+71	5437927	7	0.14824993512224
+71	5437927	8	0.14826172238484
+71	5437927	9	0.14824027860513
+71	5437927	10	0.14824567503216
+71	5437927	11	0.14822180073839
+71	5437927	12	0.14821633397653
+71	5437927	13	0.14813749711428
+71	5437927	14	0.14821129939955
+71	5437927	15	0.14820906786385

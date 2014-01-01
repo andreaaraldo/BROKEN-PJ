@@ -20,16 +20,11 @@ network simple_scenario_cache_in_the_core_network extends base_network
 		
 		int cachesize;
 
-		//TODO: convert node[0] and node[3] into TransparentNode
 		node[0].content_store.C =  cachesize;
 		node[1].content_store.C =  0;
-		node[1].core_layer.interest_aggregation =  false; 
 		node[2].content_store.C =  0;
-		node[2].core_layer.interest_aggregation =  false; 
 		node[3].content_store.C =  0;
-		node[3].core_layer.interest_aggregation =  false; 
 		node[4].content_store.C =  0;
-		node[4].core_layer.interest_aggregation =  false; 
 
 
 
