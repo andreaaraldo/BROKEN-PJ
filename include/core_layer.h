@@ -97,6 +97,8 @@ class core_layer : public abstract_node{
 	#ifdef SEVERE_DEBUG
 	int discarded_interests; //number of incoming interests discarded
 							 // because their TTL is > max hops
+	int unsatisfied_interests;	//number of interests for contents that are 
+								//in the cache nor in the repository of this node	
 	#endif
 	//</aa>
 };

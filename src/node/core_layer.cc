@@ -63,6 +63,22 @@ void  core_layer::initialize(){
     interests = 0;
     data = 0;
 
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	unsatisfied_interests=0;
+	discarded_interests=0;
+
+	if (repo_load != interests - discarded_interests - unsatisfied_interests){
+			std::stringstream msg; 
+			msg<<"node["<<getIndex()<<"]: "<<
+				"repo_load="<<repo_load<<"; interests="<<interests<<
+				"; discarded_interests="<<discarded_interests<<
+				"; unsatisfied_interests="<<unsatisfied_interests;
+		    severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
+
+	#endif
+	//</aa>
 
 }
 
@@ -75,6 +91,20 @@ void  core_layer::initialize(){
  * handle_data() have the task of dealing with interest and data processing.
  */
 void core_layer::handleMessage(cMessage *in){
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	if (repo_load != interests - discarded_interests - unsatisfied_interests){
+			std::stringstream msg; 
+			msg<<"node["<<getIndex()<<"]: "<<
+				"repo_load="<<repo_load<<"; interests="<<interests<<
+				"; discarded_interests="<<discarded_interests<<
+				"; unsatisfied_interests="<<unsatisfied_interests;
+		    severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
+
+	#endif
+	//</aa>
+
 
     ccn_data *data_msg;
     ccn_interest *int_msg;
@@ -209,6 +239,13 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         //
         //c) Put the interface within the PIT (and follow your FIB)
         //
+        
+   		//<aa>
+		#ifdef SEVERE_DEBUG
+		unsatisfied_interests++;
+		#endif
+		//</aa>
+
 
         unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
