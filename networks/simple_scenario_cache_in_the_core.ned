@@ -16,8 +16,6 @@ network simple_scenario_cache_in_the_core_network extends base_network
 		num_repos = 2;
 		node_repos = "3,4";
 
-		**.cost = 300;
-		
 		int cachesize;
 
 		node[0].content_store.C =  cachesize;

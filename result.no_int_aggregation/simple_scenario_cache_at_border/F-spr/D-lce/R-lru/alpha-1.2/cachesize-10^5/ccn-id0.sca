@@ -1,0 +1,76 @@
+version 2
+run General-23-20140102-00:55:15-25383
+attr D lce
+attr F spr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 10^5
+attr datetime 20140102-00:55:15
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5"
+attr iterationvars2 "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5, $repetition=0"
+attr measurement "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5"
+attr net simple_scenario_cache_at_border
+attr network networks.${net=simple_scenario_cache_in_the_core,simple_scenario_cache_at_border}_network
+attr processid 25383
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 23
+attr seedset 0
+attr ttl 1000
+
+scalar . 	a 	1.2
+scalar . 	rep 	0
+scalar . 	ttl 	1000
+scalar simple_scenario_cache_at_border_network.content_distribution 	repo-0 	3
+scalar simple_scenario_cache_at_border_network.content_distribution 	repo-1 	4
+scalar simple_scenario_cache_at_border_network.content_distribution 	client-0 	0
+scalar simple_scenario_cache_at_border_network.node[0].face$o[1].channel 	effectiveCost:sum 	0
+scalar simple_scenario_cache_at_border_network.node[0].face$o[2].channel 	effectiveCost:sum 	0
+scalar simple_scenario_cache_at_border_network.node[1].face$o[1].channel 	effectiveCost:sum 	0
+scalar simple_scenario_cache_at_border_network.node[1].face$o[2].channel 	effectiveCost:sum 	0
+scalar simple_scenario_cache_at_border_network.node[2].face$o[1].channel 	effectiveCost:sum 	0
+scalar simple_scenario_cache_at_border_network.node[2].face$o[2].channel 	effectiveCost:sum 	0
+scalar simple_scenario_cache_at_border_network.node[3].face$o[1].channel 	effectiveCost:sum 	98240
+scalar simple_scenario_cache_at_border_network.node[4].face$o[1].channel 	effectiveCost:sum 	0
+scalar simple_scenario_cache_at_border_network.statistics 	p_hit 	0.18966587974137
+scalar simple_scenario_cache_at_border_network.statistics 	interests 	90817.6
+scalar simple_scenario_cache_at_border_network.statistics 	data 	54803.4
+scalar simple_scenario_cache_at_border_network.statistics 	hdistance 	2.0434328681464
+scalar simple_scenario_cache_at_border_network.statistics 	avg_time 	0.001989961363
+scalar simple_scenario_cache_at_border_network.statistics 	downloads 	180071
+scalar simple_scenario_cache_at_border_network.node[0].core_layer 	interests[0] 	180071
+scalar simple_scenario_cache_at_border_network.node[0].core_layer 	data[0] 	180071
+scalar simple_scenario_cache_at_border_network.node[0].core_layer 	repo_int[0] 	93946
+scalar simple_scenario_cache_at_border_network.node[0].content_store 	p_hit[0] 	0
+scalar simple_scenario_cache_at_border_network.node[0].content_store 	hits[0] 	0
+scalar simple_scenario_cache_at_border_network.node[0].content_store 	misses[0] 	180071
+scalar simple_scenario_cache_at_border_network.node[1].core_layer 	interests[1] 	89141
+scalar simple_scenario_cache_at_border_network.node[1].core_layer 	data[1] 	3016
+scalar simple_scenario_cache_at_border_network.node[1].content_store 	p_hit[1] 	0.96616596179087
+scalar simple_scenario_cache_at_border_network.node[1].content_store 	hits[1] 	86125
+scalar simple_scenario_cache_at_border_network.node[1].content_store 	misses[1] 	3016
+scalar simple_scenario_cache_at_border_network.node[2].core_layer 	interests[2] 	90930
+scalar simple_scenario_cache_at_border_network.node[2].core_layer 	data[2] 	90930
+scalar simple_scenario_cache_at_border_network.node[2].content_store 	p_hit[2] 	0
+scalar simple_scenario_cache_at_border_network.node[2].content_store 	hits[2] 	0
+scalar simple_scenario_cache_at_border_network.node[2].content_store 	misses[2] 	90930
+scalar simple_scenario_cache_at_border_network.node[3].core_layer 	interests[3] 	3016
+scalar simple_scenario_cache_at_border_network.node[3].core_layer 	repo_load[3] 	98240
+scalar simple_scenario_cache_at_border_network.node[3].core_layer 	data[3] 	0
+scalar simple_scenario_cache_at_border_network.node[3].content_store 	p_hit[3] 	0
+scalar simple_scenario_cache_at_border_network.node[3].content_store 	hits[3] 	0
+scalar simple_scenario_cache_at_border_network.node[3].content_store 	misses[3] 	3016
+scalar simple_scenario_cache_at_border_network.node[4].core_layer 	interests[4] 	90930
+scalar simple_scenario_cache_at_border_network.node[4].core_layer 	repo_load[4] 	1919104
+scalar simple_scenario_cache_at_border_network.node[4].core_layer 	data[4] 	0
+scalar simple_scenario_cache_at_border_network.node[4].content_store 	p_hit[4] 	0
+scalar simple_scenario_cache_at_border_network.node[4].content_store 	hits[4] 	0
+scalar simple_scenario_cache_at_border_network.node[4].content_store 	misses[4] 	90930
+scalar simple_scenario_cache_at_border_network.client[0] 	hdistance[0] 	2.0434328681464
+scalar simple_scenario_cache_at_border_network.client[0] 	downloads[0] 	180071
+scalar simple_scenario_cache_at_border_network.client[0] 	avg_time[0] 	0.001989961363

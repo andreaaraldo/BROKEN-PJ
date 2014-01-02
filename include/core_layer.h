@@ -92,6 +92,13 @@ class core_layer : public abstract_node{
 	//Statistics
 	int interests;
 	int data;
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	int discarded_interests; //number of incoming interests discarded
+							 // because their TTL is > max hops
+	#endif
+	//</aa>
 };
 #endif
 

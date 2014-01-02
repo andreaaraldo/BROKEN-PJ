@@ -1,0 +1,121 @@
+version 2
+run General-23-20140102-00:55:15-25383
+attr D lce
+attr F spr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 10^5
+attr datetime 20140102-00:55:15
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5"
+attr iterationvars2 "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5, $repetition=0"
+attr measurement "$net=simple_scenario_cache_at_border, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^5"
+attr net simple_scenario_cache_at_border
+attr network networks.${net=simple_scenario_cache_in_the_core,simple_scenario_cache_at_border}_network
+attr processid 25383
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 23
+attr seedset 0
+attr ttl 1000
+
+vector 138  simple_scenario_cache_at_border_network.node[0].content_store  hit_node[0]  ETV
+138	23716188	1	0
+138	23716188	2	0
+138	23716188	3	0
+138	23716188	4	0
+138	23716188	5	0
+138	23716188	6	0
+138	23716188	7	0
+138	23716188	8	0
+138	23716188	9	0
+138	23716188	10	0
+138	23716188	11	0
+138	23716188	12	0
+138	23716188	13	0
+138	23716188	14	0
+138	23716188	15	0
+vector 139  simple_scenario_cache_at_border_network.node[1].content_store  hit_node[1]  ETV
+139	23716188	1	1
+139	23716188	2	-nan
+139	23716188	3	-nan
+139	23716188	4	1
+139	23716188	5	-nan
+139	23716188	6	-nan
+139	23716188	7	-nan
+139	23716188	8	-nan
+139	23716188	9	-nan
+139	23716188	10	-nan
+139	23716188	11	-nan
+139	23716188	12	1
+139	23716188	13	1
+139	23716188	14	-nan
+139	23716188	15	1
+vector 140  simple_scenario_cache_at_border_network.node[2].content_store  hit_node[2]  ETV
+140	23716188	1	-nan
+140	23716188	2	0
+140	23716188	3	0
+140	23716188	4	-nan
+140	23716188	5	0
+140	23716188	6	0
+140	23716188	7	0
+140	23716188	8	0
+140	23716188	9	0
+140	23716188	10	0
+140	23716188	11	0
+140	23716188	12	-nan
+140	23716188	13	-nan
+140	23716188	14	0
+140	23716188	15	-nan
+vector 141  simple_scenario_cache_at_border_network.node[3].content_store  hit_node[3]  ETV
+141	23716188	1	-nan
+141	23716188	2	-nan
+141	23716188	3	-nan
+141	23716188	4	-nan
+141	23716188	5	-nan
+141	23716188	6	-nan
+141	23716188	7	-nan
+141	23716188	8	-nan
+141	23716188	9	-nan
+141	23716188	10	-nan
+141	23716188	11	-nan
+141	23716188	12	-nan
+141	23716188	13	-nan
+141	23716188	14	-nan
+141	23716188	15	-nan
+vector 142  simple_scenario_cache_at_border_network.node[4].content_store  hit_node[4]  ETV
+142	23716188	1	-nan
+142	23716188	2	0
+142	23716188	3	0
+142	23716188	4	-nan
+142	23716188	5	0
+142	23716188	6	0
+142	23716188	7	0
+142	23716188	8	0
+142	23716188	9	0
+142	23716188	10	0
+142	23716188	11	0
+142	23716188	12	-nan
+142	23716188	13	-nan
+142	23716188	14	0
+142	23716188	15	-nan
+vector 143  simple_scenario_cache_at_border_network.client[0]  hdistance[0]  ETV
+143	23716188	1	2.0434035199695
+143	23716188	2	2.0435225154513
+143	23716188	3	2.0435549418329
+143	23716188	4	2.0432959328096
+143	23716188	5	2.0436484978564
+143	23716188	6	2.0436838754279
+143	23716188	7	2.0437524298214
+143	23716188	8	2.0438188434159
+143	23716188	9	2.0438463037348
+143	23716188	10	2.0438842642694
+143	23716188	11	2.0439616651026
+143	23716188	12	2.0428537567259
+143	23716188	13	2.0428111307177
+143	23716188	14	2.044131612201
+143	23716188	15	2.0426380944288

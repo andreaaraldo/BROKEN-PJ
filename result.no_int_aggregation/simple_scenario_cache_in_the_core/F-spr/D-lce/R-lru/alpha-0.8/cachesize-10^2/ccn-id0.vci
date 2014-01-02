@@ -1,0 +1,38 @@
+file 4941408 1388620077                                         
+version 2
+run General-0-20140102-00:47:41-25383
+attr D lce
+attr F spr
+attr R lru
+attr a 0.8
+attr configname General
+attr csize 10^2
+attr datetime 20140102-00:47:41
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario_cache_in_the_core, $rep=0, $a=0.8, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^2"
+attr iterationvars2 "$net=simple_scenario_cache_in_the_core, $rep=0, $a=0.8, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^2, $repetition=0"
+attr measurement "$net=simple_scenario_cache_in_the_core, $rep=0, $a=0.8, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^2"
+attr net simple_scenario_cache_in_the_core
+attr network networks.${net=simple_scenario_cache_in_the_core,simple_scenario_cache_at_border}_network
+attr processid 25383
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+attr ttl 1000
+
+vector 0  simple_scenario_cache_in_the_core_network.node[0].content_store  hit_node[0]  ETV
+0	977 778172 1296579 1296579 1 41037 41037 0 0.75606796116505 -nan -nan
+vector 1  simple_scenario_cache_in_the_core_network.node[1].content_store  hit_node[1]  ETV
+1	779241 812478 1296579 1296579 1 41037 41037 0 0 -nan -nan
+vector 2  simple_scenario_cache_in_the_core_network.node[2].content_store  hit_node[2]  ETV
+2	1591811 811917 1296579 1296579 1 41037 41037 0 0 -nan -nan
+vector 3  simple_scenario_cache_in_the_core_network.node[3].content_store  hit_node[3]  ETV
+3	2403820 812478 1296579 1296579 1 41037 41037 0 0 -nan -nan
+vector 4  simple_scenario_cache_in_the_core_network.node[4].content_store  hit_node[4]  ETV
+4	3216390 811917 1296579 1296579 1 41037 41037 0 0 -nan -nan
+vector 5  simple_scenario_cache_in_the_core_network.client[0]  hdistance[0]  ETV
+5	4028388 913020 1296579 1296579 1 41037 41037 0 3 76148.813900611 226128.54294629

@@ -39,7 +39,8 @@ void IcnChannel::initialize()
         
         effectiveCostID = registerSignal("effectiveCost");
         std::stringstream msg; 
-		msg<<"cost:"<< cost;
+		msg<<"cost for each data pkt from node["<<source_index<<"] to node["
+			<<dest_index<<"]: "<< cost;
 	    debug_message(__FILE__,__LINE__,msg.str().c_str() );
 }
 

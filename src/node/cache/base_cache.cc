@@ -134,11 +134,11 @@ bool base_cache::lookup(chunk_t chunk ){
     }else{
         found = false;
 
-	//Average cache statistics(miss)
-	miss++;
-	//Per file cache statistics(miss)
-	if ( name <= __file_bulk )
-	    cache_stats[name].miss++;
+		//Average cache statistics(miss)
+		miss++;
+		//Per file cache statistics(miss)
+		if ( name <= __file_bulk )
+			cache_stats[name].miss++;
     }
 
     return found;

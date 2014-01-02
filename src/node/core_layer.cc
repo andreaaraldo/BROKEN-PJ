@@ -32,6 +32,10 @@
 #include "ccn_data.h"
 #include "base_cache.h"
 
+//<aa>
+#include "error_handling.h"
+//</aa>
+
 Register_Class(core_layer);
 int core_layer::repo_interest = 0;
 
@@ -80,19 +84,23 @@ void core_layer::handleMessage(cMessage *in){
     switch(type){
     //On receiving interest
     case CCN_I:	
-	interests++;
+		interests++;
 
-	int_msg = (ccn_interest *) in;
-	int_msg->setHops(int_msg -> getHops() + 1);
+		int_msg = (ccn_interest *) in;
+		int_msg->setHops(int_msg -> getHops() + 1);
 
-	if (int_msg->getHops() == int_msg->getTTL()){
-	    break;
-	}
-	int_msg->setCapacity (int_msg->getCapacity() + ContentStore->get_size());
+		if (int_msg->getHops() == int_msg->getTTL()){
+	    	//<aa>
+	    	#ifdef SEVERE_DEBUG
+	    	discarded_interests++;
+	    	#endif
+	    	//</aa>
+	    	break;
+		}
+		int_msg->setCapacity (int_msg->getCapacity() + ContentStore->get_size());
+		handle_interest (int_msg);
+		break;
 
-	handle_interest (int_msg);
-
-	break;
     //On receiving data
     case CCN_D:
 	data++;
@@ -154,11 +162,11 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         data_msg->setHops(0);
         data_msg->setBtw(int_btw); //Copy the highest betweenness
         data_msg->setTarget(getIndex());
-	data_msg->setFound(true);
+        data_msg->setFound(true);
 
-	data_msg->setCapacity(int_msg->getCapacity());
-	data_msg->setTSI(int_msg->getHops());
-	data_msg->setTSB(1);
+        data_msg->setCapacity(int_msg->getCapacity());
+        data_msg->setTSI(int_msg->getHops());
+        data_msg->setTSB(1);
 
         send(data_msg,"face$o", int_msg->getArrivalGate()->getIndex());
 
@@ -168,45 +176,57 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	// we are mimicking a message sent to the repository
 	//
         ccn_data* data_msg = compose_data(chunk);
-	repo_interest++;
-	repo_load++;
+		repo_interest++;
+		repo_load++;
+
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		if (repo_load != interests - discarded_interests){
+				std::stringstream msg; 
+				msg<<"node["<<getIndex()<<"]: "<<
+					"repo_load="<<repo_load<<"; interests="<<interests<<
+					"; discarded_interests="<<discarded_interests;
+			    severe_error(__FILE__, __LINE__, msg.str().c_str() );
+		}
+
+		#endif
+		//</aa>
 
         data_msg->setHops(1);
         data_msg->setTarget(getIndex());
-	data_msg->setBtw(std::max(my_btw,int_btw));
+		data_msg->setBtw(std::max(my_btw,int_btw));
 
-	data_msg->setCapacity(int_msg->getCapacity());
-	data_msg->setTSI(int_msg->getHops() + 1);
-	data_msg->setTSB(1);
-	data_msg->setFound(true);
+		data_msg->setCapacity(int_msg->getCapacity());
+		data_msg->setTSI(int_msg->getHops() + 1);
+		data_msg->setTSB(1);
+		data_msg->setFound(true);
 
         ContentStore->store(data_msg);
 
         send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
 
     } else {
-	//
+        //
         //c) Put the interface within the PIT (and follow your FIB)
-	//
+        //
 
-	unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
+        unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
 
-	if (	pitIt==PIT.end() || //<aa> there is no such an entry in the PIT 
+        if (	pitIt==PIT.end() || //<aa> there is no such an entry in the PIT 
 								// thus I have to forward the interest</aa>
 			(pitIt != PIT.end() && int_msg->getNfound()) ||
 		    simTime() - PIT[chunk].time > 2*RTT ||			
 			/*//<aa>*/! interest_aggregation //</aa>
-	){
-	    bool * decision = strategy->get_decision(int_msg);
-	    handle_decision(decision,int_msg);
-	    delete [] decision;//free memory for the decision array
+        ){
+	    	bool * decision = strategy->get_decision(int_msg);
+	    	handle_decision(decision,int_msg);
+	    	delete [] decision;//free memory for the decision array
 
-	    if (pitIt!=PIT.end())
-			PIT.erase(chunk);
-		//<aa>Last time this entry has been updated is now</aa>
-	    PIT[chunk].time = simTime(); 
-
+	    	if (pitIt!=PIT.end())
+				PIT.erase(chunk);
+			//<aa>Last time this entry has been updated is now</aa>
+	    	PIT[chunk].time = simTime(); 
 	}
 
 	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());

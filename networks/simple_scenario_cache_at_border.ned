@@ -16,8 +16,6 @@ network simple_scenario_cache_at_border_network extends base_network
 		num_repos = 2;
 		node_repos = "3,4";
 
-		**.cost = 300;
-		
 		int cachesize;
 
 		//TODO: convert node[0] and others into TransparentNode
