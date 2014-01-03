@@ -24,8 +24,6 @@
  *
  */
 
-#ifndef CCN_NODE_H
-#define CCN_NODE_H
 //<aa>
 #ifndef ICNCHANNEL_H_
 #define ICNCHANNEL_H_
@@ -33,6 +31,9 @@
 #include <cdataratechannel.h>
 
 class IcnChannel: public cDatarateChannel {
+	public:	
+        void notifyStability();
+        
     private:
         simsignal_t effectiveCostID;
 
@@ -40,8 +41,10 @@ class IcnChannel: public cDatarateChannel {
         double cost;
         virtual void initialize();
         virtual void processMessage(cMessage *msg, simtime_t t, result_t& result);
+        
+        //true if the whole system (not only the IcnChannel) is stable
+        bool systemIsStable;
 };
 
 #endif /* CHANNELWITHCOST_H_ */
 //</aa>
-#endif /* CCN_NODE_H */

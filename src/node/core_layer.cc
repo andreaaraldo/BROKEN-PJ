@@ -43,7 +43,7 @@ int core_layer::repo_interest = 0;
 void  core_layer::initialize(){
     RTT = par("RTT");
 	/*//<aa>*/interest_aggregation = par("interest_aggregation");//</aa>
-    repo_load = 0;
+    //repo_load = 0;  //<aa> Disabled this. The reset is inside clear_stat() </aa>
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
     int num_repos = getAncestorPar("num_repos");
@@ -60,24 +60,16 @@ void  core_layer::initialize(){
     strategy = (strategy_layer *) gate("strategy_port$o")->getNextGate()->getOwner();
 
     //Statistics
-    interests = 0;
-    data = 0;
+    //interests = 0; //<aa> Disabled this. The reset is inside clear_stat() </aa>
+    //data = 0; //<aa> Disabled this. The reset is inside clear_stat() </aa>
 
 	//<aa>
+	clear_stat();
+
 	#ifdef SEVERE_DEBUG
-	unsatisfied_interests=0;
-	discarded_interests=0;
-
-	if (repo_load != interests - discarded_interests - unsatisfied_interests){
-			std::stringstream msg; 
-			msg<<"node["<<getIndex()<<"]: "<<
-				"repo_load="<<repo_load<<"; interests="<<interests<<
-				"; discarded_interests="<<discarded_interests<<
-				"; unsatisfied_interests="<<unsatisfied_interests;
-		    severe_error(__FILE__, __LINE__, msg.str().c_str() );
-	}
-
+	check_if_correct(__LINE__);
 	#endif
+
 	//</aa>
 
 }
@@ -93,15 +85,9 @@ void  core_layer::initialize(){
 void core_layer::handleMessage(cMessage *in){
 	//<aa>
 	#ifdef SEVERE_DEBUG
-	if (repo_load != interests - discarded_interests - unsatisfied_interests){
-			std::stringstream msg; 
-			msg<<"node["<<getIndex()<<"]: "<<
-				"repo_load="<<repo_load<<"; interests="<<interests<<
-				"; discarded_interests="<<discarded_interests<<
-				"; unsatisfied_interests="<<unsatisfied_interests;
-		    severe_error(__FILE__, __LINE__, msg.str().c_str() );
-	}
-
+	check_if_correct(__LINE__);
+	char* last_received;
+	
 	#endif
 	//</aa>
 
@@ -119,10 +105,12 @@ void core_layer::handleMessage(cMessage *in){
 		int_msg = (ccn_interest *) in;
 		int_msg->setHops(int_msg -> getHops() + 1);
 
-		if (int_msg->getHops() == int_msg->getTTL()){
+		if (int_msg->getHops() == int_msg->getTTL())
+		{
 	    	//<aa>
 	    	#ifdef SEVERE_DEBUG
 	    	discarded_interests++;
+	    	check_if_correct(__LINE__);
 	    	#endif
 	    	//</aa>
 	    	break;
@@ -133,16 +121,22 @@ void core_layer::handleMessage(cMessage *in){
 
     //On receiving data
     case CCN_D:
-	data++;
+		data++;
 
-	data_msg = (ccn_data* ) in; //One hop more from the last caching node (useful for distance policy)
-	data_msg->setHops(data_msg -> getHops() + 1);
-	handle_data(data_msg);
+		data_msg = (ccn_data* ) in; //One hop more from the last caching node (useful for distance policy)
+		data_msg->setHops(data_msg -> getHops() + 1);
+		handle_data(data_msg);
 
-	break;
+		break;
     }
 
     delete in;
+    
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	check_if_correct(__LINE__);
+	#endif
+	//</aa>
 }
 
 //Per node statistics printing
@@ -199,6 +193,13 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         data_msg->setTSB(1);
 
         send(data_msg,"face$o", int_msg->getArrivalGate()->getIndex());
+        
+        //<aa>
+        #ifdef SEVERE_DEBUG
+        interests_satisfied_by_cache++;
+		check_if_correct(__LINE__);
+        #endif
+        //</aa>
 
     } else if ( my_bitmask & __repo(int_msg->get_name() ) ){
 	//
@@ -208,19 +209,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         ccn_data* data_msg = compose_data(chunk);
 		repo_interest++;
 		repo_load++;
-
-		//<aa>
-		#ifdef SEVERE_DEBUG
-		if (repo_load != interests - discarded_interests){
-				std::stringstream msg; 
-				msg<<"node["<<getIndex()<<"]: "<<
-					"repo_load="<<repo_load<<"; interests="<<interests<<
-					"; discarded_interests="<<discarded_interests;
-			    severe_error(__FILE__, __LINE__, msg.str().c_str() );
-		}
-
-		#endif
-		//</aa>
 
         data_msg->setHops(1);
         data_msg->setTarget(getIndex());
@@ -235,7 +223,12 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
         send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
 
-    } else {
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		check_if_correct(__LINE__);
+		#endif
+		//</aa>
+   } else {
         //
         //c) Put the interface within the PIT (and follow your FIB)
         //
@@ -243,6 +236,7 @@ void core_layer::handle_interest(ccn_interest *int_msg){
    		//<aa>
 		#ifdef SEVERE_DEBUG
 		unsatisfied_interests++;
+		check_if_correct(__LINE__);
 		#endif
 		//</aa>
 
@@ -264,12 +258,24 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 				PIT.erase(chunk);
 			//<aa>Last time this entry has been updated is now</aa>
 	    	PIT[chunk].time = simTime(); 
-	}
+		}
 
-	__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
+		__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
+		
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		check_if_correct(__LINE__);
+		#endif
+		//</aa>
 
 
     }
+    
+    //<aa>
+    #ifdef SEVERE_DEBUG
+    check_if_correct(__LINE__);
+    #endif
+    //</aa>
 }
 
 
@@ -343,4 +349,34 @@ void core_layer::clear_stat(){
     repo_interest = 0;
     interests = 0;
     data = 0;
+    
+    //<aa>
+    repo_interest = 0;
+    repo_load = 0;
+    
+   	#ifdef SEVERE_DEBUG
+	discarded_interests = 0;
+	unsatisfied_interests = 0;
+	interests_satisfied_by_cache = 0;
+	#endif
+    //</aa>
 }
+
+//<aa>
+#ifdef SEVERE_DEBUG
+void core_layer::check_if_correct(int line)
+{
+	if (repo_load != interests - discarded_interests - unsatisfied_interests
+		-interests_satisfied_by_cache)
+	{
+			std::stringstream msg; 
+			msg<<"node["<<getIndex()<<"]: "<<
+				"repo_load="<<repo_load<<"; interests="<<interests<<
+				"; discarded_interests="<<discarded_interests<<
+				"; unsatisfied_interests="<<unsatisfied_interests<<
+				"; interests_satisfied_by_cache="<<interests_satisfied_by_cache;
+		    severe_error(__FILE__, line, msg.str().c_str() );
+	}
+}
+#endif
+//</aa>

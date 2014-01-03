@@ -29,12 +29,16 @@
 #include "content_distribution.h"
 #include "lru_cache.h"
 
-#include "ccnsim.h"
+//<aa>
+//#include "core_layer.h"
+#include "IcnChannel.h"
+//</aa>
+
+
 Register_Class(statistics);
 
 
 using namespace std;
-
 
 void statistics::initialize(){
     //Node property
@@ -58,13 +62,13 @@ void statistics::initialize(){
     topo.extractByNedTypeName(clients_vec);
     int k = 0;
     for (int i = 0;i<topo.getNumNodes();i++){
-        int c = ((client *)topo.getNode(i)->getModule())->getNodeIndex();
-	if ( find (content_distribution::clients, content_distribution::clients + num_clients, c) 
-		!= content_distribution::clients + num_clients)  {
-	    clients[k++] = (client *)topo.getNode(i)->getModule();
-	}
+		    int c = ((client *)topo.getNode(i)->getModule())->getNodeIndex();
+		if ( find (content_distribution::clients, content_distribution::clients + num_clients, c) 
+			!= content_distribution::clients + num_clients)  {
+			clients[k++] = (client *)topo.getNode(i)->getModule();
+		}
     }
-
+    
     //Extracting nodes (caches and cores)
     caches = new base_cache*[num_nodes];
     cores = new core_layer*[num_nodes];
@@ -72,9 +76,19 @@ void statistics::initialize(){
     topo.extractByNedTypeName(nodes_vec);
 
     for (int i = 0;i<topo.getNumNodes();i++){
-	caches[i] = (base_cache *) (topo.getNode(i)->getModule()->getModuleByRelativePath("content_store"));
-	cores [i] = (core_layer *) (topo.getNode(i)->getModule()->getModuleByRelativePath("core_layer"));
+		caches[i] = (base_cache *) (topo.getNode(i)->getModule()->getModuleByRelativePath("content_store"));
+		cores [i] = (core_layer *) (topo.getNode(i)->getModule()->getModuleByRelativePath("core_layer"));
     }
+    
+    //<aa> Extracting icn channels
+    vector<string> icn_chan_vec(1,"modules.channels.IcnChannel");
+    topo.extractByNedTypeName(icn_chan_vec);
+    int num_channels = topo.getNumNodes();
+    for (int i = 0;i<num_channels;i++){
+		icn_channels.push_back( (IcnChannel *) (topo.getNode(i)->getModule() ) );
+	}
+    //</aa>
+
 
 
     //Store samples for stabilization
@@ -86,7 +100,7 @@ void statistics::initialize(){
 
     //Start checking for full
     scheduleAt(simTime() + ts, full_check);
-
+    
 }
 
 
@@ -117,13 +131,14 @@ void statistics::handleMessage(cMessage *in){
             for (int i = 0;i<num_nodes;i++)
         	stables += (int) stable(i);
 
-            if ( stables >= partial_n ){
-		delete stable_check;
-        	scheduleAt(simTime() + time_steady, end );
-        	clear_stat();
+            if ( stables >= partial_n )
+            {
+				delete stable_check;
+				scheduleAt(simTime() + time_steady, end );
+				stability_has_been_reached();
             } else 
-        	scheduleAt(simTime() + ts, in);
-	    break;
+        		scheduleAt(simTime() + ts, in);
+		    break;
         case END:
             delete in;
             endSimulation();
@@ -230,8 +245,18 @@ void statistics::clear_stat(){
 	    clients[i]->clear_stat();
 
     for (int i = 0;i<num_nodes;i++)
-	cores[i]->clear_stat();
+	    cores[i]->clear_stat();
 
     for (int i = 0;i<num_nodes;i++)
-	caches[i]->clear_stat();
+	    caches[i]->clear_stat();
+}
+
+void statistics::stability_has_been_reached(){
+	clear_stat();
+	for (unsigned i=0; i<icn_channels.size(); i++ ){
+		IcnChannel* chan = icn_channels[i];
+		chan->notifyStability();
+		//icn_channels[i]->notifyStability();
+	}
+		
 }

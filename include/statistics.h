@@ -28,13 +28,21 @@
 #include <ctopology.h>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
+#include <vector>
+
+//<aa>
+#include "IcnChannel.h"
+//#include "core_layer.h"
+//</aa>
 
 class client;
 class core_layer;
 class base_cache;
+//class IcnChannel;
 
 using namespace std;
 using namespace boost;
+
 
 /*
  * This class defines the central class for collecting statistics. Its first
@@ -57,9 +65,13 @@ class statistics : public cSimpleModule{
 	//<aa>It checks if that cache has a stable hit rate</aa>
 	virtual bool stable(int);
 
-	//Ask to each worth component (e.g., clients or caches)  of clearing
+	//Ask each worth component (e.g., clients or caches)  to clear
 	//its internal statistics
 	void clear_stat();
+	
+	//<aa> Perform the operations to do after having reached the stability
+	void stability_has_been_reached();
+	//</aa>
 
 
     private:
@@ -71,6 +83,10 @@ class statistics : public cSimpleModule{
 	client** clients;
 	core_layer** cores;
 	base_cache** caches;
+	
+	//<aa>
+	vector<IcnChannel*> icn_channels;
+	//</aa>
 
 	//Network infos
 	int num_nodes;
@@ -89,4 +105,5 @@ class statistics : public cSimpleModule{
 	unordered_map <int, int> level_same;
 
 };
+
 #endif

@@ -17,7 +17,7 @@
 #include "IcnChannel.h"
 #include "error_handling.h"
 #include "cmodule.h"
-#include "ccnsim.h" // for CCN_D
+#include "ccnsim.h" // for CCN_D and systemIsStable
 
 
 Define_Channel(IcnChannel);
@@ -38,19 +38,26 @@ void IcnChannel::initialize()
         cost = source_index < dest_index ? cost_asc : cost_desc;
         
         effectiveCostID = registerSignal("effectiveCost");
+        #ifdef SEVERE_DEBUG
         std::stringstream msg; 
 		msg<<"cost for each data pkt from node["<<source_index<<"] to node["
 			<<dest_index<<"]: "<< cost;
 	    debug_message(__FILE__,__LINE__,msg.str().c_str() );
+	    #endif
+	    systemIsStable = false;
 }
 
 
 void IcnChannel::processMessage(cMessage *msg, simtime_t t, result_t& result)
 {
         cDatarateChannel::processMessage(msg,t,result);
-        if( msg->getKind() == CCN_D ){
+        if( msg->getKind() == CCN_D && systemIsStable){
         	// This is a data packet
         	emit(effectiveCostID, cost );
         }
+}
+
+void IcnChannel::notifyStability(){
+	systemIsStable = true;
 }
 //</aa>

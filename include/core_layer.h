@@ -52,6 +52,9 @@ struct pit_entry {
 
 class core_layer : public abstract_node{
     friend class statistics;
+    
+    public:
+    	void check_if_correct(int line);
 
     protected:
     //Standard node Omnet++ functions
@@ -97,8 +100,9 @@ class core_layer : public abstract_node{
 	#ifdef SEVERE_DEBUG
 	int discarded_interests; //number of incoming interests discarded
 							 // because their TTL is > max hops
-	int unsatisfied_interests;	//number of interests for contents that are 
+	int unsatisfied_interests;	//number of interests for contents that are neither
 								//in the cache nor in the repository of this node	
+	int interests_satisfied_by_cache;
 	#endif
 	//</aa>
 };
