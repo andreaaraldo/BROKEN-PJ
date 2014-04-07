@@ -25,9 +25,19 @@ Define_Channel(IcnChannel);
 void IcnChannel::initialize()
 {
         cDatarateChannel::initialize();
-        cost = par("cost");
-        double cost_asc = par("cost_asc");
-        double cost_desc = par("cost_desc");
+        double price_asc = par("price_asc");
+        double price_desc = par("price_desc");
+
+        #ifdef SEVERE_DEBUG
+		cTopology topo;
+		topo.extractByNedTypeName(cStringTokenizer("modules.statistics.statistics").asVector() );
+        std::stringstream ermsg; 
+	    int num_nodes = topo.getNumNodes();
+		if (num_nodes!=1) {
+			ermsg<<"Number of statistics nodes: "<<num_nodes;
+		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	    #endif
         
         //cGate* sourceGate = getSourceGate();
         //cModule* node_ = sourceGate->getOwnerModule();
@@ -35,29 +45,48 @@ void IcnChannel::initialize()
         
         int source_index = getSourceGate()->getOwnerModule()->getIndex();
         int dest_index = getSourceGate()->getNextGate()->getOwnerModule()->getIndex();
-        cost = source_index < dest_index ? cost_asc : cost_desc;
-        
-        effectiveCostID = registerSignal("effectiveCost");
+        price = source_index < dest_index ? price_asc : price_desc;
         #ifdef SEVERE_DEBUG
         std::stringstream msg; 
-		msg<<"cost for each data pkt from node["<<source_index<<"] to node["
-			<<dest_index<<"]: "<< cost;
+
+		ermsg.str(""); 
+		msg<<"price for each data pkt from node["<<source_index<<"] to node["
+			<<dest_index<<"]: "<< price;
 	    debug_message(__FILE__,__LINE__,msg.str().c_str() );
 	    #endif
-	    systemIsStable = false;
+
+		// Registering this IcnChannel to the statistics module
+		vector<string> name_vec(1,"modules.statistics.statistics");
+		topo.extractByNedTypeName(name_vec );
+		#ifdef SEVERE_DEBUG
+		if (topo.getNumNodes() != 1) {
+		    std::stringstream ermsg; 
+			ermsg<<topo.getNumNodes()<<" modules have been found whereas there must be only "<<
+					"one statistics module: ";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+		statistics_object = (statistics*) topo.getNode(0)->getModule();
+		statistics_object->registerIcnChannel(this);
+		clear_stat();
 }
 
 
 void IcnChannel::processMessage(cMessage *msg, simtime_t t, result_t& result)
 {
         cDatarateChannel::processMessage(msg,t,result);
-        if( msg->getKind() == CCN_D && systemIsStable){
-        	// This is a data packet
-        	emit(effectiveCostID, cost );
-        }
+        if( msg->getKind() == CCN_D)
+		    count++;
 }
 
-void IcnChannel::notifyStability(){
-	systemIsStable = true;
+void IcnChannel::clear_stat(){
+    count = 0;
 }
+
+
+long IcnChannel::get_cost(){
+    return count*price;
+}
+
+Register_Class(IcnChannel);
 //</aa>

@@ -29,22 +29,26 @@
 #define ICNCHANNEL_H_
 
 #include <cdataratechannel.h>
+#include <ccnsim.h>
+#include "statistics.h"
 
 class IcnChannel: public cDatarateChannel {
-	public:	
-        void notifyStability();
-        
-    private:
-        simsignal_t effectiveCostID;
 
+	public:	
+		void clear_stat();
+		long get_cost();
+
+	private:
+		statistics* statistics_object; // Reference to the statistics object
+        
     protected:
-        double cost;
+        long price;
         virtual void initialize();
         virtual void processMessage(cMessage *msg, simtime_t t, result_t& result);
-        
-        //true if the whole system (not only the IcnChannel) is stable
-        bool systemIsStable;
+
+		// Statistics
+		long count; //count how many objects passed through this channel
 };
 
-#endif /* CHANNELWITHCOST_H_ */
+#endif /* ICNCHANNEL_H_ */
 //</aa>

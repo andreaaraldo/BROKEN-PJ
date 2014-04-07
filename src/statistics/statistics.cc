@@ -31,6 +31,7 @@
 
 //<aa>
 //#include "core_layer.h"
+#include "error_handling.h"
 #include "IcnChannel.h"
 //</aa>
 
@@ -45,8 +46,7 @@ void statistics::initialize(){
     num_nodes 	= getAncestorPar("n");
     num_clients = getAncestorPar("num_clients");
 
-    cTopology topo;
-    
+   
     //Statistics parameters
     ts          = par("ts"); //sampling time
     window      = par("window");
@@ -56,6 +56,7 @@ void statistics::initialize(){
 	partial_n = num_nodes;
 
 
+    cTopology topo;
     //Extracting clients
     clients = new client* [num_clients];
     vector<string> clients_vec(1,"modules.clients.client");
@@ -79,17 +80,6 @@ void statistics::initialize(){
 		caches[i] = (base_cache *) (topo.getNode(i)->getModule()->getModuleByRelativePath("content_store"));
 		cores [i] = (core_layer *) (topo.getNode(i)->getModule()->getModuleByRelativePath("core_layer"));
     }
-    
-    //<aa> Extracting icn channels
-    vector<string> icn_chan_vec(1,"modules.channels.IcnChannel");
-    topo.extractByNedTypeName(icn_chan_vec);
-    int num_channels = topo.getNumNodes();
-    for (int i = 0;i<num_channels;i++){
-		icn_channels.push_back( (IcnChannel *) (topo.getNode(i)->getModule() ) );
-	}
-    //</aa>
-
-
 
     //Store samples for stabilization
     samples.resize(num_nodes);
@@ -188,14 +178,22 @@ void statistics::finish(){
     double global_tot_downloads = 0;
 
     for (int i = 0; i<num_nodes; i++){
-	if (cores[i]->interests){//Check if the given node got involved within the interest/data process
-	    global_hit  += caches[i]->hit;
-	    global_miss += caches[i]->miss;
-	    global_data += cores[i]->data;
-	    global_interests += cores[i]->interests;
-	}
+		if (cores[i]->interests){
+			//Check if the given node got involved within the interest/data process
+			global_hit  += caches[i]->hit;
+			global_miss += caches[i]->miss;
+			global_data += cores[i]->data;
+			global_interests += cores[i]->interests;
+		}
     }
 
+	//<aa>
+	long total_cost = 0;
+	for (unsigned i = 0; i<icn_channels.size() ;i++){
+		IcnChannel* ch = (IcnChannel*) icn_channels[i];
+		total_cost += ch->get_cost() ;
+	}
+	//</aa>
     
     //Print and store global statistics
     sprintf (name, "p_hit");
@@ -209,9 +207,9 @@ void statistics::finish(){
     recordScalar(name,global_data * 1./num_nodes);
 
     for (int i = 0;i<num_clients;i++){
-	global_avg_distance += clients[i]->avg_distance;
-	global_tot_downloads += clients[i]->tot_downloads;
-	global_avg_time  += clients[i]->avg_time;
+		global_avg_distance += clients[i]->avg_distance;
+		global_tot_downloads += clients[i]->tot_downloads;
+		global_avg_time  += clients[i]->avg_time;
     }
 
     sprintf ( name, "hdistance");
@@ -226,6 +224,10 @@ void statistics::finish(){
     recordScalar(name,global_tot_downloads);
     cout<<"Downloads/client: "<<global_tot_downloads * 1./num_clients<<endl;
 
+    sprintf ( name, "total_cost");
+    recordScalar(name,total_cost);
+    cout<<"total_cost: "<<total_cost<<endl;
+
     
     //TODO per content statistics
     //double hit_rate;
@@ -235,8 +237,6 @@ void statistics::finish(){
     //         hit_rate = hit_per_file[f] / ( hit_per_file[f] +miss_per_file[f] );
     //     hit_per_fileV.recordWithTimestamp(f, hit_rate);
     //}
-    
-    
 }
 
 void statistics::clear_stat(){
@@ -249,14 +249,19 @@ void statistics::clear_stat(){
 
     for (int i = 0;i<num_nodes;i++)
 	    caches[i]->clear_stat();
+
+	for (unsigned i = 0; i<icn_channels.size() ;i++){
+		IcnChannel* ch = (IcnChannel*) icn_channels[i];
+		ch->clear_stat();
+	}
 }
 
 void statistics::stability_has_been_reached(){
 	clear_stat();
-	for (unsigned i=0; i<icn_channels.size(); i++ ){
-		IcnChannel* chan = icn_channels[i];
-		chan->notifyStability();
-		//icn_channels[i]->notifyStability();
-	}
-		
 }
+
+void statistics::registerIcnChannel(cChannel* icn_channel){
+	cout<<"Ciao \n";
+	icn_channels.push_back(icn_channel);
+}
+//</aa>

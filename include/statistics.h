@@ -52,6 +52,13 @@ using namespace boost;
  *
  */
 class statistics : public cSimpleModule{
+
+	//<aa>
+	public:
+//		virtual void registerIcnChannel(int gate_id);
+		virtual void registerIcnChannel(cChannel* icn_channel);
+	//</aa>
+
     protected:
 	virtual void initialize();
 	//Handle message deals with timers for checking cache states and stable
@@ -83,10 +90,10 @@ class statistics : public cSimpleModule{
 	client** clients;
 	core_layer** cores;
 	base_cache** caches;
-	
 	//<aa>
-	vector<IcnChannel*> icn_channels;
+	vector<cChannel*> icn_channels;
 	//</aa>
+	
 
 	//Network infos
 	int num_nodes;

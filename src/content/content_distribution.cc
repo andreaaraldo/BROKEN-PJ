@@ -167,8 +167,8 @@ void content_distribution::init_content()
 
 }
 /*
-* Initialize the repositories vector. This vector is composed by the
-* repositories specified by the ini file.  In addition some random repositories
+* Initialize the repositories vector. This vector is composed of the
+* repositories specified in the ini file.  In addition some random repositories
 * are added if one wished more repositories than the fixed number specified
 * (see omnet.ini for further comments).
 */
