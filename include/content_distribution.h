@@ -64,7 +64,7 @@ class content_distribution : public cSimpleModule{
 	static name_t perfile_bulk;
 	static name_t stabilization_bulk; 
 	static name_t cut_off;
-	static int  *repositories;
+	static int  *repositories; //<aa> repositories[i] is the node which the i-th repository is attached to</aa>
 	static int  *clients;
 
 

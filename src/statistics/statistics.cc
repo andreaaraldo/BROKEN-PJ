@@ -250,6 +250,11 @@ void statistics::clear_stat(){
     for (int i = 0;i<num_nodes;i++)
 	    caches[i]->clear_stat();
 
+	#ifdef SEVERE_DEBUG
+		std::stringstream ermsg; 
+		ermsg<<"Clearing stats of "<<icn_channels.size()<<" icn channels"<<endl;
+		debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+	#endif
 	for (unsigned i = 0; i<icn_channels.size() ;i++){
 		IcnChannel* ch = (IcnChannel*) icn_channels[i];
 		ch->clear_stat();
@@ -261,7 +266,15 @@ void statistics::stability_has_been_reached(){
 }
 
 void statistics::registerIcnChannel(cChannel* icn_channel){
-	cout<<"Ciao \n";
+	#ifdef SEVERE_DEBUG
+	if ( std::find(icn_channels.begin(), icn_channels.end(), icn_channel)
+			!=icn_channels.end()
+	){
+        std::stringstream ermsg; 
+		ermsg<<"Trying to add to statistics object an icn channel already added"<<endl;
+	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
 	icn_channels.push_back(icn_channel);
 }
 //</aa>

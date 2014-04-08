@@ -1,0 +1,15 @@
+#
+# This makefile was generated with the following command:
+# /home/andrea/software/omnetpp-4.4.1/bin/opp_runall --export prova.txt ./ccnSim -u Cmdenv -r 0..1
+#
+
+.PHONY:  r0 r1
+
+all:  r0 r1
+
+r0:
+	./ccnSim -u Cmdenv -r 0
+
+r1:
+	./ccnSim -u Cmdenv -r 1
+

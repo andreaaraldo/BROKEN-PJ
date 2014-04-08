@@ -117,17 +117,17 @@ vector<int> content_distribution::binary_strings(int num_ones,int len){
     vector<int> bins;
     int ones,bin;
     for (int i =1;i< (1<<len);i++){
-	bin = i;
-	ones = 0;
-	//Count the number of ones
-	while (bin){
-	    ones += bin & 1;
-	    bin >>= 1;
-	}
-	//If the ones are equal to the number of repositories this is a good
-	//binary number
-	if (ones == num_ones)
-	    bins.push_back(i);
+		bin = i;
+		ones = 0;
+		//Count the number of ones
+		while (bin){
+			ones += bin & 1;
+			bin >>= 1;
+		}
+		//If the ones are equal to the number of repositories this is a good
+		//binary number
+		if (ones == num_ones)
+			bins.push_back(i);
     }
     return bins;
 
@@ -136,9 +136,17 @@ vector<int> content_distribution::binary_strings(int num_ones,int len){
 //Store information about the content:
 void content_distribution::init_content()
 {
+	// <aa>
+	// In repo_card we count how many obects each repo is storing
+	// <aa>
+	vector<int> repo_card(num_repos,0); 
+
     //As the repositories are represented as a string of bits, the function
     //binary_string is used for generating binary strings of length num_repos
     //with exactly degree ones
+	//<aa> where degree is the number of replicas. Each string represents a replica
+	// placement among the repositories. Given a single string, a 1 in the i-th position
+	// means that a replica of that object is placed in the i-th repository </aa>
     vector<int> repo_strings = binary_strings(degree, num_repos);
 
 	//<aa>cardF indicates how many objects there are into the catalog</aa>
@@ -156,15 +164,48 @@ void content_distribution::init_content()
 		}else 
 			__ssize( d , 1);
 
+		// <aa>
+		vector<int> chosen_repos; 
+		// </aa>
+
 		//Set the repositories
 		if (num_repos==1){
 			__srepo ( d , 1 );
+			// <aa> Compute the chosen_repo
+			chosen_repos.push_back(0);
+			// </aa>
 		} else {
+			// <aa> Choose a replica placement among all the possibile ones. 
+			// 		repos is a replica placement </aa>
 			repo_t repos = repo_strings[intrand(repo_strings.size())];
 			__srepo (d ,repos);
+
+			// <aa> Compute the chosen_repos
+			repo_t repo_extracted = __repo(d);
+			unsigned k = 0;
+			while (repo_extracted)
+			{	if (repo_extracted & 1) 
+					chosen_repos.push_back(k);
+				repo_extracted >>= 1;
+				k++;
+			}
+			// </aa>
 		}
+
+		// <aa> Update the repository cardinality
+		for (int repo_idx = 0; repo_idx < chosen_repos.size(); repo_idx++)
+					repo_card[ chosen_repos[repo_idx] ] ++;
+		// </aa>
+
     }
 
+	// <aa> Record the repository cardinality
+	for (int repo_idx = 0; repo_idx < num_repos; repo_idx++){
+	    char name[15];
+		sprintf(name,"repo-%d_card",repo_idx);
+		recordScalar(name, repo_card[repo_idx] );
+	}
+    // </aa>
 }
 /*
 * Initialize the repositories vector. This vector is composed of the
@@ -195,7 +236,6 @@ int *content_distribution::init_repos(vector<int> node_repos){
 			repositories[i++] = new_rep;
 		}
     }
-    return repositories;
     
     //<aa>
     #ifdef SEVERE_DEBUG
@@ -207,6 +247,8 @@ int *content_distribution::init_repos(vector<int> node_repos){
     debug_message(__FILE__,__LINE__, ss.str().c_str() );
     #endif
     //</aa>
+
+    return repositories;
 }
 
 

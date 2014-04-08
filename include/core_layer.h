@@ -64,6 +64,7 @@ class core_layer : public abstract_node{
 
 	//<aa> See ned file
 	bool interest_aggregation;
+	bool transparent_to_hops;
 	//</aa>
 
     //Custom functions

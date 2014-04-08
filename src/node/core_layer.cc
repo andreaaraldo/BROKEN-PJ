@@ -42,7 +42,10 @@ int core_layer::repo_interest = 0;
 
 void  core_layer::initialize(){
     RTT = par("RTT");
-	/*//<aa>*/interest_aggregation = par("interest_aggregation");//</aa>
+	//<aa>
+	interest_aggregation = par("interest_aggregation");
+	transparent_to_hops = par("transparent_to_hops");
+	//</aa>
     //repo_load = 0;  //<aa> Disabled this. The reset is inside clear_stat() </aa>
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
@@ -103,7 +106,11 @@ void core_layer::handleMessage(cMessage *in){
 		interests++;
 
 		int_msg = (ccn_interest *) in;
-		int_msg->setHops(int_msg -> getHops() + 1);
+
+		//<aa>
+		if (!transparent_to_hops)
+		//</aa>
+			int_msg->setHops(int_msg -> getHops() + 1);
 
 		if (int_msg->getHops() == int_msg->getTTL())
 		{
@@ -124,7 +131,12 @@ void core_layer::handleMessage(cMessage *in){
 		data++;
 
 		data_msg = (ccn_data* ) in; //One hop more from the last caching node (useful for distance policy)
-		data_msg->setHops(data_msg -> getHops() + 1);
+
+		//<aa>
+		if (!transparent_to_hops)
+		//</aa>
+			data_msg->setHops(data_msg -> getHops() + 1);
+
 		handle_data(data_msg);
 
 		break;

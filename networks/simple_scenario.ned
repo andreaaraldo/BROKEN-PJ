@@ -18,17 +18,23 @@ network simple_scenario_network extends base_network
 		node_repos = "3,4";
 		
 		int cachesize;
+		string decision_policy;
 
 		// The following nodes are "fake"
-		node[0].content_store.C =  0;
-		node[0].core_layer.interest_aggregation =  false; 
 		node[3].content_store.C =  0;
 		node[3].core_layer.interest_aggregation =  false; 
+		node[3].core_layer.transparent_to_hops = true;
 		node[4].content_store.C =  0;
 		node[4].core_layer.interest_aggregation =  false; 
+		node[4].core_layer.transparent_to_hops = true;
 
+
+		node[0].content_store.C =  cachesize;
 		node[1].content_store.C =  cachesize;
 		node[2].content_store.C =  cachesize;
+		node[0].content_store.DS = decision_policy;
+		node[1].content_store.DS = decision_policy;
+		node[2].content_store.DS = decision_policy;
 
 
     connections allowunconnected :
@@ -37,5 +43,5 @@ network simple_scenario_network extends base_network
         node[0].face++ <--> node[1].face++;
         node[0].face++ <--> node[2].face++;
         node[1].face++ <-->  IcnChannel{price_desc=1;} <--> node[3].face++;
-        node[2].face++ <-->  IcnChannel{price_desc=80;} <--> node[4].face++;
+        node[2].face++ <-->  IcnChannel{price_desc=1;} <--> node[4].face++;
 }
