@@ -16,6 +16,7 @@ network simple_scenario_network extends base_network
 		node_clients = "0";
 		num_repos = 2;
 		node_repos = "3,4";
+		int priceratio;
 		
 		int cachesize;
 		string decision_policy;
@@ -43,5 +44,5 @@ network simple_scenario_network extends base_network
         node[0].face++ <--> node[1].face++;
         node[0].face++ <--> node[2].face++;
         node[1].face++ <-->  IcnChannel{price_desc=1;} <--> node[3].face++;
-        node[2].face++ <-->  IcnChannel{price_desc=1;} <--> node[4].face++;
+        node[2].face++ <-->  IcnChannel{price_desc=priceratio;} <--> node[4].face++;
 }
