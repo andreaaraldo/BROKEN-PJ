@@ -10,6 +10,10 @@ packet ccn_data{
 //Chunk identifier (Name+Chunk Number = 64 bit)
 	chunk_t chunk;
 
+//<aa> The price of the external link this data msg passes through
+	double cost = 0;
+//</aa>
+
 
 //Target of the interest file
 	int target = -1;

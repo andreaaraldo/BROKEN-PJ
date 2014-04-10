@@ -29,6 +29,10 @@
  * 	chunk_t chunk;
  * 
  * 
+ * 	double cost = 0;
+ * 
+ * 
+ * 
  * 
  * 	int target = -1;
  * 
@@ -85,6 +89,9 @@ class ccn_data_Base : public ::cPacket
     double capacity_var;
     double btw_var;
     bool found_var;
+	//<aa>
+    double cost_var;
+	//<aa>
 
   private:
     void copy(const ccn_data_Base& other);
@@ -108,6 +115,8 @@ class ccn_data_Base : public ::cPacket
     virtual chunk_t& getChunk();
     virtual const chunk_t& getChunk() const {return const_cast<ccn_data_Base*>(this)->getChunk();}
     virtual void setChunk(const chunk_t& chunk);
+    virtual double getCost() const;
+    virtual void setCost(double cost);
     virtual int getTarget() const;
     virtual void setTarget(int target);
     virtual int getOrigin() const;

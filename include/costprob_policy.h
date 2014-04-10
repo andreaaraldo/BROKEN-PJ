@@ -6,8 +6,8 @@
  * People:
  *    Giuseppe Rossini (lead developer, mailto giuseppe.rossini@enst.fr)
  *    Raffaele Chiocchetti (developer, mailto raffaele.chiocchetti@gmail.com)
- *    Andrea Araldo (developer, mailto raffaele.chiocchetti@gmail.com)
  *    Dario Rossi (occasional debugger, mailto dario.rossi@enst.fr)
+ *    Andrea Araldo (mailto andrea.araldo@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -23,32 +23,32 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef COSTPROB_POLICY_H_
+#define COSTPROB_POLICY_H_
 
 //<aa>
-#ifndef ICNCHANNEL_H_
-#define ICNCHANNEL_H_
+#include "decision_policy.h"
 
-#include <cdataratechannel.h>
-#include <ccnsim.h>
-#include "statistics.h"
+/* Fixed probability policy: store a given chunk with a given (fixed)
+ * probability. 
+ */
+class Costprob: public DecisionPolicy{
+    public:
+		Costprob(double sens_):sens(sens_){;}//Store the caching probability
 
-class IcnChannel: public cDatarateChannel {
+		virtual bool data_to_cache(ccn_data * data_msg){
 
-	public:	
-		void clear_stat();
-		double get_cost();
+			double x = dblrand();
+			double cost = data_msg->getCost();
 
-	private:
-		statistics* statistics_object; // Reference to the statistics object
-        
-    protected:
-        double price;
-        virtual void initialize();
-        virtual void processMessage(cMessage *msg, simtime_t t, result_t& result);
+			if (x < cost*sens)
+					return true;
 
-		// Statistics
-		long count; //count how many objects passed through this channel
+			return false;
+		}
+    private:
+		double sens; // sensitivity to price
 };
+//<//aa>
+#endif
 
-#endif /* ICNCHANNEL_H_ */
-//</aa>

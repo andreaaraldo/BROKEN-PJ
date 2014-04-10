@@ -30,6 +30,10 @@
 #include "ccn_data_m.h"
 
 #include "fix_policy.h"
+//<aa>
+#include "costprob_policy.h"
+#include "error_handling.h"
+//</aa>
 #include "lcd_policy.h"
 #include "never_policy.h"
 #include "always_policy.h"
@@ -51,23 +55,49 @@ void base_cache::initialize(){
     string decision_policy = par("DS");
     //Initialize the storage policy
     if (decision_policy.compare("lcd")==0){
-	decisor = new LCD();
+		decisor = new LCD();
     } else if (decision_policy.find("fix")==0){
-	string sp = decision_policy.substr(3);
-	double dp = atof(sp.c_str());
-	decisor = new Fix(dp);
-    } else if (decision_policy.find("btw")==0){
-	double db = getAncestorPar("betweenness");
-	if (fabs(db - 1)<=0.001)
-	    error ("Node %i betwenness not defined.",getIndex());
-	decisor = new Betweenness(db);
-    }else if (decision_policy.find("prob_cache")==0){
-	decisor = new prob_cache(cache_size);
-    } else if (decision_policy.find("never")==0)
-	decisor = new Never();
-    else 
-	decisor = new Always();
+		string sp = decision_policy.substr(3);
+		double dp = atof(sp.c_str());
+		decisor = new Fix(dp);
+    }
+	//<aa>
+	else if (decision_policy.find("costprob")==0){
+		string sens_string = decision_policy.substr( strlen("costprob") );
+		double sens = atof(sens_string.c_str());
+		decisor = new Costprob(sens);
 
+		std::stringstream ermsg; 
+		//Check for consistency
+		    if (sens>1 || sens <=0){
+				ermsg<<"sens "<<sens<<" is not valid. sens_string="<<sens_string<<"; decision_policy="<<decision_policy;
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+
+		#ifdef SEVERE_DEBUG
+		ermsg<<"costprob will be used with the sensitivity "<<sens;
+	    debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+		#endif
+    }
+	//</aa>
+	 else if (decision_policy.find("btw")==0){
+		double db = getAncestorPar("betweenness");
+		if (fabs(db - 1)<=0.001)
+			error ("Node %i betwenness not defined.",getIndex());
+		decisor = new Betweenness(db);
+    }else if (decision_policy.find("prob_cache")==0){
+		decisor = new prob_cache(cache_size);
+    } else if (decision_policy.find("never")==0)
+		decisor = new Never();
+	//<aa>
+    else if (decision_policy.compare("lce")==0 )
+		decisor = new Always();
+	else{
+        std::stringstream ermsg; 
+		ermsg<<"Decision policy incorrect";
+	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	//</aa>
 
 
     //Cache statistics

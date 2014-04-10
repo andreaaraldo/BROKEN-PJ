@@ -1,7 +1,7 @@
 # result processing
 
 priceratio_list={1,2,5};
-decision_list={"lce", "fix0.1", "fix0.4", "fix0.8", "btw", "prob_cache"};
+decision_list={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01"};
 
 resultdir="~/software/ccnsim/results";
 network="simple_scenario";

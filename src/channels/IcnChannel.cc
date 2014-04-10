@@ -18,7 +18,7 @@
 #include "error_handling.h"
 #include "cmodule.h"
 #include "ccnsim.h" // for CCN_D and systemIsStable
-
+#include "ccn_data.h"
 
 Define_Channel(IcnChannel);
 
@@ -76,7 +76,12 @@ void IcnChannel::processMessage(cMessage *msg, simtime_t t, result_t& result)
 {
         cDatarateChannel::processMessage(msg,t,result);
         if( msg->getKind() == CCN_D)
+		{
 		    count++;
+			ccn_data* data_msg = (ccn_data*) msg;
+			data_msg->setCost(price);
+		}
+
 }
 
 void IcnChannel::clear_stat(){
@@ -84,7 +89,7 @@ void IcnChannel::clear_stat(){
 }
 
 
-long IcnChannel::get_cost(){
+double IcnChannel::get_cost(){
     return count*price;
 }
 

@@ -20,6 +20,8 @@ network simple_scenario_network extends base_network
 		
 		int cachesize;
 		string decision_policy;
+		double cheap_price = 1/(1+priceratio);
+		double expensive_price = priceratio/(1+priceratio);
 
 		// The following nodes are "fake"
 		node[3].content_store.C =  0;
@@ -43,6 +45,6 @@ network simple_scenario_network extends base_network
     	// even if the client is not active
         node[0].face++ <--> node[1].face++;
         node[0].face++ <--> node[2].face++;
-        node[1].face++ <-->  IcnChannel{price_desc=1;} <--> node[3].face++;
-        node[2].face++ <-->  IcnChannel{price_desc=priceratio;} <--> node[4].face++;
+        node[1].face++ <-->  IcnChannel{price_desc=cheap_price;} <--> node[3].face++;
+        node[2].face++ <-->  IcnChannel{price_desc=expensive_price;} <--> node[4].face++;
 }
