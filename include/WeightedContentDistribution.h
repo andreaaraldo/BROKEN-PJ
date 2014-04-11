@@ -22,75 +22,24 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef CONTENT_DISTRIBUTION_H
-#define CONTENT_DISTRIBUTION_H
+#ifndef WEIGHTEDCONTENT_DISTRIBUTION_H
+#define WEIGHTEDCONTENT_DISTRIBUTION_H
 #include <omnetpp.h>
 #include "ccnsim.h"
+#include "content_distribution.h"
 #include "zipf.h"
-
-
-#pragma pack(push)
-#pragma pack(1)
-//
-//This structure is very critical in terms of space. 
-//In fact, it accounts for the startup memory requirement
-//of the simulator, and should be keep as small as possible.
-//
-//
-struct file{
-    info_t info;
-};
-#pragma pack(pop)
 
 
 using namespace std;
 
 
-
-class content_distribution : public cSimpleModule{
+class WeightedContentDistribution : public content_distribution{
     protected:
 		virtual void initialize();
-		void handleMessage(cMessage *){;}
-
-		//<aa> Before me, the method was private //</aa>
+		virtual int choose_repos ();
 		virtual vector<int> binary_strings(int,int);
 
-		//<aa>
-		virtual int choose_repos();
-		//</aa>
-
-
-    public:
-		void init_content();
-		int *init_repos(vector<int>);
-		int *init_clients(vector<int>);
-
-		static vector<file> catalog;
-		static zipf_distribution zipf;
-
-		static name_t perfile_bulk;
-		static name_t stabilization_bulk; 
-		static name_t cut_off;
-		static int  *repositories; //<aa> repositories[i] is the node which the i-th repository is attached to</aa>
-		static int  *clients;
-
-
-    private:
-		//<aa>
-		vector<int> repo_strings; //It is a temporary variable used to generate content dispacement among repos
-		//</aa>
-		
-		//INI parameters
-		int num_repos;
-		int num_clients;
-		int nodes;
-		int degree;
-		int cardF;
-		int F;
-
-		double alpha;
-		double q;
-
-
+	private:
+		std::vector<double> weights;
 };
 #endif

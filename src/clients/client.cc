@@ -130,6 +130,14 @@ void client::handle_timers(cMessage *timer){
 	case TIMER:
 	    for (multimap<name_t, download >::iterator i = current_downloads.begin();i != current_downloads.end();i++){
 		if ( simTime() - i->second.last > RTT ){
+			//<aa>
+			#ifdef SEVERE_DEBUG
+		    std::stringstream ermsg; 
+			ermsg<<"Al client non arrivano indietro i dati. Questo succede quando uso WeightedContentDistribution (vedi networks/base.ned)";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			#endif
+			//</aa>
+			
 		    //resend the request for the given chunk
 		    cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
 		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;

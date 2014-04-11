@@ -1,5 +1,5 @@
 package networks;
-import modules.content.content_distribution;
+import modules.content.IContentDistribution;
 import modules.statistics.statistics;
 import modules.clients.client;
 import modules.node.node;
@@ -21,11 +21,15 @@ network base_network {
 		int num_clients = default(1);
 		string node_clients = default("");
 
+		//<aa>
+		string content_distribution_type="WeightedContentDistribution";
+		//</aa>
+
     submodules:
-    	content_distribution: content_distribution{
-	    parameters:
-	        @display("p=900,200");
-	}
+    	content_distribution: <content_distribution_type> like IContentDistribution{
+			parameters:
+			    @display("p=900,200");
+		}
 
  	statistics: statistics{
 	    parameters:

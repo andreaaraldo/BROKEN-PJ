@@ -95,7 +95,7 @@ void content_distribution::initialize(){
     tokenizer = cStringTokenizer(getAncestorPar("node_clients"),",");
     clients = init_clients (tokenizer.asIntVector());
 
-    //Useful for statitics: write out the name of each repository within the network
+    //Useful for statitics: write out the name of each client within the network
     for (int i = 0; i < num_clients; i++){
 	sprintf(name,"client-%d",i);
 	recordScalar(name,clients[i]);
@@ -109,15 +109,17 @@ void content_distribution::initialize(){
     cout<<"Content initialized"<<endl;
 }
 
+
 /* 
  * Generate all possible combinations of binary strings of a given length with
  * a given number of bits set.
 */
 vector<int> content_distribution::binary_strings(int num_ones,int len){
+
     vector<int> bins;
     int ones,bin;
     for (int i =1;i< (1<<len);i++){
-		bin = i;
+		bin = i; //<aa> It is the binary string //</aa>
 		ones = 0;
 		//Count the number of ones
 		while (bin){
@@ -133,6 +135,13 @@ vector<int> content_distribution::binary_strings(int num_ones,int len){
 
 }
 
+//<aa> Return a string of bit representing an object placement. 
+// There is a 1 in the i-th position iff the object is served by the i-th repo
+int content_distribution::choose_repos ( ){
+	return repo_strings[intrand(repo_strings.size())];
+}
+//</aa>
+
 //Store information about the content:
 void content_distribution::init_content()
 {
@@ -145,9 +154,10 @@ void content_distribution::init_content()
     //binary_string is used for generating binary strings of length num_repos
     //with exactly degree ones
 	//<aa> where degree is the number of replicas. Each string represents a replica
-	// placement among the repositories. Given a single string, a 1 in the i-th position
-	// means that a replica of that object is placed in the i-th repository </aa>
-    vector<int> repo_strings = binary_strings(degree, num_repos);
+	// placement of a certain object among the repositories. Given a single string, 
+	// a 1 in the i-th position means that a replica of that object is placed in the 
+	// i-th repository </aa>
+    repo_strings = binary_strings(degree, num_repos);
 
 	//<aa>cardF indicates how many objects there are into the catalog</aa>
     for (int d = 1; d <= cardF; d++)
@@ -176,8 +186,8 @@ void content_distribution::init_content()
 			// </aa>
 		} else {
 			// <aa> Choose a replica placement among all the possibile ones. 
-			// 		repos is a replica placement </aa>
-			repo_t repos = repo_strings[intrand(repo_strings.size())];
+			// 		repos is a replica placement </aa>				
+			repo_t repos = choose_repos();
 			__srepo (d ,repos);
 
 			// <aa> Compute the chosen_repos
@@ -193,7 +203,7 @@ void content_distribution::init_content()
 		}
 
 		// <aa> Update the repository cardinality
-		for (int repo_idx = 0; repo_idx < chosen_repos.size(); repo_idx++)
+		for (unsigned repo_idx = 0; repo_idx < chosen_repos.size(); repo_idx++)
 					repo_card[ chosen_repos[repo_idx] ] ++;
 		// </aa>
 
@@ -216,21 +226,23 @@ void content_distribution::init_content()
 int *content_distribution::init_repos(vector<int> node_repos){
 
     if (node_repos.size() > (unsigned) num_repos)
-	error("You try to distribute too much repositories.");
+		error("You try to distribute too many repositories.");
 
-    int *repositories = new int[num_repos];
 
-    int i = 0;
-    while (node_repos.size()){
-	int r = node_repos[i];
-	node_repos.pop_back();
-	repositories[i++] = r;
-    }
+	int i = 0;
+	int *repositories = new int[num_repos];
+	// <aa> Construct repositories array. repositories[i] will be the id of the
+	// node which i-th repository is connected to. //</aa>
+	while (node_repos.size() ){
+			int r = node_repos[i];
+			node_repos.pop_back();
+			repositories[i++] = r;
+	}
 
+   	//<aa> We already assigned i repositories. Now we randomly assign the rest</aa>
     int new_rep;
     while ( i < num_repos  )
     {
-    	//<aa> We already assigned i repositories. Now we randomly assign the rest</aa>
 		new_rep = intrand(nodes);
 		if (find (repositories,repositories + i , new_rep) == repositories + i ){
 			repositories[i++] = new_rep;
@@ -239,12 +251,12 @@ int *content_distribution::init_repos(vector<int> node_repos){
     
     //<aa>
     #ifdef SEVERE_DEBUG
-    std:stringstream ss;
-    ss<<"The repositories are in the following nodes";
-    for (int j=0; j<i; j++)
-    	ss<<" "<<repositories[j];
-    ss<<endl;
-    debug_message(__FILE__,__LINE__, ss.str().c_str() );
+		std::stringstream ss;
+		ss<<"The repositories are in the following nodes";
+		for (int j=0; j<i; j++)
+			ss<<" "<<repositories[j];
+		ss<<endl;
+		debug_message(__FILE__,__LINE__, ss.str().c_str() );
     #endif
     //</aa>
 
@@ -287,3 +299,28 @@ int *content_distribution::init_clients(vector<int> node_clients){
     return clients;
 
 }
+
+
+/**
+
+	//<aa>
+	//Input check
+	{
+        std::stringstream ermsg; 
+		if ( catalog_weights.size() != len ){
+			ermsg<<"found "<< catalog_weights.size() <<"catalog_weights, "
+				<<"while len is "<len;
+		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+
+		for (unsigned i = 0; i<catalog_weights.size(); i++)
+			if ( catalog_weights[i] < 0 or catalog_weights[i] > 1){
+				ermsg<<"The "<< i <<"-th catalog weight is "<< catalog_weights[i];
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}				
+	}
+	//</aa>
+
+
+
+**/
