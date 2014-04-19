@@ -1,14 +1,14 @@
 # result processing
 
-priceratio_list={1,2,5};
+priceratio_list={1,2,3,4,5,6,7,8,9,10};
 decision_list={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01"};
 
 resultdir="~/software/ccnsim/results";
 network="simple_scenario";
 forwarding_="nrr";
 replacement_="lru";
-alpha_=1.2;
-ctlg_="10\\^4";
+alpha_=0.8;
+ctlg_="10\\^8";
 csize_=10;
 id_rep_=0;
 
@@ -37,7 +37,6 @@ for priceratio_idx = 1:length(priceratio_list)
 			command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 			[status, output] = system(command,1);
 			p_hit{i} = str2num(output);
-
 			string_to_search="total_cost ";
 			command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 			[status, output] = system(command,1);
@@ -47,6 +46,17 @@ for priceratio_idx = 1:length(priceratio_list)
 			command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 			[status, output] = system(command,1);
 			hdistance{i} = str2num(output);
+
+			# CHECK RESULTS{
+				if length(p_hit{i})==0 || length(total_cost{i})==0 || length(hdistance{i})==0
+					priceratio_
+					decision_
+					disp(["p_hit=", num2str(p_hit{i}), "; total_cost=", \
+							num2str(total_cost{i}), "; hdistance=",num2str(hdistance{i} ) ] );
+					error("Persing error");
+				endif
+			# }CHECK RESULTS
+
 			i++;
 
 	endfor
@@ -76,6 +86,16 @@ for decision_idx = 1:length(decision_list)
 	total_cost_column = cell2mat( total_cost(idx) );
 	hdistance_column = cell2mat( hdistance(idx) );
 
+	# CHECK DIMENSIONS{
+		if size(p_hit_matrix,1) != length(p_hit_column)
+			p_hit_matrix
+			p_hit_column
+			priceratio_column_for_check
+			decision_
+			error("Length of p_hit_column MUST bne equal to the row number of p_hit_matrix");
+		endif
+	# }CHECK DIMENSIONS
+	
 	p_hit_matrix = [p_hit_matrix, p_hit_column'];
 	total_cost_matrix = [total_cost_matrix, total_cost_column'];
 	hdistance_matrix = [hdistance_matrix, hdistance_column'];
@@ -94,21 +114,21 @@ comment="";
 
 metric="p_hit";
 matrix = p_hit_matrix;
-out_filename = ["~/Dropbox/shared_with_servers/icn14_runs/",metric,"-alpha_",num2str(alpha_),".dat"];
+out_filename = ["~/Dropbox/shared_with_servers/icn14_runs/",metric,"-alpha_",num2str(alpha_),"-ctlg_",num2str(ctlg_),".dat"];
 
 print_table(out_filename, matrix, column_names, fixed_variables,
 												fixed_variable_names, comment);
 
 metric="total_cost";
 matrix = total_cost_matrix;
-out_filename = ["~/Dropbox/shared_with_servers/icn14_runs/",metric,"-alpha_",num2str(alpha_),".dat"];
+out_filename = ["~/Dropbox/shared_with_servers/icn14_runs/",metric,"-alpha_",num2str(alpha_),"-ctlg_",num2str(ctlg_),".dat"];
 
 print_table(out_filename, matrix, column_names, fixed_variables,
 												fixed_variable_names, comment);
 
 metric="hdistance";
 matrix = hdistance_matrix;
-out_filename = ["~/Dropbox/shared_with_servers/icn14_runs/",metric,"-alpha_",num2str(alpha_),".dat"];
+out_filename = ["~/Dropbox/shared_with_servers/icn14_runs/",metric,"-alpha_",num2str(alpha_),"-ctlg_",num2str(ctlg_),".dat"];
 
 print_table(out_filename, matrix, column_names, fixed_variables,
 												fixed_variable_names, comment);
