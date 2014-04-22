@@ -59,46 +59,47 @@ struct client_stat_entry{
 class client : public cSimpleModule {
     friend class statistics;
     protected:
-	virtual void initialize();
-	virtual void handleMessage(cMessage *);
-	virtual void finish();
+		virtual void initialize();
+		virtual void handleMessage(cMessage *);
+		virtual void finish();
 
-	virtual void handle_incoming_chunk(ccn_data *);
-	virtual void request_file();
-	virtual void handle_timers(cMessage*);
+		virtual void handle_incoming_chunk(ccn_data *);
+		virtual void request_file();
+		virtual void handle_timers(cMessage*);
 
-	void send_interest(name_t, cnumber_t, int);
-	void resend_interest(name_t,cnumber_t,int);
+		void send_interest(name_t, cnumber_t, int);
+		void resend_interest(name_t,cnumber_t,int);
 
-	int  getNodeIndex();
-	void clear_stat();
+		int  getNodeIndex();
+		void clear_stat();
 
 
     private:
-	cMessage *timer;
-	cMessage *arrival;
+		cMessage *timer;
+		cMessage *arrival;
 
-	//List of current downloads for a given file
-	multimap < name_t, download > current_downloads;
+		//List of current downloads for a given file
+		multimap < name_t, download > current_downloads;
 
-	//Single file statistics
-	client_stat_entry* client_stats;
+		//Single file statistics
+		client_stat_entry* client_stats;
 
-	//Average statistics (on the whole set of files downloaded by this client)
-	double tot_downloads; // Here the "double" type arises when you consider
-	                      // that a given download might be not yet completed at all. 
-	unsigned int tot_chunks;
+		//<aa> Number of objects downloaded by the client </aa>
+		double tot_downloads; // Here the "double" type arises when you consider
+			                  // that a given download might be not yet completed at all. 
+		unsigned int tot_chunks;
 
-	simtime_t avg_time;
-	double avg_distance;
+		//Average statistics (on the whole set of files downloaded by this client)
+		simtime_t avg_time;
+		double avg_distance;
 
-	//INI parameters
-	double lambda;
-	double RTT;
-	simtime_t check_time;
+		//INI parameters
+		double lambda;
+		double RTT;
+		simtime_t check_time;
 
-	//Set if the client actively sends interests for files
-	bool active;
+		//Set if the client actively sends interests for files
+		bool active;
 
 
 };

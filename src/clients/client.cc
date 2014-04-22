@@ -132,9 +132,9 @@ void client::handle_timers(cMessage *timer){
 		if ( simTime() - i->second.last > RTT ){
 			//<aa>
 			#ifdef SEVERE_DEBUG
-		    std::stringstream ermsg; 
-			ermsg<<"Al client non arrivano indietro i dati. Questo succede quando uso WeightedContentDistribution (vedi networks/base.ned)";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				std::stringstream ermsg; 
+				ermsg<<"Client is not able to retrieve tha data before the timeout expires. This is not necessarily a bug. If you expect such an event and you think it is not a bug, disable this error";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			#endif
 			//</aa>
 			

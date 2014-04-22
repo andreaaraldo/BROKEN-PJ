@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgc 4.4 from packets/ccn_data.msg.
+// Generated file, do not edit! Created by opp_msgc 4.3 from packets/ccn_data.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -11,8 +11,6 @@
 #include <iostream>
 #include <sstream>
 #include "ccn_data_m.h"
-
-USING_NAMESPACE
 
 // Template rule which fires if a struct or class doesn't have operator<<
 template<typename T>
@@ -32,7 +30,7 @@ void doUnpacking(cCommBuffer *, T& t) {
 
 
 
-ccn_data_Base::ccn_data_Base(const char *name, int kind) : ::cPacket(name,kind)
+ccn_data_Base::ccn_data_Base(const char *name, int kind) : cPacket(name,kind)
 {
     this->cost_var = 0;
     this->target_var = -1;
@@ -43,13 +41,9 @@ ccn_data_Base::ccn_data_Base(const char *name, int kind) : ::cPacket(name,kind)
     this->capacity_var = 0;
     this->btw_var = 0;
     this->found_var = false;
-
-	//<aa>
-	this->cost_var = 0;
-	//</aa>
 }
 
-ccn_data_Base::ccn_data_Base(const ccn_data_Base& other) : ::cPacket(other)
+ccn_data_Base::ccn_data_Base(const ccn_data_Base& other) : cPacket(other)
 {
     copy(other);
 }
@@ -61,7 +55,7 @@ ccn_data_Base::~ccn_data_Base()
 ccn_data_Base& ccn_data_Base::operator=(const ccn_data_Base& other)
 {
     if (this==&other) return *this;
-    ::cPacket::operator=(other);
+    cPacket::operator=(other);
     copy(other);
     return *this;
 }
@@ -78,14 +72,11 @@ void ccn_data_Base::copy(const ccn_data_Base& other)
     this->capacity_var = other.capacity_var;
     this->btw_var = other.btw_var;
     this->found_var = other.found_var;
-	//<aa>
-	this->cost_var = other.cost_var;
-	//</aa>
 }
 
 void ccn_data_Base::parsimPack(cCommBuffer *b)
 {
-    ::cPacket::parsimPack(b);
+    cPacket::parsimPack(b);
     doPacking(b,this->chunk_var);
     doPacking(b,this->cost_var);
     doPacking(b,this->target_var);
@@ -96,14 +87,11 @@ void ccn_data_Base::parsimPack(cCommBuffer *b)
     doPacking(b,this->capacity_var);
     doPacking(b,this->btw_var);
     doPacking(b,this->found_var);
-	//<aa>
-    doPacking(b,this->cost_var);
-	//</aa>
 }
 
 void ccn_data_Base::parsimUnpack(cCommBuffer *b)
 {
-    ::cPacket::parsimUnpack(b);
+    cPacket::parsimUnpack(b);
     doUnpacking(b,this->chunk_var);
     doUnpacking(b,this->cost_var);
     doUnpacking(b,this->target_var);
@@ -114,9 +102,6 @@ void ccn_data_Base::parsimUnpack(cCommBuffer *b)
     doUnpacking(b,this->capacity_var);
     doUnpacking(b,this->btw_var);
     doUnpacking(b,this->found_var);
-	//<aa>
-    doUnpacking(b,this->cost_var);
-	//</aa>
 }
 
 chunk_t& ccn_data_Base::getChunk()
@@ -312,9 +297,6 @@ const char *ccn_dataDescriptor::getFieldName(void *object, int field) const
         "capacity",
         "btw",
         "found",
-	//<aa>
-        "cost",
-	//</aa>
     };
     return (field>=0 && field<10) ? fieldNames[field] : NULL;
 }
@@ -333,9 +315,6 @@ int ccn_dataDescriptor::findField(void *object, const char *fieldName) const
     if (fieldName[0]=='c' && strcmp(fieldName, "capacity")==0) return base+7;
     if (fieldName[0]=='b' && strcmp(fieldName, "btw")==0) return base+8;
     if (fieldName[0]=='f' && strcmp(fieldName, "found")==0) return base+9;
-	//<aa>
-    if (fieldName[0]=='b' && strcmp(fieldName, "cost")==0) return base+10;
-	//</aa>
     return basedesc ? basedesc->findField(object, fieldName) : -1;
 }
 
@@ -409,10 +388,6 @@ std::string ccn_dataDescriptor::getFieldAsString(void *object, int field, int i)
         case 7: return double2string(pp->getCapacity());
         case 8: return double2string(pp->getBtw());
         case 9: return bool2string(pp->getFound());
-
-	//<aa>
-        case 10: return double2string(pp->getCost());
-	//</aa>
         default: return "";
     }
 }
@@ -436,9 +411,6 @@ bool ccn_dataDescriptor::setFieldAsString(void *object, int field, int i, const 
         case 7: pp->setCapacity(string2double(value)); return true;
         case 8: pp->setBtw(string2double(value)); return true;
         case 9: pp->setFound(string2bool(value)); return true;
-	//<aa>
-        case 10: pp->setCost(string2double(value)); return true;
-	//</aa>
         default: return false;
     }
 }
@@ -480,4 +452,5 @@ void *ccn_dataDescriptor::getFieldStructPointer(void *object, int field, int i) 
         default: return NULL;
     }
 }
+
 
