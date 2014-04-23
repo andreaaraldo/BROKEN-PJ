@@ -12,9 +12,9 @@ network="simple_scenario";
 forwarding_="nrr";
 replacement_="lru";
 alpha_=0.8;
-ctlg_="10\\^3"; 
-ctlg_to_write_="1e3";
-csize_=10;
+ctlg_="10\\^8"; 
+ctlg_to_write_="1e8";
+csize_=10^2;
 
 i = 1;
 
