@@ -22,8 +22,7 @@ function y = print_table (out_filename, matrix, column_names, fixed_variables, f
 		end
 	end
 	% end of Some checks
-
-
+	delete(out_filename);
 							delimiter = " ";
 							outfile = fopen(out_filename,"w");
 							column_name_string = "";
