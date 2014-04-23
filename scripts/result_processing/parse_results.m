@@ -1,4 +1,5 @@
 % result processing
+global severe_debug = true;
 
 per_seed_results = false;
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
@@ -8,7 +9,7 @@ decision_list={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0
 id_rep_list=1:20; # list of seeds
 alpha_list = [0, 0.8, 1.2];
 
-resultdir="~/loganberry_image/software/ccnsim/results";
+resultdir="~/software/ccnsim/results";
 network="simple_scenario";
 forwarding_="nrr";
 replacement_="lru";
@@ -20,7 +21,9 @@ csize_to_write="10";
 i = 1;
 
 disp("YOU SHOULD CHECK IF THE FILE EXISTS");
-
+############################################
+##### PARSE FILES ##########################
+############################################
 for alpha_ = alpha_list
 	for priceratio_idx = 1:length(priceratio_list)
 		for decision_idx = 1:length(decision_list)
@@ -30,10 +33,12 @@ for alpha_ = alpha_list
 
 				filename = strcat(resultdir,"/",network,"/F-",forwarding_,"/D-",decision_,"/R-",replacement_,"/alpha-",num2str(alpha_),"/ctlg-",ctlg_,"/cachesize-",num2str(csize_),"/priceratio-",num2str(priceratio_),"/ccn-id",num2str(id_rep_),".sca");
 
+				filename_list{i} = filename;
+
 				decision{i} = decision_;
 				forwarding{i} = forwarding_;
 				replacement{i} = replacement_;
-				alpha{i} = alpha_;
+				alpha(i) = alpha_;
 				ctlg{i} = ctlg_;
 				csize{i} = csize_;
 				priceratio{i} = priceratio_;
@@ -79,7 +84,7 @@ for alpha_ = alpha_list
 								num2str(total_cost{i}), "; hdistance=",num2str(hdistance{i} ), \
 								"; client_requests=",num2str(client_requests{i} )] );
 						command
-						error("Persing error");
+						error("Parsing error");
 					endif
 				# }CHECK RESULTS
 
@@ -87,9 +92,14 @@ for alpha_ = alpha_list
 			endfor
 		endfor
 	endfor
+endfor %alpha for
 
 
-	######### Matrix construction
+############################################
+##### MATRIX CONSTRUCTION ##################
+############################################
+
+for alpha_ = alpha_list
 	seed_id = 1;
 
 	p_hit_matrix_over_seed=[];
@@ -97,6 +107,7 @@ for alpha_ = alpha_list
 	per_request_cost_matrix_over_seed=[];
 	hdistance_matrix_over_seed=[];
 	expensive_link_utilization_matrix_over_seed=[];
+	client_requests_matrix_over_seed=[];
 
 
 	column_names{1} = {"priceratio"};
@@ -107,21 +118,25 @@ for alpha_ = alpha_list
 	for id_rep_ = id_rep_list
 		# Compute the priceratio_column, using whatever decision_ 
 		decision_ = decision_list{1};
-		idx =  strcmp(decision, decision_ ) & ( id_rep == id_rep_ ) ;
-		priceratio_column = cell2mat( priceratio(idx) );
+		idx_pr =  strcmp(decision, decision_ ) & ( id_rep == id_rep_ ) & (alpha == alpha_);
+		priceratio_column = cell2mat( priceratio(idx_pr) );
 
 		p_hit_matrix = priceratio_column';
 		total_cost_matrix = priceratio_column';
 		per_request_cost_matrix = priceratio_column';
 		hdistance_matrix = priceratio_column';
 		expensive_link_utilization_matrix = priceratio_column';
+		client_requests_matrix = priceratio_column';
 
 		for decision_idx = 1:length(decision_list)
 			decision_ = decision_list{decision_idx};
-			idx =  strcmp(decision, decision_ ) & id_rep == id_rep_;
-			priceratio_column_for_check = cell2mat( priceratio(idx) );
-			if any(priceratio_column_for_check !=  priceratio_column)
-				error("price ratio is erroneous");
+			idx =  strcmp(decision, decision_ ) & id_rep == id_rep_  & (alpha == alpha_);
+
+			if severe_debug
+				priceratio_column_for_check = cell2mat( priceratio(idx) );
+				if any(priceratio_column_for_check !=  priceratio_column)
+					error("price ratio is erroneous");
+				endif
 			endif
 
 			p_hit_column = cell2mat( p_hit(idx) );
@@ -130,8 +145,18 @@ for alpha_ = alpha_list
 			hdistance_column = cell2mat( hdistance(idx) );
 			expensive_link_utilization_column = cell2mat( expensive_link_load(idx) ) ./ \
 							( cell2mat( expensive_link_load(idx) ) + cell2mat( cheap_link_load(idx) ) );
+			client_requests_column = cell2mat( client_requests(idx) );
 
 			# CHECK DIMENSIONS{
+			if severe_debug
+				if length(priceratio_column) != length(priceratio_list)
+					disp("The files that are involved are");
+					filename_list(idx_pr)
+					priceratio_column
+					error("Error in price ratio column");
+				endif
+
+
 				if size(p_hit_matrix,1) != length(p_hit_column)
 					p_hit_matrix
 					p_hit_column
@@ -139,6 +164,16 @@ for alpha_ = alpha_list
 					decision_
 					error("Length of p_hit_column MUST be equal to the row number of p_hit_matrix");
 				endif
+
+				if size(p_hit_matrix,1) != length(priceratio_list) || length(priceratio_column) != length(priceratio_list)
+					alpha_
+					priceratio_list
+					p_hit_column
+					p_hit_matrix
+					error("The number of rows in the matrix and the lenghth of priceratio_column must be equal to the number of price ratios");
+				endif
+			endif
+
 			# }CHECK DIMENSIONS
 	
 			p_hit_matrix = [p_hit_matrix, p_hit_column'];
@@ -147,6 +182,8 @@ for alpha_ = alpha_list
 			hdistance_matrix = [hdistance_matrix, hdistance_column'];
 			expensive_link_utilization_matrix = \
 						[expensive_link_utilization_matrix, expensive_link_utilization_column'];
+			client_requests_matrix = [client_requests_matrix, client_requests_column'];
+
 		endfor % decision for
 
 		% Going along the rows of p_hit_matrix_over_seed, the price_ratios are changing
@@ -154,10 +191,27 @@ for alpha_ = alpha_list
 		% Going along the 3rd dimension of p_hit_matrix_over_seed, the seeds are changing
 		p_hit_matrix_over_seed = cat(3,p_hit_matrix_over_seed, p_hit_matrix);
 		total_cost_matrix_over_seed = cat(3,total_cost_matrix_over_seed, total_cost_matrix);
-		per_request_cost_matrix_over_seed = cat(3,per_request_cost_matrix_over_seed, per_request_cost_matrix);
+		per_request_cost_matrix_over_seed = \
+					cat(3,per_request_cost_matrix_over_seed, per_request_cost_matrix);
 		hdistance_matrix_over_seed = cat(3,hdistance_matrix_over_seed, hdistance_matrix);
 		expensive_link_utilization_matrix_over_seed =\
-				 cat(3,expensive_link_utilization_matrix_over_seed, expensive_link_utilization_matrix);
+					cat(3,expensive_link_utilization_matrix_over_seed,\
+								 expensive_link_utilization_matrix);
+		client_requests_matrix_over_seed = \
+					cat(3,client_requests_matrix_over_seed, client_requests_matrix);
+
+
+		% CHECK MATRIX{
+		if severe_debug
+			if size(p_hit_matrix_over_seed,1) != length(priceratio_list)
+				alpha_
+				priceratio_list
+				p_hit_matrix_over_seed
+				error("The number of rows in the matrix must be equal to the number of price ratios");
+			endif
+		endif
+		% }CHECK MATRIX
+
 
 		if per_seed_results
 			fixed_variables = { network; forwarding_; replacement_; alpha_; ctlg_; csize_; id_rep_ };
@@ -208,6 +262,16 @@ for alpha_ = alpha_list
 
 			print_table(out_filename, matrix, column_names, fixed_variables,
 															fixed_variable_names, comment);
+
+
+			metric="client_requests";
+			matrix = client_requests_matrix;
+			out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),\
+							"-ctlg_",ctlg_to_write_,"-seed_",num2str(id_rep_),".dat"];
+
+			print_table(out_filename, matrix, column_names, fixed_variables,
+															fixed_variable_names, comment);
+
 		endif % per_seed_results
 
 		seed_id ++;
@@ -225,6 +289,21 @@ for alpha_ = alpha_list
 	[hdistance_mean_matrix, hdistance_conf_matrix] = confidence_interval(hdistance_matrix_over_seed);
 	[expensive_link_utilization_mean_matrix, expensive_link_utilization_conf_matrix] = \
 										confidence_interval(expensive_link_utilization_matrix_over_seed);
+	[client_requests_mean_matrix, client_requests_conf_matrix] = \
+										confidence_interval(client_requests_matrix_over_seed);
+
+
+	% CHECK MATRIX{
+	if severe_debug
+		if size(p_hit_mean_matrix,1) != length(priceratio_list)
+				alpha_
+				priceratio_list
+				p_hit_mean_matrix
+				p_hit_matrix_over_seed
+				error("The number of rows in the matrix must be equal to the number of price ratios");
+		endif
+	endif
+	% }CHECK MATRIX
 
 
 	metric="p_hit-mean";
@@ -249,6 +328,11 @@ for alpha_ = alpha_list
 
 	metric="expensive_link_utilization-mean";
 	matrix = expensive_link_utilization_mean_matrix;
+	out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),"-ctlg_",ctlg_to_write_,".dat"];
+	print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
+
+	metric="client_requests-mean";
+	matrix = client_requests_mean_matrix;
 	out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),"-ctlg_",ctlg_to_write_,".dat"];
 	print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
 
@@ -279,4 +363,8 @@ for alpha_ = alpha_list
 	out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),"-ctlg_",ctlg_to_write_,".dat"];
 	print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
 
+	metric="client_requests-conf";
+	matrix = client_requests_conf_matrix;
+	out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),"-ctlg_",ctlg_to_write_,".dat"];
+	print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
 endfor % alpha
