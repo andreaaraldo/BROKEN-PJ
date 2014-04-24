@@ -69,8 +69,9 @@ void base_cache::initialize(){
 
 		std::stringstream ermsg; 
 		//Check for consistency
-		    if (sens>1 || sens <=0){
-				ermsg<<"sens "<<sens<<" is not valid. sens_string="<<sens_string<<"; decision_policy="<<decision_policy;
+		    if (sens>1 || sens <0){
+				ermsg<<"sens "<<sens<<" is not valid. sens_string="<<sens_string<<
+							"; decision_policy="<<decision_policy;
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
 

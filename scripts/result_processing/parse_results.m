@@ -5,11 +5,12 @@ per_seed_results = false;
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
 priceratio_list={1,2,3,4,5,6,7,8,9,10};
-decision_list={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01",};
+decision_list={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
+			 "costprob0","never"};
 id_rep_list=1:1; # list of seeds
 alpha_list = [0,0.8,1.2];
-csize_list = {"0","2","10"};
-csize_to_write_list = {"0","2","10"};
+csize_list = {"10"};
+csize_to_write_list = {"10"};
 
 resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
@@ -80,7 +81,8 @@ for idx_csize = 1:length(csize_list)
 					[status, output] = system(command,1);
 					expensive_link_load{i} = str2num(output);
 					# CHECK RESULTS{
-						if ( size(p_hit{i})!=[1 1] || size(total_cost{i})!=[1 1] || size(hdistance{i} )!=[1 1] \
+						if ( size(p_hit{i})!=[1 1] || size(total_cost{i})!=[1 1] || \
+							 size(hdistance{i} )!=[1 1] \
 								|| size(client_requests{i})!=[1 1] || size(cheap_link_load{i})!=[1 1] \
 								|| size(expensive_link_load{i})!=[1 1] )
 
