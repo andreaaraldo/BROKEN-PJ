@@ -63,6 +63,12 @@ void client::initialize(){
 	tot_downloads = 0;
 	tot_chunks = 0;
 
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	interests_sent = 0;
+	#endif
+	//</aa>
+
 	arrival = new cMessage("arrival", ARRIVAL );
 	timer = new cMessage("timer", TIMER);
 	scheduleAt( simTime() + exponential(1./lambda), arrival);
@@ -106,6 +112,23 @@ void client::finish(){
 
 	sprintf ( name, "avg_time[%d]",getNodeIndex());
 	recordScalar (name, avg_time);
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		sprintf ( name, "interests_sent[%d]",getNodeIndex());
+		recordScalar (name, interests_sent );
+
+		if (interests_sent != tot_downloads){
+			std::stringstream ermsg; 
+			ermsg<<"interests_sent="<<interests_sent<<"; tot_downloads="<<tot_downloads<<
+				". If **.size==1 in omnetpp and all links has 0 delay, this "<<
+				" is an error. Otherwise, it is not. In the latter case, disable "<<
+				"this error and run again";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
+		}
+	#endif
+	//</aa>
 
 	//Output per file statistics
 	sprintf ( name, "hdistance[%d]", getNodeIndex());
@@ -158,6 +181,11 @@ void client::request_file(){
     current_downloads.insert(pair<name_t, download >(name, download (0,simTime() ) ) );
     send_interest(name, 0 ,-1);
 
+    //<aa>
+    #ifdef SEVERE_DEBUG
+	interests_sent+=1;
+    #endif
+    //</aa>
 }
 
 void client::resend_interest(name_t name,cnumber_t number, int toward){
@@ -172,6 +200,17 @@ void client::resend_interest(name_t name,cnumber_t number, int toward){
     interest->setTarget(toward);
     interest->setNfound(true);
     send(interest, "client_port$o");
+
+
+    //<aa>
+    #ifdef SEVERE_DEBUG
+	std::stringstream ermsg; 
+	ermsg<<"An error occurred. This is not necessarily a bug. If you "<<
+		"think that a retransmission is plausible in your scenario, "<<
+		"please disable this error and run again";
+	severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+    #endif
+    //</aa>
 }
 
 void client::send_interest(name_t name,cnumber_t number, int toward){
@@ -255,6 +294,13 @@ void client::clear_stat(){
     avg_time = 0;
     tot_downloads = 0;
     tot_chunks = 0;
+
+    //<aa>
+    #ifdef SEVERE_DEBUG
+    interests_sent = 0;
+    #endif
+    //</aa>
+
     delete [] client_stats;
     client_stats = new client_stat_entry[__file_bulk+1];
 

@@ -177,6 +177,12 @@ void statistics::finish(){
     simtime_t global_avg_time = 0;
     double global_tot_downloads = 0;
 
+    //<aa>
+    #ifdef SEVERE_DEBUG
+    unsigned int global_interests_sent = 0;
+    #endif
+    //</aa>
+
     for (int i = 0; i<num_nodes; i++){
 		if (cores[i]->interests){
 			//Check if the given node got involved within the interest/data process
@@ -210,6 +216,12 @@ void statistics::finish(){
 		global_avg_distance += clients[i]->avg_distance;
 		global_tot_downloads += clients[i]->tot_downloads;
 		global_avg_time  += clients[i]->avg_time;
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		global_interests_sent += clients[i]->interests_sent;
+		#endif
+		//</aa>
+
     }
 
     sprintf ( name, "hdistance");
@@ -227,6 +239,14 @@ void statistics::finish(){
     sprintf ( name, "total_cost");
     recordScalar(name,total_cost);
     cout<<"total_cost: "<<total_cost<<endl;
+
+    //<aa>
+    #ifdef SEVERE_DEBUG
+    sprintf ( name, "interests_sent");
+    recordScalar(name,global_interests_sent);
+    cout<<"interests_sent: "<<global_interests_sent<<endl;
+    #endif
+    //</aa>
 
     
     //TODO per content statistics

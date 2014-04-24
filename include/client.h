@@ -89,6 +89,12 @@ class client : public cSimpleModule {
 			                  // that a given download might be not yet completed at all. 
 		unsigned int tot_chunks;
 
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		unsigned int interests_sent;
+		#endif
+		//</aa>
+
 		//Average statistics (on the whole set of files downloaded by this client)
 		simtime_t avg_time;
 		double avg_distance;
