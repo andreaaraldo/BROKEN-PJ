@@ -27,6 +27,10 @@
 
 #include "decision_policy.h"
 
+//<aa>
+#include "error_handling.h"
+//</aa>
+
 /* Fixed probability policy: store a given chunk with a given (fixed)
  * probability. 
  */
@@ -38,8 +42,17 @@ class Fix: public DecisionPolicy{
 
 	    double x = dblrand();
 
+		#ifdef SEVERE_DEBUG
+		if(p==1 && x == p) {
+			ermsg<<"sens "<<sens<<" is not valid. sens_string="<<sens_string<<
+						"; decision_policy="<<decision_policy;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			
+		}
+		#endif
+
 	    if (x < p)
-		return true;
+			return true;
 	    return false;
 	}
     private:

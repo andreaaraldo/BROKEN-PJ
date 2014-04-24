@@ -5,8 +5,9 @@ per_seed_results = false;
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
 priceratio_list={1,2,3,4,5,6,7,8,9,10};
-decision_list={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
+possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never"};
+decision_list={"lce", "fix1", "fix0", "costprob0", "never"}; % The decision plocies that I want to plot
 id_rep_list=1:1; # list of seeds
 alpha_list = [0,0.8,1.2];
 csize_list = {"10"};
@@ -123,8 +124,8 @@ for idx_csize = 1:length(csize_list)
 
 
 		column_names{1} = {"priceratio"};
-		for idx_decision = 1:length(decision_list)
-			column_names{ idx_decision+1 } = decision_list{ idx_decision };
+		for idx_decision = 1:length(possible_decisions)
+			column_names{ idx_decision+1 } = possible_decisions{ idx_decision };
 		endfor
 
 		for id_rep_ = id_rep_list
@@ -141,55 +142,70 @@ for idx_csize = 1:length(csize_list)
 			expensive_link_utilization_matrix = priceratio_column';
 			client_requests_matrix = priceratio_column';
 
-			for decision_idx = 1:length(decision_list)
-				decision_ = decision_list{decision_idx};
-				idx =  strcmp(decision, decision_ ) & id_rep == id_rep_  & (alpha == alpha_) \ 
-							& strcmp(csize, csize_);
+			for decision_idx = 1:length(possible_decisions)
 
-				if severe_debug
-					priceratio_column_for_check = cell2mat( priceratio(idx) );
-					if any(priceratio_column_for_check !=  priceratio_column)
-						error("price ratio is erroneous");
+				decision_ = possible_decisions{decision_idx};
+
+				if any(strcmp(decision_,decision_list) )
+					% I want to plot this decision policy
+
+					idx =  strcmp(decision, decision_ ) & id_rep == id_rep_  & (alpha == alpha_) \ 
+								& strcmp(csize, csize_);
+
+					if severe_debug
+						priceratio_column_for_check = cell2mat( priceratio(idx) );
+						if any(priceratio_column_for_check !=  priceratio_column)
+							error("price ratio is erroneous");
+						endif
 					endif
-				endif
 
-				p_hit_column = cell2mat( p_hit(idx) );
-				total_cost_column = cell2mat( total_cost(idx) );
-				per_request_cost_column = cell2mat( total_cost(idx) ) ./ cell2mat( client_requests(idx) );
-				hdistance_column = cell2mat( hdistance(idx) );
-				expensive_link_utilization_column = cell2mat( expensive_link_load(idx) ) ./ \
+					p_hit_column = cell2mat( p_hit(idx) );
+					total_cost_column = cell2mat( total_cost(idx) );
+					per_request_cost_column = cell2mat( total_cost(idx) ) ./ cell2mat( client_requests(idx) );
+					hdistance_column = cell2mat( hdistance(idx) );
+					expensive_link_utilization_column = cell2mat( expensive_link_load(idx) ) ./ \
 								( cell2mat( expensive_link_load(idx) ) + cell2mat( cheap_link_load(idx) ) );
-				client_requests_column = cell2mat( client_requests(idx) );
+					client_requests_column = cell2mat( client_requests(idx) );
 
-				# CHECK DIMENSIONS{
-				if severe_debug
-					if length(priceratio_column) != length(priceratio_list)
-						disp("The files that are involved are");
-						filename_list(idx_pr)
-						priceratio_column
-						error("Error in price ratio column");
-					endif
+					# CHECK DIMENSIONS{
+						if severe_debug
+							if length(priceratio_column) != length(priceratio_list)
+								disp("The files that are involved are");
+								filename_list(idx_pr)
+								priceratio_column
+								error("Error in price ratio column");
+							endif
 
 
-					if size(p_hit_matrix,1) != length(p_hit_column)
-						p_hit_matrix
-						p_hit_column
-						priceratio_column_for_check
-						decision_
-						error("Length of p_hit_column MUST be equal to the row number of p_hit_matrix");
-					endif
+							if size(p_hit_matrix,1) != length(p_hit_column)
+								p_hit_matrix
+								p_hit_column
+								priceratio_column_for_check
+								decision_
+								error("Length of p_hit_column MUST be equal to the row number of p_hit_matrix");
+							endif
 
-					if size(p_hit_matrix,1) != length(priceratio_list) || length(priceratio_column) != length(priceratio_list)
-						alpha_
-						priceratio_list
-						p_hit_column
-						p_hit_matrix
-						error("The number of rows in the matrix and the lenghth of priceratio_column must be equal to the number of price ratios");
-					endif
+							if size(p_hit_matrix,1) != length(priceratio_list) || length(priceratio_column) != length(priceratio_list)
+								alpha_
+								priceratio_list
+								p_hit_column
+								p_hit_matrix
+								error("The number of rows in the matrix and the lenghth of priceratio_column must be equal to the number of price ratios");
+							endif
+						endif
+					# }CHECK DIMENSIONS
+				else
+					% I don't want to plot this decision policy => I will replace it with -1
+					p_hit_column =  ones( 1, length(priceratio_list) ) * -1;
+					total_cost_column = ones( 1, length(priceratio_list) ) * -1;
+					per_request_cost_column = ones( 1, length(priceratio_list) ) * -1;
+					hdistance_column = ones( 1, length(priceratio_list) ) * -1;
+					expensive_link_utilization_column = ones( 1, length(priceratio_list) ) * -1;
+					client_requests_column = ones( 1, length(priceratio_list) ) * -1;
+					
 				endif
 
-				# }CHECK DIMENSIONS
-	
+				% Add the column corresponding to decision_ to the matrices	
 				p_hit_matrix = [p_hit_matrix, p_hit_column'];
 				total_cost_matrix = [total_cost_matrix, total_cost_column'];
 				per_request_cost_matrix = [per_request_cost_matrix, per_request_cost_column'];
@@ -197,7 +213,6 @@ for idx_csize = 1:length(csize_list)
 				expensive_link_utilization_matrix = \
 							[expensive_link_utilization_matrix, expensive_link_utilization_column'];
 				client_requests_matrix = [client_requests_matrix, client_requests_column'];
-
 			endfor % decision for
 
 			% Going along the rows of p_hit_matrix_over_seed, the price_ratios are changing
