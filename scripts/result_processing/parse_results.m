@@ -5,8 +5,8 @@ per_seed_results = false;
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
 priceratio_list={1,2,3,4,5,6,7,8,9,10};
-decision_list={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01"};
-id_rep_list=1:20; # list of seeds
+decision_list={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01",};
+id_rep_list=1:1; # list of seeds
 alpha_list = [0,0.8,1.2];
 csize_list = {"0","2","10"};
 csize_to_write_list = {"0","2","10"};
