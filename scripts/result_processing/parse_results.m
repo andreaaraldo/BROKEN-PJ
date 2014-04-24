@@ -7,9 +7,9 @@ out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 priceratio_list={1,2,3,4,5,6,7,8,9,10};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never"};
-decision_list={"lce", "fix1", "fix0", "costprob0", "never"}; % The decision plocies that I want to plot
+decision_list={"lce", "fix1", "fix0", "never"}; % The decision plocies that I want to plot
 id_rep_list=1:1; # list of seeds
-alpha_list = [0,0.8,1.2];
+alpha_list = [0];
 csize_list = {"10"};
 csize_to_write_list = {"10"};
 
