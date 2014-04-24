@@ -105,6 +105,11 @@ void base_cache::initialize(){
     //--Average
     miss = 0;
     hit = 0;
+
+	//<aa>
+	decision_yes = decision_no = 0;
+	//</aa>
+
     //--Per file
     cache_stats = new cache_stat_entry[__file_bulk + 1];
 
@@ -124,6 +129,14 @@ void base_cache::finish(){
     sprintf ( name, "misses[%d]", getIndex());
     recordScalar (name, miss);
 
+	//<aa>
+    sprintf ( name, "decision_yes[%d]", getIndex());
+    recordScalar (name, decision_yes);
+
+    sprintf ( name, "decision_no[%d]", getIndex());
+    recordScalar (name, decision_no);
+	//</aa>
+
     //Per file hit rate
     sprintf ( name, "hit_node[%d]", getIndex());
     cOutVector hit_vector(name);
@@ -137,11 +150,22 @@ void base_cache::finish(){
 
 //Base class function: a data has been received:
 void base_cache::store(cMessage *in){
-    if (cache_size ==0)
-	return;
+    if (cache_size ==0){
+		//<aa>
+		decision_no++;
+		//</aa>
+		return;
+	}
 
-    if (decisor->data_to_cache((ccn_data*)in ) )
-	data_store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
+    if (decisor->data_to_cache((ccn_data*)in ) ){
+		//<aa>
+		decision_yes++;
+		//</aa>
+		data_store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
+	}
+	//<aa>
+	else {decision_no++; }
+	//</aa>
 
 }
 
@@ -185,6 +209,10 @@ bool base_cache::fake_lookup(chunk_t chunk){
 //Clear all the statistics
 void base_cache::clear_stat(){
     hit = miss = 0; //local statistics
+
+	//<aa>
+	decision_yes = decision_no = 0;
+	//</aa>
     delete cache_stats;
     cache_stats = new cache_stat_entry[__file_bulk+1];
 }

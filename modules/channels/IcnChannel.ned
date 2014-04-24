@@ -16,6 +16,7 @@
 package modules.channels;
 
 import ned.DatarateChannel;
+import ned.IdealChannel;
 
 channel IcnChannel extends DatarateChannel
 {

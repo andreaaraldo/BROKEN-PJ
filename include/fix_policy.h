@@ -42,15 +42,6 @@ class Fix: public DecisionPolicy{
 
 	    double x = dblrand();
 
-		#ifdef SEVERE_DEBUG
-		if(p==1 && x == p) {
-			ermsg<<"sens "<<sens<<" is not valid. sens_string="<<sens_string<<
-						"; decision_policy="<<decision_policy;
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			
-		}
-		#endif
-
 	    if (x < p)
 			return true;
 	    return false;

@@ -190,6 +190,22 @@ void statistics::finish(){
 			global_miss += caches[i]->miss;
 			global_data += cores[i]->data;
 			global_interests += cores[i]->interests;
+
+
+			#ifdef SEVERE_DEBUG
+			if (	caches[i]->decision_yes + caches[i]->decision_no != 
+					cores[i]->data + cores[i]->repo_load
+			){
+				std::stringstream ermsg; 
+				ermsg<<"caches["<<i<<"]->decision_yes="<<caches[i]->decision_yes<<
+					"; caches[i]->decision_no="<<caches[i]->decision_no<<
+					"; cores[i]->data="<<cores[i]->data<<
+					"; cores[i]->repo_load="<<cores[i]->repo_load<<
+					". The sum of "<< "decision_yes and decision_no must be data";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+			#endif
+
 		}
     }
 
@@ -242,10 +258,20 @@ void statistics::finish(){
 
     //<aa>
     #ifdef SEVERE_DEBUG
-    sprintf ( name, "interests_sent");
-    recordScalar(name,global_interests_sent);
-    cout<<"interests_sent: "<<global_interests_sent<<endl;
-    #endif
+		sprintf ( name, "interests_sent");
+		recordScalar(name,global_interests_sent);
+		cout<<"interests_sent: "<<global_interests_sent<<endl;
+
+		if (global_interests_sent != global_tot_downloads){
+			std::stringstream ermsg; 
+			ermsg<<"interests_sent="<<global_interests_sent<<"; tot_downloads="<<global_tot_downloads<<
+				". If **.size==1 in omnetpp and all links has 0 delay, this "<<
+				" is an error. Otherwise, it is not. In the latter case, disable "<<
+				"this error and run again";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+
+	#endif
     //</aa>
 
     

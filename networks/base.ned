@@ -43,7 +43,7 @@ network base_network {
 
 connections allowunconnected:
 	for i = 0..n-1{
-	    node[i].face++ <--> { delay = 1ms; } <--> client[i].client_port;
+	    node[i].face++ <--> { delay = 0ms; } <--> client[i].client_port;
 	}
 
 }

@@ -85,7 +85,7 @@ class core_layer : public abstract_node{
 	double my_btw;
 	double RTT;
 	static int repo_interest;
-	int repo_load;
+	int repo_load; //<aa> number of chunks satisfied by the attached repositoery </aa>
 	
 
 	//Architecture data structures

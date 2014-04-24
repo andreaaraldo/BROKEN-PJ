@@ -58,29 +58,34 @@ class base_cache : public abstract_node{
 	virtual void dump(){cout<<"Not implemented"<<endl;}
 	
     public:
-	//Outside function behaviour
-	uint32_t get_size() { return cache_size; }
+		//Outside function behaviour
+		uint32_t get_size() { return cache_size; }
 
-	virtual bool fake_lookup(chunk_t);
-	bool lookup(chunk_t);
-	void store (cMessage *);
+		virtual bool fake_lookup(chunk_t);
+		bool lookup(chunk_t);
+		void store (cMessage *);
 
-	void clear_stat();
+		void clear_stat();
 
     private:
-	int  cache_size;
-	int  nodes;
-	int level;
+		int  cache_size;
+		int  nodes;
+		int level;
 
-	DecisionPolicy *decisor;
+		DecisionPolicy *decisor;
 
-	//Average statistics
-	uint32_t miss;
-	uint32_t hit;
+		//Average statistics
+		uint32_t miss;
+		uint32_t hit;
+
+		//<aa>
+		uint32_t decision_yes;
+		uint32_t decision_no;
+		//</aa>
 
 
-	//Per file statistics
-	cache_stat_entry *cache_stats;
+		//Per file statistics
+		cache_stat_entry *cache_stats;
 };
 
 #endif
