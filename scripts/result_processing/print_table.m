@@ -12,17 +12,20 @@ function y = print_table (out_filename, matrix, column_names, fixed_variables, f
 				length(column_names)
 				disp("size(matrix, 2)=");
 				size(matrix, 2)
+				disp(["Error writing the file ",out_filename]);
 				error("Column names do not match with matrix columns");
 			end
 
 			if length(fixed_variables) != length(fixed_variable_names)
 				length(fixed_variables)
 				length(fixed_variable_names)
+				disp(["Error writing the file ",out_filename]);
 				error("Fixed variable names do not match with the fixed variables");
 			end
 
 			if size(matrix,1) != 10
 				matrix
+				disp(["Error writing the file ",out_filename]);
 				error("I expect a matrix with 10 rows");
 			endif
 		end

@@ -6,18 +6,19 @@ out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
 priceratio_list={1,2,3,4,5,6,7,8,9,10};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
-			 "costprob0","never"};
-decision_list={"lce", "fix1", "fix0", "never"}; % The decision plocies that I want to plot
-id_rep_list=1:1; # list of seeds
-alpha_list = [0];
-csize_list = {"10"};
-csize_to_write_list = {"10"};
+			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
+decision_list={"lce", "fix0.01", "fix0.0001", "costprob0.02", "costprob0.0002","prob_cache"}; % The decision plocies that I want to plot
+decision_list ={"lce", "fix0.01", "fix0.0001", "costprob0.02", "costprob0.0002"};
+id_rep_list=1:20; # list of seeds
+alpha_list = [0 0.8];
+csize_list = {"9"};
+csize_to_write_list = {"9"};
 
 resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
-						"client_requests"};
+						"client_requests", "decision_ratio"};
 
-network="simple_scenario";
+network="one_cache_scenario";
 forwarding_="nrr";
 replacement_="lru";
 ctlg_="10\\^3"; 
@@ -52,7 +53,7 @@ for idx_csize = 1:length(csize_list)
 					priceratio{i} = priceratio_;
 					id_rep(i) = id_rep_;
 
-					string_to_search="p_hit ";
+					string_to_search="p_hit\\[0\\] ";
 					command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 					[status, output] = system(command,1);
 					p_hit{i} = str2num(output);
@@ -81,6 +82,19 @@ for idx_csize = 1:length(csize_list)
 					command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 					[status, output] = system(command,1);
 					expensive_link_load{i} = str2num(output);
+
+					string_to_search="decision_yes\\[0\\] ";
+					command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+					[status, output] = system(command,1);
+					decision_yes{i} = str2num(output);
+
+					string_to_search="decision_no\\[0\\] ";
+					command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+					[status, output] = system(command,1);
+					decision_no{i} = str2num(output);
+					
+
+
 					# CHECK RESULTS{
 						if ( size(p_hit{i})!=[1 1] || size(total_cost{i})!=[1 1] || \
 							 size(hdistance{i} )!=[1 1] \
@@ -115,15 +129,14 @@ for idx_csize = 1:length(csize_list)
 	for alpha_ = alpha_list
 		seed_id = 1;
 
-		p_hit_matrix_over_seed=[];
-		total_cost_matrix_over_seed=[];
-		per_request_cost_matrix_over_seed=[];
-		hdistance_matrix_over_seed=[];
-		expensive_link_utilization_matrix_over_seed=[];
-		client_requests_matrix_over_seed=[];
+		# Initialize the matrix_over_seed{
+			for idx_metric = 1:length(metric_list)
+				matrix_over_seed_list{idx_metric} = [];
+			endfor
+		# }Initialize the matrix_over_seed
 
 
-		column_names{1} = {"priceratio"};
+		column_names{1} = "priceratio";
 		for idx_decision = 1:length(possible_decisions)
 			column_names{ idx_decision+1 } = possible_decisions{ idx_decision };
 		endfor
@@ -135,224 +148,184 @@ for idx_csize = 1:length(csize_list)
 							& strcmp(csize, csize_);
 			priceratio_column = cell2mat( priceratio(idx_pr) );
 
-			p_hit_matrix = priceratio_column';
-			total_cost_matrix = priceratio_column';
-			per_request_cost_matrix = priceratio_column';
-			hdistance_matrix = priceratio_column';
-			expensive_link_utilization_matrix = priceratio_column';
-			client_requests_matrix = priceratio_column';
+			# For each seed, the first column of each matrix must be the price ratio
+			for idx_metric = 1:length(metric_list)
+				metric_matrix_list{idx_metric} = priceratio_column';
+			endfor
 
 			for decision_idx = 1:length(possible_decisions)
-
 				decision_ = possible_decisions{decision_idx};
 
 				if any(strcmp(decision_,decision_list) )
 					% I want to plot this decision policy
-
 					idx =  strcmp(decision, decision_ ) & id_rep == id_rep_  & (alpha == alpha_) \ 
 								& strcmp(csize, csize_);
 
-					if severe_debug
-						priceratio_column_for_check = cell2mat( priceratio(idx) );
-						if any(priceratio_column_for_check !=  priceratio_column)
-							error("price ratio is erroneous");
-						endif
-					endif
-
-					p_hit_column = cell2mat( p_hit(idx) );
-					total_cost_column = cell2mat( total_cost(idx) );
-					per_request_cost_column = cell2mat( total_cost(idx) ) ./ cell2mat( client_requests(idx) );
-					hdistance_column = cell2mat( hdistance(idx) );
-					expensive_link_utilization_column = cell2mat( expensive_link_load(idx) ) ./ \
-								( cell2mat( expensive_link_load(idx) ) + cell2mat( cheap_link_load(idx) ) );
-					client_requests_column = cell2mat( client_requests(idx) );
-
-					# CHECK DIMENSIONS{
+					# CHECK{
 						if severe_debug
-							if length(priceratio_column) != length(priceratio_list)
-								disp("The files that are involved are");
-								filename_list(idx_pr)
-								priceratio_column
-								error("Error in price ratio column");
-							endif
-
-
-							if size(p_hit_matrix,1) != length(p_hit_column)
-								p_hit_matrix
-								p_hit_column
-								priceratio_column_for_check
-								decision_
-								error("Length of p_hit_column MUST be equal to the row number of p_hit_matrix");
-							endif
-
-							if size(p_hit_matrix,1) != length(priceratio_list) || length(priceratio_column) != length(priceratio_list)
-								alpha_
-								priceratio_list
-								p_hit_column
-								p_hit_matrix
-								error("The number of rows in the matrix and the lenghth of priceratio_column must be equal to the number of price ratios");
+							priceratio_column_for_check = cell2mat( priceratio(idx) );
+							if any(priceratio_column_for_check !=  priceratio_column)
+								error("price ratio is erroneous");
 							endif
 						endif
-					# }CHECK DIMENSIONS
+					# }CHECK
+
+					for idx_metric = 1:length(metric_list)
+						column_list{idx_metric} = [];
+		
+						switch ( metric_list{idx_metric} )
+							case "p_hit"
+								column_list{idx_metric} = cell2mat( p_hit(idx) );
+
+							case "total_cost"
+								column_list{idx_metric} = cell2mat( total_cost(idx) );
+
+							case "per_request_cost"
+								column_list{idx_metric} = \
+									cell2mat( total_cost(idx) ) ./ cell2mat( client_requests(idx) );
+
+							case "hdistance"
+								column_list{idx_metric} = cell2mat( hdistance(idx) );
+
+							case "expensive_link_utilization"
+								column_list{idx_metric} = cell2mat( expensive_link_load(idx) ) ./ \
+										( cell2mat( expensive_link_load(idx) ) + \
+										  cell2mat( cheap_link_load(idx)) 	);
+
+							case "client_requests"
+								column_list{idx_metric} = cell2mat( client_requests(idx) );
+
+							case "decision_ratio"
+								column_list{idx_metric} = cell2mat( decision_yes(idx) ) ./ \
+										( cell2mat( decision_yes(idx) ) + cell2mat( decision_no(idx) ));
+
+							otherwise
+								error(["metric ",metric_name," is not valid"]);
+						endswitch
+
+						# CHECK DIMENSIONS{
+							if severe_debug
+								if length(priceratio_column) != length(priceratio_list)
+									disp("The files that are involved are");
+									filename_list(idx_pr)
+									priceratio_column
+									error("Error in price ratio column");
+								endif
+
+
+								if size(metric_matrix_list{idx_metric},1) != length(column_list{idx_metric})
+									matrix = metric_matrix_list{idx_metric}
+									column = column_list{idx_metric}
+									priceratio_column_for_check
+									decision_
+									error("Length of column MUST be equal to the row number of matrix");
+								endif
+
+								if size(metric_matrix_list{idx_metric},1) != length(priceratio_list) || length(column_list{idx_metric} ) != length(priceratio_list)
+									alpha_
+									priceratio_list
+									column_list{idx_metric}
+									metric_matrix_list{idx_metric}
+									error("The number of rows in the matrix and the lenghth of priceratio_column must be equal to the number of price ratios");
+								endif
+							endif
+						# }CHECK DIMENSIONS
+
+					endfor
+
 				else
 					% I don't want to plot this decision policy => I will replace it with -1
-					p_hit_column =  ones( 1, length(priceratio_list) ) * -1;
-					total_cost_column = ones( 1, length(priceratio_list) ) * -1;
-					per_request_cost_column = ones( 1, length(priceratio_list) ) * -1;
-					hdistance_column = ones( 1, length(priceratio_list) ) * -1;
-					expensive_link_utilization_column = ones( 1, length(priceratio_list) ) * -1;
-					client_requests_column = ones( 1, length(priceratio_list) ) * -1;
-					
+					for idx_metric = 1:length(metric_list)
+						column_list{idx_metric} = ones( 1, length(priceratio_list) ) * -1;
+					endfor
 				endif
 
-				% Add the column corresponding to decision_ to the matrices	
-				p_hit_matrix = [p_hit_matrix, p_hit_column'];
-				total_cost_matrix = [total_cost_matrix, total_cost_column'];
-				per_request_cost_matrix = [per_request_cost_matrix, per_request_cost_column'];
-				hdistance_matrix = [hdistance_matrix, hdistance_column'];
-				expensive_link_utilization_matrix = \
-							[expensive_link_utilization_matrix, expensive_link_utilization_column'];
-				client_requests_matrix = [client_requests_matrix, client_requests_column'];
-			endfor % decision for
+				for idx_metric = 1:length(metric_list)
+					% Add the column corresponding to decision_ to the matrices	
+					metric_matrix_list{idx_metric} = \
+						[ metric_matrix_list{idx_metric}, column_list{idx_metric}' ];
+					% The matrix above is related to one seed only
+				endfor
+			endfor % decision loop
 
-			% Going along the rows of p_hit_matrix_over_seed, the price_ratios are changing
-			% Going along the comumns of p_hit_matrix_over_seed, the decision policies are changing
-			% Going along the 3rd dimension of p_hit_matrix_over_seed, the seeds are changing
-			p_hit_matrix_over_seed = cat(3,p_hit_matrix_over_seed, p_hit_matrix);
-			total_cost_matrix_over_seed = cat(3,total_cost_matrix_over_seed, total_cost_matrix);
-			per_request_cost_matrix_over_seed = \
-						cat(3,per_request_cost_matrix_over_seed, per_request_cost_matrix);
-			hdistance_matrix_over_seed = cat(3,hdistance_matrix_over_seed, hdistance_matrix);
-			expensive_link_utilization_matrix_over_seed =\
-						cat(3,expensive_link_utilization_matrix_over_seed,\
-									 expensive_link_utilization_matrix);
-			client_requests_matrix_over_seed = \
-						cat(3,client_requests_matrix_over_seed, client_requests_matrix);
+			for idx_metric = 1:length(metric_list)
+				% Going along the rows of p_hit_matrix_over_seed, the price_ratios are changing
+				% Going along the comumns of p_hit_matrix_over_seed, the decision policies are changing
+				% Going along the 3rd dimension of p_hit_matrix_over_seed, the seeds are changing
+				matrix_over_seed_list{idx_metric} = cat( 3,\
+						matrix_over_seed_list{idx_metric}, metric_matrix_list{idx_metric});
 
-
-			% CHECK MATRIX{
-			if severe_debug
-				if size(p_hit_matrix_over_seed,1) != length(priceratio_list)
-					alpha_
-					priceratio_list
-					p_hit_matrix_over_seed
-					error("The number of rows in the matrix must be equal to the number of price ratios");
+				% CHECK MATRIX{
+				if severe_debug
+					if size(matrix_over_seed_list{idx_metric},1) != length(priceratio_list)
+						alpha_
+						priceratio_list
+						matrix_over_seed_list{idx_metric}
+						disp( ["metric=", metric_list{idx_metric} ] );
+						error("The number of rows in the matrix must be equal to the number of price ratios");
+					endif
 				endif
-			endif
-			% }CHECK MATRIX
+				% }CHECK MATRIX
+			endfor
 
-
-			if per_seed_results
-				fixed_variables = { network; forwarding_; replacement_; alpha_; ctlg_; csize_; id_rep_ };
-				fixed_variable_names = {"network"; "forwarding"; "replacement"; "alpha"; "ctlg";"csize"; "id_rep"};
-				comment="";
-
-				metric="p_hit";
-				matrix = p_hit_matrix;
-				out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),\
-								"-ctlg_",ctlg_to_write_,"-seed_",num2str(id_rep_),".dat"];
-
-				print_table(out_filename, matrix, column_names, fixed_variables,
-																fixed_variable_names, comment);
-
-				metric="total_cost";
-				matrix = total_cost_matrix;
-				out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),\
-								"-ctlg_",ctlg_to_write_,"-seed_",num2str(id_rep_),".dat"];
-
-				print_table(out_filename, matrix, column_names, fixed_variables,
-																fixed_variable_names, comment);
-
-
-				metric="per_request_cost";
-				matrix = per_request_cost_matrix;
-				out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),\
-								"-ctlg_",ctlg_to_write_,"-seed_",num2str(id_rep_),".dat"];
-
-				print_table(out_filename, matrix, column_names, fixed_variables,
-																fixed_variable_names, comment);
-
-
-
-				metric="hdistance";
-				matrix = hdistance_matrix;
-				out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),\
-								"-ctlg_",ctlg_to_write_,"-seed_",num2str(id_rep_),".dat"];
-
-				print_table(out_filename, matrix, column_names, fixed_variables,
-																fixed_variable_names, comment);
-
-
-
-				metric="expensive_link_utilization";
-				matrix = expensive_link_utilization_matrix;
-				out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),\
-								"-ctlg_",ctlg_to_write_,"-seed_",num2str(id_rep_),".dat"];
-
-				print_table(out_filename, matrix, column_names, fixed_variables,
-																fixed_variable_names, comment);
-
-
-				metric="client_requests";
-				matrix = client_requests_matrix;
-				out_filename = [out_folder,metric,"-alpha_",num2str(alpha_),\
-								"-ctlg_",ctlg_to_write_,"-seed_",num2str(id_rep_),".dat"];
-
-				print_table(out_filename, matrix, column_names, fixed_variables,
-																fixed_variable_names, comment);
-
-			endif % per_seed_results
 
 			seed_id ++;
 		endfor # id_rep for
 
-		fixed_variables = { network; forwarding_; replacement_; alpha_; ctlg_; csize_; id_rep_list };
-		fixed_variable_names = {"network"; "forwarding"; "replacement"; "alpha"; "ctlg";"csize"; "seed_list"};
+		fixed_variables = { network; forwarding_; replacement_; alpha_; ctlg_; csize_;\
+						id_rep_list };
+		fixed_variable_names = {"network"; "forwarding"; "replacement"; "alpha"; "ctlg";"csize";\
+						 "seed_list"};
 		comment="";
 
+		for idx_metric = 1:length(metric_list)
+			% CHECK MATRIX{
+				if severe_debug
+					if size(matrix_over_seed_list{idx_metric},1) != length(priceratio_list) || size(matrix_over_seed_list{idx_metric},2) != length(column_names)
+						alpha_
+						priceratio_list
+						matrix_over_seed = matrix_over_seed_list{idx_metric}
+						metric = metric_list{idx_metric}
+						error(["The number of rows in the matrix must be equal to the number of ",\
+								"price ratios.The number of columns must match the column names"]);
+					endif
+				endif
+			% }CHECK MATRIX
 
-		[p_hit_mean_matrix, p_hit_conf_matrix] = confidence_interval(p_hit_matrix_over_seed);
-		[total_cost_mean_matrix, total_cost_conf_matrix] = confidence_interval(total_cost_matrix_over_seed);
-		[per_request_cost_mean_matrix, per_request_cost_conf_matrix] = \
-											confidence_interval(per_request_cost_matrix_over_seed);
-		[hdistance_mean_matrix, hdistance_conf_matrix] = confidence_interval(hdistance_matrix_over_seed);
-		[expensive_link_utilization_mean_matrix, expensive_link_utilization_conf_matrix] = \
-											confidence_interval(expensive_link_utilization_matrix_over_seed);
-		[client_requests_mean_matrix, client_requests_conf_matrix] = \
-											confidence_interval(client_requests_matrix_over_seed);
+			[mean_matrix, conf_matrix] = confidence_interval(matrix_over_seed_list{idx_metric});
+			mean_matrix_list{idx_metric} = mean_matrix;
+			conf_matrix_list{idx_metric} = conf_matrix;
 
-
-		% CHECK MATRIX{
-		if severe_debug
-			if size(p_hit_mean_matrix,1) != length(priceratio_list)
-					alpha_
-					priceratio_list
-					p_hit_mean_matrix
-					p_hit_matrix_over_seed
-					error("The number of rows in the matrix must be equal to the number of price ratios");
-			endif
-		endif
-		% }CHECK MATRIX
+			% CHECK MATRIX{
+				if severe_debug
+					if size(mean_matrix,1) != length(priceratio_list) || size(conf_matrix,1) != length(priceratio_list) || size(mean_matrix,2) != length(column_names) || size(conf_matrix,2) != length(column_names)
+						alpha_
+						priceratio_list
+						mean_matrix
+						conf_matrix
+						metric_list{idx_metric}
+						error(["The number of rows in the matrix must be equal to the number of ",\
+								"price ratios.The number of columns must match the column names"]);
+					endif
+				endif
+			% }CHECK MATRIX
+		endfor
 
 
 		for idx_metric = 1:length(metric_list)
-
 			metric = metric_list{idx_metric};
 
 			% Print mean matrix
-			matrix_name = [metric,"_mean_matrix"];
-			matrix = eval(matrix_name);
+			matrix = mean_matrix_list{idx_metric};
 			out_filename = [out_folder,metric,"-mean-alpha_",num2str(alpha_),\
 						"-ctlg_",ctlg_to_write_,"-csize_",csize_,".dat"];
 			print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
 
 			% Print confidence interval matrix
-			matrix_name = [metric,"_conf_matrix"]
-			matrix = eval(matrix_name);
+			matrix = conf_matrix_list{idx_metric};;
 			out_filename = [out_folder,metric,"-conf-alpha_",num2str(alpha_),\
 						"-ctlg_",ctlg_to_write_,"-csize_",csize_,".dat"];
 			print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
-
 		endfor
 
 	endfor % alpha
