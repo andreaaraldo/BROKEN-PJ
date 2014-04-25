@@ -268,7 +268,7 @@ void statistics::finish(){
 				". If **.size==1 in omnetpp and all links has 0 delay, this "<<
 				" is an error. Otherwise, it is not. In the latter case, disable "<<
 				"this error and run again";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 
 	#endif
