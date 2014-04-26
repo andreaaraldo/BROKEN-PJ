@@ -43,6 +43,7 @@ class IcnChannel: public cDatarateChannel {
         
     protected:
         double price;
+        double price_powered;
         virtual void initialize();
         virtual void processMessage(cMessage *msg, simtime_t t, result_t& result);
 

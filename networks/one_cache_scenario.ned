@@ -17,11 +17,19 @@ network one_cache_scenario_network extends base_network
 		num_repos = 2;
 		node_repos = "3,4";
 		int priceratio;
+		double xi;
+
 		
 		int cachesize;
 		string decision_policy;
 		double cheap_price = 1/(1+priceratio);
 		double expensive_price = priceratio/(1+priceratio);
+
+		// The following two values are not used to compute the cost but are only used by the costprob policy
+		// to take its decision
+		double cheap_price_powered = 1/(1+priceratio^xi);
+		double expensive_price_powered = (priceratio^xi)/(1+priceratio^xi);
+
 
 		// The following nodes are "fake"
 		node[1].content_store.C =  0;
@@ -47,6 +55,6 @@ network one_cache_scenario_network extends base_network
     	// even if the client is not active
         node[0].face++ <--> node[1].face++;
         node[0].face++ <--> node[2].face++;
-        node[1].face++ <-->  IcnChannel{price_desc=cheap_price;} <--> node[3].face++;
-        node[2].face++ <-->  IcnChannel{price_desc=expensive_price;} <--> node[4].face++;
+        node[1].face++ <-->  IcnChannel{price_desc=cheap_price; price_desc_powered=cheap_price_powered;} <--> node[3].face++;
+        node[2].face++ <-->  IcnChannel{price_desc=expensive_price;  price_desc_powered=expensive_price_powered;} <--> node[4].face++;
 }

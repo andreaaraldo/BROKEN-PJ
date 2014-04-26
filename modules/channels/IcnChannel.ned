@@ -33,4 +33,11 @@ channel IcnChannel extends DatarateChannel
         //		cost = i_source < i_dest cost_up ? cost_asc : cost_desc;
         double price_asc = default(0);
         double price_desc = default(0);
+
+		// The following values do not represent the real object costs, but are only used by the costprob
+		// decision policy to take its decision
+        double price_powered = default(0);
+        double price_asc_powered = default(0);
+        double price_desc_powered = default(0);
+
 }

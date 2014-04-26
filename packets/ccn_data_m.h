@@ -30,6 +30,8 @@
  * 
  * 
  * 	double cost = 0;
+ * 	double costPowered = 0; 
+ * 							
  * 
  * 
  * 
@@ -82,6 +84,7 @@ class ccn_data_Base : public ::cPacket
   protected:
     chunk_t chunk_var;
     double cost_var;
+    double costPowered_var;
     int target_var;
     int origin_var;
     int hops_var;
@@ -115,6 +118,8 @@ class ccn_data_Base : public ::cPacket
     virtual void setChunk(const chunk_t& chunk);
     virtual double getCost() const;
     virtual void setCost(double cost);
+    virtual double getCostPowered() const;
+    virtual void setCostPowered(double costPowered);
     virtual int getTarget() const;
     virtual void setTarget(int target);
     virtual int getOrigin() const;

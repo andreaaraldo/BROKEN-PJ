@@ -28,10 +28,8 @@
 
 //<aa>
 #include "decision_policy.h"
+#include "error_handling.h"
 
-/* Fixed probability policy: store a given chunk with a given (fixed)
- * probability. 
- */
 class Costprob: public DecisionPolicy{
     public:
 		Costprob(double sens_):sens(sens_){;}//Store the caching probability
@@ -39,9 +37,14 @@ class Costprob: public DecisionPolicy{
 		virtual bool data_to_cache(ccn_data * data_msg){
 
 			double x = dblrand();
-			double cost = data_msg->getCost();
+			double cost_powered = data_msg->getCostPowered();
 
-			if (x < cost*sens)
+//			std::stringstream msg; 
+//			msg<<"cost_powered = "<<cost_powered;
+//		    severe_error(__FILE__, __LINE__, msg.str().c_str() );
+
+
+			if (x < cost_powered*sens)
 					return true;
 
 			return false;

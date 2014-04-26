@@ -35,6 +35,7 @@ void doUnpacking(cCommBuffer *, T& t) {
 ccn_data_Base::ccn_data_Base(const char *name, int kind) : ::cPacket(name,kind)
 {
     this->cost_var = 0;
+    this->costPowered_var = 0;
     this->target_var = -1;
     this->origin_var = -1;
     this->hops_var = 0;
@@ -66,6 +67,7 @@ void ccn_data_Base::copy(const ccn_data_Base& other)
 {
     this->chunk_var = other.chunk_var;
     this->cost_var = other.cost_var;
+    this->costPowered_var = other.costPowered_var;
     this->target_var = other.target_var;
     this->origin_var = other.origin_var;
     this->hops_var = other.hops_var;
@@ -81,6 +83,7 @@ void ccn_data_Base::parsimPack(cCommBuffer *b)
     ::cPacket::parsimPack(b);
     doPacking(b,this->chunk_var);
     doPacking(b,this->cost_var);
+    doPacking(b,this->costPowered_var);
     doPacking(b,this->target_var);
     doPacking(b,this->origin_var);
     doPacking(b,this->hops_var);
@@ -96,6 +99,7 @@ void ccn_data_Base::parsimUnpack(cCommBuffer *b)
     ::cPacket::parsimUnpack(b);
     doUnpacking(b,this->chunk_var);
     doUnpacking(b,this->cost_var);
+    doUnpacking(b,this->costPowered_var);
     doUnpacking(b,this->target_var);
     doUnpacking(b,this->origin_var);
     doUnpacking(b,this->hops_var);
@@ -124,6 +128,16 @@ double ccn_data_Base::getCost() const
 void ccn_data_Base::setCost(double cost)
 {
     this->cost_var = cost;
+}
+
+double ccn_data_Base::getCostPowered() const
+{
+    return costPowered_var;
+}
+
+void ccn_data_Base::setCostPowered(double costPowered)
+{
+    this->costPowered_var = costPowered;
 }
 
 int ccn_data_Base::getTarget() const
@@ -254,7 +268,7 @@ const char *ccn_dataDescriptor::getProperty(const char *propertyname) const
 int ccn_dataDescriptor::getFieldCount(void *object) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 10+basedesc->getFieldCount(object) : 10;
+    return basedesc ? 11+basedesc->getFieldCount(object) : 11;
 }
 
 unsigned int ccn_dataDescriptor::getFieldTypeFlags(void *object, int field) const
@@ -276,8 +290,9 @@ unsigned int ccn_dataDescriptor::getFieldTypeFlags(void *object, int field) cons
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISEDITABLE,
+        FD_ISEDITABLE,
     };
-    return (field>=0 && field<10) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<11) ? fieldTypeFlags[field] : 0;
 }
 
 const char *ccn_dataDescriptor::getFieldName(void *object, int field) const
@@ -291,6 +306,7 @@ const char *ccn_dataDescriptor::getFieldName(void *object, int field) const
     static const char *fieldNames[] = {
         "chunk",
         "cost",
+        "costPowered",
         "target",
         "origin",
         "hops",
@@ -300,7 +316,7 @@ const char *ccn_dataDescriptor::getFieldName(void *object, int field) const
         "btw",
         "found",
     };
-    return (field>=0 && field<10) ? fieldNames[field] : NULL;
+    return (field>=0 && field<11) ? fieldNames[field] : NULL;
 }
 
 int ccn_dataDescriptor::findField(void *object, const char *fieldName) const
@@ -309,14 +325,15 @@ int ccn_dataDescriptor::findField(void *object, const char *fieldName) const
     int base = basedesc ? basedesc->getFieldCount(object) : 0;
     if (fieldName[0]=='c' && strcmp(fieldName, "chunk")==0) return base+0;
     if (fieldName[0]=='c' && strcmp(fieldName, "cost")==0) return base+1;
-    if (fieldName[0]=='t' && strcmp(fieldName, "target")==0) return base+2;
-    if (fieldName[0]=='o' && strcmp(fieldName, "origin")==0) return base+3;
-    if (fieldName[0]=='h' && strcmp(fieldName, "hops")==0) return base+4;
-    if (fieldName[0]=='T' && strcmp(fieldName, "TSB")==0) return base+5;
-    if (fieldName[0]=='T' && strcmp(fieldName, "TSI")==0) return base+6;
-    if (fieldName[0]=='c' && strcmp(fieldName, "capacity")==0) return base+7;
-    if (fieldName[0]=='b' && strcmp(fieldName, "btw")==0) return base+8;
-    if (fieldName[0]=='f' && strcmp(fieldName, "found")==0) return base+9;
+    if (fieldName[0]=='c' && strcmp(fieldName, "costPowered")==0) return base+2;
+    if (fieldName[0]=='t' && strcmp(fieldName, "target")==0) return base+3;
+    if (fieldName[0]=='o' && strcmp(fieldName, "origin")==0) return base+4;
+    if (fieldName[0]=='h' && strcmp(fieldName, "hops")==0) return base+5;
+    if (fieldName[0]=='T' && strcmp(fieldName, "TSB")==0) return base+6;
+    if (fieldName[0]=='T' && strcmp(fieldName, "TSI")==0) return base+7;
+    if (fieldName[0]=='c' && strcmp(fieldName, "capacity")==0) return base+8;
+    if (fieldName[0]=='b' && strcmp(fieldName, "btw")==0) return base+9;
+    if (fieldName[0]=='f' && strcmp(fieldName, "found")==0) return base+10;
     return basedesc ? basedesc->findField(object, fieldName) : -1;
 }
 
@@ -331,6 +348,7 @@ const char *ccn_dataDescriptor::getFieldTypeString(void *object, int field) cons
     static const char *fieldTypeStrings[] = {
         "chunk_t",
         "double",
+        "double",
         "int",
         "int",
         "int",
@@ -340,7 +358,7 @@ const char *ccn_dataDescriptor::getFieldTypeString(void *object, int field) cons
         "double",
         "bool",
     };
-    return (field>=0 && field<10) ? fieldTypeStrings[field] : NULL;
+    return (field>=0 && field<11) ? fieldTypeStrings[field] : NULL;
 }
 
 const char *ccn_dataDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
@@ -382,14 +400,15 @@ std::string ccn_dataDescriptor::getFieldAsString(void *object, int field, int i)
     switch (field) {
         case 0: {std::stringstream out; out << pp->getChunk(); return out.str();}
         case 1: return double2string(pp->getCost());
-        case 2: return long2string(pp->getTarget());
-        case 3: return long2string(pp->getOrigin());
-        case 4: return long2string(pp->getHops());
-        case 5: return long2string(pp->getTSB());
-        case 6: return long2string(pp->getTSI());
-        case 7: return double2string(pp->getCapacity());
-        case 8: return double2string(pp->getBtw());
-        case 9: return bool2string(pp->getFound());
+        case 2: return double2string(pp->getCostPowered());
+        case 3: return long2string(pp->getTarget());
+        case 4: return long2string(pp->getOrigin());
+        case 5: return long2string(pp->getHops());
+        case 6: return long2string(pp->getTSB());
+        case 7: return long2string(pp->getTSI());
+        case 8: return double2string(pp->getCapacity());
+        case 9: return double2string(pp->getBtw());
+        case 10: return bool2string(pp->getFound());
         default: return "";
     }
 }
@@ -405,14 +424,15 @@ bool ccn_dataDescriptor::setFieldAsString(void *object, int field, int i, const 
     ccn_data_Base *pp = (ccn_data_Base *)object; (void)pp;
     switch (field) {
         case 1: pp->setCost(string2double(value)); return true;
-        case 2: pp->setTarget(string2long(value)); return true;
-        case 3: pp->setOrigin(string2long(value)); return true;
-        case 4: pp->setHops(string2long(value)); return true;
-        case 5: pp->setTSB(string2long(value)); return true;
-        case 6: pp->setTSI(string2long(value)); return true;
-        case 7: pp->setCapacity(string2double(value)); return true;
-        case 8: pp->setBtw(string2double(value)); return true;
-        case 9: pp->setFound(string2bool(value)); return true;
+        case 2: pp->setCostPowered(string2double(value)); return true;
+        case 3: pp->setTarget(string2long(value)); return true;
+        case 4: pp->setOrigin(string2long(value)); return true;
+        case 5: pp->setHops(string2long(value)); return true;
+        case 6: pp->setTSB(string2long(value)); return true;
+        case 7: pp->setTSI(string2long(value)); return true;
+        case 8: pp->setCapacity(string2double(value)); return true;
+        case 9: pp->setBtw(string2double(value)); return true;
+        case 10: pp->setFound(string2bool(value)); return true;
         default: return false;
     }
 }
@@ -436,8 +456,9 @@ const char *ccn_dataDescriptor::getFieldStructName(void *object, int field) cons
         NULL,
         NULL,
         NULL,
+        NULL,
     };
-    return (field>=0 && field<10) ? fieldStructNames[field] : NULL;
+    return (field>=0 && field<11) ? fieldStructNames[field] : NULL;
 }
 
 void *ccn_dataDescriptor::getFieldStructPointer(void *object, int field, int i) const

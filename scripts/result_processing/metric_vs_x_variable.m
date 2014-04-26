@@ -1,5 +1,5 @@
 % metric_vs_priceratio
-function y = metric_vs_priceratio (input_data)
+function y = metric_vs_x_variable (input_data)
 	global severe_debug;
 
 	% Unroll input data
@@ -30,6 +30,7 @@ function y = metric_vs_priceratio (input_data)
 
 	filename_list = input_data.parsed.filename_list;
 	decision = input_data.parsed.decision;
+	xi = input_data.parsed.xi;
 	forwarding = input_data.parsed.forwarding;
 	replacement = input_data.parsed.replacement;
 	alpha = input_data.parsed.alpha;
@@ -48,17 +49,15 @@ function y = metric_vs_priceratio (input_data)
 
 	% CHECK_INPUT_DATA{
 		if severe_debug
-			if length(fixed_variable_names_additional) != 1 || length(fixed_variable_values_additional) != 1
+			if length(fixed_variable_names_additional) != 2 || length(fixed_variable_values_additional) != 2
 				fixed_variable_names_additional
 				fixed_variable_values_additional
-				error("Only one additional fixed variable is admitted for now");
+				error("Only two additional fixed variables are admitted for now");
 			endif
 		endif
 	% }CHECK_INPUT_DATA
 
 
-
-	idx_fixed_variable_additional = 1;
 
 	############################################
 	##### MATRIX CONSTRUCTION ##################
@@ -84,15 +83,30 @@ function y = metric_vs_priceratio (input_data)
 			for id_rep_ = id_rep_list
 				# Compute the x_variable_column, using whatever decision_ 
 				decision_ = decision_list{1};
-				idx_pr =  strcmp(decision, decision_ ) & ( id_rep == id_rep_ ) \
-						& cell2mat( eval(fixed_variable_names_additional(idx_fixed_variable_additional) ) )\
-							== fixed_variable_values_additional(idx_fixed_variable_additional)  \ 
-						& strcmp(csize, csize_);
+				idx_pr =  strcmp(decision, decision_ ) & ( id_rep == id_rep_ ) & strcmp(csize, csize_);
+				for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
+					% CHECK{
+						if severe_debug
+							if ! isscalar(fixed_variable_values_additional(idx_fixed_variable_additional) )
+								fixed_values = \
+									fixed_variable_values_additional(idx_fixed_variable_additional)
+								fixed_variable_name = \
+									fixed_variable_names_additional(idx_fixed_variable_additional)
+								error("The fixed value MUST be a scalar");								
+							endif
+						endif
+					% }CHECK
+					value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
+					idx_pr = idx_pr \
+						& eval(fixed_variable_names_additional(idx_fixed_variable_additional) )\
+						== value;
+				endfor
+
 				x_variable_column = x_variable_values;
 
 				% CHECK{
 					if severe_debug
-						original_data = eval(x_variable_name);
+						original_data = cell2mat(eval(x_variable_name) ); 
 						extracted_column = original_data(idx_pr);
 						if x_variable_column != extracted_column
 							x_variable_column
@@ -112,16 +126,20 @@ function y = metric_vs_priceratio (input_data)
 
 					if any(strcmp(decision_,decision_list) )
 						% I want to plot this decision policy
-						idx =  strcmp(decision, decision_ ) & id_rep == id_rep_  \
-						  & cell2mat(eval(fixed_variable_names_additional{idx_fixed_variable_additional}))\
-						  		== fixed_variable_values_additional(idx_fixed_variable_additional)  \ 
-						  & strcmp(csize, csize_);
+# CANCELLARE?
+#						idx =  strcmp(decision, decision_ ) & id_rep == id_rep_ & strcmp(csize, csize_);
+#						for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
+#							idx = idx \
+#								& cell2mat( eval(fixed_variable_names_additional(idx_fixed_variable_additional) ) )\
+#								== fixed_variable_values_additional(idx_fixed_variable_additional)  \ 
+#						endfor
 
+						idx = idx_pr;
 						# CHECK{
 							if severe_debug
 								original_data = eval(x_variable_name);
-								x_variable_column_for_check = original_data(idx);
-								if any(x_variable_column_for_check !=  x_variable_column)
+								x_variable_column_for_check = cell2mat( original_data(idx) );
+								if x_variable_column_for_check !=  x_variable_column
 									error("x_variable_column is erroneous");
 								endif
 							endif
@@ -223,13 +241,16 @@ function y = metric_vs_priceratio (input_data)
 				seed_id ++;
 			endfor # id_rep for
 
-			fixed_variables = { network; forwarding_; replacement_;\
-					fixed_variable_values_additional(idx_fixed_variable_additional);\
-					ctlg_; csize_;\
-							id_rep_list };
-			fixed_variable_names = {"network"; "forwarding"; "replacement"; \
-					fixed_variable_names_additional{idx_fixed_variable_additional};\
-					 "ctlg";"csize"; "seed_list"};
+			fixed_variables = { network; forwarding_; replacement_;	ctlg_; csize_; id_rep_list };
+
+			fixed_variable_names = {"network"; "forwarding"; "replacement"; "ctlg";"csize"; "seed_list"};
+
+			for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
+				fixed_variables{ length(fixed_variables) + idx_fixed_variable_additional, 1 } =\
+							fixed_variable_values_additional{idx_fixed_variable_additional};
+				fixed_variable_names{ length(fixed_variable_names) + idx_fixed_variable_additional, 1 } =\
+							fixed_variable_names_additional{idx_fixed_variable_additional};
+			endfor
 			comment="";
 
 			for idx_metric = 1:length(metric_list)
@@ -242,7 +263,7 @@ function y = metric_vs_priceratio (input_data)
 							matrix_over_seed = matrix_over_seed_list{idx_metric}
 							metric = metric_list{idx_metric}
 							error(["The number of rows in the matrix must be equal to the number of ",\
-									"price ratios.The number of columns must match the column names"]);
+									"x variable.The number of columns must match the column names"]);
 						endif
 					endif
 				% }CHECK MATRIX
@@ -261,7 +282,7 @@ a							mean_matrix
 							conf_matrix
 							metric_list{idx_metric}
 							error(["The number of rows in the matrix must be equal to the number of ",\
-									"price ratios.The number of columns must match the column names"]);
+									"x variable.The number of columns must match the column names"]);
 						endif
 					endif
 				% }CHECK MATRIX
@@ -271,10 +292,14 @@ a							mean_matrix
 			for idx_metric = 1:length(metric_list)
 				metric = metric_list{idx_metric};
 
-				common_out_filename = [ out_folder, metric,"_vs_", x_variable_name,  "-",\
-						fixed_variable_names_additional{idx_fixed_variable_additional}, "_",\
-						num2str( fixed_variable_values_additional(idx_fixed_variable_additional) ),\
-							"-ctlg_",ctlg_to_write_,"-csize_",csize_];
+				common_out_filename = [ out_folder, metric,"_vs_", x_variable_name];
+				for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
+					value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
+					common_out_filename = [common_out_filename, "-",\
+						fixed_variable_names_additional{idx_fixed_variable_additional}, "_", num2str(value)\
+						];
+				endfor
+				common_out_filename = [common_out_filename, "-ctlg_",ctlg_to_write_,"-csize_",csize_ ];
 
 				% Print mean matrix
 				matrix = mean_matrix_list{idx_metric};
