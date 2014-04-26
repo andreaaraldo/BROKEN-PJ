@@ -23,11 +23,6 @@ function y = print_table (out_filename, matrix, column_names, fixed_variables, f
 				error("Fixed variable names do not match with the fixed variables");
 			end
 
-			if size(matrix,1) != 10
-				matrix
-				disp(["Error writing the file ",out_filename]);
-				error("I expect a matrix with 10 rows");
-			endif
 		end
 	% }Some checks
 
@@ -62,27 +57,8 @@ function y = print_table (out_filename, matrix, column_names, fixed_variables, f
 										);
 							fprintf(outfile,"%s",header_new);
 							fclose(outfile);
-	% CHECK MATRIX{
-	if severe_debug
-		if size(matrix,1) != 10
-				matrix
-				error("I expect a matrix with 10 rows");
-		endif
-	endif
-	% }CHECK MATRIX
 
 							dlmwrite(out_filename, matrix, delim=delimiter,"-append");
 	disp(["Data have been written in ", out_filename])
-
-	% CHECK OUTPUT{
-	if severe_debug
-		command = ["wc -l ",out_filename," | cut -f1 -d' ' "];
-		[status, output] = system(command,1);
-		if str2num(output)!=15
-			matrix
-			error([out_filename," has ",output," lines, while I expect 15 lines. The size of the table is ",num2str(size(matrix) ) ]);
-		endif
-	endif
-	% }CHECK OUTPUT
 
 end

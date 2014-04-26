@@ -4,15 +4,14 @@ global severe_debug = true;
 per_seed_results = false;
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
-priceratio_list={1,2,3,4,5,6,7,8,9,10};
+priceratio_list={2,5,10};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-decision_list={"lce", "fix0.01", "fix0.0001", "costprob0.02", "costprob0.0002","prob_cache"}; % The decision plocies that I want to plot
-decision_list ={"lce", "fix0.01", "fix0.0001", "costprob0.02", "costprob0.0002"};
-id_rep_list=1:20; # list of seeds
-alpha_list = [0 0.8];
-csize_list = {"9"};
-csize_to_write_list = {"9"};
+decision_list={"fix0.01","costprob0.02"}; % The decision plocies that I want to plot
+id_rep_list=1:5; # list of seeds
+alpha_list = [1];
+csize_list = {"1000"};
+csize_to_write_list = {"1000"};
 
 resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
@@ -21,8 +20,8 @@ metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensiv
 network="one_cache_scenario";
 forwarding_="nrr";
 replacement_="lru";
-ctlg_="10\\^3"; 
-ctlg_to_write_="1e3";
+ctlg_="10\\^5"; 
+ctlg_to_write_="1e5";
 
 i = 1;
 
