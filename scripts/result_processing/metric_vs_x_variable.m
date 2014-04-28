@@ -47,6 +47,7 @@ function y = metric_vs_x_variable (input_data)
 	decision_yes = input_data.parsed.decision_yes;
 	decision_no = input_data.parsed.decision_no;
 
+
 	% CHECK_INPUT_DATA{
 		if severe_debug
 			if length(fixed_variable_names_additional) != 2 || length(fixed_variable_values_additional) != 2
@@ -103,7 +104,7 @@ function y = metric_vs_x_variable (input_data)
 				endfor
 
 				x_variable_column = x_variable_values;
-
+				
 				% CHECK{
 					if severe_debug
 						original_data = eval(x_variable_name) ; 
@@ -126,15 +127,15 @@ function y = metric_vs_x_variable (input_data)
 
 					if any(strcmp(decision_,decision_list) )
 						% I want to plot this decision policy
-# CANCELLARE?
-#						idx =  strcmp(decision, decision_ ) & id_rep == id_rep_ & strcmp(csize, csize_);
-#						for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
-#							idx = idx \
-#								& cell2mat( eval(fixed_variable_names_additional(idx_fixed_variable_additional) ) )\
-#								== fixed_variable_values_additional(idx_fixed_variable_additional)  \ 
-#						endfor
+						idx =  strcmp(decision, decision_ ) & id_rep == id_rep_ & strcmp(csize, csize_);
+						for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
+							value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
 
-						idx = idx_pr;
+							idx = idx \
+								& eval(fixed_variable_names_additional(idx_fixed_variable_additional) ) \
+								== value ;
+						endfor
+						
 						# CHECK{
 							if severe_debug
 								original_data = eval(x_variable_name);
@@ -144,7 +145,7 @@ function y = metric_vs_x_variable (input_data)
 								endif
 							endif
 						# }CHECK
-
+						
 						for idx_metric = 1:length(metric_list)
 							column_list{idx_metric} = [];
 		
@@ -200,7 +201,7 @@ function y = metric_vs_x_variable (input_data)
 							# }CHECK DIMENSIONS
 
 						endfor
-
+						
 					else
 						% I don't want to plot this decision policy => I will replace it with -1
 						for idx_metric = 1:length(metric_list)
@@ -222,7 +223,7 @@ function y = metric_vs_x_variable (input_data)
 					% Going along the 3rd dimension of p_hit_matrix_over_seed, the seeds are changing
 					matrix_over_seed_list{idx_metric} = cat( 3,\
 							matrix_over_seed_list{idx_metric}, metric_matrix_list{idx_metric});
-
+					
 					% CHECK MATRIX{
 					if severe_debug
 						if size(matrix_over_seed_list{idx_metric},1) != length(x_variable_values)
@@ -251,6 +252,7 @@ function y = metric_vs_x_variable (input_data)
 				fixed_variable_names{ length(fixed_variable_names) + idx_fixed_variable_additional, 1 } =\
 							fixed_variable_names_additional{idx_fixed_variable_additional};
 			endfor
+
 			comment="";
 
 			for idx_metric = 1:length(metric_list)
