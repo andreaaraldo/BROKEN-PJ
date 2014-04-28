@@ -106,7 +106,7 @@ function y = metric_vs_x_variable (input_data)
 
 				% CHECK{
 					if severe_debug
-						original_data = cell2mat(eval(x_variable_name) ); 
+						original_data = eval(x_variable_name) ; 
 						extracted_column = original_data(idx_pr);
 						if x_variable_column != extracted_column
 							x_variable_column
@@ -138,7 +138,7 @@ function y = metric_vs_x_variable (input_data)
 						# CHECK{
 							if severe_debug
 								original_data = eval(x_variable_name);
-								x_variable_column_for_check = cell2mat( original_data(idx) );
+								x_variable_column_for_check = original_data(idx) ;
 								if x_variable_column_for_check !=  x_variable_column
 									error("x_variable_column is erroneous");
 								endif
