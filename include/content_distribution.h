@@ -52,12 +52,17 @@ class content_distribution : public cSimpleModule{
 		virtual void initialize();
 		void handleMessage(cMessage *){;}
 
-		//<aa> Before me, the method was private //</aa>
-		virtual vector<int> binary_strings(int,int);
-
 		//<aa>
 		virtual int choose_repos();
+		virtual void verify_replica_number();
+		virtual void finalize_total_replica();
 		//</aa>
+
+		//</aa> I moved the following members from private to protected </aa>
+		virtual vector<int> binary_strings(int,int);
+		int degree; // <aa> The number of replicas for each object</aa>
+		int num_repos;
+		int cardF;
 
 
     public:
@@ -71,8 +76,16 @@ class content_distribution : public cSimpleModule{
 		static name_t perfile_bulk;
 		static name_t stabilization_bulk; 
 		static name_t cut_off;
-		static int  *repositories; //<aa> repositories[i] is the node which the i-th repository is attached to</aa>
+
+		// <aa> repositories[i] = d means that the i-th repository 
+		// is attached to node[d] </aa>
+		static int  *repositories;
 		static int  *clients;
+
+		//<aa>
+		static int *total_replicas_p; // The number of replicas that are 
+								// distributed among all the repos
+		//</aa>
 
 
     private:
@@ -81,11 +94,8 @@ class content_distribution : public cSimpleModule{
 		//</aa>
 		
 		//INI parameters
-		int num_repos;
 		int num_clients;
 		int nodes;
-		int degree;
-		int cardF;
 		int F;
 
 		double alpha;

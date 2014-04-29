@@ -42,6 +42,7 @@ name_t  content_distribution::perfile_bulk = 0;
 name_t  content_distribution::cut_off = 0;
 int  *content_distribution::repositories = 0;
 int  *content_distribution::clients = 0;
+int  *content_distribution::total_replicas_p = 0;
 
 
 
@@ -97,9 +98,12 @@ void content_distribution::initialize(){
 
     //Useful for statitics: write out the name of each client within the network
     for (int i = 0; i < num_clients; i++){
-	sprintf(name,"client-%d",i);
-	recordScalar(name,clients[i]);
+		sprintf(name,"client-%d",i);
+		recordScalar(name,clients[i]);
     }
+
+
+	//</aa>
 
     //
     //Content initialization
@@ -107,7 +111,30 @@ void content_distribution::initialize(){
     cout<<"Start content initialization..."<<endl;
     init_content();
     cout<<"Content initialized"<<endl;
+	//<aa>
+	finalize_total_replica();
+    int *total_replicas_p = new int [1];
+	*total_replicas_p = 0;
+	//</aa>
 }
+
+//<aa>
+void content_distribution::finalize_total_replica(){
+
+	*total_replicas_p = cardF*degree;
+}
+
+#ifdef SEVERE_DEBUG
+void content_distribution::verify_replica_number(){
+	if (*total_replicas_p != cardF*degree)
+	{
+        std::stringstream ermsg; 
+		ermsg<<"Ctlg size="<< cardF <<". total_replica="<<*total_replicas_p;
+	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+}
+#endif
+//</aa>
 
 
 /* 
@@ -138,7 +165,23 @@ vector<int> content_distribution::binary_strings(int num_ones,int len){
 //<aa> Return a string of bit representing an object placement. 
 // There is a 1 in the i-th position iff the object is served by the i-th repo
 int content_distribution::choose_repos ( ){
-	return repo_strings[intrand(repo_strings.size())];
+	int repo_string = repo_strings[intrand(repo_strings.size())];
+
+	#ifdef SEVERE_DEBUG
+	int num_1_bits =  __builtin_popcount (repo_string); //http://stackoverflow.com/a/109069
+												// Number of bits set to 1 (corresponding 
+												// to the number of repositories this object was 
+												// assigned to)
+	if (num_1_bits != degree){
+		std::stringstream ermsg; 
+		ermsg<<"an object has been assigned to "<< num_1_bits <<" repos while degree="<<degree;
+	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+
+	*total_replicas_p += num_1_bits;
+	#endif
+
+	return repo_string;
 }
 //</aa>
 
@@ -222,6 +265,11 @@ void content_distribution::init_content()
 * repositories specified in the ini file.  In addition some random repositories
 * are added if one wished more repositories than the fixed number specified
 * (see omnet.ini for further comments).
+* <aa>
+* Return value:
+* 	repositories[.], where repositories[i] = d means that the i-th repository is
+*					 in node[d]
+* </aa>
 */
 int *content_distribution::init_repos(vector<int> node_repos){
 

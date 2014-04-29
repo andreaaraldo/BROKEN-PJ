@@ -27,7 +27,7 @@ network one_cache_scenario_with_free_link_network extends base_network
 		// The following two values are not used to compute the cost but are only used by the costprob policy
 		// to take its decision
 		double cheap_price_powered = 0;
-		double expensive_price_powered = 0;
+		double expensive_price_powered = 1;
 
 
 		// The following nodes are "fake"

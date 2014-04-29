@@ -36,7 +36,8 @@ class IcnChannel: public cDatarateChannel {
 
 	public:	
 		void clear_stat();
-		double get_cost();
+		double get_cost(); // num_objects_served * price;
+		double get_price();
 
 	private:
 		statistics* statistics_object; // Reference to the statistics object

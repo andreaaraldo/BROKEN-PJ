@@ -70,6 +70,9 @@ void statistics::initialize(){
 		}
     }
     
+	total_replicas = content_distribution::total_replicas;
+
+
     //Extracting nodes (caches and cores)
     caches = new base_cache*[num_nodes];
     cores = new core_layer*[num_nodes];
@@ -194,7 +197,7 @@ void statistics::finish(){
 
 			#ifdef SEVERE_DEBUG
 			if (	caches[i]->decision_yes + caches[i]->decision_no != 
-					cores[i]->data + cores[i]->repo_load
+					(unsigned) cores[i]->data + cores[i]->repo_load
 			){
 				std::stringstream ermsg; 
 				ermsg<<"caches["<<i<<"]->decision_yes="<<caches[i]->decision_yes<<
@@ -216,7 +219,7 @@ void statistics::finish(){
 		total_cost += ch->get_cost() ;
 	}
 	//</aa>
-    
+
     //Print and store global statistics
     sprintf (name, "p_hit");
     recordScalar(name,global_hit * 1./(global_hit+global_miss));
@@ -255,6 +258,10 @@ void statistics::finish(){
     sprintf ( name, "total_cost");
     recordScalar(name,total_cost);
     cout<<"total_cost: "<<total_cost<<endl;
+
+    sprintf ( name, "total_replicas");
+    recordScalar(name,total_replicas);
+    cout<<"total_replicas: "<<total_replicas<<endl;
 
     //<aa>
     #ifdef SEVERE_DEBUG

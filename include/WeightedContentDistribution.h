@@ -38,8 +38,13 @@ class WeightedContentDistribution : public content_distribution{
 		virtual void initialize();
 		virtual int choose_repos ();
 		virtual vector<int> binary_strings(int,int);
+		virtual void verify_prices();
+		virtual void verify_replica_number();
+		virtual void finalize_total_replica();
+
 
 	private:
 		std::vector<double> weights;
+		bool replication_admitted;
 };
 #endif

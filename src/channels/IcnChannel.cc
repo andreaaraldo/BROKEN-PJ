@@ -50,14 +50,6 @@ void IcnChannel::initialize()
         int dest_index = getSourceGate()->getNextGate()->getOwnerModule()->getIndex();
         price = source_index < dest_index ? price_asc : price_desc;
         price_powered = source_index < dest_index ? price_asc_powered : price_desc_powered;
-        #ifdef SEVERE_DEBUG
-        std::stringstream msg; 
-
-		ermsg.str(""); 
-		msg<<"price_powered for each data pkt from node["<<source_index<<"] to node["
-			<<dest_index<<"]: "<< price_powered;
-	    debug_message(__FILE__,__LINE__,msg.str().c_str() );
-	    #endif
 
 		// Registering this IcnChannel to the statistics module
 		vector<string> name_vec(1,"modules.statistics.statistics");
@@ -96,6 +88,10 @@ void IcnChannel::clear_stat(){
 
 double IcnChannel::get_cost(){
     return count*price;
+}
+
+double IcnChannel::get_price(){
+    return price;
 }
 
 Register_Class(IcnChannel);

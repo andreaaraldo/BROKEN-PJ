@@ -111,6 +111,10 @@ class statistics : public cSimpleModule{
 	unordered_map <int, unordered_set <int> > level_union;
 	unordered_map <int, int> level_same;
 
+	//<aa>
+	int total_replicas;
+	//</aa>
+
 };
 
 #endif

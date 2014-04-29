@@ -26,6 +26,7 @@
 
 #include "ccnsim.h"
 #include "WeightedContentDistribution.h"
+#include "IcnChannel.h"
 #include <error_handling.h>
 
 Register_Class(WeightedContentDistribution);
@@ -33,15 +34,12 @@ Register_Class(WeightedContentDistribution);
 void WeightedContentDistribution::initialize(){
 	const char *str = par("weights").stringValue();
 	weights = cStringTokenizer(str).asDoubleVector();
+	replication_admitted = par("replication_admitted");
+
+	std::stringstream ermsg; 
 
 	// Input consistency check
 	{
-        std::stringstream ermsg; 
-
-		if ( weights.size() != 2 ) {
-			ermsg<<"For the time being it works only with 2 repos";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
 
 		double sum = 0;
 		for (unsigned i=0; i < weights.size(); i++)
@@ -59,8 +57,88 @@ void WeightedContentDistribution::initialize(){
 	}
 
 	content_distribution::initialize();
+
+	// Other checks
+	{
+		if ( degree != -1 ){
+			ermsg<<"degree is "<<degree <<". But with this content distribution model "<<
+				"this value is ignored. Please, set degree = -1";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+
+		#ifdef SEVERE_DEBUG
+		verify_prices();
+		if (!replication_admitted && total_replicas != cardF)
+		{
+	        std::stringstream ermsg; 
+			ermsg<<"total_replicas="<<total_replicas<<"; cardF="<<cardF<<". ";
+			ermsg<<"Since replication_admitted==false, There MUST be 1 replica for each content ";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+	}
 }
 
+#ifdef SEVERE_DEBUG
+/**
+ * from_repo_to_channel[repo_idx]   is the pointer to the IcnChannel through which you can 
+ *									reach the repository repo_idx
+ */
+void WeightedContentDistribution::verify_prices()
+{
+	unsigned num_repos = weights.size();
+	unsigned previous_repo_price = 0;
+
+	for (unsigned repo_idx=0; repo_idx < num_repos; repo_idx++)
+	{
+		// get the node associated to the repository
+		int node_idx = repositories[repo_idx];
+		// The repository is attached to node[node_idx]
+
+	    vector<string> ctype;
+	    ctype.push_back("modules.node.node");
+		cTopology topo;
+   		topo.extractByNedTypeName(ctype);
+		cTopology::Node *node = topo.getNode(node_idx);
+
+		if ( node->getModule()->gateSize("face$o") != 2)
+		{
+	        std::stringstream ermsg; 
+			ermsg<<"Found "<< node->getModule()->gateSize("face$o")<<
+				" ports."<<
+				"The nodes attached to a repo admit only 2 output ports: port 0 attached "
+				<<" to the client and port 1 attached the next node toward the clients";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		cGate *gate = node->getModule()->gate("face$o", 1);
+		IcnChannel *ch = (IcnChannel*) gate->getChannel();
+		double repo_price = ch->get_price();
+		if (repo_price < previous_repo_price)
+		{
+	        std::stringstream ermsg; 
+			ermsg<<"Prices must be non descending. This is due to the way choose_repo() works.";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		previous_repo_price = repo_price;
+	}
+}
+#endif
+
+#ifdef SEVERE_DEBUG
+// Override content_distribution::verify_replica_number()
+void WeightedContentDistribution::verify_replica_number(){
+	// Do nothing
+}
+#endif
+
+// Override content_distribution::finalize_total_replica()
+void WeightedContentDistribution::finalize_total_replica(){
+	// Do nothing
+}
+
+
+
+// Override content_distribution::binary_strings(..)
 vector<int> WeightedContentDistribution::binary_strings(int num_ones,int len){
 	// Do nothing as we don't need this in this case
 	vector<int> v;
@@ -71,15 +149,67 @@ vector<int> WeightedContentDistribution::binary_strings(int num_ones,int len){
 //		PAY ATTENTION: 
 //			- Verify the correctness of catalog_weights before calling
 //				this method. Their sum must be 1 and 
-//			- For the time being, it works only with 2 repositories with
-//			-	1 replica per object
-int WeightedContentDistribution::choose_repos ( ){
-	double rand_num = dblrand();
-	int repo_string = (rand_num < weights[0]) ? 1 : 3 ;
-	// Remember that 1 is the binary string 0...01 and it corresponds to the
-	// object placed only in the 1st repository. 3 is the string 0...10 and
-	// it corresponds to the object placed only in the 2ns repo.
+int WeightedContentDistribution::choose_repos ( )
+{
+	unsigned num_repos = weights.size();
+	int assigned_repo = -1;
 
-	std::stringstream ermsg; 
+	if (replication_admitted) 
+	{
+		for (unsigned repo_idx = 0; repo_idx < num_repos; repo_idx++)
+		{
+			if (dblrand() < weights[repo_idx] ){
+				total_replicas++;
+				if ( assigned_repo==-1 )
+					// The object has not been assigned yet. Assign it to repo_idx
+					assigned_repo = repo_idx;
+
+				// else: do nothing
+					// The object has already been assigned to a previous repository.
+					// Since the previous repositories are cheaper than the current
+					// repo_idx, the copy on the current repository will be ignored.
+					// It is like it does not exist.
+			}
+		}
+	} 	// else: leave the object unassigned.
+			// If replication is not admitted, we assign the object to one and only one repository.
+			// To do so, we leverage the following code
+
+	if ( assigned_repo == -1 )
+	{
+		// The object has not been assigned yet. We have to force it in some
+		// repository
+		double rand_num = dblrand();
+		double accumulated_weight = 0;
+		assigned_repo = 0;
+		while (rand_num > accumulated_weight){
+			accumulated_weight += weights[ assigned_repo ];
+			assigned_repo++;
+		}
+		assigned_repo--;
+		total_replicas++;
+	}
+	// The object will be assigned to the repo_idx-th repository.
+	// Set the repo_idx-th bit in the binary string
+	int repo_string = 0;
+	repo_string |= 1 << assigned_repo; //http://stackoverflow.com/a/47990
+
+	#ifdef SEVERE_DEBUG
+		int num_1_bits =  __builtin_popcount (repo_string); //http://stackoverflow.com/a/109069
+												// Number of bits set to 1 (corresponding 
+												// to the number of repositories this object was 
+												// assigned to)
+		if ( assigned_repo > (int) num_repos-1 || assigned_repo < 0){
+		    std::stringstream ermsg; 
+			ermsg<<"assigned_repo="<<assigned_repo;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		if (num_1_bits != 1 && !replication_admitted){
+		    std::stringstream ermsg; 
+			ermsg<<"repo_string="<<repo_string;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+
 	return repo_string;
 }
