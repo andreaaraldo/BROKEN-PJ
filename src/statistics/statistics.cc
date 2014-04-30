@@ -70,7 +70,7 @@ void statistics::initialize(){
 		}
     }
     
-	total_replicas = content_distribution::total_replicas;
+	total_replicas = *(content_distribution::total_replicas_p );
 
 
     //Extracting nodes (caches and cores)

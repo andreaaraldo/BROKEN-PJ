@@ -42,7 +42,7 @@ name_t  content_distribution::perfile_bulk = 0;
 name_t  content_distribution::cut_off = 0;
 int  *content_distribution::repositories = 0;
 int  *content_distribution::clients = 0;
-int  *content_distribution::total_replicas_p = 0;
+int  *content_distribution::total_replicas_p;
 
 
 
@@ -59,6 +59,9 @@ void content_distribution::initialize(){
     cardF = par("objects"); //Number of files within the system
     F = par("file_size"); //Average chunk size
     degree = getAncestorPar("replicas");
+
+    content_distribution::total_replicas_p = (int*) malloc ( sizeof(int) );
+	*(content_distribution::total_replicas_p) = 0;
 
 
     catalog.resize(cardF+1); // initialize content catalog
@@ -84,15 +87,15 @@ void content_distribution::initialize(){
 
     //Useful for statitics: write out the name of each repository within the network
     for (int i = 0; i < num_repos; i++){
-	sprintf(name,"repo-%d",i);
-	recordScalar(name,repositories[i]);
+		sprintf(name,"repo-%d",i);
+		recordScalar(name,repositories[i]);
     }
 
     //
     //Clients initialization
     //
     if (num_clients < 0) //If num_clients is < 0 all nodes of the network are clients
-	num_clients = nodes;
+		num_clients = nodes;
     tokenizer = cStringTokenizer(getAncestorPar("node_clients"),",");
     clients = init_clients (tokenizer.asIntVector());
 
@@ -111,10 +114,9 @@ void content_distribution::initialize(){
     cout<<"Start content initialization..."<<endl;
     init_content();
     cout<<"Content initialized"<<endl;
+
 	//<aa>
 	finalize_total_replica();
-    int *total_replicas_p = new int [1];
-	*total_replicas_p = 0;
 	//</aa>
 }
 

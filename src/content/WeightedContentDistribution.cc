@@ -33,7 +33,7 @@ Register_Class(WeightedContentDistribution);
 
 void WeightedContentDistribution::initialize(){
 	const char *str = par("weights").stringValue();
-	weights = cStringTokenizer(str).asDoubleVector();
+	weights = cStringTokenizer(str,"_").asDoubleVector();
 	replication_admitted = par("replication_admitted");
 
 	std::stringstream ermsg; 
@@ -68,10 +68,10 @@ void WeightedContentDistribution::initialize(){
 
 		#ifdef SEVERE_DEBUG
 		verify_prices();
-		if (!replication_admitted && total_replicas != cardF)
+		if (!replication_admitted && *total_replicas_p != cardF)
 		{
 	        std::stringstream ermsg; 
-			ermsg<<"total_replicas="<<total_replicas<<"; cardF="<<cardF<<". ";
+			ermsg<<"total_replicas="<<*total_replicas_p<<"; cardF="<<cardF<<". ";
 			ermsg<<"Since replication_admitted==false, There MUST be 1 replica for each content ";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
@@ -159,7 +159,7 @@ int WeightedContentDistribution::choose_repos ( )
 		for (unsigned repo_idx = 0; repo_idx < num_repos; repo_idx++)
 		{
 			if (dblrand() < weights[repo_idx] ){
-				total_replicas++;
+				(*total_replicas_p) = (*total_replicas_p) +1;
 				if ( assigned_repo==-1 )
 					// The object has not been assigned yet. Assign it to repo_idx
 					assigned_repo = repo_idx;
@@ -187,7 +187,7 @@ int WeightedContentDistribution::choose_repos ( )
 			assigned_repo++;
 		}
 		assigned_repo--;
-		total_replicas++;
+		(*total_replicas_p) ++;
 	}
 	// The object will be assigned to the repo_idx-th repository.
 	// Set the repo_idx-th bit in the binary string
