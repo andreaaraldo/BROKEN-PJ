@@ -34,6 +34,18 @@ using namespace std;
 
 
 class WeightedContentDistribution : public content_distribution{
+	public:
+		WeightedContentDistribution() : initialized(false) {;}
+		// http://stackoverflow.com/a/7863971/2110769
+
+		virtual const vector<double> get_weights();
+		virtual const double get_priceratio();
+
+		#ifdef SEVERE_DEBUG
+		virtual bool isInitialized();
+		#endif
+
+
     protected:
 		virtual void initialize();
 		virtual int choose_repos ();
@@ -45,6 +57,12 @@ class WeightedContentDistribution : public content_distribution{
 
 	private:
 		std::vector<double> weights;
+		double* probabilities;
 		bool replication_admitted;
+		double priceratio;
+
+		#ifdef SEVERE_DEBUG
+		bool initialized;
+		#endif
 };
 #endif

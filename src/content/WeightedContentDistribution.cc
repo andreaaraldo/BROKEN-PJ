@@ -31,30 +31,34 @@
 
 Register_Class(WeightedContentDistribution);
 
-void WeightedContentDistribution::initialize(){
+void WeightedContentDistribution::initialize()
+{
+
 	const char *str = par("weights").stringValue();
 	weights = cStringTokenizer(str,"_").asDoubleVector();
 	replication_admitted = par("replication_admitted");
+	priceratio = par("priceratio");
+
+	unsigned repo_num = weights.size();
 
 	std::stringstream ermsg; 
 
-	// Input consistency check
+	double sum = 0;
+	for (unsigned i=0; i < repo_num; i++)
 	{
-
-		double sum = 0;
-		for (unsigned i=0; i < weights.size(); i++)
-		{
+		{// Input consistency check
 			if ( weights[i] > 1 ||  weights[i] < 0){
 				ermsg<<"Weight : "<<weights[i]<<" is invalid";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
-			sum += weights[i];
 		}
-		if ( sum != 1 ){
-			ermsg<<"Sum of weights : "<<sum <<" is invalid";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
+		
+		sum += weights[i];
 	}
+
+    probabilities = (double* ) malloc(repo_num * sizeof(double) );
+	for (unsigned repo_idx = 0; repo_idx < repo_num; repo_idx++)
+		probabilities[repo_idx] = weights[repo_idx] / sum;
 
 	content_distribution::initialize();
 
@@ -77,6 +81,9 @@ void WeightedContentDistribution::initialize(){
 		}
 		#endif
 	}
+	#ifdef SEVERE_DEBUG
+	initialized = true;
+	#endif
 }
 
 #ifdef SEVERE_DEBUG
@@ -86,7 +93,12 @@ void WeightedContentDistribution::initialize(){
  */
 void WeightedContentDistribution::verify_prices()
 {
-	unsigned num_repos = weights.size();
+	if (num_repos != weights.size() ){
+        std::stringstream ermsg; 
+		ermsg<<"num_repos="<<num_repos<<"; while weights vector has "<<weights.size()
+				<<" elements";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
 	unsigned previous_repo_price = 0;
 
 	for (unsigned repo_idx=0; repo_idx < num_repos; repo_idx++)
@@ -131,6 +143,21 @@ void WeightedContentDistribution::verify_replica_number(){
 }
 #endif
 
+#ifdef SEVERE_DEBUG
+bool WeightedContentDistribution::isInitialized(){
+	return initialized;
+}
+#endif
+
+const vector<double> WeightedContentDistribution::get_weights(){
+	return weights;
+}
+
+const double WeightedContentDistribution::get_priceratio(){
+	return priceratio;
+}
+
+
 // Override content_distribution::finalize_total_replica()
 void WeightedContentDistribution::finalize_total_replica(){
 	// Do nothing
@@ -151,7 +178,6 @@ vector<int> WeightedContentDistribution::binary_strings(int num_ones,int len){
 //				this method. Their sum must be 1 and 
 int WeightedContentDistribution::choose_repos ( )
 {
-	unsigned num_repos = weights.size();
 	int assigned_repo = -1;
 
 	if (replication_admitted) 
@@ -180,10 +206,10 @@ int WeightedContentDistribution::choose_repos ( )
 		// The object has not been assigned yet. We have to force it in some
 		// repository
 		double rand_num = dblrand();
-		double accumulated_weight = 0;
+		double accumulated_prob = 0;
 		assigned_repo = 0;
-		while (rand_num > accumulated_weight){
-			accumulated_weight += weights[ assigned_repo ];
+		while (rand_num > accumulated_prob){
+			accumulated_prob += probabilities[ assigned_repo ];
 			assigned_repo++;
 		}
 		assigned_repo--;

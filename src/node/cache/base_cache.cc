@@ -47,6 +47,7 @@
 //Initialization function
 void base_cache::initialize(){
 
+
     nodes      = getAncestorPar("n");
     level = getAncestorPar("level");
     cache_size = par("C");  //cache size
@@ -63,8 +64,10 @@ void base_cache::initialize(){
     }
 	//<aa>
 	else if (decision_policy.find("costprob")==0){
+
 		string sens_string = decision_policy.substr( strlen("costprob") );
 		double sens = atof(sens_string.c_str());
+
 		decisor = new Costprob(sens);
 
 		std::stringstream ermsg; 
@@ -79,6 +82,7 @@ void base_cache::initialize(){
 		ermsg<<"costprob will be used with the sensitivity "<<sens;
 	    debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 		#endif
+
     }
 	//</aa>
 	 else if (decision_policy.find("btw")==0){
@@ -112,6 +116,7 @@ void base_cache::initialize(){
 
     //--Per file
     cache_stats = new cache_stat_entry[__file_bulk + 1];
+
 
 }
 
