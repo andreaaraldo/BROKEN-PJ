@@ -78,7 +78,6 @@ class Costprob: public DecisionPolicy{
 
 			correction_factor = 
 				average_decision_ratio_ / (weights[1] + weights[2] * priceratio);
-
 		}
 
 		virtual bool data_to_cache(ccn_data * data_msg)

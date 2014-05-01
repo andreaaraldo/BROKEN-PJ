@@ -23,8 +23,8 @@ network one_cache_scenario_3_links_network extends base_network
 		string decision_policy;
 
 		content_distribution.priceratio = priceratio;
-		double cheap_price = 1/(1+priceratio);
-		double expensive_price = priceratio/(1+priceratio);
+		double cheap_price = 1;
+		double expensive_price = priceratio;
 
 		// The following two values are not used to compute the cost but are only used by the costprob policy
 		// to take its decision
