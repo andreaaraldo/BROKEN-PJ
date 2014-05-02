@@ -1,0 +1,87 @@
+version 2
+run General-5974-20140425-08:56:06-19030
+attr D fix0.0001
+attr F nrr
+attr R lru
+attr a 0
+attr configname General
+attr csize 30
+attr ctlg 10^3
+attr datetime 20140425-08:56:06
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=one_cache_scenario, $rep=15, $priceratiovalue=3, $a=0, $ctlg=10^3, $F=nrr, $ttl=1000, $D=fix0.0001, $R=lru, $csize=30"
+attr iterationvars2 "$net=one_cache_scenario, $rep=15, $priceratiovalue=3, $a=0, $ctlg=10^3, $F=nrr, $ttl=1000, $D=fix0.0001, $R=lru, $csize=30, $repetition=0"
+attr measurement "$net=one_cache_scenario, $rep=15, $priceratiovalue=3, $a=0, $ctlg=10^3, $F=nrr, $ttl=1000, $D=fix0.0001, $R=lru, $csize=30"
+attr net one_cache_scenario
+attr network networks.${net=one_cache_scenario}_network
+attr priceratiovalue 3
+attr processid 19030
+attr rep 15
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 5974
+attr seedset 15
+attr ttl 1000
+
+scalar . 	a 	0
+scalar . 	csize 	30
+scalar . 	priceratiovalue 	3
+scalar . 	rep 	15
+scalar . 	ttl 	1000
+scalar one_cache_scenario_network.content_distribution 	repo-0 	3
+scalar one_cache_scenario_network.content_distribution 	repo-1 	4
+scalar one_cache_scenario_network.content_distribution 	client-0 	0
+scalar one_cache_scenario_network.content_distribution 	repo-0_card 	484
+scalar one_cache_scenario_network.content_distribution 	repo-1_card 	516
+scalar one_cache_scenario_network.statistics 	p_hit 	0.010045818036939
+scalar one_cache_scenario_network.statistics 	interests 	105417
+scalar one_cache_scenario_network.statistics 	data 	69572
+scalar one_cache_scenario_network.statistics 	hdistance 	1.9409122611243
+scalar one_cache_scenario_network.statistics 	avg_time 	0
+scalar one_cache_scenario_network.statistics 	downloads 	179225
+scalar one_cache_scenario_network.statistics 	total_cost 	87696
+scalar one_cache_scenario_network.statistics 	interests_sent 	179225
+scalar one_cache_scenario_network.node[0].core_layer 	interests[0] 	179225
+scalar one_cache_scenario_network.node[0].core_layer 	data[0] 	173930
+scalar one_cache_scenario_network.node[0].core_layer 	repo_int[0] 	173930
+scalar one_cache_scenario_network.node[0].content_store 	p_hit[0] 	0.029543869437857
+scalar one_cache_scenario_network.node[0].content_store 	hits[0] 	5295
+scalar one_cache_scenario_network.node[0].content_store 	misses[0] 	173930
+scalar one_cache_scenario_network.node[0].content_store 	decision_yes[0] 	20
+scalar one_cache_scenario_network.node[0].content_store 	decision_no[0] 	173910
+scalar one_cache_scenario_network.node[1].core_layer 	interests[1] 	85501
+scalar one_cache_scenario_network.node[1].core_layer 	data[1] 	85501
+scalar one_cache_scenario_network.node[1].content_store 	p_hit[1] 	0
+scalar one_cache_scenario_network.node[1].content_store 	hits[1] 	0
+scalar one_cache_scenario_network.node[1].content_store 	misses[1] 	85501
+scalar one_cache_scenario_network.node[1].content_store 	decision_yes[1] 	0
+scalar one_cache_scenario_network.node[1].content_store 	decision_no[1] 	85501
+scalar one_cache_scenario_network.node[2].core_layer 	interests[2] 	88429
+scalar one_cache_scenario_network.node[2].core_layer 	data[2] 	88429
+scalar one_cache_scenario_network.node[2].content_store 	p_hit[2] 	0
+scalar one_cache_scenario_network.node[2].content_store 	hits[2] 	0
+scalar one_cache_scenario_network.node[2].content_store 	misses[2] 	88429
+scalar one_cache_scenario_network.node[2].content_store 	decision_yes[2] 	0
+scalar one_cache_scenario_network.node[2].content_store 	decision_no[2] 	88429
+scalar one_cache_scenario_network.node[3].core_layer 	interests[3] 	85501
+scalar one_cache_scenario_network.node[3].core_layer 	repo_load[3] 	85501
+scalar one_cache_scenario_network.node[3].core_layer 	data[3] 	0
+scalar one_cache_scenario_network.node[3].content_store 	p_hit[3] 	0
+scalar one_cache_scenario_network.node[3].content_store 	hits[3] 	0
+scalar one_cache_scenario_network.node[3].content_store 	misses[3] 	85501
+scalar one_cache_scenario_network.node[3].content_store 	decision_yes[3] 	0
+scalar one_cache_scenario_network.node[3].content_store 	decision_no[3] 	85501
+scalar one_cache_scenario_network.node[4].core_layer 	interests[4] 	88429
+scalar one_cache_scenario_network.node[4].core_layer 	repo_load[4] 	88429
+scalar one_cache_scenario_network.node[4].core_layer 	data[4] 	0
+scalar one_cache_scenario_network.node[4].content_store 	p_hit[4] 	0
+scalar one_cache_scenario_network.node[4].content_store 	hits[4] 	0
+scalar one_cache_scenario_network.node[4].content_store 	misses[4] 	88429
+scalar one_cache_scenario_network.node[4].content_store 	decision_yes[4] 	0
+scalar one_cache_scenario_network.node[4].content_store 	decision_no[4] 	88429
+scalar one_cache_scenario_network.client[0] 	hdistance[0] 	1.9409122611243
+scalar one_cache_scenario_network.client[0] 	downloads[0] 	179225
+scalar one_cache_scenario_network.client[0] 	avg_time[0] 	0
+scalar one_cache_scenario_network.client[0] 	interests_sent[0] 	179225

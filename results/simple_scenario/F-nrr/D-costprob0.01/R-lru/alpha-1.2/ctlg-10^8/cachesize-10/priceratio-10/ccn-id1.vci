@@ -1,0 +1,40 @@
+file 3445 1397827734                                            
+version 2
+run General-251-20140418-15:28:07-1866
+attr D costprob0.01
+attr F nrr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 10
+attr ctlg 10^8
+attr datetime 20140418-15:28:07
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario, $rep=1, $priceratiovalue=10, $a=1.2, $ctlg=10^8, $F=nrr, $ttl=1000, $D=costprob0.01, $R=lru, $csize=10"
+attr iterationvars2 "$net=simple_scenario, $rep=1, $priceratiovalue=10, $a=1.2, $ctlg=10^8, $F=nrr, $ttl=1000, $D=costprob0.01, $R=lru, $csize=10, $repetition=0"
+attr measurement "$net=simple_scenario, $rep=1, $priceratiovalue=10, $a=1.2, $ctlg=10^8, $F=nrr, $ttl=1000, $D=costprob0.01, $R=lru, $csize=10"
+attr net simple_scenario
+attr network networks.${net=simple_scenario}_network
+attr priceratiovalue 10
+attr processid 1866
+attr rep 1
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 251
+attr seedset 1
+attr ttl 1000
+
+vector 0  simple_scenario_network.node[0].content_store  hit_node[0]  ETV
+0	1005 369 1374719 1374719 1 17 17 0 1 6.438765683902 5.3827364158496
+vector 1  simple_scenario_network.node[1].content_store  hit_node[1]  ETV
+1	1448 311 1374719 1374719 1 17 17 0 1 -nan -nan
+vector 2  simple_scenario_network.node[2].content_store  hit_node[2]  ETV
+2	1833 351 1374719 1374719 1 17 17 0.66366366366366 1 -nan -nan
+vector 3  simple_scenario_network.node[3].content_store  hit_node[3]  ETV
+3	2258 285 1374719 1374719 1 17 17 0 0 -nan -nan
+vector 4  simple_scenario_network.node[4].content_store  hit_node[4]  ETV
+4	2617 282 1374719 1374719 1 17 17 0 0 -nan -nan
+vector 5  simple_scenario_network.client[0]  hdistance[0]  ETV
+5	2962 483 1374719 1374719 1 17 17 1.7365150791698 1.7384395488505 29.52967711255 51.294229237497

@@ -1,0 +1,40 @@
+version 2
+run General-11-20140426-22:18:55-15386
+attr D ""
+attr F nrr
+attr R lru
+attr a 1
+attr configname General
+attr csize 1000
+attr ctlg 10^5
+attr datetime 20140426-22:18:55
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=one_cache_scenario, $rep=1, $priceratiovalue=10, $a=1, $ctlg=10^5, $F=nrr, $ttl=1000, $D=, $xi=1, $R=lru, $csize=1000"
+attr iterationvars2 "$net=one_cache_scenario, $rep=1, $priceratiovalue=10, $a=1, $ctlg=10^5, $F=nrr, $ttl=1000, $D=, $xi=1, $R=lru, $csize=1000, $repetition=0"
+attr measurement "$net=one_cache_scenario, $rep=1, $priceratiovalue=10, $a=1, $ctlg=10^5, $F=nrr, $ttl=1000, $D=, $xi=1, $R=lru, $csize=1000"
+attr net one_cache_scenario
+attr network networks.${net=one_cache_scenario}_network
+attr priceratiovalue 10
+attr processid 15386
+attr rep 1
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 11
+attr seedset 1
+attr ttl 1000
+attr xi 1
+
+scalar . 	D 	
+scalar . 	a 	1
+scalar . 	csize 	1000
+scalar . 	priceratiovalue 	10
+scalar . 	rep 	1
+scalar . 	ttl 	1000
+scalar . 	xi 	1
+scalar one_cache_scenario_network.content_distribution 	repo-0 	3
+scalar one_cache_scenario_network.content_distribution 	repo-1 	4
+scalar one_cache_scenario_network.content_distribution 	client-0 	0
+scalar one_cache_scenario_network.content_distribution 	repo-0_card 	49874
+scalar one_cache_scenario_network.content_distribution 	repo-1_card 	50126

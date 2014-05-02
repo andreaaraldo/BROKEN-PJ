@@ -1,0 +1,37 @@
+version 2
+run General-0-20140411-01:04:33-22466
+attr D cost0.1
+attr F nrr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 10
+attr ctlg 10^2
+attr datetime 20140411-01:04:33
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario, $rep=0, $priceratiovalue=10, $a=1.2, $ctlg=10^2, $F=nrr, $ttl=1000, $D=cost0.1, $R=lru, $csize=10"
+attr iterationvars2 "$net=simple_scenario, $rep=0, $priceratiovalue=10, $a=1.2, $ctlg=10^2, $F=nrr, $ttl=1000, $D=cost0.1, $R=lru, $csize=10, $repetition=0"
+attr measurement "$net=simple_scenario, $rep=0, $priceratiovalue=10, $a=1.2, $ctlg=10^2, $F=nrr, $ttl=1000, $D=cost0.1, $R=lru, $csize=10"
+attr net simple_scenario
+attr network networks.${net=simple_scenario}_network
+attr priceratiovalue 10
+attr processid 22466
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+attr ttl 1000
+
+scalar . 	a 	1.2
+scalar . 	csize 	10
+scalar . 	priceratiovalue 	10
+scalar . 	rep 	0
+scalar . 	ttl 	1000
+scalar simple_scenario_network.content_distribution 	repo-0 	3
+scalar simple_scenario_network.content_distribution 	repo-1 	4
+scalar simple_scenario_network.content_distribution 	client-0 	0
+scalar simple_scenario_network.content_distribution 	repo-0_card 	44
+scalar simple_scenario_network.content_distribution 	repo-1_card 	56

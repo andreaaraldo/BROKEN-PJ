@@ -1,0 +1,75 @@
+version 2
+run General-94-20140421-20:03:27-14742
+attr D costprob0.1
+attr F nrr
+attr R lru
+attr a 0.8
+attr configname General
+attr csize 10
+attr ctlg 10^3
+attr datetime 20140421-20:03:27
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario, $rep=7, $priceratiovalue=6, $a=0.8, $ctlg=10^3, $F=nrr, $ttl=1000, $D=costprob0.1, $R=lru, $csize=10"
+attr iterationvars2 "$net=simple_scenario, $rep=7, $priceratiovalue=6, $a=0.8, $ctlg=10^3, $F=nrr, $ttl=1000, $D=costprob0.1, $R=lru, $csize=10, $repetition=0"
+attr measurement "$net=simple_scenario, $rep=7, $priceratiovalue=6, $a=0.8, $ctlg=10^3, $F=nrr, $ttl=1000, $D=costprob0.1, $R=lru, $csize=10"
+attr net simple_scenario
+attr network networks.${net=simple_scenario}_network
+attr priceratiovalue 6
+attr processid 14742
+attr rep 7
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 94
+attr seedset 7
+attr ttl 1000
+
+scalar . 	a 	0.8
+scalar . 	csize 	10
+scalar . 	priceratiovalue 	6
+scalar . 	rep 	7
+scalar . 	ttl 	1000
+scalar simple_scenario_network.content_distribution 	repo-0 	3
+scalar simple_scenario_network.content_distribution 	repo-1 	4
+scalar simple_scenario_network.content_distribution 	client-0 	0
+scalar simple_scenario_network.content_distribution 	repo-0_card 	505
+scalar simple_scenario_network.content_distribution 	repo-1_card 	495
+scalar simple_scenario_network.statistics 	p_hit 	0.094991560667131
+scalar simple_scenario_network.statistics 	interests 	96808.6
+scalar simple_scenario_network.statistics 	data 	60822.8
+scalar simple_scenario_network.statistics 	hdistance 	2.4346468070916
+scalar simple_scenario_network.statistics 	avg_time 	0.001998289934
+scalar simple_scenario_network.statistics 	downloads 	179930
+scalar simple_scenario_network.statistics 	total_cost 	67541
+scalar simple_scenario_network.node[0].core_layer 	interests[0] 	179929
+scalar simple_scenario_network.node[0].core_layer 	data[0] 	170165
+scalar simple_scenario_network.node[0].core_layer 	repo_int[0] 	133949
+scalar simple_scenario_network.node[0].content_store 	p_hit[0] 	0.054265849307227
+scalar simple_scenario_network.node[0].content_store 	hits[0] 	9764
+scalar simple_scenario_network.node[0].content_store 	misses[0] 	170165
+scalar simple_scenario_network.node[1].core_layer 	interests[1] 	82838
+scalar simple_scenario_network.node[1].core_layer 	data[1] 	66180
+scalar simple_scenario_network.node[1].content_store 	p_hit[1] 	0.2010912866076
+scalar simple_scenario_network.node[1].content_store 	hits[1] 	16658
+scalar simple_scenario_network.node[1].content_store 	misses[1] 	66180
+scalar simple_scenario_network.node[2].core_layer 	interests[2] 	87327
+scalar simple_scenario_network.node[2].core_layer 	data[2] 	67769
+scalar simple_scenario_network.node[2].content_store 	p_hit[2] 	0.22396280646306
+scalar simple_scenario_network.node[2].content_store 	hits[2] 	19558
+scalar simple_scenario_network.node[2].content_store 	misses[2] 	67769
+scalar simple_scenario_network.node[3].core_layer 	interests[3] 	66180
+scalar simple_scenario_network.node[3].core_layer 	repo_load[3] 	66180
+scalar simple_scenario_network.node[3].core_layer 	data[3] 	0
+scalar simple_scenario_network.node[3].content_store 	p_hit[3] 	0
+scalar simple_scenario_network.node[3].content_store 	hits[3] 	0
+scalar simple_scenario_network.node[3].content_store 	misses[3] 	66180
+scalar simple_scenario_network.node[4].core_layer 	interests[4] 	67769
+scalar simple_scenario_network.node[4].core_layer 	repo_load[4] 	67769
+scalar simple_scenario_network.node[4].core_layer 	data[4] 	0
+scalar simple_scenario_network.node[4].content_store 	p_hit[4] 	0
+scalar simple_scenario_network.node[4].content_store 	hits[4] 	0
+scalar simple_scenario_network.node[4].content_store 	misses[4] 	67769
+scalar simple_scenario_network.client[0] 	hdistance[0] 	2.4346468070916
+scalar simple_scenario_network.client[0] 	downloads[0] 	179930
+scalar simple_scenario_network.client[0] 	avg_time[0] 	0.001998289934
