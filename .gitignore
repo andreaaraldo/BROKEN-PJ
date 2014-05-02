@@ -1,7 +1,6 @@
 *.o
 *.old
 *~
-results
 out/*
 Makefile
 ccnSim

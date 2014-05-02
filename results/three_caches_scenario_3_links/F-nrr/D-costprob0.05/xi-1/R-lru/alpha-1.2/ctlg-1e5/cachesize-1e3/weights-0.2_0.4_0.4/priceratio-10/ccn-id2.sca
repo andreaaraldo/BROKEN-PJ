@@ -1,0 +1,109 @@
+version 2
+run General-1074-20140502-03:08:13-9979
+attr D costprob0.05
+attr F nrr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 1e3
+attr ctlg 1e5
+attr datetime 20140502-03:08:13
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=three_caches_scenario_3_links, $rep=2, $priceratiovalue=10, $weights=0.2_0.4_0.4, $a=1.2, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprob0.05, $xi=1, $R=lru, $csize=1e3"
+attr iterationvars2 "$net=three_caches_scenario_3_links, $rep=2, $priceratiovalue=10, $weights=0.2_0.4_0.4, $a=1.2, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprob0.05, $xi=1, $R=lru, $csize=1e3, $repetition=0"
+attr measurement "$net=three_caches_scenario_3_links, $rep=2, $priceratiovalue=10, $weights=0.2_0.4_0.4, $a=1.2, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprob0.05, $xi=1, $R=lru, $csize=1e3"
+attr net three_caches_scenario_3_links
+attr network networks.${net=three_caches_scenario_3_links}_network
+attr priceratiovalue 10
+attr processid 9979
+attr rep 2
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 1074
+attr seedset 2
+attr ttl 1000
+attr weights 0.2_0.4_0.4
+attr xi 1
+
+scalar . 	a 	1.2
+scalar . 	csize 	1e3
+scalar . 	ctlg 	1e5
+scalar . 	priceratiovalue 	10
+scalar . 	rep 	2
+scalar . 	ttl 	1000
+scalar . 	xi 	1
+scalar three_caches_scenario_3_links_network.content_distribution 	repo-0 	4
+scalar three_caches_scenario_3_links_network.content_distribution 	repo-1 	5
+scalar three_caches_scenario_3_links_network.content_distribution 	repo-2 	6
+scalar three_caches_scenario_3_links_network.content_distribution 	client-0 	0
+scalar three_caches_scenario_3_links_network.content_distribution 	repo-0_card 	20021
+scalar three_caches_scenario_3_links_network.content_distribution 	repo-1_card 	39941
+scalar three_caches_scenario_3_links_network.content_distribution 	repo-2_card 	40038
+scalar three_caches_scenario_3_links_network.statistics 	p_hit 	0.35367054197858
+scalar three_caches_scenario_3_links_network.statistics 	interests 	48033
+scalar three_caches_scenario_3_links_network.statistics 	data 	22355.142857143
+scalar three_caches_scenario_3_links_network.statistics 	hdistance 	1.0123897744026
+scalar three_caches_scenario_3_links_network.statistics 	avg_time 	0
+scalar three_caches_scenario_3_links_network.statistics 	downloads 	179745
+scalar three_caches_scenario_3_links_network.statistics 	total_cost 	132613
+scalar three_caches_scenario_3_links_network.statistics 	total_replicas 	100000
+scalar three_caches_scenario_3_links_network.statistics 	interests_sent 	179745
+scalar three_caches_scenario_3_links_network.node[0].core_layer 	interests[0] 	179745
+scalar three_caches_scenario_3_links_network.node[0].core_layer 	data[0] 	95656
+scalar three_caches_scenario_3_links_network.node[0].core_layer 	repo_int[0] 	60830
+scalar three_caches_scenario_3_links_network.node[0].content_store 	p_hit[0] 	0.46782386158169
+scalar three_caches_scenario_3_links_network.node[0].content_store 	hits[0] 	84089
+scalar three_caches_scenario_3_links_network.node[0].content_store 	misses[0] 	95656
+scalar three_caches_scenario_3_links_network.node[0].content_store 	decision_yes[0] 	1571
+scalar three_caches_scenario_3_links_network.node[0].content_store 	decision_no[0] 	94085
+scalar three_caches_scenario_3_links_network.node[1].core_layer 	interests[1] 	35344
+scalar three_caches_scenario_3_links_network.node[1].core_layer 	data[1] 	35344
+scalar three_caches_scenario_3_links_network.node[1].content_store 	p_hit[1] 	0
+scalar three_caches_scenario_3_links_network.node[1].content_store 	hits[1] 	0
+scalar three_caches_scenario_3_links_network.node[1].content_store 	misses[1] 	35344
+scalar three_caches_scenario_3_links_network.node[1].content_store 	decision_yes[1] 	0
+scalar three_caches_scenario_3_links_network.node[1].content_store 	decision_no[1] 	35344
+scalar three_caches_scenario_3_links_network.node[2].core_layer 	interests[2] 	29776
+scalar three_caches_scenario_3_links_network.node[2].core_layer 	data[2] 	13583
+scalar three_caches_scenario_3_links_network.node[2].content_store 	p_hit[2] 	0.54382724341752
+scalar three_caches_scenario_3_links_network.node[2].content_store 	hits[2] 	16193
+scalar three_caches_scenario_3_links_network.node[2].content_store 	misses[2] 	13583
+scalar three_caches_scenario_3_links_network.node[2].content_store 	decision_yes[2] 	157
+scalar three_caches_scenario_3_links_network.node[2].content_store 	decision_no[2] 	13426
+scalar three_caches_scenario_3_links_network.node[3].core_layer 	interests[3] 	30536
+scalar three_caches_scenario_3_links_network.node[3].core_layer 	data[3] 	11903
+scalar three_caches_scenario_3_links_network.node[3].content_store 	p_hit[3] 	0.61019779931884
+scalar three_caches_scenario_3_links_network.node[3].content_store 	hits[3] 	18633
+scalar three_caches_scenario_3_links_network.node[3].content_store 	misses[3] 	11903
+scalar three_caches_scenario_3_links_network.node[3].content_store 	decision_yes[3] 	1318
+scalar three_caches_scenario_3_links_network.node[3].content_store 	decision_no[3] 	10585
+scalar three_caches_scenario_3_links_network.node[4].core_layer 	interests[4] 	35344
+scalar three_caches_scenario_3_links_network.node[4].core_layer 	repo_load[4] 	35344
+scalar three_caches_scenario_3_links_network.node[4].core_layer 	data[4] 	0
+scalar three_caches_scenario_3_links_network.node[4].content_store 	p_hit[4] 	0
+scalar three_caches_scenario_3_links_network.node[4].content_store 	hits[4] 	0
+scalar three_caches_scenario_3_links_network.node[4].content_store 	misses[4] 	35344
+scalar three_caches_scenario_3_links_network.node[4].content_store 	decision_yes[4] 	0
+scalar three_caches_scenario_3_links_network.node[4].content_store 	decision_no[4] 	35344
+scalar three_caches_scenario_3_links_network.node[5].core_layer 	interests[5] 	13583
+scalar three_caches_scenario_3_links_network.node[5].core_layer 	repo_load[5] 	13583
+scalar three_caches_scenario_3_links_network.node[5].core_layer 	data[5] 	0
+scalar three_caches_scenario_3_links_network.node[5].content_store 	p_hit[5] 	0
+scalar three_caches_scenario_3_links_network.node[5].content_store 	hits[5] 	0
+scalar three_caches_scenario_3_links_network.node[5].content_store 	misses[5] 	13583
+scalar three_caches_scenario_3_links_network.node[5].content_store 	decision_yes[5] 	0
+scalar three_caches_scenario_3_links_network.node[5].content_store 	decision_no[5] 	13583
+scalar three_caches_scenario_3_links_network.node[6].core_layer 	interests[6] 	11903
+scalar three_caches_scenario_3_links_network.node[6].core_layer 	repo_load[6] 	11903
+scalar three_caches_scenario_3_links_network.node[6].core_layer 	data[6] 	0
+scalar three_caches_scenario_3_links_network.node[6].content_store 	p_hit[6] 	0
+scalar three_caches_scenario_3_links_network.node[6].content_store 	hits[6] 	0
+scalar three_caches_scenario_3_links_network.node[6].content_store 	misses[6] 	11903
+scalar three_caches_scenario_3_links_network.node[6].content_store 	decision_yes[6] 	0
+scalar three_caches_scenario_3_links_network.node[6].content_store 	decision_no[6] 	11903
+scalar three_caches_scenario_3_links_network.client[0] 	hdistance[0] 	1.0123897744026
+scalar three_caches_scenario_3_links_network.client[0] 	downloads[0] 	179745
+scalar three_caches_scenario_3_links_network.client[0] 	avg_time[0] 	0
+scalar three_caches_scenario_3_links_network.client[0] 	interests_sent[0] 	179745
