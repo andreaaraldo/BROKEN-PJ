@@ -140,6 +140,9 @@ void base_cache::finish(){
 
     sprintf ( name, "decision_no[%d]", getIndex());
     recordScalar (name, decision_no);
+
+    sprintf ( name, "decision_ratio[%d]", getIndex());
+    recordScalar (name, decision_yes / (decision_yes + decision_no));
 	//</aa>
 
     //Per file hit rate

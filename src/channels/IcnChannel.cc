@@ -28,9 +28,6 @@ void IcnChannel::initialize()
         double price_asc = par("price_asc");
         double price_desc = par("price_desc");
 
-        double price_asc_powered = par("price_asc_powered");
-        double price_desc_powered = par("price_desc_powered");
-
         #ifdef SEVERE_DEBUG
 		cTopology topo;
 		topo.extractByNedTypeName(cStringTokenizer("modules.statistics.statistics").asVector() );
@@ -49,7 +46,7 @@ void IcnChannel::initialize()
         int source_index = getSourceGate()->getOwnerModule()->getIndex();
         int dest_index = getSourceGate()->getNextGate()->getOwnerModule()->getIndex();
         price = source_index < dest_index ? price_asc : price_desc;
-        price_powered = source_index < dest_index ? price_asc_powered : price_desc_powered;
+
 
 		// Registering this IcnChannel to the statistics module
 		vector<string> name_vec(1,"modules.statistics.statistics");
@@ -76,7 +73,6 @@ void IcnChannel::processMessage(cMessage *msg, simtime_t t, result_t& result)
 		    count++;
 			ccn_data* data_msg = (ccn_data*) msg;
 			data_msg->setCost(price);
-			data_msg->setCostPowered(price_powered);
 		}
 
 }

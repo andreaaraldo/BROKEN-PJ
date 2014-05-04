@@ -8,5 +8,6 @@ simple WeightedContentDistribution extends content_distribution{
 		string weights; //weights of the different repositories
 		bool replication_admitted;
 		double priceratio;
+		double xi;
 }
 //</aa>

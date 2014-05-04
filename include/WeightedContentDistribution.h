@@ -40,6 +40,7 @@ class WeightedContentDistribution : public content_distribution{
 
 		virtual const vector<double> get_weights();
 		virtual const double get_priceratio();
+		virtual const double get_xi();
 
 		#ifdef SEVERE_DEBUG
 		virtual bool isInitialized();
@@ -60,6 +61,7 @@ class WeightedContentDistribution : public content_distribution{
 		double* probabilities;
 		bool replication_admitted;
 		double priceratio;
+		double xi;
 
 		#ifdef SEVERE_DEBUG
 		bool initialized;

@@ -67,6 +67,7 @@ class Costprob: public DecisionPolicy{
 			vector<double> weights = content_distribution_module->get_weights();
 			unsigned num_repos = weights.size();
 			double priceratio = content_distribution_module->get_priceratio();
+			double xi = content_distribution_module->get_xi();
 			
 			{ //check
 				if (num_repos != 3){
@@ -76,8 +77,8 @@ class Costprob: public DecisionPolicy{
 				}
 			}
 
-			correction_factor = 
-				average_decision_ratio_ / (weights[1] + weights[2] * priceratio);
+			correction_factor = average_decision_ratio_ / 
+				(weights[1] + weights[2] * pow(priceratio,xi) );
 		}
 
 		virtual bool data_to_cache(ccn_data * data_msg)
@@ -86,14 +87,15 @@ class Costprob: public DecisionPolicy{
 			double x = dblrand();
 			double cost = data_msg->getCost();
 
-			if (x < cost * correction_factor)
+			if (x < pow(cost, xi) * correction_factor)
 					return true;
 
 			return false;
 		}
     private:
-		double average_decision_ratio; // sensitivity to price
+		double average_decision_ratio;
 		double correction_factor; // An object will be cached with prob correction_factor * cost
+		double xi;
 };
 //<//aa>
 #endif

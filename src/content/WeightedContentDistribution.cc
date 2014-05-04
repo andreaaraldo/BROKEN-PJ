@@ -38,6 +38,7 @@ void WeightedContentDistribution::initialize()
 	weights = cStringTokenizer(str,"_").asDoubleVector();
 	replication_admitted = par("replication_admitted");
 	priceratio = par("priceratio");
+	xi = par("xi");
 
 	unsigned repo_num = weights.size();
 
@@ -155,6 +156,10 @@ const vector<double> WeightedContentDistribution::get_weights(){
 
 const double WeightedContentDistribution::get_priceratio(){
 	return priceratio;
+}
+
+const double WeightedContentDistribution::get_xi(){
+	return xi;
 }
 
 

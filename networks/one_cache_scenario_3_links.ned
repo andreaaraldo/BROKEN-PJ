@@ -23,6 +23,7 @@ network one_cache_scenario_3_links_network extends base_network
 		string decision_policy;
 
 		content_distribution.priceratio = priceratio;
+		content_distribution.xi = xi;
 		double cheap_price = 1;
 		double expensive_price = priceratio;
 
@@ -63,7 +64,7 @@ network one_cache_scenario_3_links_network extends base_network
         node[0].face++ <--> node[1].face++;
         node[0].face++ <--> node[2].face++;
         node[0].face++ <--> node[3].face++;
-        node[1].face++ <-->  IcnChannel{price_desc=0; price_desc_powered=0;} <--> node[4].face++;
-        node[2].face++ <-->  IcnChannel{price_desc=cheap_price;  price_desc_powered=cheap_price_powered;} <--> node[5].face++;
-        node[3].face++ <-->  IcnChannel{price_desc=expensive_price;  price_desc_powered=expensive_price_powered;} <--> node[6].face++;
+        node[1].face++ <-->  IcnChannel{price_desc=0;} <--> node[4].face++;
+        node[2].face++ <-->  IcnChannel{price_desc=cheap_price;} <--> node[5].face++;
+        node[3].face++ <-->  IcnChannel{price_desc=expensive_price;} <--> node[6].face++;
 }
