@@ -2,6 +2,7 @@
 function y = metric_vs_x_variable (input_data)
 	global severe_debug;
 
+
 	% Unroll input data
 	out_folder = input_data.out_folder;
 
@@ -27,25 +28,26 @@ function y = metric_vs_x_variable (input_data)
 
 	fixed_variable_names_additional = input_data.fixed_variable_names_additional;
 	fixed_variable_values_additional = input_data.fixed_variable_values_additional;
+	
 
-	filename_list = input_data.parsed.filename_list;
-	decision = input_data.parsed.decision;
-	xi = input_data.parsed.xi;
-	forwarding = input_data.parsed.forwarding;
-	replacement = input_data.parsed.replacement;
-	alpha = input_data.parsed.alpha;
-	ctlg = input_data.parsed.ctlg;
-	csize = input_data.parsed.csize;
-	priceratio = input_data.parsed.priceratio;
-	id_rep = input_data.parsed.id_rep;
-	p_hit = input_data.parsed.p_hit;
-	total_cost = input_data.parsed.total_cost;
-	hdistance = input_data.parsed.hdistance;
-	client_requests = input_data.parsed.client_requests;
-	cheap_link_load = input_data.parsed.cheap_link_load;
-	expensive_link_load = input_data.parsed.expensive_link_load;
-	decision_yes = input_data.parsed.decision_yes;
-	decision_no = input_data.parsed.decision_no;
+	filename_list = {input_data.parsed.filename_list};
+	decision = {input_data.parsed.decision};
+	xi = {input_data.parsed.xi};
+	forwarding = {input_data.parsed.forwarding};
+	replacement = {input_data.parsed.replacement};
+	alpha = {input_data.parsed.alpha};
+	ctlg = {input_data.parsed.ctlg};
+	csize = {input_data.parsed.csize};
+	priceratio = {input_data.parsed.priceratio};
+	id_rep = {input_data.parsed.id_rep};
+	p_hit = {input_data.parsed.p_hit};
+	total_cost = {input_data.parsed.total_cost};
+	hdistance = {input_data.parsed.hdistance};
+	client_requests = {input_data.parsed.client_requests};
+	cheap_link_load = {input_data.parsed.cheap_link_load};
+	expensive_link_load = {input_data.parsed.expensive_link_load};
+	decision_yes = {input_data.parsed.decision_yes};
+	decision_no = {input_data.parsed.decision_no};
 
 
 	% CHECK_INPUT_DATA{
@@ -58,13 +60,13 @@ function y = metric_vs_x_variable (input_data)
 		endif
 	% }CHECK_INPUT_DATA
 
-
+	idx_pr_previous = zeros(length(filename_list) );
 
 	############################################
 	##### MATRIX CONSTRUCTION ##################
 	############################################
 	for idx_csize = 1:length(csize_list)
-		csize_ = csize_list{idx_csize};
+			csize_ = csize_list{idx_csize};
 		csize_to_write = csize_to_write_list{ idx_csize};
 
 			seed_id = 1;
@@ -84,7 +86,8 @@ function y = metric_vs_x_variable (input_data)
 			for id_rep_ = id_rep_list
 				# Compute the x_variable_column, using whatever decision_ 
 				decision_ = decision_list{1};
-				idx_pr =  strcmp(decision, decision_ ) & ( id_rep == id_rep_ ) & strcmp(csize, csize_);
+				idx_pr =  (strcmp(decision, decision_ ) & ( cell2mat(id_rep) == id_rep_ ) \
+							& strcmp(csize, csize_) );
 				for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
 					% CHECK{
 						if severe_debug
@@ -97,21 +100,59 @@ function y = metric_vs_x_variable (input_data)
 							endif
 						endif
 					% }CHECK
+
 					value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
+
+					% CHECK{
+						if severe_debug && !isscalar(value)
+							value
+							error("value must be a scalar");
+						endif
+					% }CHECK
+
+					idx_pr_previous = idx_pr;
+					values_assumed = \
+						eval(fixed_variable_names_additional(idx_fixed_variable_additional) );
 					idx_pr = idx_pr \
-						& eval(fixed_variable_names_additional(idx_fixed_variable_additional) )\
-						== value;
+						& cellfun(@isequal, values_assumed, num2cell(value) );
+
+					% CHECK{
+						if severe_debug
+							if (length(value) != 1)
+								value
+								error("this value is not admitted");
+							endif
+
+							if ( sum(idx_pr == 1) == 0 )
+								files_previously_selected =  \
+									filename_list( idx_pr_previous)
+								variable_newly_considered = \
+									fixed_variable_names_additional{idx_fixed_variable_additional}
+								values_of_that_variable = \
+									eval(fixed_variable_names_additional(\
+											idx_fixed_variable_additional) )
+								value_that_we_try_to_match = value
+								files_currently_selected =  \
+									filename_list( idx_pr)
+								error(["No results are matching when considering ",\
+									variable_newly_considered]);
+							endif
+						endif % severe_debug
+					% }CHECK
 				endfor
 
 				x_variable_column = x_variable_values;
 				
 				% CHECK{
 					if severe_debug
-						original_data = eval(x_variable_name) ; 
-						extracted_column = original_data(idx_pr);
-						if x_variable_column != extracted_column
+						original_data = eval(x_variable_name);
+						extracted_column = cell2mat( original_data(idx_pr) );
+						if length(x_variable_column) != length(extracted_column) || \
+								 x_variable_column != extracted_column
+							idx_pr
 							x_variable_column
 							extracted_column
+							original_data
 							error("x_variable_column and x_variable_column MUST match");
 						endif
 					endif
@@ -127,19 +168,22 @@ function y = metric_vs_x_variable (input_data)
 
 					if any(strcmp(decision_,decision_list) )
 						% I want to plot this decision policy
-						idx =  strcmp(decision, decision_ ) & id_rep == id_rep_ & strcmp(csize, csize_);
+						idx =  strcmp(decision, decision_ ) & cell2mat(id_rep) == id_rep_\
+								 & strcmp(csize, csize_);
 						for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
 							value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
 
+							values_assumed = \
+							eval(fixed_variable_names_additional(\
+									idx_fixed_variable_additional) );
 							idx = idx \
-								& eval(fixed_variable_names_additional(idx_fixed_variable_additional) ) \
-								== value ;
+								& cellfun(@isequal, values_assumed, num2cell(value) );
 						endfor
 						
 						# CHECK{
 							if severe_debug
 								original_data = eval(x_variable_name);
-								x_variable_column_for_check = original_data(idx) ;
+								x_variable_column_for_check = cell2mat( original_data(idx) );
 								if x_variable_column_for_check !=  x_variable_column
 									error("x_variable_column is erroneous");
 								endif
