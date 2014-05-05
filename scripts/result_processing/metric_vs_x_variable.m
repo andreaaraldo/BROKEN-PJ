@@ -8,9 +8,10 @@ function y = metric_vs_x_variable (input_data)
 
 	x_variable_name = input_data.x_variable_name;
 	x_variable_values = input_data.x_variable_values;
+	z_variable_name = input_data.z_variable_name;
+	z_variable_values = input_data.z_variable_values;
 	
 
-	possible_decisions = input_data.possible_decisions;
 	decision_list = input_data.decision_list; % The decision plocies that I want to plot
 	id_rep_list = input_data.id_rep_list; # list of seeds
 	alpha_list = input_data.alpha_list;
@@ -81,14 +82,17 @@ function y = metric_vs_x_variable (input_data)
 
 
 			column_names{1} = x_variable_name;
-			for idx_decision = 1:length(possible_decisions)
-				column_names{ idx_decision+1 } = possible_decisions{ idx_decision };
+			for idx_z = 1:length(z_variable_values)
+				column_names{ idx_z+1 } = z_variable_values{ idx_z };
 			endfor
+
 
 			for id_rep_ = id_rep_list
 				# Compute the x_variable_column, using whatever decision_ 
-				decision_ = decision_list{1};
-				idx_pr =  (strcmp(decision, decision_ ) & ( cell2mat(id_rep) == id_rep_ ) \
+				z_value_ = z_variable_values{1};
+				z_variable_assumed_values = eval(z_variable_name);
+				idx_pr =  (strcmp(z_variable_assumed_values, z_value_ ) \
+							& ( cell2mat(id_rep) == id_rep_ ) \
 							& strcmp(csize, csize_) );
 				for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
 					% CHECK{
@@ -165,13 +169,13 @@ function y = metric_vs_x_variable (input_data)
 					metric_matrix_list{idx_metric} = x_variable_column';
 				endfor
 
-				for decision_idx = 1:length(possible_decisions)
-					decision_ = possible_decisions{decision_idx};
+				for z_idx = 1:length(z_variable_values)
+					z_value_ = z_variable_values{z_idx};
 
-					if any(strcmp(decision_,decision_list) )
-						% I want to plot this decision policy
-						idx =  strcmp(decision, decision_ ) & cell2mat(id_rep) == id_rep_\
-								 & strcmp(csize, csize_);
+						z_variable_values_assumed = eval("z_variable_name");
+						idx =  strcmp(z_variable_values_assumed, z_value_ ) \
+								& cell2mat(id_rep) == id_rep_\
+								& strcmp(csize, csize_);
 						for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
 							value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
 
@@ -251,13 +255,6 @@ function y = metric_vs_x_variable (input_data)
 							# }CHECK DIMENSIONS
 
 						endfor
-						
-					else
-						% I don't want to plot this decision policy => I will replace it with -1
-						for idx_metric = 1:length(metric_list)
-							column_list{idx_metric} = ones( 1, length(x_variable_values) ) * -1;
-						endfor
-					endif
 
 					for idx_metric = 1:length(metric_list)
 						% Add the column corresponding to decision_ to the matrices	

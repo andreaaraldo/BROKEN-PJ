@@ -17,16 +17,34 @@ function parsed = select(selection_tuple, resultdir)
 							decision_root_ = "fix";
 							target_decision_probability_ = \
 								num2str( strrep(decision_,"fix","") );
-						elseif strcmp( substr(decision_,1,8), "costprob")
-							decision_root_ = "costprob";
+
+						elseif strcmp( substr(decision_,1,17), "costprobprodplain")
+							decision_root_ = "costprobprodplain";
 							target_decision_probability_ = \
-								num2str( strrep(decision_,"costprob","") );
+								num2str( strrep(decision_,"costprobprodplain","") );
+
+						elseif strcmp( substr(decision_,1,16), "costprobprodcorr")
+							decision_root_ = "costprobprodcorr";
+							target_decision_probability_ = \
+								num2str( strrep(decision_,"costprobprodcorr","") );
+
+						elseif strcmp( substr(decision_,1,17), "costprobcoinplain")
+							decision_root_ = "costprobcoinplain";
+							target_decision_probability_ = \
+								num2str( strrep(decision_,"costprobcoinplain","") );
+
+						elseif strcmp( substr(decision_,1,16), "costprobcoincorr")
+							decision_root_ = "costprobcoincorr";
+							target_decision_probability_ = \
+								num2str( strrep(decision_,"costprobcoincorr","") );
+
 						else
 							decision_root_ = decision_;
 							target_decision_probability_ = NaN;
 						endif
 
-						filename = strcat(resultdir,"/",network,"/F-",forwarding_,"/D-",decision_,"/xi-",num2str(xi_),"/R-",replacement_,"/alpha-",num2str(alpha_),"/ctlg-",ctlg_,"/cachesize-",num2str(csize_),"/weights-",weights_,"/priceratio-",num2str(priceratio_),"/ccn-id",num2str(id_rep_),".sca");
+						filename = strcat(resultdir,"/",network,"/F-",forwarding_,"/D-",decision_,"/xi-",xi_,"/R-",replacement_,"/alpha-",num2str(alpha_),"/ctlg-",ctlg_,"/cachesize-",num2str(csize_),"/weights-",weights_,"/priceratio-",num2str(priceratio_),"/ccn-id",num2str(id_rep_),".sca");
+
 
 						parsed.filename_list = filename;
 
@@ -46,6 +64,7 @@ function parsed = select(selection_tuple, resultdir)
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
 						parsed.p_hit = str2num(output);
+
 						string_to_search="total_cost ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);

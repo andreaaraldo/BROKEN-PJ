@@ -6,8 +6,8 @@ out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 priceratio_list=[10];
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-decision_list={"costprob0.01"}; % The decision plocies that I want to plot
-xi_list = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128];
+decision_list={"costprobcoincorr0.01","costprobcoinplain0.01"}; % The decision plocies that I want to plot
+xi_list = {"0", "0.25", "0.50", "0.75", "1"};
 weights_list={"0_0.5_0.5"};
 id_rep_list=1:20; # list of seeds
 alpha_list = [1];
@@ -27,7 +27,7 @@ ctlg_to_write_="1e5";
 
 fixed_variable_names_additional = {"priceratio", "alpha"};
 x_variable_name = "xi";
-
+z_variable_name = "decision";
 
 
 i = 1;
@@ -44,7 +44,8 @@ for idx_csize = 1:length(csize_list)
 	for alpha_ = alpha_list
 		for priceratio_idx = 1:length(priceratio_list)
 			for decision_idx = 1:length(decision_list)
-				for xi_ = xi_list
+				for idx_xi = 1:length(xi_list)
+					xi_ = xi_list{idx_xi};
 					for idx_weight = 1:length(weights_list)
 						weights_ = weights_list{idx_weight};
 						for id_rep_ = id_rep_list
@@ -81,7 +82,6 @@ endfor %csize for
 input_data.out_folder = out_folder;
 
 input_data.priceratio_list = priceratio_list;
-input_data.possible_decisions = possible_decisions;
 input_data.decision_list = decision_list; % The decision plocies that I want to plot
 input_data.id_rep_list = id_rep_list; # list of seeds
 input_data.alpha_list = alpha_list;
@@ -106,6 +106,8 @@ endfor
 
 input_data.x_variable_name = x_variable_name;
 input_data.x_variable_values = eval( [input_data.x_variable_name,"_list"] ) ;
+input_data.z_variable_name = z_variable_name;
+input_data.z_variable_values = eval( [input_data.z_variable_name,"_list"] ) ;
 
 input_data.parsed = parsed;
 
