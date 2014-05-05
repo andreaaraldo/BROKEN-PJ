@@ -31,7 +31,10 @@
 
 #include "fix_policy.h"
 //<aa>
-#include "costprob_policy.h"
+#include "costprobprodcorr_policy.h"
+#include "costprobprodplain_policy.h"
+#include "costprobcoincorr_policy.h"
+#include "costprobcoinplain_policy.h"
 #include "error_handling.h"
 //</aa>
 #include "lcd_policy.h"
@@ -63,25 +66,40 @@ void base_cache::initialize(){
 		decisor = new Fix(dp);
     }
 	//<aa>
-	else if (decision_policy.find("costprob")==0){
+	else if (decision_policy.find("costprob")==0)
+	{
+		double sens;
+		string sens_string;
+		if (decision_policy.find("costprobcoincorr")==0)
+		{
+			sens_string = decision_policy.substr( strlen("costprobcoincorr") );
+			sens = atof(sens_string.c_str());
+			decisor = new Costprobcoincorr(sens);
 
-		string sens_string = decision_policy.substr( strlen("costprob") );
-		double sens = atof(sens_string.c_str());
-
-		decisor = new Costprob(sens);
-
-		std::stringstream ermsg; 
-		//Check for consistency
-		    if (sens <0){
-				ermsg<<"sens "<<sens<<" is not valid. sens_string="<<sens_string<<
-							"; decision_policy="<<decision_policy;
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-
-		#ifdef SEVERE_DEBUG
-		ermsg<<"costprob will be used with the sensitivity "<<sens;
-	    debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-		#endif
+		} else if (decision_policy.find("costprobcoinplain")==0)
+		{
+			sens_string = decision_policy.substr( strlen("costprobcoinplain") );
+			sens = atof(sens_string.c_str());
+			decisor = new Costprobcoinplain(sens);
+		} else if (decision_policy.find("costprobprodcorr")==0)
+		{
+			sens_string = decision_policy.substr( strlen("costprobprodcorr") );
+			sens = atof(sens_string.c_str());
+			decisor = new Costprobprodcorr(sens);
+		} else if (decision_policy.find("costprobprodplain")==0)
+		{
+			sens_string = decision_policy.substr( strlen("costprobprodplain") );
+			sens = atof(sens_string.c_str());
+			decisor = new Costprobprodplain(sens);
+		}
+		// CHECK{
+				if (sens <0){
+					std::stringstream ermsg; 
+					ermsg<<"sens "<<sens<<" is not valid. sens_string="<<sens_string<<
+								"; decision_policy="<<decision_policy;
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				}
+		// }CHECK
 
     }
 	//</aa>

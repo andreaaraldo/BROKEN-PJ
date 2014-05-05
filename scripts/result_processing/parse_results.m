@@ -3,12 +3,12 @@ global severe_debug = true;
 
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
-priceratio_list=[5];
+priceratio_list=[10];
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 decision_list={"costprob0.01"}; % The decision plocies that I want to plot
-xi_list = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64];
-weights_list={"0.333_0.333_0.334"};
+xi_list = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128];
+weights_list={"0_0.5_0.5"};
 id_rep_list=1:20; # list of seeds
 alpha_list = [1];
 csize_list = {"1e3"};

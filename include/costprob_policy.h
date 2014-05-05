@@ -64,10 +64,10 @@ class Costprob: public DecisionPolicy{
 			}
 			#endif
 
-			vector<double> weights = content_distribution_module->get_weights();
+			weights = content_distribution_module->get_weights();
 			unsigned num_repos = weights.size();
-			double priceratio = content_distribution_module->get_priceratio();
-			double xi = content_distribution_module->get_xi();
+			priceratio = content_distribution_module->get_priceratio();
+			xi = content_distribution_module->get_xi();
 			
 			{ //check
 				if (num_repos != 3){
@@ -76,33 +76,28 @@ class Costprob: public DecisionPolicy{
 					severe_error(__FILE__, __LINE__, msg.str().c_str() );
 				}
 			}
-
-			correction_factor = average_decision_ratio_ / 
-				(1 + pow(priceratio,xi) );
 		}
 
-		virtual bool data_to_cache(ccn_data * data_msg)
-		{
 
-			double x = dblrand();
-			double cost = data_msg->getCost();
-
-			if (x < ( (double)  (pow(cost, xi) )* correction_factor) )
-					return true;
-
-			return false;
-		}
+		virtual bool data_to_cache(ccn_data * data_msg) = 0;
 
 		virtual void finish (int nodeIndex, base_cache* cache_p){			
 		    char name [30];
 			sprintf ( name, "correction_factor[%d]", nodeIndex);
 			cache_p->recordScalar (name, correction_factor);
+
+			sprintf ( name, "xi[%d]", nodeIndex);
+			cache_p->recordScalar (name, xi);
 		};
 
-    private:
+		virtual double compute_correction_factor()=0;
+
+    protected:
 		double average_decision_ratio;
 		double correction_factor; // An object will be cached with prob correction_factor * cost
 		double xi;
+		double priceratio;
+		vector<double> weights;
 };
 //<//aa>
 #endif
