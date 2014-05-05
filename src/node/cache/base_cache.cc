@@ -142,9 +142,11 @@ void base_cache::finish(){
     recordScalar (name, decision_no);
 
     sprintf ( name, "decision_ratio[%d]", getIndex());
-	double decision_ratio = decision_yes + decision_no == 0 ?
-			0 : decision_yes / (decision_yes + decision_no) ;
+	double decision_ratio = (decision_yes + decision_no == 0 ) ?
+			0 : (double)decision_yes / (decision_yes + decision_no) ; 
     recordScalar (name, decision_ratio);
+
+	decisor->finish(getIndex(), this);
 	//</aa>
 
     //Per file hit rate
@@ -226,3 +228,13 @@ void base_cache::clear_stat(){
     delete cache_stats;
     cache_stats = new cache_stat_entry[__file_bulk+1];
 }
+
+//<aa>
+uint32_t base_cache::get_decision_yes(){
+	return decision_yes;	
+}
+
+uint32_t base_cache::get_decision_no(){
+	return decision_no;
+}
+//</aa>

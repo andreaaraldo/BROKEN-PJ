@@ -153,14 +153,31 @@ void core_layer::handleMessage(cMessage *in){
 
 //Per node statistics printing
 void core_layer::finish(){
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	if (	data+repo_load != \
+			(int) (ContentStore->get_decision_yes() + ContentStore->get_decision_no() ) 
+	){
+			std::stringstream msg; 
+			msg<<"node["<<getIndex()<<"]: "<<
+				"decision_yes=="<<ContentStore->get_decision_yes()<<
+				"; decision_no=="<<ContentStore->get_decision_no()<<
+				"; repo_load=="<<repo_load<<
+				"; data="<<data<<
+				". The sum of decision_yes+decision_no MUST be equal to data+repo_load";
+		    severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
+	#endif
+	//</aa>
+
     char name [30];
     //Total interests
     sprintf ( name, "interests[%d]", getIndex());
     recordScalar (name, interests);
 
     if (repo_load != 0){
-	sprintf ( name, "repo_load[%d]", getIndex());
-	recordScalar(name,repo_load);
+		sprintf ( name, "repo_load[%d]", getIndex());
+		recordScalar(name,repo_load);
     }
 
     //Total data

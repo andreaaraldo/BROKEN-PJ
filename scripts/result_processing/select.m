@@ -85,7 +85,7 @@ function parsed = select(selection_tuple, resultdir)
 				fixed_counterpart_parsed = select(selection_tuple_of_fixed_counterpart,\
 						resultdir);
 				parsed.cost_savings = (fixed_counterpart_parsed.total_cost - parsed.total_cost)/\
-											fixed_counterpart_parsed.total_cost
+											fixed_counterpart_parsed.total_cost;
 			else
 				parsed.cost_savings = NaN;
 			endif

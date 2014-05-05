@@ -47,15 +47,15 @@ class base_cache : public abstract_node{
     friend class statistics;
     protected:
 
-	void initialize();
-	void handleMessage (cMessage *){;}
-	void finish();
+		void initialize();
+		void handleMessage (cMessage *){;}
+		void finish();
 
-	//Inteface function (depending by internal data structures of each cache)
-	virtual void data_store (chunk_t) = 0; 
-	virtual bool data_lookup(chunk_t) = 0;
-	virtual bool full() = 0;
-	virtual void dump(){cout<<"Not implemented"<<endl;}
+		//Inteface function (depending by internal data structures of each cache)
+		virtual void data_store (chunk_t) = 0; 
+		virtual bool data_lookup(chunk_t) = 0;
+		virtual bool full() = 0;
+		virtual void dump(){cout<<"Not implemented"<<endl;}
 	
     public:
 		//Outside function behaviour
@@ -66,6 +66,11 @@ class base_cache : public abstract_node{
 		void store (cMessage *);
 
 		void clear_stat();
+
+		//<aa>
+		virtual uint32_t get_decision_yes();
+		virtual uint32_t get_decision_no();
+		//</aa>
 
     private:
 		int  cache_size;

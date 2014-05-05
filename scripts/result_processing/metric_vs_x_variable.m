@@ -48,6 +48,8 @@ function y = metric_vs_x_variable (input_data)
 	expensive_link_load = {input_data.parsed.expensive_link_load};
 	decision_yes = {input_data.parsed.decision_yes};
 	decision_no = {input_data.parsed.decision_no};
+	cost_savings = {input_data.parsed.cost_savings};
+
 
 
 	% CHECK_INPUT_DATA{
@@ -217,7 +219,11 @@ function y = metric_vs_x_variable (input_data)
 
 								case "decision_ratio"
 									column_list{idx_metric} = cell2mat( decision_yes(idx) ) ./ \
-											( cell2mat( decision_yes(idx) ) + cell2mat( decision_no(idx) ));
+											(	cell2mat( decision_yes(idx) ) + \
+												cell2mat( decision_no(idx) ));
+
+								case "cost_savings"
+									column_list{idx_metric} = cell2mat( cost_savings(idx) );
 
 								otherwise
 									error(["metric ",metric_name," is not valid"]);
@@ -282,7 +288,6 @@ function y = metric_vs_x_variable (input_data)
 					% }CHECK MATRIX
 				endfor
 
-
 				seed_id ++;
 			endfor # id_rep for
 
@@ -334,7 +339,6 @@ a							mean_matrix
 				% }CHECK MATRIX
 			endfor
 
-
 			for idx_metric = 1:length(metric_list)
 				metric = metric_list{idx_metric};
 
@@ -357,6 +361,5 @@ a							mean_matrix
 				out_filename = [common_out_filename,"-conf.dat"];
 				print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
 			endfor
-
 	endfor %csize
 endfunction

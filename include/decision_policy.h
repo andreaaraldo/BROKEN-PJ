@@ -34,7 +34,11 @@
  */
 class DecisionPolicy {
     public:
-	virtual bool data_to_cache (ccn_data *)=0;
+		virtual bool data_to_cache (ccn_data *)=0;
+
+		//<aa>
+		virtual void finish (int nodeIndex, base_cache* cache_p){};
+		//</aa>
 };
 #endif
 

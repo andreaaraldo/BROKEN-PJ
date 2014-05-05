@@ -3,7 +3,7 @@ global severe_debug = true;
 
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
-priceratio_list=[10];
+priceratio_list=[5];
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 decision_list={"costprob0.01"}; % The decision plocies that I want to plot
@@ -16,7 +16,8 @@ csize_to_write_list = {"1e3"};
 
 resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
-						"client_requests", "decision_ratio"};
+						"client_requests", "decision_ratio", "cost_savings"};
+
 
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
@@ -26,6 +27,7 @@ ctlg_to_write_="1e5";
 
 fixed_variable_names_additional = {"priceratio", "alpha"};
 x_variable_name = "xi";
+
 
 
 i = 1;
@@ -106,6 +108,5 @@ input_data.x_variable_name = x_variable_name;
 input_data.x_variable_values = eval( [input_data.x_variable_name,"_list"] ) ;
 
 input_data.parsed = parsed;
-
 
 metric_vs_x_variable(input_data);
