@@ -107,28 +107,16 @@ function y = metric_vs_x_variable (input_data)
 						endif
 					% }CHECK
 
-					value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
-
-					% CHECK{
-						if severe_debug && !isscalar(value)
-							value
-							error("value must be a scalar");
-						endif
-					% }CHECK
+					value = fixed_variable_values_additional{idx_fixed_variable_additional};
 
 					idx_pr_previous = idx_pr;
 					values_assumed = \
 						eval(fixed_variable_names_additional(idx_fixed_variable_additional) );
 					idx_pr = idx_pr \
-						& cellfun(@isequal, values_assumed, num2cell(value) );
+						& cellfun(@isequal, values_assumed, {value} );
 
 					% CHECK{
 						if severe_debug
-							if (length(value) != 1)
-								value
-								error("this value is not admitted");
-							endif
-
 							if ( sum(idx_pr == 1) == 0 )
 								files_previously_selected =  \
 									filename_list( idx_pr_previous)
@@ -152,45 +140,72 @@ function y = metric_vs_x_variable (input_data)
 				% CHECK{
 					if severe_debug
 						original_data = eval(x_variable_name);
-						extracted_column = cell2mat( original_data(idx_pr) );
+						extracted_column = original_data(idx_pr) ;
+						x_variable_column;
 						if length(x_variable_column) != length(extracted_column) || \
-								 x_variable_column != extracted_column
+								 !isequal( x_variable_column, extracted_column )
 							idx_pr
 							x_variable_column
 							extracted_column
+							filenames = filename_list(idx_pr)
 							original_data
-							error("x_variable_column and x_variable_column MUST match");
+							filtered_original_data = original_data(idx_pr)
+							filtered_original_data_transformed = \
+								cellfun(@str2num, original_data(idx_pr) )
+							error("x_variable_column and extracted_column_column MUST match");
 						endif
 					endif
 				% }CHECK
 
-				# For each seed, the first column of each matrix must be the x_variable_column
+				# For each seed, the first column of each matrix must be all zeros.
+				# In print_table.m, it will be replaced with the real x column
 				for idx_metric = 1:length(metric_list)
-					metric_matrix_list{idx_metric} = x_variable_column';
+					metric_matrix_list{idx_metric} = zeros(length(x_variable_column),1);
 				endfor
 
 				for z_idx = 1:length(z_variable_values)
 					z_value_ = z_variable_values{z_idx};
 
-						z_variable_values_assumed = eval("z_variable_name");
+						z_variable_values_assumed = eval(z_variable_name);
 						idx =  strcmp(z_variable_values_assumed, z_value_ ) \
 								& cell2mat(id_rep) == id_rep_\
 								& strcmp(csize, csize_);
+
+						if severe_debug && sum(idx ) == 0
+							idx
+							z_variable_values_assumed
+							error("No results are going to be selected");
+							
+						endif
+
+
+						idx_previous = [];
 						for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
-							value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
+							value = fixed_variable_values_additional{\
+												idx_fixed_variable_additional};
 
 							values_assumed = \
-							eval(fixed_variable_names_additional(\
-									idx_fixed_variable_additional) );
+								eval(fixed_variable_names_additional(\
+										idx_fixed_variable_additional) );
+							idx_previous = idx;
 							idx = idx \
-								& cellfun(@isequal, values_assumed, num2cell(value) );
+								& cellfun(@isequal, values_assumed, {value} );
 						endfor
 						
 						# CHECK{
 							if severe_debug
 								original_data = eval(x_variable_name);
-								x_variable_column_for_check = cell2mat( original_data(idx) );
-								if x_variable_column_for_check !=  x_variable_column
+								x_variable_column_for_check = original_data(idx);
+								if !isequal(x_variable_column_for_check,  x_variable_column )
+									fixed_variable_name = fixed_variable_names_additional(\
+										idx_fixed_variable_additional)
+									values_assumed
+									value_to_match = value
+									class_of_value = class(value)
+									idx
+									idx_previous
+									prova_riprova = cellfun(@isequal, values_assumed, {value} )
+
 									error("x_variable_column is erroneous");
 								endif
 							endif
@@ -288,15 +303,32 @@ function y = metric_vs_x_variable (input_data)
 				seed_id ++;
 			endfor # id_rep for
 
-			fixed_variables = { network; forwarding_; replacement_;	ctlg_; csize_; id_rep_list };
-
+			fixed_variables = { network; forwarding_; replacement_;	ctlg_; csize_; num2str(id_rep_list) };
 			fixed_variable_names = {"network"; "forwarding"; "replacement"; "ctlg";"csize"; "seed_list"};
+			fix_var_num = length(fixed_variables);
+
+			% CHECK{
+			if severe_debug && fix_var_num != length(fixed_variable_names)
+				fixed_variable_names
+				fixed_variables
+				error("fixed_variable_names and fixed_variables are different");
+			endif
+			% }CHECK
 
 			for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
-				fixed_variables{ length(fixed_variables) + idx_fixed_variable_additional, 1 } =\
+				new_fix_var_name = fixed_variable_names_additional{idx_fixed_variable_additional};
+
+				% CHECK{
+					if severe_debug && length(new_fix_var_name)==0
+						error("added a variable with null name");
+					endif
+				% }CHECK
+
+				fixed_variables{ fix_var_num + idx_fixed_variable_additional } =\
 							fixed_variable_values_additional{idx_fixed_variable_additional};
-				fixed_variable_names{ length(fixed_variable_names) + idx_fixed_variable_additional, 1 } =\
-							fixed_variable_names_additional{idx_fixed_variable_additional};
+
+				fixed_variable_names{ fix_var_num + idx_fixed_variable_additional } =\
+							new_fix_var_name;				
 			endfor
 
 			comment="";
@@ -326,7 +358,7 @@ function y = metric_vs_x_variable (input_data)
 							fixed_variable_names_additional
 							fixed_variable_values_additional
 							x_variable_values
-a							mean_matrix
+							mean_matrix
 							conf_matrix
 							metric_list{idx_metric}
 							error(["The number of rows in the matrix must be equal to the number of ",\
@@ -341,22 +373,29 @@ a							mean_matrix
 
 				common_out_filename = [ out_folder, metric,"_vs_", x_variable_name];
 				for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
-					value = fixed_variable_values_additional(idx_fixed_variable_additional){1};
+					value = fixed_variable_values_additional{idx_fixed_variable_additional};
 					common_out_filename = [common_out_filename, "-",\
-						fixed_variable_names_additional{idx_fixed_variable_additional}, "_", num2str(value)\
+						fixed_variable_names_additional{idx_fixed_variable_additional}, "_", value\
 						];
 				endfor
 				common_out_filename = [common_out_filename, "-ctlg_",ctlg_to_write_,"-csize_",csize_ ];
+				% CHECK{
+					if severe_debug && !isequal( class(common_out_filename), "char" )
+						common_out_filename
+						class_of_common_out_filename = class(common_out_filename)
+						error("Error in the construction of the output file name");
+					endif
+				% }CHECK
 
 				% Print mean matrix
 				matrix = mean_matrix_list{idx_metric};
 				out_filename = [common_out_filename,"-mean.dat"];
-				print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
+				print_table(out_filename, matrix, x_variable_column, column_names, fixed_variables,fixed_variable_names, comment);
 
 				% Print confidence interval matrix
 				matrix = conf_matrix_list{idx_metric};;
 				out_filename = [common_out_filename,"-conf.dat"];
-				print_table(out_filename, matrix, column_names, fixed_variables,fixed_variable_names, comment);
+				print_table(out_filename, matrix, x_variable_column, column_names, fixed_variables,fixed_variable_names, comment);
 			endfor
 	endfor %csize
 endfunction

@@ -3,14 +3,14 @@ global severe_debug = true;
 
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
-priceratio_list=[10];
+priceratio_list={"10"};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 decision_list={"costprobcoincorr0.01","costprobcoinplain0.01"}; % The decision plocies that I want to plot
-xi_list = {"0", "0.25", "0.50", "0.75", "1"};
+xi_list = {"0.75", "0.25"};
 weights_list={"0_0.5_0.5"};
-id_rep_list=1:20; # list of seeds
-alpha_list = [1];
+id_rep_list=1:2; # list of seeds
+alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
 
@@ -18,7 +18,7 @@ resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
 						"client_requests", "decision_ratio", "cost_savings"};
 
-
+metric_list={"client_requests"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
@@ -33,15 +33,13 @@ z_variable_name = "decision";
 i = 1;
 
 
-
-disp("YOU SHOULD CHECK IF THE FILE EXISTS");
 ############################################
 ##### PARSE FILES ##########################
 ############################################
 for idx_csize = 1:length(csize_list)
 	csize_ = csize_list{idx_csize};
 	csize_to_write = csize_to_write_list{ idx_csize};
-	for alpha_ = alpha_list
+	for alpha_idx = length(alpha_list)
 		for priceratio_idx = 1:length(priceratio_list)
 			for decision_idx = 1:length(decision_list)
 				for idx_xi = 1:length(xi_list)
@@ -50,12 +48,12 @@ for idx_csize = 1:length(csize_list)
 						weights_ = weights_list{idx_weight};
 						for id_rep_ = id_rep_list
 
-							selection_tuple.priceratio = priceratio_list(priceratio_idx);
+							selection_tuple.priceratio = priceratio_list{priceratio_idx};
 							selection_tuple.decision = decision_list{decision_idx};
 							selection_tuple.xi = xi_;
 							selection_tuple.forwarding = forwarding_;
 							selection_tuple.replacement = replacement_;
-							selection_tuple.alpha = alpha_;
+							selection_tuple.alpha = alpha_list{alpha_idx};
 							selection_tuple.ctlg = ctlg_;
 							selection_tuple.csize = csize_;
 							selection_tuple.id_rep = id_rep_;
@@ -100,8 +98,9 @@ input_data.ctlg_to_write_ = ctlg_to_write_;
 
 input_data.fixed_variable_names_additional = fixed_variable_names_additional;
 for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
-	input_data.fixed_variable_values_additional{idx_fixed_variable_additional} = \
-			eval( [input_data.fixed_variable_names_additional{idx_fixed_variable_additional},"_list"] );
+	temp = eval( [input_data.fixed_variable_names_additional{\
+						idx_fixed_variable_additional},"_list"] ) ;
+	input_data.fixed_variable_values_additional{idx_fixed_variable_additional} = temp{1};
 endfor
 
 input_data.x_variable_name = x_variable_name;

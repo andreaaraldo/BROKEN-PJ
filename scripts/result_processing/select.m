@@ -43,8 +43,15 @@ function parsed = select(selection_tuple, resultdir)
 							target_decision_probability_ = NaN;
 						endif
 
-						filename = strcat(resultdir,"/",network,"/F-",forwarding_,"/D-",decision_,"/xi-",xi_,"/R-",replacement_,"/alpha-",num2str(alpha_),"/ctlg-",ctlg_,"/cachesize-",num2str(csize_),"/weights-",weights_,"/priceratio-",num2str(priceratio_),"/ccn-id",num2str(id_rep_),".sca");
-
+						filename = strcat(resultdir,"/",network,"/F-",forwarding_,"/D-",decision_,"/xi-",xi_,"/R-",replacement_,"/alpha-",alpha_,"/ctlg-",ctlg_,"/cachesize-",num2str(csize_),"/weights-",weights_,"/priceratio-",priceratio_,"/ccn-id",num2str(id_rep_),".sca");
+						% CHECK{
+							fid = fopen(filename, "r");
+							if fid < 0
+								filename
+								error("the file does not exist");
+							endif
+							fclose(fid);
+						% CHECK{
 
 						parsed.filename_list = filename;
 
