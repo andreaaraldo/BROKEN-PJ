@@ -116,6 +116,16 @@ function parsed = select(selection_tuple, resultdir)
 				parsed.cost_savings = NaN;
 			endif
 
+	% COMPUTE COST FRACTION{
+		% Comparison with the no-cache scenario
+				selection_tuple_of_never_counterpart = selection_tuple;
+				selection_tuple_of_never_counterpart.decision = "never";
+				selection_tuple_of_never_counterpart.xi = 1;
+				never_counterpart_parsed = select(selection_tuple_of_never_counterpart,\
+						resultdir);
+				parsed.cost_fraction = parsed.total_cost) / never_counterpart_parsed.total_cost;
+	% }COMPUTE COST FRACTION
+
 
 			if severe_debug
 				if (size(parsed.free_link_load) != [1,1] && size(parsed.cheap_link_load) != [1,1] &&  size(parsed.expensive_link_load) != [1,1] )

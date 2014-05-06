@@ -50,6 +50,7 @@ function y = metric_vs_x_variable (input_data)
 	decision_yes = {input_data.parsed.decision_yes};
 	decision_no = {input_data.parsed.decision_no};
 	cost_savings = {input_data.parsed.cost_savings};
+	cost_fraction = {input_data.parsed.cost_fraction};
 
 
 
@@ -243,6 +244,10 @@ function y = metric_vs_x_variable (input_data)
 
 								case "cost_savings"
 									column_list{idx_metric} = cell2mat( cost_savings(idx) );
+
+
+								case "cost_fraction"
+									column_list{idx_metric} = cell2mat( cost_fraction(idx) );
 
 								otherwise
 									error(["metric ",metric_name," is not valid"]);
