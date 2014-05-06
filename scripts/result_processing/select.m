@@ -12,32 +12,35 @@ function parsed = select(selection_tuple, resultdir)
 						id_rep_ = selection_tuple.id_rep;
 						network = selection_tuple.network;
 						weights_ = selection_tuple.weights;
+						metric_list = selection_tuple.metric_list;
 
 						if strcmp( substr(decision_,1,3), "fix")
 							decision_root_ = "fix";
 							target_decision_probability_ = \
 								num2str( strrep(decision_,"fix","") );
 
-						elseif strcmp( substr(decision_,1,17), "costprobprodplain")
-							decision_root_ = "costprobprodplain";
-							target_decision_probability_ = \
-								num2str( strrep(decision_,"costprobprodplain","") );
+						elseif length(decision_) >= 16
 
-						elseif strcmp( substr(decision_,1,16), "costprobprodcorr")
-							decision_root_ = "costprobprodcorr";
-							target_decision_probability_ = \
-								num2str( strrep(decision_,"costprobprodcorr","") );
+							if strcmp( substr(decision_,1,17), "costprobprodplain")
+								decision_root_ = "costprobprodplain";
+								target_decision_probability_ = \
+									num2str( strrep(decision_,"costprobprodplain","") );
 
-						elseif strcmp( substr(decision_,1,17), "costprobcoinplain")
-							decision_root_ = "costprobcoinplain";
-							target_decision_probability_ = \
-								num2str( strrep(decision_,"costprobcoinplain","") );
+							elseif strcmp( substr(decision_,1,16), "costprobprodcorr")
+								decision_root_ = "costprobprodcorr";
+								target_decision_probability_ = \
+									num2str( strrep(decision_,"costprobprodcorr","") );
 
-						elseif strcmp( substr(decision_,1,16), "costprobcoincorr")
-							decision_root_ = "costprobcoincorr";
-							target_decision_probability_ = \
-								num2str( strrep(decision_,"costprobcoincorr","") );
+							elseif strcmp( substr(decision_,1,17), "costprobcoinplain")
+								decision_root_ = "costprobcoinplain";
+								target_decision_probability_ = \
+									num2str( strrep(decision_,"costprobcoinplain","") );
 
+							elseif strcmp( substr(decision_,1,16), "costprobcoincorr")
+								decision_root_ = "costprobcoincorr";
+								target_decision_probability_ = \
+									num2str( strrep(decision_,"costprobcoincorr","") );
+							endif
 						else
 							decision_root_ = decision_;
 							target_decision_probability_ = NaN;
@@ -66,6 +69,7 @@ function parsed = select(selection_tuple, resultdir)
 						parsed.csize = csize_;
 						parsed.priceratio = priceratio_;
 						parsed.id_rep = id_rep_;
+						parsed.weights = weights_;
 
 						string_to_search="p_hit\\[0\\] ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
@@ -107,7 +111,7 @@ function parsed = select(selection_tuple, resultdir)
 				selection_tuple_of_fixed_counterpart = selection_tuple;
 				selection_tuple_of_fixed_counterpart.decision =\
 						 ["fix",target_decision_probability_];
-				selection_tuple_of_fixed_counterpart.xi = 1;
+				selection_tuple_of_fixed_counterpart.xi = "1";
 				fixed_counterpart_parsed = select(selection_tuple_of_fixed_counterpart,\
 						resultdir);
 				parsed.cost_savings = (fixed_counterpart_parsed.total_cost - parsed.total_cost)/\
@@ -118,12 +122,14 @@ function parsed = select(selection_tuple, resultdir)
 
 	% COMPUTE COST FRACTION{
 		% Comparison with the no-cache scenario
+		if !isequal("never", decision_)
 				selection_tuple_of_never_counterpart = selection_tuple;
 				selection_tuple_of_never_counterpart.decision = "never";
-				selection_tuple_of_never_counterpart.xi = 1;
+				selection_tuple_of_never_counterpart.xi = "1";
 				never_counterpart_parsed = select(selection_tuple_of_never_counterpart,\
 						resultdir);
-				parsed.cost_fraction = parsed.total_cost) / never_counterpart_parsed.total_cost;
+				parsed.cost_fraction = parsed.total_cost / never_counterpart_parsed.total_cost;
+		endif
 	% }COMPUTE COST FRACTION
 
 

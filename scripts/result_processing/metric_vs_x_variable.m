@@ -51,15 +51,16 @@ function y = metric_vs_x_variable (input_data)
 	decision_no = {input_data.parsed.decision_no};
 	cost_savings = {input_data.parsed.cost_savings};
 	cost_fraction = {input_data.parsed.cost_fraction};
+	weights = {input_data.parsed.weights};
 
 
 
 	% CHECK_INPUT_DATA{
 		if severe_debug
-			if length(fixed_variable_names_additional) != 2 || length(fixed_variable_values_additional) != 2
+			if length(fixed_variable_names_additional) != length(fixed_variable_values_additional)
 				fixed_variable_names_additional
 				fixed_variable_values_additional
-				error("Only two additional fixed variables are admitted for now");
+				error("The two vectors must be equally long");
 			endif
 		endif
 	% }CHECK_INPUT_DATA

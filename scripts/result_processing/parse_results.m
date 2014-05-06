@@ -6,9 +6,9 @@ out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 priceratio_list={"10"};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-decision_list={"costprobcoincorr0.01","costprobcoinplain0.01"}; % The decision plocies that I want to plot
-xi_list = {"0","0.25","0.50","0.75","1"};
-weights_list={"0_0.5_0.5"};
+decision_list={"costprobprodcorr0.01"}; % The decision plocies that I want to plot
+xi_list = {"0.75","1.25","1.50","1.75"};
+weights_list={"0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25"};
 id_rep_list=1:20; # list of seeds
 alpha_list = {"1"};
 csize_list = {"1e3"};
@@ -18,16 +18,16 @@ resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
 						"client_requests", "decision_ratio", "cost_savings"};
 
-metric_list={"client_requests"};
+metric_list={"cost_fraction"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
 ctlg_="1e5"; 
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"priceratio", "alpha"};
+fixed_variable_names_additional = {"priceratio", "alpha","decision"};
 x_variable_name = "xi";
-z_variable_name = "decision";
+z_variable_name = "weights";
 
 
 i = 1;
@@ -59,6 +59,7 @@ for idx_csize = 1:length(csize_list)
 							selection_tuple.id_rep = id_rep_;
 							selection_tuple.network = network;
 							selection_tuple.weights = weights_;
+							selection_tuple.metric_list = metric_list;
 
 							parsed_ = select(selection_tuple, resultdir);
 
