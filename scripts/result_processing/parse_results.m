@@ -10,7 +10,7 @@ decision_list={"fix0.01", "lce", "costprobprodcorr0.01"}; % The decision plocies
 xi_list = {"1"};
 weights_list={"0_0.5_0.5"};
 id_rep_list=1:20; # list of seeds
-alpha_list = {"1"};
+alpha_list = {"0","0.8","1","1.2"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
 
@@ -27,7 +27,7 @@ ctlg_to_write_="1e5";
 
 fixed_variable_names_additional = {"weights", "priceratio","xi"};
 x_variable_name = "alpha";
-z_variable_name = "decision";
+z_variable_name = "decision"; % Over the columns
 
 
 i = 1;
@@ -39,7 +39,7 @@ i = 1;
 for idx_csize = 1:length(csize_list)
 	csize_ = csize_list{idx_csize};
 	csize_to_write = csize_to_write_list{ idx_csize};
-	for alpha_idx = length(alpha_list)
+	for alpha_idx = 1:length(alpha_list)
 		for priceratio_idx = 1:length(priceratio_list)
 			for decision_idx = 1:length(decision_list)
 				for idx_xi = 1:length(xi_list)

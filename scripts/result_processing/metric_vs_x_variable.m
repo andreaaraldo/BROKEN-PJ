@@ -65,16 +65,16 @@ function y = metric_vs_x_variable (input_data)
 		endif
 	% }CHECK_INPUT_DATA
 
-	idx_pr_previous = zeros(length(filename_list) );
+	idx_pr_previous = ones(1,length(filename_list) );
 
 	############################################
 	##### MATRIX CONSTRUCTION ##################
 	############################################
 	for idx_csize = 1:length(csize_list)
-			csize_ = csize_list{idx_csize};
+		csize_ = csize_list{idx_csize};
 		csize_to_write = csize_to_write_list{ idx_csize};
 
-			seed_id = 1;
+		seed_id = 1;
 
 			# Initialize the matrix_over_seed{
 				for idx_metric = 1:length(metric_list)
@@ -90,12 +90,27 @@ function y = metric_vs_x_variable (input_data)
 
 
 			for id_rep_ = id_rep_list
-				# Compute the x_variable_column, using whatever decision_ 
+				# Compute the x_variable_column, using the first z_value
 				z_value_ = z_variable_values{1};
 				z_variable_assumed_values = eval(z_variable_name);
 				idx_pr =  (strcmp(z_variable_assumed_values, z_value_ ) \
 							& ( cell2mat(id_rep) == id_rep_ ) \
 							& strcmp(csize, csize_) );
+
+				% CHECK{
+				if severe_debug
+					if sum(idx_pr) < length(x_variable_values)
+						x_variable_name
+						x_variable_values
+						idx_pr
+						filename_list
+						filenames_selected = filename_list{idx_pr}
+						error(["The number of selected items MUST be at least",\
+								" the lenght of x_variable_values"] );
+					endif
+				endif
+				% }CHECK
+
 				for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
 					% CHECK{
 						if severe_debug
@@ -146,6 +161,7 @@ function y = metric_vs_x_variable (input_data)
 						x_variable_column;
 						if length(x_variable_column) != length(extracted_column) || \
 								 !isequal( x_variable_column, extracted_column )
+							idx_pr_previous
 							idx_pr
 							x_variable_column
 							extracted_column
