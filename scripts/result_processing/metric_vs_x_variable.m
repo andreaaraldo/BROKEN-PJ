@@ -208,6 +208,17 @@ function y = metric_vs_x_variable (input_data)
 							idx_previous = idx;
 							idx = idx \
 								& cellfun(@isequal, values_assumed, {value} );
+
+							% CHECK{
+							if severe_debug
+								if sum(idx) == 0
+									fixed_var_name = fixed_variable_names_additional{\
+											idx_fixed_variable_additional};
+									error(["After considering ",fixed_var_name," no results are"\
+										" selected.Are you sure that variable is intended to be fixed?"]);
+								endif
+							endif
+							% }CHECK
 						endfor
 						
 						# CHECK{
@@ -223,7 +234,8 @@ function y = metric_vs_x_variable (input_data)
 									idx
 									idx_previous
 									prova_riprova = cellfun(@isequal, values_assumed, {value} )
-
+									x_variable_column_for_check
+									x_variable_column
 									error("x_variable_column is erroneous");
 								endif
 							endif

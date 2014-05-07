@@ -96,16 +96,27 @@ function parsed = select(selection_tuple, resultdir)
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
 						parsed.free_link_load = str2num(output);
+						if size(parsed.free_link_load) == [0,0]
+							parsed.free_link_load = 0;
+						endif
 
 						string_to_search="repo_load\\[5\\] ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
 						parsed.cheap_link_load = str2num(output);
+						if size(parsed.cheap_link_load) == [0,0]
+							parsed.cheap_link_load = 0;
+						endif
+
 
 						string_to_search="repo_load\\[6\\] ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
 						parsed.expensive_link_load = str2num(output);
+						if size(parsed.expensive_link_load) == [0,0]
+							parsed.expensive_link_load = 0;
+						endif
+
 
 			if strcmp(decision_root_, "costprob")
 				selection_tuple_of_fixed_counterpart = selection_tuple;
@@ -134,7 +145,10 @@ function parsed = select(selection_tuple, resultdir)
 
 
 			if severe_debug
-				if (size(parsed.free_link_load) != [1,1] && size(parsed.cheap_link_load) != [1,1] &&  size(parsed.expensive_link_load) != [1,1] )
+				if (size(parsed.free_link_load) != [1,1] || size(parsed.cheap_link_load) != [1,1] \
+					||  size(parsed.expensive_link_load) != [1,1] )
+
+					cheap_link_load_size = size(parsed.cheap_link_load)
 					free_link_load = parsed.free_link_load
 					cheap_link_load = parsed.cheap_link_load
 					expensive_link_load = parsed.expensive_link_load
@@ -159,19 +173,21 @@ function parsed = select(selection_tuple, resultdir)
 			
 
 	# CHECK RESULTS{
-								if ( size(parsed.p_hit)!=[1 1] || size(parsed.total_cost)!=[1 1] || \
-									 size(parsed.hdistance )!=[1 1] \
-										|| size(parsed.client_requests)!=[1 1] || size(parsed.cheap_link_load)!=[1 1] \
-										|| size(parsed.expensive_link_load)!=[1 1] )
+	if ( size(parsed.p_hit)!=[1 1] || size(parsed.total_cost)!=[1 1] || \
+				 size(parsed.hdistance )!=[1 1] || size(parsed.client_requests)!=[1 1] || \
+				size(parsed.cheap_link_load)!=[1 1] || size(parsed.expensive_link_load)!=[1 1] )
 
-									priceratio_
-									decision_
-									disp(["p_hit=", num2str(parsed.p_hit), "; total_cost=", \
-											num2str(parsed.total_cost), "; hdistance=",num2str(parsed.hdistance ), \
-											"; client_requests=",num2str(parsed.client_requests )] );
-									command
-									error("Parsing error");
-								endif
+		p_hit = parsed.p_hit
+		total_cost = parsed.total_cost
+		hdistance = parsed.hdistance
+		client_requests = parsed.client_requests
+		cheap_link_load = parsed.cheap_link_load
+		expensive_link_load = parsed.expensive_link_load
+		priceratio_
+		decision_
+		command
+				error("Parsing error");
+	endif
 	# }CHECK RESULTS
 		
 endfunction

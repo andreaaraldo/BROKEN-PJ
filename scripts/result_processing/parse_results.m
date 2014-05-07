@@ -6,11 +6,11 @@ out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 priceratio_list={"10"};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-decision_list={"fix0.01", "lce", "costprobprodcorr0.01"}; % The decision plocies that I want to plot
+decision_list={"lce","fix0.01","costprobprodcorr0.01"}; % The decision plocies that I want to plot
 xi_list = {"1"};
-weights_list={"0_0.5_0.5"};
+weights_list={"0.333_0.333_0.334", "0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0","0.5_0_0.5", "0.5_0.25_0.25", "0.5_0.5_0", "0.75_0_0.25", "0.75_0.25_0"};
 id_rep_list=1:20; # list of seeds
-alpha_list = {"0","0.8","1","1.2"};
+alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
 
@@ -25,8 +25,8 @@ replacement_="lru";
 ctlg_="1e5"; 
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"weights", "priceratio","xi"};
-x_variable_name = "alpha";
+fixed_variable_names_additional = {"xi", "priceratio","alpha"};
+x_variable_name = "weights";
 z_variable_name = "decision"; % Over the columns
 
 
@@ -110,5 +110,4 @@ input_data.z_variable_name = z_variable_name;
 input_data.z_variable_values = eval( [input_data.z_variable_name,"_list"] ) ;
 
 input_data.parsed = parsed;
-
 metric_vs_x_variable(input_data);
