@@ -94,7 +94,7 @@ void WeightedContentDistribution::initialize()
  */
 void WeightedContentDistribution::verify_prices()
 {
-	if (num_repos != weights.size() ){
+	if ((unsigned) num_repos != weights.size() ){
         std::stringstream ermsg; 
 		ermsg<<"num_repos="<<num_repos<<"; while weights vector has "<<weights.size()
 				<<" elements";
@@ -102,7 +102,7 @@ void WeightedContentDistribution::verify_prices()
 	}
 	unsigned previous_repo_price = 0;
 
-	for (unsigned repo_idx=0; repo_idx < num_repos; repo_idx++)
+	for (int repo_idx=0; repo_idx < num_repos; repo_idx++)
 	{
 		// get the node associated to the repository
 		int node_idx = repositories[repo_idx];
@@ -187,7 +187,7 @@ int WeightedContentDistribution::choose_repos ( )
 
 	if (replication_admitted) 
 	{
-		for (unsigned repo_idx = 0; repo_idx < num_repos; repo_idx++)
+		for (int repo_idx = 0; repo_idx < num_repos; repo_idx++)
 		{
 			if (dblrand() < weights[repo_idx] ){
 				(*total_replicas_p) = (*total_replicas_p) +1;

@@ -18,15 +18,15 @@ resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
 						"client_requests", "decision_ratio", "cost_savings"};
 
-metric_list={"cost_fraction"};
+metric_list={"total_cost"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
 ctlg_="1e5"; 
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"decision", "priceratio","xi"};
-x_variable_name = "weights";
+fixed_variable_names_additional = {"decision", "priceratio","weights"};
+x_variable_name = "alpha";
 z_variable_name = "xi"; % Over the columns
 
 

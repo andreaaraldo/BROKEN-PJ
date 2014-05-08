@@ -29,6 +29,12 @@ simple lru_cache extends base_cache{
     @class(lru_cache);
 }
 
+//<aa>
+simple costlru_cache extends lru_cache{
+    @class(costlru_cache);
+}
+//</aa>
+
 simple two_cache extends base_cache{
     @class(two_cache);
 }

@@ -70,6 +70,7 @@ class base_cache : public abstract_node{
 		//<aa>
 		virtual uint32_t get_decision_yes();
 		virtual uint32_t get_decision_no();
+		virtual const DecisionPolicy* get_decisor();
 		//</aa>
 
     private:

@@ -36,6 +36,7 @@ void lru_cache::data_store(chunk_t elem){
 	return;
 
     lru_pos *p = (lru_pos *)malloc (sizeof(lru_pos)); //position for the new element
+										//<aa> i.e. datastructure for the new element </aa>
     //lru_pos *p = new lru_pos();
     p->k = elem;
     p->hit_time = simTime();
@@ -79,6 +80,14 @@ void lru_cache::data_store(chunk_t elem){
 
 }
 
+//<aa>
+lru_pos* lru_cache::get_mru(){
+	return mru;
+}
+lru_pos* lru_cache::get_lru(){
+	return lru;
+}
+//</aa>
 
 bool lru_cache::fake_lookup(chunk_t elem){
 //    if (getIndex()==12)
@@ -130,6 +139,7 @@ bool lru_cache::data_lookup(chunk_t elem){
     mru->hit_time = simTime();
     return true;
 }
+
 
 void lru_cache::dump(){
     lru_pos *it = mru;

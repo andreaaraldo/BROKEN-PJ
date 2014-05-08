@@ -255,4 +255,7 @@ uint32_t base_cache::get_decision_yes(){
 uint32_t base_cache::get_decision_no(){
 	return decision_no;
 }
+const DecisionPolicy* base_cache::get_decisor(){
+	return decisor;
+}
 //</aa>

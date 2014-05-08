@@ -32,9 +32,18 @@
 #include "WeightedContentDistribution.h"
 
 class Costprob: public DecisionPolicy{
+    protected:
+		double average_decision_ratio;
+		double correction_factor; // An object will be cached with prob correction_factor * cost
+		double xi;
+		double priceratio;
+		vector<double> weights;
+		double last_accepted_content_cost;
+
     public:
 		Costprob(double average_decision_ratio_)
 		{
+			last_accepted_content_cost=-1;
 			average_decision_ratio = average_decision_ratio_;
 
 		    vector<string> ctype;
@@ -90,14 +99,15 @@ class Costprob: public DecisionPolicy{
 			cache_p->recordScalar (name, xi);
 		};
 
-		virtual double compute_correction_factor()=0;
+		virtual double get_last_accepted_content_cost(){
+			return last_accepted_content_cost;
+		};
 
-    protected:
-		double average_decision_ratio;
-		double correction_factor; // An object will be cached with prob correction_factor * cost
-		double xi;
-		double priceratio;
-		vector<double> weights;
+		virtual void set_last_accepted_content_cost(ccn_data * data_msg){
+			last_accepted_content_cost = data_msg->getCost();
+		}
+
+		virtual double compute_correction_factor()=0;
 };
 //<//aa>
 #endif
