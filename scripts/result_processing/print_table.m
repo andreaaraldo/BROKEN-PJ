@@ -41,6 +41,13 @@ function y = print_table (out_filename, matrix, x_variable_column, column_names,
 
 	delimiter = " ";
 	outfile = fopen(out_filename,"w");
+	% CHECK{
+	if (outfile < 0)
+		out_filename
+		error(["Error opening file "]);
+	endif
+	% }CHECK
+
 	column_name_string = "";
 	for i=1:length(column_names)
 			column_name_string = cstrcat(column_name_string, strvcat(column_names{i} ), delimiter );
