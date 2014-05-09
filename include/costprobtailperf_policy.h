@@ -36,11 +36,10 @@
 
 class Costprobtailperf: public Costprobtail{
 	public:
-		Costprobtailperf(double average_decision_ratio_, base_cache* mycache_):
-			Costprobtail(average_decision_ratio_, mycache)
+		Costprobtailperf(double average_decision_ratio_, base_cache* mycache_par):
+			Costprobtail(average_decision_ratio_, mycache_par)
 		{			
-			cout<<"constructor of Costprobtailperf"<<endl;
-			exit(5);
+			// Do nothing
 		};
 
 		virtual double compute_content_weight(chunk_t id, double cost)

@@ -96,25 +96,8 @@ void base_cache::initialize(){
 			decisor = new Costprobprodplain(sens);
 		}else if (decision_policy.find("costprobtailperf")==0)
 		{
-			lru_cache* this_cache = (dynamic_cast<lru_cache*> (this) );
-			#ifdef SEVERE_DEBUG
-			if ( this_cache == NULL ){
-					std::stringstream ermsg; 
-					ermsg<<"lru_cache is expected";
-					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-			#endif
-
 			sens = 0; // I don't need this parameter
-			cout<<"this = "<< this_cache <<endl;
-			decisor = new Costprobprodplain(sens);
-			cout<<"after constructing fake Costprobtailperf"<<endl;
-			exit(5);
-			cout<<"before constructing Costprobtailperf"<<endl;
-			decisor = new Costprobtailperf(sens, this_cache );
-			cout<<"after constructing Costprobtailperf"<<endl;
-			exit(5);
-			
+			decisor = new Costprobtailperf(sens, this );
 
 		}else if (decision_policy.find("costprobtailimperf")==0)
 		{

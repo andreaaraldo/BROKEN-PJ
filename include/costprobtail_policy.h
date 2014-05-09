@@ -39,23 +39,19 @@ class Costprobtail: public Costprob{
 		lru_cache* mycache; // cache I'm attached to
 
     public:
-		Costprobtail(double average_decision_ratio_, base_cache* mycache_):
+		Costprobtail(double average_decision_ratio_, base_cache* mycache_par):
 			Costprob(average_decision_ratio_)
 		{
 
-			cout<<"costruttore di Costprobtail ="<<mycache<<endl;
-			exit(5);
-
+			cout<<"Costprobtail constructor"<<endl;
 			if (xi>1 || xi<0){
 				std::stringstream ermsg; 
 				ermsg<<"xi="<<xi<<" is not valid";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
 			alpha = content_distribution_module->get_alpha();
-			mycache = dynamic_cast<lru_cache*>(mycache_);
-
-			cout<<"mycache ="<<mycache<<endl;
-			exit(5);
+			mycache = dynamic_cast<lru_cache*>(mycache_par);
+			cout<<"after casting"<<endl;
 
 			#ifdef SEVERE_DEBUG
 			if( mycache == NULL ){

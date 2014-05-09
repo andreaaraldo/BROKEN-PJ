@@ -36,8 +36,8 @@
 
 class Costprobtailimperf: public Costprobtail{    
 	public:
-		Costprobtailimperf(double average_decision_ratio_, base_cache* mycache_):
-			Costprobtail(average_decision_ratio_, mycache)
+		Costprobtailimperf(double average_decision_ratio_, base_cache* mycache_par):
+			Costprobtail(average_decision_ratio_, mycache_par)
 		{};
 
 		virtual double compute_content_weight(chunk_t id, double cost)
