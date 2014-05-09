@@ -1,5 +1,9 @@
 version 2
+<<<<<<< HEAD
 run General-104-20140509-21:33:21-21572
+=======
+run General-104-20140509-21:30:42-16144
+>>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
 attr D lce
 attr F nrr
 attr R lru
@@ -7,7 +11,11 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
+<<<<<<< HEAD
 attr datetime 20140509-21:33:21
+=======
+attr datetime 20140509-21:30:42
+>>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=one_cache_scenario_3_links, $rep=18, $priceratiovalue=2, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e3"
@@ -16,7 +24,11 @@ attr measurement "$net=one_cache_scenario_3_links, $rep=18, $priceratiovalue=2, 
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr priceratiovalue 2
+<<<<<<< HEAD
 attr processid 21572
+=======
+attr processid 16144
+>>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
 attr rep 18
 attr repetition 0
 attr replication #0
