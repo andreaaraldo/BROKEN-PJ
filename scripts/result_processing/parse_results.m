@@ -3,7 +3,7 @@ global severe_debug = true;
 
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
-priceratio_list={"10"};
+priceratio_list={"1","2","5","10"};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 decision_list={"lce","fix0.01","costprobprodcorr0.01","costprobtailperf"}; % The decision plocies that I want to plot
@@ -25,8 +25,8 @@ replacement_="lru";
 ctlg_="1e5"; 
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"xi", "priceratio","weights"};
-x_variable_name = "alpha";
+fixed_variable_names_additional = {"xi", "alpha","weights"};
+x_variable_name = "priceratio";
 z_variable_name = "decision"; % Over the columns
 
 
