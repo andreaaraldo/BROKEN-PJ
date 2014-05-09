@@ -37,7 +37,6 @@
 #include "costprobcoinplain_policy.h"
 #include "costprobtailperf_policy.h"
 #include "error_handling.h"
-#include "lru_cache.h"
 //</aa>
 #include "lcd_policy.h"
 #include "never_policy.h"
@@ -97,7 +96,7 @@ void base_cache::initialize(){
 		}else if (decision_policy.find("costprobtailperf")==0)
 		{
 			sens = 0; // I don't need this parameter
-			decisor = new Costprobtailperf(sens, (lru_cache*) this);
+			decisor = new Costprobtailperf(sens, this );
 		}
 		// CHECK{
 				if (sens <0){
@@ -205,6 +204,10 @@ void base_cache::store(cMessage *in){
 		decision_yes++;
 		//</aa>
 		data_store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
+
+		//<aa>
+		decisor->after_insertion_action();
+		//</aa>
 	}
 	//<aa>
 	else {decision_no++; }

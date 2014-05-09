@@ -31,6 +31,8 @@
 #include "error_handling.h"
 #include "WeightedContentDistribution.h"
 
+#define UNSET_COST -1
+
 class Costprob: public DecisionPolicy{
     protected:
 		double average_decision_ratio;
@@ -44,7 +46,7 @@ class Costprob: public DecisionPolicy{
     public:
 		Costprob(double average_decision_ratio_)
 		{
-			last_accepted_content_cost=-1;
+			last_accepted_content_cost = UNSET_COST;
 			average_decision_ratio = average_decision_ratio_;
 
 		    vector<string> ctype;
@@ -101,6 +103,14 @@ class Costprob: public DecisionPolicy{
 		};
 
 		virtual double get_last_accepted_content_cost(){
+			#ifdef SEVERE_DEBUG
+			if (last_accepted_content_cost == UNSET_COST){
+					std::stringstream msg; 
+					msg<<"last_accepted_content_cost has nevere been set";
+					severe_error(__FILE__, __LINE__, msg.str().c_str() );
+			}
+			#endif
+
 			return last_accepted_content_cost;
 		};
 

@@ -99,6 +99,13 @@ lru_pos* lru_cache::get_lru(){
 
 	return lru;
 }
+
+const lru_pos* lru_cache::get_eviction_candidate(){
+	if ( full() ) 
+		return get_lru();
+	else return NULL;
+}
+
 //</aa>
 
 bool lru_cache::fake_lookup(chunk_t elem){

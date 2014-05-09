@@ -54,10 +54,10 @@ class lru_cache:public base_cache{
     friend class statistics;
     public:
 		lru_cache():base_cache(),actual_size(0),lru(0),mru(0){;}
-		chunk_t* get_eviction_candidate();
 		//<aa>
 		lru_pos* get_mru();
 		lru_pos* get_lru();
+		const lru_pos* get_eviction_candidate();
 		//</aa>
 	
 		bool full(); //<aa> moved from protected to public </aa>

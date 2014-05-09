@@ -38,6 +38,9 @@ class DecisionPolicy {
 
 		//<aa>
 		virtual void finish (int nodeIndex, base_cache* cache_p){};
+		virtual void after_insertion_action(){
+			// Do nothing
+		};
 		//</aa>
 };
 #endif
