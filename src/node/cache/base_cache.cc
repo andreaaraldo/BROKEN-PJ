@@ -36,6 +36,7 @@
 #include "costprobcoincorr_policy.h"
 #include "costprobcoinplain_policy.h"
 #include "costprobtailperf_policy.h"
+#include "costprobtailimperf_policy.h"
 #include "error_handling.h"
 //</aa>
 #include "lcd_policy.h"
@@ -95,8 +96,30 @@ void base_cache::initialize(){
 			decisor = new Costprobprodplain(sens);
 		}else if (decision_policy.find("costprobtailperf")==0)
 		{
+			lru_cache* this_cache = (dynamic_cast<lru_cache*> (this) );
+			#ifdef SEVERE_DEBUG
+			if ( this_cache == NULL ){
+					std::stringstream ermsg; 
+					ermsg<<"lru_cache is expected";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+			#endif
+
 			sens = 0; // I don't need this parameter
-			decisor = new Costprobtailperf(sens, this );
+			cout<<"this = "<< this_cache <<endl;
+			decisor = new Costprobprodplain(sens);
+			cout<<"after constructing fake Costprobtailperf"<<endl;
+			exit(5);
+			cout<<"before constructing Costprobtailperf"<<endl;
+			decisor = new Costprobtailperf(sens, this_cache );
+			cout<<"after constructing Costprobtailperf"<<endl;
+			exit(5);
+			
+
+		}else if (decision_policy.find("costprobtailimperf")==0)
+		{
+			sens = 0; // I don't need this parameter
+			decisor = new Costprobtailimperf(sens, this );
 		}
 		// CHECK{
 				if (sens <0){

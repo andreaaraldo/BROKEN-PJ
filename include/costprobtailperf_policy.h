@@ -32,115 +32,21 @@
 #include "costprob_policy.h"
 #include "lru_cache.h"
 #include "WeightedContentDistribution.h"
+#include "costprobtail_policy.h"
 
-class Costprobtailperf: public Costprob{
-	private:
-		double alpha;
-		lru_cache* mycache; // cache I'm attached to
-
-    public:
+class Costprobtailperf: public Costprobtail{
+	public:
 		Costprobtailperf(double average_decision_ratio_, base_cache* mycache_):
-			Costprob(average_decision_ratio_)
-		{
-			if (xi>1 || xi<0){
-				std::stringstream ermsg; 
-				ermsg<<"xi="<<xi<<" is not valid";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-			alpha = content_distribution_module->get_alpha();
-			mycache = dynamic_cast<lru_cache*>(mycache_);
-
-			#ifdef SEVERE_DEBUG
-			if( mycache == NULL ){
-				std::stringstream ermsg; 
-				ermsg<<"Costprobatailperf works only with lru";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-			#endif
-
+			Costprobtail(average_decision_ratio_, mycache)
+		{			
+			cout<<"constructor of Costprobtailperf"<<endl;
+			exit(5);
 		};
 
-		virtual bool data_to_cache(ccn_data * data_msg)
+		virtual double compute_content_weight(chunk_t id, double cost)
 		{
-			bool decision;
-
-			#ifdef SEVERE_DEBUG
-			if( !mycache->is_initialized() ){
-				std::stringstream ermsg; 
-				ermsg<<"base_cache is not initialized.";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-			#endif
-
-			if (! mycache->full() )
-				decision = true;
-			else{
-
-				chunk_t content_index = data_msg->getChunk();
-
-				double popularity_estimation = 1./pow(content_index, alpha);
-				double cost = data_msg->getCost();
-				double integral_cost_new = popularity_estimation * cost;
-//				cout << "new_content_index="<<content_index<<"; popularity_estimation_new="<<
-//					popularity_estimation<<"; cost of new="<<cost<<"; integral_cost_new="<<
-//					integral_cost_new<<endl;
-
-
-				lru_pos* lru_element_descriptor = mycache->get_lru();
-				content_index = lru_element_descriptor->k;
-				popularity_estimation = 1./pow(content_index, alpha);
-				cost = lru_element_descriptor->cost;
-
-				double integral_cost_lru = cost * popularity_estimation;
-//				cout << "lru_content_index="<<content_index<<"; popularity_estimation of lru="<<
-//					popularity_estimation<<"; cost if lru="<<cost<<"; integral_cost_lru="<<
-//					integral_cost_lru<<endl;
-
-				if (integral_cost_new > integral_cost_lru)
-					// Inserting this content in the cache would make it better
-					decision = true;
-
-				// a large xi means that we tend to renew the cache often
-
-				else if ( dblrand() < xi )
-					decision = true;
-				else
-					decision = false;
-			}
-
-			if (decision == true)
-				set_last_accepted_content_cost(data_msg );
-
-			return decision;
-		};
-
-		virtual double compute_correction_factor(){
-			return 0;
-		};
-
-		virtual void after_insertion_action()
-		{
-			DecisionPolicy::after_insertion_action();
-			#ifdef SEVERE_DEBUG
-			if ( get_last_accepted_content_cost() == UNSET_COST ){
-				std::stringstream ermsg; 
-				ermsg<<"cost_of_the_last_accepted_element="<<get_last_accepted_content_cost() <<
-					", while it MUST NOT be a negative number. Something goes wrong with the "<<
-					"initialization of this attribute";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-
-			}
-			#endif
-
-			// Annotate the cost of the last inserted element
-			mycache->get_mru()->cost = get_last_accepted_content_cost();
-
-			#ifdef SEVERE_DEBUG
-			// Unset this field to check if it is set again at the appropriate time
-			// without erroneously use an old value
-			last_accepted_content_cost = UNSET_COST;
-			#endif
-			
+			double popularity_estimation = 1./pow(id, alpha);
+			return cost * popularity_estimation;
 		}
 };
 //<//aa>

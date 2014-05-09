@@ -21,25 +21,29 @@ function parsed = select(selection_tuple, resultdir)
 
 						elseif length(decision_) >= 16
 
-							if strcmp( substr(decision_,1,17), "costprobprodplain")
+							if strmatch( "costprobprodplain", decision_)
 								decision_root_ = "costprobprodplain";
 								target_decision_probability_ = \
 									num2str( strrep(decision_,"costprobprodplain","") );
 
-							elseif strcmp( substr(decision_,1,16), "costprobprodcorr")
+							elseif strmatch( "costprobprodcorr", decision_ )
 								decision_root_ = "costprobprodcorr";
 								target_decision_probability_ = \
 									num2str( strrep(decision_,"costprobprodcorr","") );
 
-							elseif strcmp( substr(decision_,1,17), "costprobcoinplain")
+							elseif strmatch( "costprobcoinplain", decision_ )
 								decision_root_ = "costprobcoinplain";
 								target_decision_probability_ = \
 									num2str( strrep(decision_,"costprobcoinplain","") );
 
-							elseif strcmp( substr(decision_,1,16), "costprobcoincorr")
+							elseif strmatch( "costprobcoincorr", decision_ )
 								decision_root_ = "costprobcoincorr";
 								target_decision_probability_ = \
 									num2str( strrep(decision_,"costprobcoincorr","") );
+
+							elseif strmatch( "costprobtailperf", decision_ )
+								decision_root_ = "costprobtailperf";
+								target_decision_probability_ = NaN;
 							endif
 						else
 							decision_root_ = decision_;
