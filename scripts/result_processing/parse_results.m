@@ -3,13 +3,13 @@ global severe_debug = true;
 
 out_folder="~/Dropbox/shared_with_servers/icn14_runs/";
 
-priceratio_list={"10"};
+priceratio_list={"1"};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-decision_list={"costprobtailperf"}; % The decision plocies that I want to plot
-xi_list = {"0"};
+decision_list={"fix0.01","lce","costprobprodcorr0.01","costprobtailperf"}; % The decision plocies that I want to plot
+xi_list = {"1"};
 weights_list={"0.333_0.333_0.334"};
-id_rep_list=1:1; # list of seeds
+id_rep_list=1:20; # list of seeds
 alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
@@ -18,7 +18,7 @@ resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
 						"client_requests", "decision_ratio", "cost_savings"};
 
-metric_list={"total_cost"};
+metric_list={"cost_fraction"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";

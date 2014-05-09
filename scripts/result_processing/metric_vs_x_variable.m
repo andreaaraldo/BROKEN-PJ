@@ -236,6 +236,7 @@ function y = metric_vs_x_variable (input_data)
 									prova_riprova = cellfun(@isequal, values_assumed, {value} )
 									x_variable_column_for_check
 									x_variable_column
+									selected_files = filename_list(idx)
 									error("x_variable_column is erroneous");
 								endif
 							endif
