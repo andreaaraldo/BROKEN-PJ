@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgc 4.4 from packets/ccn_data.msg.
+// Generated file, do not edit! Created by opp_msgc 4.3 from packets/ccn_data.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -11,8 +11,6 @@
 #include <iostream>
 #include <sstream>
 #include "ccn_data_m.h"
-
-USING_NAMESPACE
 
 // Template rule which fires if a struct or class doesn't have operator<<
 template<typename T>
@@ -32,7 +30,7 @@ void doUnpacking(cCommBuffer *, T& t) {
 
 
 
-ccn_data_Base::ccn_data_Base(const char *name, int kind) : ::cPacket(name,kind)
+ccn_data_Base::ccn_data_Base(const char *name, int kind) : cPacket(name,kind)
 {
     this->cost_var = 0;
     this->costPowered_var = 0;
@@ -46,7 +44,7 @@ ccn_data_Base::ccn_data_Base(const char *name, int kind) : ::cPacket(name,kind)
     this->found_var = false;
 }
 
-ccn_data_Base::ccn_data_Base(const ccn_data_Base& other) : ::cPacket(other)
+ccn_data_Base::ccn_data_Base(const ccn_data_Base& other) : cPacket(other)
 {
     copy(other);
 }
@@ -58,7 +56,7 @@ ccn_data_Base::~ccn_data_Base()
 ccn_data_Base& ccn_data_Base::operator=(const ccn_data_Base& other)
 {
     if (this==&other) return *this;
-    ::cPacket::operator=(other);
+    cPacket::operator=(other);
     copy(other);
     return *this;
 }
@@ -80,7 +78,7 @@ void ccn_data_Base::copy(const ccn_data_Base& other)
 
 void ccn_data_Base::parsimPack(cCommBuffer *b)
 {
-    ::cPacket::parsimPack(b);
+    cPacket::parsimPack(b);
     doPacking(b,this->chunk_var);
     doPacking(b,this->cost_var);
     doPacking(b,this->costPowered_var);
@@ -96,7 +94,7 @@ void ccn_data_Base::parsimPack(cCommBuffer *b)
 
 void ccn_data_Base::parsimUnpack(cCommBuffer *b)
 {
-    ::cPacket::parsimUnpack(b);
+    cPacket::parsimUnpack(b);
     doUnpacking(b,this->chunk_var);
     doUnpacking(b,this->cost_var);
     doUnpacking(b,this->costPowered_var);

@@ -35,7 +35,9 @@
 #include "costprobprodplain_policy.h"
 #include "costprobcoincorr_policy.h"
 #include "costprobcoinplain_policy.h"
+#include "costprobtailperf_policy.h"
 #include "error_handling.h"
+#include "lru_cache.h"
 //</aa>
 #include "lcd_policy.h"
 #include "never_policy.h"
@@ -55,6 +57,7 @@ void base_cache::initialize(){
     level = getAncestorPar("level");
     cache_size = par("C");  //cache size
 
+	decisor = NULL;
 
     string decision_policy = par("DS");
     //Initialize the storage policy
@@ -91,6 +94,10 @@ void base_cache::initialize(){
 			sens_string = decision_policy.substr( strlen("costprobprodplain") );
 			sens = atof(sens_string.c_str());
 			decisor = new Costprobprodplain(sens);
+		}else if (decision_policy.find("costprobtailperf")==0)
+		{
+			sens = 0; // I don't need this parameter
+			decisor = new Costprobtailperf(sens, (lru_cache*) this);
 		}
 		// CHECK{
 				if (sens <0){
@@ -115,7 +122,8 @@ void base_cache::initialize(){
 	//<aa>
     else if (decision_policy.compare("lce")==0 )
 		decisor = new Always();
-	else{
+
+	if (decisor==NULL){
         std::stringstream ermsg; 
 		ermsg<<"Decision policy incorrect";
 	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
@@ -135,6 +143,11 @@ void base_cache::initialize(){
     //--Per file
     cache_stats = new cache_stat_entry[__file_bulk + 1];
 
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	initialized = true;
+	#endif
+	//</aa>
 
 }
 
@@ -258,4 +271,10 @@ uint32_t base_cache::get_decision_no(){
 const DecisionPolicy* base_cache::get_decisor(){
 	return decisor;
 }
+
+#ifdef SEVERE_DEBUG
+bool base_cache::is_initialized(){
+	return initialized;
+}
+#endif
 //</aa>

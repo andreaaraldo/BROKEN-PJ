@@ -1,0 +1,121 @@
+version 2
+run General-10-20140103-22:19:09-32212
+attr D lce
+attr F spr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 10^4
+attr datetime 20140103-22:19:09
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario_cache_in_the_core, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^4"
+attr iterationvars2 "$net=simple_scenario_cache_in_the_core, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^4, $repetition=0"
+attr measurement "$net=simple_scenario_cache_in_the_core, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=10^4"
+attr net simple_scenario_cache_in_the_core
+attr network networks.${net=simple_scenario_cache_in_the_core,simple_scenario_cache_at_border}_network
+attr processid 32212
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 10
+attr seedset 0
+attr ttl 1000
+
+vector 60  simple_scenario_cache_in_the_core_network.node[0].content_store  hit_node[0]  ETV
+60	907220	1	1
+60	907220	2	1
+60	907220	3	1
+60	907220	4	1
+60	907220	5	1
+60	907220	6	1
+60	907220	7	1
+60	907220	8	1
+60	907220	9	1
+60	907220	10	1
+60	907220	11	1
+60	907220	12	1
+60	907220	13	1
+60	907220	14	1
+60	907220	15	1
+vector 61  simple_scenario_cache_in_the_core_network.node[1].content_store  hit_node[1]  ETV
+61	907220	1	-nan
+61	907220	2	-nan
+61	907220	3	-nan
+61	907220	4	-nan
+61	907220	5	-nan
+61	907220	6	-nan
+61	907220	7	-nan
+61	907220	8	-nan
+61	907220	9	-nan
+61	907220	10	-nan
+61	907220	11	-nan
+61	907220	12	-nan
+61	907220	13	-nan
+61	907220	14	-nan
+61	907220	15	-nan
+vector 62  simple_scenario_cache_in_the_core_network.node[2].content_store  hit_node[2]  ETV
+62	907220	1	-nan
+62	907220	2	-nan
+62	907220	3	-nan
+62	907220	4	-nan
+62	907220	5	-nan
+62	907220	6	-nan
+62	907220	7	-nan
+62	907220	8	-nan
+62	907220	9	-nan
+62	907220	10	-nan
+62	907220	11	-nan
+62	907220	12	-nan
+62	907220	13	-nan
+62	907220	14	-nan
+62	907220	15	-nan
+vector 63  simple_scenario_cache_in_the_core_network.node[3].content_store  hit_node[3]  ETV
+63	907220	1	-nan
+63	907220	2	-nan
+63	907220	3	-nan
+63	907220	4	-nan
+63	907220	5	-nan
+63	907220	6	-nan
+63	907220	7	-nan
+63	907220	8	-nan
+63	907220	9	-nan
+63	907220	10	-nan
+63	907220	11	-nan
+63	907220	12	-nan
+63	907220	13	-nan
+63	907220	14	-nan
+63	907220	15	-nan
+vector 64  simple_scenario_cache_in_the_core_network.node[4].content_store  hit_node[4]  ETV
+64	907220	1	-nan
+64	907220	2	-nan
+64	907220	3	-nan
+64	907220	4	-nan
+64	907220	5	-nan
+64	907220	6	-nan
+64	907220	7	-nan
+64	907220	8	-nan
+64	907220	9	-nan
+64	907220	10	-nan
+64	907220	11	-nan
+64	907220	12	-nan
+64	907220	13	-nan
+64	907220	14	-nan
+64	907220	15	-nan
+vector 65  simple_scenario_cache_in_the_core_network.client[0]  hdistance[0]  ETV
+65	907220	1	0.37633155700774
+65	907220	2	0.3763256982768
+65	907220	3	0.37630786131683
+65	907220	4	0.37623087315769
+65	907220	5	0.37620658363743
+65	907220	6	0.37625216321015
+65	907220	7	0.37616167986616
+65	907220	8	0.37614489578452
+65	907220	9	0.37612689094932
+65	907220	10	0.37615795084715
+65	907220	11	0.37613807010307
+65	907220	12	0.37613455332314
+65	907220	13	0.37607723759883
+65	907220	14	0.3760365912773
+65	907220	15	0.3759942024607

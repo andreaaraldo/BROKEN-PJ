@@ -54,10 +54,19 @@ class base_cache : public abstract_node{
 		//Inteface function (depending by internal data structures of each cache)
 		virtual void data_store (chunk_t) = 0; 
 		virtual bool data_lookup(chunk_t) = 0;
-		virtual bool full() = 0;
 		virtual void dump(){cout<<"Not implemented"<<endl;}
+
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		bool initialized;
+		#endif
+		//</aa>
 	
     public:
+		#ifdef SEVERE_DEBUG
+		base_cache():abstract_node(){initialized=false; };
+		#endif
+
 		//Outside function behaviour
 		uint32_t get_size() { return cache_size; }
 
@@ -71,7 +80,13 @@ class base_cache : public abstract_node{
 		virtual uint32_t get_decision_yes();
 		virtual uint32_t get_decision_no();
 		virtual const DecisionPolicy* get_decisor();
+
+		#ifdef SEVERE_DEBUG
+		virtual bool is_initialized();
+		#endif
 		//</aa>
+
+		virtual bool full() = 0; //<aa> moved from protected to public</aa>
 
     private:
 		int  cache_size;

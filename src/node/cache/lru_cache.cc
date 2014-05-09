@@ -26,6 +26,10 @@
 #include <iostream>
 #include "lru_cache.h"
 
+//<aa>
+#include "error_handling.h"
+//</aa>
+
 Register_Class(lru_cache);
 
 
@@ -85,6 +89,14 @@ lru_pos* lru_cache::get_mru(){
 	return mru;
 }
 lru_pos* lru_cache::get_lru(){
+	#ifdef SEVERE_DEBUG
+	if (lru != NULL){
+		// To see if a seg fault arises due to the access to a forbidden area
+		// To use with valgrind software
+		chunk_t test = lru->k;
+	} //else the cache is empty
+	#endif
+
 	return lru;
 }
 //</aa>

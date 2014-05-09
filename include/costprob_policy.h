@@ -39,6 +39,7 @@ class Costprob: public DecisionPolicy{
 		double priceratio;
 		vector<double> weights;
 		double last_accepted_content_cost;
+		WeightedContentDistribution* content_distribution_module;
 
     public:
 		Costprob(double average_decision_ratio_)
@@ -62,7 +63,7 @@ class Costprob: public DecisionPolicy{
 			#endif
 
 			cTopology::Node *content_distribution_node = topo.getNode(0);
-			WeightedContentDistribution* content_distribution_module = 
+			content_distribution_module = 
 					(WeightedContentDistribution*) content_distribution_node->getModule();
 
 			#ifdef SEVERE_DEBUG

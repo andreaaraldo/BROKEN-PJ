@@ -39,6 +39,7 @@ void WeightedContentDistribution::initialize()
 	replication_admitted = par("replication_admitted");
 	priceratio = par("priceratio");
 	xi = par("xi");
+	alpha = par("alpha");
 
 	unsigned repo_num = weights.size();
 
@@ -151,16 +152,49 @@ bool WeightedContentDistribution::isInitialized(){
 #endif
 
 const vector<double> WeightedContentDistribution::get_weights(){
+	#ifdef SEVERE_DEBUG
+	if (!isInitialized() ){
+        std::stringstream ermsg; 
+		ermsg<<"module must be initialized before calling this method";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
 	return weights;
 }
 
 const double WeightedContentDistribution::get_priceratio(){
+	#ifdef SEVERE_DEBUG
+	if (!isInitialized() ){
+        std::stringstream ermsg; 
+		ermsg<<"module must be initialized before calling this method";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
 	return priceratio;
 }
 
 const double WeightedContentDistribution::get_xi(){
+	#ifdef SEVERE_DEBUG
+	if (!isInitialized() ){
+        std::stringstream ermsg; 
+		ermsg<<"module must be initialized before calling this method";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
 	return xi;
 }
+
+const double WeightedContentDistribution::get_alpha(){
+	#ifdef SEVERE_DEBUG
+	if (!isInitialized() ){
+        std::stringstream ermsg; 
+		ermsg<<"module must be initialized before calling this method";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
+	return alpha;
+}
+
 
 
 // Override content_distribution::finalize_total_replica()
