@@ -1,5 +1,5 @@
 version 2
-run General-90-20140509-14:24:08-3444
+run General-151-20140509-17:03:52-9742
 attr D costprobtailperf
 attr F nrr
 attr R lru
@@ -7,25 +7,25 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140509-14:24:08
+attr datetime 20140509-17:03:52
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=0, $R=lru, $csize=1e3"
-attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=0, $R=lru, $csize=1e3, $repetition=0"
-attr measurement "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=0, $R=lru, $csize=1e3"
+attr iterationvars "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3"
+attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3, $repetition=0"
+attr measurement "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3"
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr priceratiovalue 10
-attr processid 3444
+attr processid 9742
 attr rep 19
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 90
+attr runnumber 151
 attr seedset 19
 attr ttl 1000
 attr weights 0.333_0.333_0.334
-attr xi 0
+attr xi 1
 
 scalar . 	a 	1
 scalar . 	csize 	1e3
@@ -33,7 +33,7 @@ scalar . 	ctlg 	1e5
 scalar . 	priceratiovalue 	10
 scalar . 	rep 	19
 scalar . 	ttl 	1000
-scalar . 	xi 	0
+scalar . 	xi 	1
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-0 	4
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-1 	5
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-2 	6
@@ -59,8 +59,8 @@ scalar one_cache_scenario_3_links_network.node[0].content_store 	misses[0] 	7866
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_yes[0] 	1227
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_no[0] 	77440
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_ratio[0] 	0.015597391536477
-scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	7.5633861529975e-317
-scalar one_cache_scenario_3_links_network.node[0].content_store 	xi[0] 	0
+scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	9.7409350330033e-317
+scalar one_cache_scenario_3_links_network.node[0].content_store 	xi[0] 	1
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	interests[1] 	32939
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	data[1] 	32939
 scalar one_cache_scenario_3_links_network.node[1].content_store 	p_hit[1] 	0
