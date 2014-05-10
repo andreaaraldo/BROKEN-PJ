@@ -37,6 +37,7 @@
 #include "costprobcoinplain_policy.h"
 #include "costprobtailperf_policy.h"
 #include "costprobtailimperf_policy.h"
+#include "costprobtailsmart_policy.h"
 #include "error_handling.h"
 //</aa>
 #include "lcd_policy.h"
@@ -94,6 +95,11 @@ void base_cache::initialize(){
 			sens_string = decision_policy.substr( strlen("costprobprodplain") );
 			sens = atof(sens_string.c_str());
 			decisor = new Costprobprodplain(sens);
+		} else if (decision_policy.find("costprobtailsmart")==0)
+		{
+			sens_string = decision_policy.substr( strlen("costprobtailsmart") );
+			sens = atof(sens_string.c_str());
+			decisor = new Costprobtailsmart(sens, this);
 		}else if (decision_policy.find("costprobtailperf")==0)
 		{
 			sens = 0; // I don't need this parameter
@@ -130,7 +136,7 @@ void base_cache::initialize(){
 
 	if (decisor==NULL){
         std::stringstream ermsg; 
-		ermsg<<"Decision policy incorrect";
+		ermsg<<"Decision policy \""<<decision_policy<<"\" incorrect";
 	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
 	//</aa>

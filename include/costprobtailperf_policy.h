@@ -34,6 +34,8 @@
 #include "WeightedContentDistribution.h"
 #include "costprobtail_policy.h"
 
+// I verified that xi=1 is the best setting
+
 class Costprobtailperf: public Costprobtail{
 	public:
 		Costprobtailperf(double average_decision_ratio_, base_cache* mycache_par):
