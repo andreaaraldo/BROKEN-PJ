@@ -77,8 +77,6 @@ class Tailandrank: public DecisionPolicy{
 				else 
 					decision = false;
 
-				cout<<"new_content_index="<<new_content_index<<", lru_index="<<lru_index<<", decision"<<
-					decision<<endl;
 			}
 			return decision;
 		};
