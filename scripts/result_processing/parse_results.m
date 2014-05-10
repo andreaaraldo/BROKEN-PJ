@@ -8,9 +8,9 @@ possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","cost
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 decision_list={"costprobtailsmart0.01"}; % The decision plocies that I want to plot
 xi_list = {"0","0.25","0.50","0.75","1"};
-weights_list={"0.333_0.333_0.334"};
+weights_list={"0.5_0.25_0.25"};
 id_rep_list=1:5; # list of seeds
-alpha_list = {"0","0.8","1", "1.2"};
+alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
 
@@ -25,8 +25,8 @@ replacement_="lru";
 ctlg_="1e5"; 
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"decision", "priceratio","weights"};
-x_variable_name = "alpha";
+fixed_variable_names_additional = {"decision", "priceratio","alpha"};
+x_variable_name = "weights";
 z_variable_name = "xi"; % Over the columns
 
 

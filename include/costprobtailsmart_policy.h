@@ -77,8 +77,6 @@ class Costprobtailsmart: public Costprobtail{
 					else
 						decision = false;
 
-					cout<<"cost aware, new_content_cost="<<new_content_cost<<", lru_cost="<<
-						lru_cost<<", decision="<<decision<<endl;
 				}
 			}else{
 				//cost unaware
