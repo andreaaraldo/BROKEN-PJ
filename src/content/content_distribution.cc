@@ -60,6 +60,18 @@ void content_distribution::initialize(){
     F = par("file_size"); //Average chunk size
     degree = getAncestorPar("replicas");
 
+	//<aa>
+	// CHECK_INPUT{
+		if (cardF == 0){
+	        std::stringstream ermsg; 
+			ermsg<<"The catalog size is 0. Are you sure you intended this. If you are sure, please "<<
+				" disable this exception";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	// }CHECK_INPUT
+	//</aa>
+
+
     content_distribution::total_replicas_p = (int*) malloc ( sizeof(int) );
 	*(content_distribution::total_replicas_p) = 0;
 

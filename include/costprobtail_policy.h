@@ -43,7 +43,6 @@ class Costprobtail: public Costprob{
 			Costprob(average_decision_ratio_)
 		{
 
-			cout<<"Costprobtail constructor"<<endl;
 			if (xi>1 || xi<0){
 				std::stringstream ermsg; 
 				ermsg<<"xi="<<xi<<" is not valid";
@@ -51,7 +50,6 @@ class Costprobtail: public Costprob{
 			}
 			alpha = content_distribution_module->get_alpha();
 			mycache = dynamic_cast<lru_cache*>(mycache_par);
-			cout<<"after casting"<<endl;
 
 			#ifdef SEVERE_DEBUG
 			if( mycache == NULL ){

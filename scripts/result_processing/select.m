@@ -14,6 +14,8 @@ function parsed = select(selection_tuple, resultdir)
 						weights_ = selection_tuple.weights;
 						metric_list = selection_tuple.metric_list;
 
+
+						decision_root_ = "";
 						if strcmp( substr(decision_,1,3), "fix")
 							decision_root_ = "fix";
 							target_decision_probability_ = \
@@ -44,11 +46,22 @@ function parsed = select(selection_tuple, resultdir)
 							elseif strmatch( "costprobtailperf", decision_ )
 								decision_root_ = "costprobtailperf";
 								target_decision_probability_ = NaN;
+
+							elseif strmatch( "costprobtailsmart", decision_ )
+								decision_root_ = "costprobtailsmart";
+								target_decision_probability_ = \
+									num2str( strrep(decision_,"costprobtailsmart","") );
 							endif
 						else
 							decision_root_ = decision_;
 							target_decision_probability_ = NaN;
 						endif
+
+						% CHECK{
+						if strcmp(decision_root_,"")
+							error(["Error in parsing the decision policy ",decision_]);
+						endif
+						% }CHECK
 
 						filename = strcat(resultdir,"/",network,"/F-",forwarding_,"/D-",decision_,"/xi-",xi_,"/R-",replacement_,"/alpha-",alpha_,"/ctlg-",ctlg_,"/cachesize-",num2str(csize_),"/weights-",weights_,"/priceratio-",priceratio_,"/ccn-id",num2str(id_rep_),".sca");
 						% CHECK{

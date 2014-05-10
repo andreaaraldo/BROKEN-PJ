@@ -28,6 +28,7 @@
 #include "ccnsim.h"
 #include "ccn_interest.h"
 #include "base_cache.h"
+#include "error_handling.h"
 
 Register_Class(nrr);
 
@@ -134,7 +135,10 @@ bool *nrr::exploit(ccn_interest *interest){
 
 int nrr::nearest(vector<int>& repositories){
     int  min_len = 10000;
-    vector<int> targets;
+    vector<int> targets
+	//<aa>
+			(0);
+	//</aa>
 
     for (vector<int>::iterator i = repositories.begin(); i!=repositories.end();i++){ 		//Find the shortest (the minimum)
     	//<aa>
@@ -142,12 +146,23 @@ int nrr::nearest(vector<int>& repositories){
     	//</aa>
         if (FIB_entry.len < min_len ){
             min_len = FIB_entry.len;
-	    targets.clear();
+            targets.clear();
             targets.push_back(*i);
         }else if (FIB_entry.len == min_len)
-	    targets.push_back(*i);
-
+		    targets.push_back(*i);
     }
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	if (repositories.size() == 0){
+		std::stringstream ermsg; 
+		ermsg<<"There are 0 repositories. It's not admitted";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	int test = targets[0]; // Just to see if targets is properly allocated
+	#endif
+	//</aa>
+
     return targets[intrand(targets.size())];
 }
 

@@ -31,6 +31,7 @@
 
 #include "fix_policy.h"
 //<aa>
+#include "tailandrank_policy.h"
 #include "costprobprodcorr_policy.h"
 #include "costprobprodplain_policy.h"
 #include "costprobcoincorr_policy.h"
@@ -70,6 +71,9 @@ void base_cache::initialize(){
 		decisor = new Fix(dp);
     }
 	//<aa>
+	else if (decision_policy.find("tailandrank")==0){
+		decisor = new Tailandrank(this);
+    }
 	else if (decision_policy.find("costprob")==0)
 	{
 		double sens;

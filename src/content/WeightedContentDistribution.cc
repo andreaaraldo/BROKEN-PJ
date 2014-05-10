@@ -269,6 +269,12 @@ int WeightedContentDistribution::choose_repos ( )
 			ermsg<<"assigned_repo="<<assigned_repo;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
+		if (num_1_bits < 1){
+		    std::stringstream ermsg; 
+			ermsg<<"No repo has been assigned ";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+
 		if (num_1_bits != 1 && !replication_admitted){
 		    std::stringstream ermsg; 
 			ermsg<<"repo_string="<<repo_string;

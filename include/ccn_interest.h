@@ -30,6 +30,10 @@
 #include <deque>
 #include <algorithm>
 
+//<aa>
+#include "error_handling.h"
+//</aa>
+
 class ccn_interest: public ccn_interest_Base{
 protected:
 
@@ -79,6 +83,16 @@ public:
 			repo >>= 1;
 			i++;
 	    }
+
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		if (repos.size() ==0){
+			std::stringstream ermsg; 
+			ermsg<<"There are 0 repositories for interest "<<__id(chunk_var);
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+		//</aa>
 
 	    return repos;
 	}
