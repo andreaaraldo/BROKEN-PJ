@@ -1,9 +1,5 @@
 version 2
-<<<<<<< HEAD
-run General-101-20140509-21:33:16-21569
-=======
-run General-101-20140509-21:30:37-16141
->>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
+run General-995-20140511-15:48:51-16277
 attr D costprobprodcorr0.01
 attr F nrr
 attr R lru
@@ -11,11 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-<<<<<<< HEAD
-attr datetime 20140509-21:33:16
-=======
-attr datetime 20140509-21:30:37
->>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
+attr datetime 20140511-15:48:51
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=one_cache_scenario_3_links, $rep=17, $priceratiovalue=5, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1, $R=lru, $csize=1e3"
@@ -24,16 +16,12 @@ attr measurement "$net=one_cache_scenario_3_links, $rep=17, $priceratiovalue=5, 
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr priceratiovalue 5
-<<<<<<< HEAD
-attr processid 21569
-=======
-attr processid 16141
->>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
+attr processid 16277
 attr rep 17
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 101
+attr runnumber 995
 attr seedset 17
 attr ttl 1000
 attr weights 0.333_0.333_0.334

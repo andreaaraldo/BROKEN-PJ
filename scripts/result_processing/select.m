@@ -135,7 +135,7 @@ function parsed = select(selection_tuple, resultdir)
 						endif
 
 
-			if strcmp(decision_root_, "costprob")
+			if strmatch("costprob", decision_root_)
 				selection_tuple_of_fixed_counterpart = selection_tuple;
 				selection_tuple_of_fixed_counterpart.decision =\
 						 ["fix",target_decision_probability_];
@@ -150,16 +150,18 @@ function parsed = select(selection_tuple, resultdir)
 
 	% COMPUTE COST FRACTION{
 		% Comparison with the no-cache scenario
-		if !isequal("never", decision_)
+		if strcmp("cost_fraction", metric_list{:,:} ) && !isequal("never", decision_) 
+
 				selection_tuple_of_never_counterpart = selection_tuple;
 				selection_tuple_of_never_counterpart.decision = "never";
 				selection_tuple_of_never_counterpart.xi = "1";
 				never_counterpart_parsed = select(selection_tuple_of_never_counterpart,\
 						resultdir);
 				parsed.cost_fraction = parsed.total_cost / never_counterpart_parsed.total_cost;
+		else
+				parsed.cost_fraction = NaN;
 		endif
 	% }COMPUTE COST FRACTION
-
 
 			if severe_debug
 				if (size(parsed.free_link_load) != [1,1] || size(parsed.cheap_link_load) != [1,1] \

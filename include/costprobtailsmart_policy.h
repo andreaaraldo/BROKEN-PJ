@@ -84,8 +84,6 @@ class Costprobtailsmart: public Costprobtail{
 					decision = true;
 				else
 					decision = false;
-
-				cout<<"cost unaware, decision="<<decision<<endl;
 			}
 
 			if (decision == true)
