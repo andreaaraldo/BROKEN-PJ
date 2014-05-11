@@ -40,10 +40,11 @@ function y = print_table (out_filename, matrix, x_variable_column, column_names,
 	% }DELETE PREVIOUS COPY
 
 	delimiter = " ";
-	outfile = fopen(out_filename,"w");
+	 [outfile, msg]  = fopen(out_filename,"w");
 	% CHECK{
 	if (outfile < 0)
 		out_filename
+		msg
 		error(["Error opening file "]);
 	endif
 	% }CHECK

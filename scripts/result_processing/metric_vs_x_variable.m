@@ -82,13 +82,6 @@ function y = metric_vs_x_variable (input_data)
 				endfor
 			# }Initialize the matrix_over_seed
 
-
-			column_names{1} = x_variable_name;
-			for idx_z = 1:length(z_variable_values)
-				column_names{ idx_z+1 } = z_variable_values{ idx_z };
-			endfor
-
-
 			for id_rep_ = id_rep_list
 				# Compute the x_variable_column, using the first z_value
 				z_value_ = z_variable_values{1};
@@ -338,6 +331,9 @@ function y = metric_vs_x_variable (input_data)
 				seed_id ++;
 			endfor # id_rep for
 
+			% matrix_over_seed_list{idx_metric} is now complete
+
+			% {PREPARING TEXTUAL DATA
 			fixed_variables = { network; forwarding_; replacement_;	ctlg_; csize_; num2str(id_rep_list) };
 			fixed_variable_names = {"network"; "forwarding"; "replacement"; "ctlg";"csize"; "seed_list"};
 			fix_var_num = length(fixed_variables);
@@ -349,6 +345,7 @@ function y = metric_vs_x_variable (input_data)
 				error("fixed_variable_names and fixed_variables are different");
 			endif
 			% }CHECK
+
 
 			for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
 				new_fix_var_name = fixed_variable_names_additional{idx_fixed_variable_additional};
@@ -367,70 +364,31 @@ function y = metric_vs_x_variable (input_data)
 			endfor
 
 			comment="";
+			text_data.fixed_variables = fixed_variables;
+			text_data.fixed_variable_names = fixed_variable_names;
+			text_data.comment = comment;
+			% }PREPARING TEXTUAL DATA
 
-			for idx_metric = 1:length(metric_list)
-				% CHECK MATRIX{
-					if severe_debug
-						if size(matrix_over_seed_list{idx_metric},1) != length(x_variable_values) || size(matrix_over_seed_list{idx_metric},2) != length(column_names)
-							fixed_variable_names_additional
-							fixed_variable_values_additional
-							x_variable_values
-							matrix_over_seed = matrix_over_seed_list{idx_metric}
-							metric = metric_list{idx_metric}
-							error(["The number of rows in the matrix must be equal to the number of ",\
-									"x variable.The number of columns must match the column names"]);
-						endif
-					endif
-				% }CHECK MATRIX
+			metric = metric_list{idx_metric};
 
-				[mean_matrix, conf_matrix] = confidence_interval(matrix_over_seed_list{idx_metric});
-				mean_matrix_list{idx_metric} = mean_matrix;
-				conf_matrix_list{idx_metric} = conf_matrix;
-
-				% CHECK MATRIX{
-					if severe_debug
-						if size(mean_matrix,1) != length(x_variable_values) || size(conf_matrix,1) != length(x_variable_values) || size(mean_matrix,2) != length(column_names) || size(conf_matrix,2) != length(column_names)
-							fixed_variable_names_additional
-							fixed_variable_values_additional
-							x_variable_values
-							mean_matrix
-							conf_matrix
-							metric_list{idx_metric}
-							error(["The number of rows in the matrix must be equal to the number of ",\
-									"x variable.The number of columns must match the column names"]);
-						endif
-					endif
-				% }CHECK MATRIX
-			endfor
-
-			for idx_metric = 1:length(metric_list)
-				metric = metric_list{idx_metric};
-
-				common_out_filename = [ out_folder, metric,"_vs_", x_variable_name];
-				for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
+			common_out_filename = [ out_folder, metric,"_vs_", x_variable_name];
+			for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
 					value = fixed_variable_values_additional{idx_fixed_variable_additional};
 					common_out_filename = [common_out_filename, "-",\
 						fixed_variable_names_additional{idx_fixed_variable_additional}, "_", value\
 						];
-				endfor
-				common_out_filename = [common_out_filename, "-ctlg_",ctlg_to_write_,"-csize_",csize_ ];
-				% CHECK{
-					if severe_debug && !isequal( class(common_out_filename), "char" )
+			endfor
+			common_out_filename = [common_out_filename, "-ctlg_",ctlg_to_write_,"-csize_",csize_ ];
+			% CHECK{
+				if severe_debug && !isequal( class(common_out_filename), "char" )
 						common_out_filename
 						class_of_common_out_filename = class(common_out_filename)
 						error("Error in the construction of the output file name");
-					endif
-				% }CHECK
+				endif
+			% }CHECK
 
-				% Print mean matrix
-				matrix = mean_matrix_list{idx_metric};
-				out_filename = [common_out_filename,"-mean.dat"];
-				print_table(out_filename, matrix, x_variable_column, column_names, fixed_variables,fixed_variable_names, comment);
-
-				% Print confidence interval matrix
-				matrix = conf_matrix_list{idx_metric};;
-				out_filename = [common_out_filename,"-conf.dat"];
-				print_table(out_filename, matrix, x_variable_column, column_names, fixed_variables,fixed_variable_names, comment);
+			for idx_metric = 1:length(metric_list)
+				mean_and_conf_matrices(input_data, matrix_over_seed_list, text_data, common_out_filename);
 			endfor
 	endfor %csize
 endfunction
