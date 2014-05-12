@@ -1,0 +1,59 @@
+package networks;
+
+import modules.channels.IcnChannel;
+
+
+network abilene_cost_network extends base_network{
+
+    parameters:
+        //Number of ccn nodes
+		int num_caching_nodes = 11; // All nodes in 0..num_caching_nodes-1 are caching
+    	n = num_caching_nodes+3; 	//The 3 additional nodes are fake nodes to which
+					//we will attach the repos
+
+		int priceratio;
+		double xi;
+		int cachesize;
+		string decision_policy;
+
+
+		double cheap_price = 1;
+		double expensive_price = priceratio;
+		num_clients = 3;
+		node_clients = "3,7,10";
+		num_repos = 3;
+		node_repos = "11,12,13";
+
+
+		int single_cachesize = ceil(cachesize / num_caching_nodes );
+		node[0..10].content_store.C = single_cachesize;
+		node[0..10].content_store.DS = decision_policy;
+
+
+		// The following nodes are "fake"
+		node[11..13].content_store.C =  0;
+		node[11..13].core_layer.interest_aggregation =  false; 
+		node[11..13].core_layer.transparent_to_hops = true;
+		node[11..13].content_store.DS = "never";
+
+connections allowunconnected:
+	node[1].face++ <--> node[0].face++;
+	node[10].face++ <--> node[0].face++;
+	node[10].face++ <--> node[1].face++;
+	node[10].face++ <--> node[9].face++;
+	node[2].face++ <--> node[1].face++;
+	node[3].face++ <--> node[2].face++;
+	node[4].face++ <--> node[3].face++;
+	node[5].face++ <--> node[4].face++;
+	node[6].face++ <--> node[5].face++;
+	node[7].face++ <--> node[3].face++;
+	node[7].face++ <--> node[6].face++;
+	node[8].face++ <--> node[2].face++;
+	node[8].face++ <--> node[7].face++;
+	node[9].face++ <--> node[8].face++;
+
+	// Attach the repos
+	node[0].face++ <--> IcnChannel{price_desc=0;} <-->node[11].face++;
+	node[5].face++ <--> IcnChannel{price_desc=cheap_price;} <-->node[12].face++;
+	node[9].face++ <--> IcnChannel{price_desc=expensive_price;} <-->node[13].face++;
+}

@@ -64,7 +64,7 @@ void content_distribution::initialize(){
 	// CHECK_INPUT{
 		if (cardF == 0){
 	        std::stringstream ermsg; 
-			ermsg<<"The catalog size is 0. Are you sure you intended this. If you are sure, please "<<
+			ermsg<<"The catalog size is 0. Are you sure you intended this?If you are sure, please "<<
 				" disable this exception";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
@@ -157,6 +157,17 @@ void content_distribution::verify_replica_number(){
 */
 vector<int> content_distribution::binary_strings(int num_ones,int len){
 
+	//<aa> CHECK INPUT
+		#ifdef SEVERE_DEBUG
+			if (num_ones <= 0){
+				std::stringstream ermsg; 
+				ermsg<<"You want a number of object replicas equal to "<<
+					num_ones<<". It is not valid";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+		#endif
+	//</aa>
+
     vector<int> bins;
     int ones,bin;
     for (int i =1;i< (1<<len);i++){
@@ -171,6 +182,17 @@ vector<int> content_distribution::binary_strings(int num_ones,int len){
 		//binary number
 		if (ones == num_ones)
 			bins.push_back(i);
+
+		//<aa>
+		#ifdef SEVERE_DEBUG
+			if (bins.size() == 0){
+				std::stringstream ermsg; 
+				ermsg<<"No binary strings were produced. The number of replicas for "<<
+					"each content should be "<<num_ones;
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+		#endif
+		//</aa>
     }
     return bins;
 
@@ -256,6 +278,16 @@ void content_distribution::init_content()
 				repo_extracted >>= 1;
 				k++;
 			}
+
+//			#ifdef SEVERE_DEBUG
+//				int object_to_test = 47785;
+//				if (d == object_to_test){
+//					cout<<"object "<<object_to_test<<" is assigned to repo ";
+//					for (unsigned repo_idx=0; repo_idx < chosen_repos.size(); repo_idx++ )
+//						cout<<chosen_repos[repo_idx]<<", "<<endl;
+//					exit(3);
+//				}
+//			#endif
 			// </aa>
 		}
 
