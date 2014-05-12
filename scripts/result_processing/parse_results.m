@@ -3,14 +3,14 @@ global severe_debug = true;
 
 out_folder="~/temp/icn14_runs/";
 
-priceratio_list={"1","2","5","10"};
+priceratio_list={"10"};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-decision_list={"costprobprodcorr0.01"}; % The decision plocies that I want to plot
+decision_list={"lce","fix0.01","costprobprodcorr0.01"}; % The decision plocies that I want to plot
 xi_list = {"1"};
 weights_list={"0.333_0.333_0.334"};
-id_rep_list=1:2; # list of seeds
-alpha_list = {"0","0.8","1","1.2"};
+id_rep_list=1:20; # list of seeds
+alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
 
@@ -18,16 +18,16 @@ resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
 						"client_requests", "decision_ratio", "cost_savings"};
 
-metric_list={"cost_savings"};
+metric_list={"cost_fraction"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
 ctlg_="1e5"; 
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"decision", "xi","weights"};
+fixed_variable_names_additional = {"alpha", "xi","weights"};
 x_variable_name = "priceratio";
-z_variable_name = "alpha"; % Over the columns
+z_variable_name = "decision"; % Over the columns
 
 
 i = 1;
@@ -64,7 +64,6 @@ for idx_csize = 1:length(csize_list)
 							parsed_ = select(selection_tuple, resultdir);
 
 							parsed(i) = parsed_;
-
 							i++;
 						endfor % seed loop
 					endfor % weights loop
@@ -74,6 +73,8 @@ for idx_csize = 1:length(csize_list)
 	endfor %alpha for
 endfor %csize for
 
+scatter_plot(parsed);
+error("ciao")
 
 ##################################
 ### PREPARE DATA FOR PLOTTING ####
