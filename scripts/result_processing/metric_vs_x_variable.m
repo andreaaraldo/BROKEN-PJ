@@ -387,8 +387,6 @@ function y = metric_vs_x_variable (input_data)
 				endif
 			% }CHECK
 
-			scatter_plot(input_data, matrix_over_seed_list, text_data,\
-				 common_out_filename);
 			
 			mean_and_conf_matrices(input_data, matrix_over_seed_list, text_data,\
 				 common_out_filename);

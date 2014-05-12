@@ -135,7 +135,7 @@ function parsed = select(selection_tuple, resultdir)
 						endif
 
 
-			if strmatch("costprob", decision_root_)
+			if strmatch("costprob", decision_root_) && strcmp("cost_savings",metric_list{:,:})
 				selection_tuple_of_fixed_counterpart = selection_tuple;
 				selection_tuple_of_fixed_counterpart.decision =\
 						 ["fix",target_decision_probability_];
