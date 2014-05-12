@@ -1,5 +1,5 @@
 version 2
-run General-0-20140512-16:04:14-29922
+run General-4-20140512-16:42:43-30059
 attr D costprobprodcorr0.01
 attr F spr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140512-16:04:14
+attr datetime 20140512-16:42:43
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=spr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1, $R=lru, $csize=1e3"
@@ -16,12 +16,12 @@ attr measurement "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333
 attr net abilene_cost
 attr network networks.${net=abilene_cost}_network
 attr priceratiovalue 10
-attr processid 29922
+attr processid 30059
 attr rep 1
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 0
+attr runnumber 4
 attr seedset 1
 attr ttl 1000
 attr weights 0.333_0.333_0.334
