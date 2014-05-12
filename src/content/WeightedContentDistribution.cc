@@ -64,8 +64,8 @@ void WeightedContentDistribution::initialize()
 
 	content_distribution::initialize();
 
-	// Other checks
-	{
+	
+	{// Other checks
 		if ( degree != -1 ){
 			ermsg<<"degree is "<<degree <<". But with this content distribution model "<<
 				"this value is ignored. Please, set degree = -1";
@@ -101,8 +101,9 @@ void WeightedContentDistribution::verify_prices()
 				<<" elements";
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
-	unsigned previous_repo_price = 0;
+	vector<double> repo_prices(weights.size() );
 
+	// Retrieve repo_prices
 	for (int repo_idx=0; repo_idx < num_repos; repo_idx++)
 	{
 		// get the node associated to the repository
@@ -126,14 +127,25 @@ void WeightedContentDistribution::verify_prices()
 		}
 		cGate *gate = node->getModule()->gate("face$o", 1);
 		IcnChannel *ch = (IcnChannel*) gate->getChannel();
-		double repo_price = ch->get_price();
-		if (repo_price < previous_repo_price)
+		repo_prices[repo_idx] = ch->get_price();
+	}
+
+	// Verify the price correctness
+	for (int repo_idx=0; repo_idx < num_repos-1; repo_idx++){
+		if (repo_prices[repo_idx] > repo_prices[repo_idx+1] )
 		{
 	        std::stringstream ermsg; 
-			ermsg<<"Prices must be non descending. This is due to the way choose_repo() works.";
+			ermsg<<"Prices must be non descending. This is due to the way choose_repo() works."
+				<<".\nrepo "<<repo_idx<<" has price "<<repo_prices[repo_idx] <<" while repo "
+				<<repo_idx+1<<" has price "<<repo_prices[repo_idx+1]
+				<<".\nrepos are attached to the following nodes: ";			
+			for (int repo_idx2=0; repo_idx2 < num_repos; repo_idx2++)
+				ermsg << repositories[repo_idx2] << ",";
+			ermsg << ".\n Prices are:";
+			for (int repo_idx2=0; repo_idx2 < num_repos; repo_idx2++)
+				ermsg << repo_prices[repo_idx2] << ",";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
-		previous_repo_price = repo_price;
 	}
 }
 #endif

@@ -29,6 +29,7 @@ network one_cache_scenario_3_links_network extends base_network
 
 		// The following two values are not used to compute the cost but are only used by the costprob policy
 		// to take its decision
+		// MAYBE THEY ARE NO MORE USED: TODO: CHECK IT
 		double cheap_price_powered = 1/(1+priceratio^xi);
 		double expensive_price_powered = (priceratio^xi)/(1+priceratio^xi);
 

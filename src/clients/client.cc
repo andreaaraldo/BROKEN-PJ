@@ -155,8 +155,13 @@ void client::handle_timers(cMessage *timer){
 		if ( simTime() - i->second.last > RTT ){
 			//<aa>
 			#ifdef SEVERE_DEBUG
+			    chunk_t chunk = 0; 	// Allocate chunk data structure. 
+									// This value wiil be overwritten soon
+				name_t object_name = i->first;
+				chunk_t object_id = __sid(chunk, object_name);
 				std::stringstream ermsg; 
-				ermsg<<"Client is not able to retrieve tha data before the timeout expires. This is not necessarily a bug. If you expect such an event and you think it is not a bug, disable this error";
+				ermsg<<"Client was not able to retrieve object "<<object_id<< " before the timeout expired. This is not necessarily a bug. If you expect such an event and you think it is not a bug, disable this error";
+				
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			#endif
 			//</aa>
@@ -191,7 +196,6 @@ void client::request_file(){
 void client::resend_interest(name_t name,cnumber_t number, int toward){
     chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
-
     __sid(chunk, name);
     __schunk(chunk, number);
 
