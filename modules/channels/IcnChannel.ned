@@ -33,4 +33,12 @@ channel IcnChannel extends DatarateChannel
         //		cost = i_source < i_dest cost_up ? cost_asc : cost_desc;
         double price_asc = default(0);
         double price_desc = default(0);
+
+		double max_price; 	// The max among the prices assigned to all the links
+							// including the present one
+
+		// Number of bits used to represent the price internally
+		// Set it to 0 if you want no approximation (you can think of an infinite 
+		// number of bits)
+		int price_bits; 
 }

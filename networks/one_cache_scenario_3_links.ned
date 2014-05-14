@@ -65,7 +65,7 @@ network one_cache_scenario_3_links_network extends base_network
         node[0].face++ <--> node[1].face++;
         node[0].face++ <--> node[2].face++;
         node[0].face++ <--> node[3].face++;
-        node[1].face++ <-->  IcnChannel{price_desc=0;} <--> node[4].face++;
-        node[2].face++ <-->  IcnChannel{price_desc=cheap_price;} <--> node[5].face++;
-        node[3].face++ <-->  IcnChannel{price_desc=expensive_price;} <--> node[6].face++;
+        node[1].face++ <-->  IcnChannel{price_desc=0; max_price=expensive_price;} <--> node[4].face++;
+        node[2].face++ <-->  IcnChannel{price_desc=cheap_price; max_price=expensive_price;} <--> node[5].face++;
+        node[3].face++ <-->  IcnChannel{price_desc=expensive_price; max_price=expensive_price;} <--> node[6].face++;
 }

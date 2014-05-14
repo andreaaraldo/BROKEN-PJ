@@ -47,6 +47,27 @@ void IcnChannel::initialize()
         int dest_index = getSourceGate()->getNextGate()->getOwnerModule()->getIndex();
         price = source_index < dest_index ? price_asc : price_desc;
 
+		////////////////////////////////////
+		// Compute represented_price ///////
+		////////////////////////////////////
+		int price_bits = par("price_bits");
+		if (price_bits == 0){
+			// No approximation
+			represented_price = price;
+		} else{
+		    double max_price = par("max_price");
+			// I will represent the real price interval [0,max_price] with a fake price interval
+			// [0,2^q-1] (where q = price_bits).
+			// This requires to scale all the price by this factor
+			double scale_factor = max_price / ( pow(2,price_bits) -1);
+			double scaled_price = price / scale_factor;
+			double quantized_scale_price = round(scaled_price);
+			// I report the original quantized_price to the original scale [0,max_price]
+			represented_price = quantized_scale_price * scale_factor;
+		}
+		////////////////////////////////////
+		////////////////////////////////////
+
 
 		// Registering this IcnChannel to the statistics module
 		vector<string> name_vec(1,"modules.statistics.statistics");
@@ -88,6 +109,20 @@ double IcnChannel::get_cost(){
 
 double IcnChannel::get_price(){
     return price;
+}
+
+double IcnChannel::get_represented_price(){
+    return represented_price;
+}
+
+void IcnChannel::finish(){
+    char name [30];
+    sprintf ( name, "price[%d]", getSourceGate()->getOwnerModule()->getIndex());
+    recordScalar (name, price);
+
+    sprintf ( name, "represented_price[%d]", getSourceGate()->getOwnerModule()->getIndex());
+    recordScalar (name, represented_price);
+
 }
 
 Register_Class(IcnChannel);

@@ -38,6 +38,8 @@ class IcnChannel: public cDatarateChannel {
 		void clear_stat();
 		double get_cost(); // num_objects_served * price;
 		double get_price();
+		double get_represented_price();
+		void finish();
 
 	private:
 		statistics* statistics_object; // Reference to the statistics object
@@ -49,6 +51,8 @@ class IcnChannel: public cDatarateChannel {
 
 		// Statistics
 		long count; //count how many objects have passed through this channel
+		double represented_price;	// The price represented with the bits used to
+									// represent it
 };
 
 #endif /* ICNCHANNEL_H_ */
