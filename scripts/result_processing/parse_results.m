@@ -9,25 +9,26 @@ possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","cost
 decision_list={"costprobprodcorr0.01"}; % The decision plocies that I want to plot
 xi_list = {"1"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0"};
+weights_list={"0.333_0.333_0.334"};
 id_rep_list=1:20; # list of seeds
 alpha_list = {"1"};
-csize_list = {"1e3"};
-csize_to_write_list = {"1e3"};
+csize_list = {"1e2"};
+csize_to_write_list = {"1e2"};
 
 resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance", "expensive_link_utilization",\
 						"client_requests", "decision_ratio", "cost_savings"};
 
-metric_list={"cost_savings"};
+metric_list={"cost_fraction"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
-ctlg_="1e5"; 
-ctlg_to_write_="1e5";
+ctlg_="1e4"; 
+ctlg_to_write_="1e4";
 
-fixed_variable_names_additional = {"decision", "xi","alpha"};
+fixed_variable_names_additional = {"alpha", "xi","priceratio"};
 x_variable_name = "weights";
-z_variable_name = "priceratio"; % Over the columns
+z_variable_name = "decision"; % Over the columns
 
 
 i = 1;
