@@ -2,15 +2,16 @@
 global severe_debug = true;
 
 out_folder="~/temp/icn14_runs/";
+optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 
-priceratio_list={"1","2","5","10","100"};
+priceratio_list={"10"};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01","fix1", "fix0",\
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-decision_list={"lce","fix0.01","costprobprodcorr0.01","costprobtailperf"}; % The decision plocies that I want to plot
-xi_list = {"1"};
+decision_list={"costprobcorrprod0.01"}; % The decision plocies that I want to plot
+xi_list = {"0","1","0.25","0.5","0.75"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0"};
-weights_list={"0.333_0.333_0.334"};
-id_rep_list=1:20; # list of seeds
+weights_list={"0_0.5_0.5"};
+id_rep_list=1:1; # list of seeds
 alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
@@ -62,7 +63,8 @@ for idx_csize = 1:length(csize_list)
 							selection_tuple.weights = weights_;
 							selection_tuple.metric_list = metric_list;
 
-							parsed_ = select(selection_tuple, resultdir);
+							parsed_ = select(selection_tuple, resultdir,...
+								optimization_result_folder);
 
 							parsed(i) = parsed_;
 							i++;
