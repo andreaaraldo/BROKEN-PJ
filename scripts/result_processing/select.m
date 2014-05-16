@@ -14,14 +14,13 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						weights_ = selection_tuple.weights;
 						metric_list = selection_tuple.metric_list;
 
-
 						decision_root_ = "";
-						if strcmp( substr(decision_,1,3), "fix")
+						if strmatch( "fix", decision_ )
 							decision_root_ = "fix";
-							target_decision_probability_ = \
+							target_decision_probability_ = ...
 								num2str( strrep(decision_,"fix","") )
 
-						elseif strcmp(decision_, "costopt")
+						elseif strmatch("costopt", decision_)
 							decision_root_ = "costopt";
 							target_decision_probability_ = NaN;
 						
@@ -63,7 +62,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						endif
 
 						% CHECK{
-						if strcmp(decision_root_,"")
+						if isequal(decision_root_,"")
 							error(["Error in parsing the decision policy ",decision_]);
 						endif
 						% }CHECK
@@ -78,8 +77,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						filename = strcat(destination_folder,"/ccn-id", ...
 										num2str(id_rep_),".sca");
 
-
-						if strcmp(decision_,"costopt")
+						if isequal(decision_,"costopt")
 							% This file does not exists yet
 							create_ccnsim_representation(selection_tuple,...
 								destination_folder, optimization_result_folder);
@@ -119,6 +117,10 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
 						parsed.total_cost = str2num(output);
+
+						error("prima di prova")
+						strcmp("hdistance",metric_list{:,:})
+						error("dopo di prova")
 
 					if strcmp("hdistance",metric_list{:,:})
 						string_to_search="hdistance ";
@@ -169,7 +171,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.expensive_link_load = NaN;
 					endif
 
-			if strmatch("costprob", decision_root_) && strcmp("cost_savings",metric_list{:,:})
+			if strcmp("cost_savings",metric_list{:,:}) && strmatch("costprob", decision_root_)
 				selection_tuple_of_fixed_counterpart = selection_tuple;
 				selection_tuple_of_fixed_counterpart.decision =...
 						 ["fix",target_decision_probability_];
