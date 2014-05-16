@@ -1,8 +1,10 @@
 % result processing
 global severe_debug = true;
 
+
 out_folder="~/temp/icn14_runs/";
 optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
+
 
 priceratio_list={"10"};
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01",...
@@ -16,6 +18,8 @@ id_rep_list=1:1; # list of seeds
 alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
+
+q_list={"0"};
 
 resultdir="~/software/ccnsim/results";
 metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance",...
@@ -34,6 +38,12 @@ x_variable_name = "priceratio";
 z_variable_name = "decision"; % Over the columns
 
 
+% {CHECK
+if length(q_list)!=1
+	error("Only one q value is admitted")
+endif
+% }CHECK
+
 i = 1;
 
 
@@ -50,27 +60,30 @@ for idx_csize = 1:length(csize_list)
 					xi_ = xi_list{idx_xi};
 					for idx_weight = 1:length(weights_list)
 						weights_ = weights_list{idx_weight};
-						for id_rep_ = id_rep_list
+						for q_idx = 1:length(q_list)
+							for id_rep_ = id_rep_list
 
-							selection_tuple.priceratio = priceratio_list{priceratio_idx};
-							selection_tuple.decision = decision_list{decision_idx};
-							selection_tuple.xi = xi_;
-							selection_tuple.forwarding = forwarding_;
-							selection_tuple.replacement = replacement_;
-							selection_tuple.alpha = alpha_list{alpha_idx};
-							selection_tuple.ctlg = ctlg_;
-							selection_tuple.csize = csize_;
-							selection_tuple.id_rep = id_rep_;
-							selection_tuple.network = network;
-							selection_tuple.weights = weights_;
-							selection_tuple.metric_list = metric_list;
+								selection_tuple.priceratio = priceratio_list{priceratio_idx};
+								selection_tuple.decision = decision_list{decision_idx};
+								selection_tuple.xi = xi_;
+								selection_tuple.forwarding = forwarding_;
+								selection_tuple.replacement = replacement_;
+								selection_tuple.alpha = alpha_list{alpha_idx};
+								selection_tuple.q = q_list{q_idx};
+								selection_tuple.ctlg = ctlg_;
+								selection_tuple.csize = csize_;
+								selection_tuple.id_rep = id_rep_;
+								selection_tuple.network = network;
+								selection_tuple.weights = weights_;
+								selection_tuple.metric_list = metric_list;
 
-							parsed_ = select(selection_tuple, resultdir,...
-								optimization_result_folder);
+								parsed_ = select(selection_tuple, resultdir,...
+									optimization_result_folder);
 
-							parsed(i) = parsed_;
-							i++;
-						endfor % seed loop
+								parsed(i) = parsed_;
+								i++;
+							endfor % seed loop
+						endfor % q_loop
 					endfor % weights loop
 				endfor % xi loop
 			endfor
@@ -90,7 +103,8 @@ input_data.priceratio_list = priceratio_list;
 input_data.decision_list = decision_list; % The decision plocies that I want to plot
 input_data.id_rep_list = id_rep_list; # list of seeds
 input_data.alpha_list = alpha_list;
-input_data.xi_list = alpha_list;
+input_data.q_list = q_list;
+input_data.xi_list = xi_list;
 input_data.csize_list = csize_list;
 input_data.csize_to_write_list = csize_to_write_list;
 

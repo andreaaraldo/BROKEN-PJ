@@ -7,6 +7,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						forwarding_ = selection_tuple.forwarding;
 						replacement_ = selection_tuple.replacement;
 						alpha_ = selection_tuple.alpha;
+						q_ = selection_tuple.q;
 						ctlg_ = selection_tuple.ctlg;
 						csize_ = selection_tuple.csize;
 						id_rep_ = selection_tuple.id_rep;
@@ -68,7 +69,8 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						% }CHECK
 
 						destination_folder = ...
-							strcat(resultdir,"/",network,"/F-",forwarding_,...
+							strcat(resultdir,"/",network,"/q-",q_,...
+							"/F-",forwarding_,...
 							"/D-",decision_,"/xi-",xi_,"/R-",replacement_,...
 							"/alpha-",alpha_,"/ctlg-",ctlg_,...
 							"/cachesize-",num2str(csize_),"/weights-",weights_,...
@@ -102,6 +104,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.forwarding = forwarding_;
 						parsed.replacement = replacement_;
 						parsed.alpha = alpha_;
+						parsed.q = q_;
 						parsed.ctlg = ctlg_;
 						parsed.csize = csize_;
 						parsed.priceratio = priceratio_;

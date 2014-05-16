@@ -37,6 +37,7 @@ function y = metric_vs_x_variable (input_data)
 	forwarding = {input_data.parsed.forwarding};
 	replacement = {input_data.parsed.replacement};
 	alpha = {input_data.parsed.alpha};
+	q = {input_data.parsed.q};
 	ctlg = {input_data.parsed.ctlg};
 	csize = {input_data.parsed.csize};
 	priceratio = {input_data.parsed.priceratio};
