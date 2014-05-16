@@ -121,7 +121,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						[status, output] = system(command,1);
 						parsed.total_cost = str2num(output);
 
-						error("prima di prova")
+						disp("prima di prova")
 						strcmp("hdistance",metric_list{:,:})
 						error("dopo di prova")
 
