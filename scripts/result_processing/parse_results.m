@@ -6,15 +6,19 @@ out_folder="~/temp/icn14_runs/";
 optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 
 
-priceratio_list={"10"};
+priceratio_list={"1","2","5","10"};
+
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01",...
 			"fix1", "fix0",...
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-decision_list={"never","lce","fix0.01","tailandrank","costprobprodcorr0.01","costprobtailperf"}; % The decision plocies that I want to plot
+
+% The decision plocies that I want to plot
+decision_list={"never","lce","fix0.01","tailandrank","costprobprodcorr0.01","costprobtailperf"}; 
+
 xi_list = {"1"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0"};
 weights_list={"0.333_0.333_0.334"};
-id_rep_list=1:1; # list of seeds
+id_rep_list=1:20; # list of seeds
 alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
@@ -22,18 +26,16 @@ csize_to_write_list = {"1e3"};
 q_list={"0"};
 
 resultdir="~/software/ccnsim/results";
-metric_list = {"p_hit", "total_cost", "per_request_cost", "hdistance",...
-			 "expensive_link_utilization",...
-			"client_requests", "decision_ratio", "cost_savings"};
 
-metric_list={"cost_fraction","decision_ratio","repo_load","p_hit"};
+% See select.m for all the possible metrics
+metric_list={"potential_reduction_wrt_costprobtailperf"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
 ctlg_="1e5"; 
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"alpha", "xi","weights"};
+fixed_variable_names_additional = {"alpha", "xi","weights","q"};
 x_variable_name = "priceratio";
 z_variable_name = "decision"; % Over the columns
 

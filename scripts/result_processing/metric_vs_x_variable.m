@@ -2,7 +2,6 @@
 function y = metric_vs_x_variable (input_data)
 	global severe_debug;
 
-
 	% Unroll input data
 	out_folder = input_data.out_folder;
 
@@ -50,8 +49,14 @@ function y = metric_vs_x_variable (input_data)
 	expensive_link_load = {input_data.parsed.expensive_link_load};
 	decision_yes = {input_data.parsed.decision_yes};
 	decision_no = {input_data.parsed.decision_no};
-	cost_savings = {input_data.parsed.cost_savings};
 	cost_fraction = {input_data.parsed.cost_fraction};
+	cost_savings_wrt_fix = {input_data.parsed.cost_savings_wrt_fix};
+	potential_reduction_wrt_costopt = {input_data.parsed.potential_reduction_wrt_costopt};
+	potential_reduction_wrt_costprobtailperf =...
+				{input_data.parsed.potential_reduction_wrt_costprobtailperf};
+	potential_savings_wrt_costprobtailperf =...
+				 {input_data.parsed.potential_savings_wrt_costprobtailperf};
+	potential_savings_wrt_costopt = {input_data.parsed.potential_savings_wrt_costopt};
 	weights = {input_data.parsed.weights};
 
 
@@ -63,6 +68,12 @@ function y = metric_vs_x_variable (input_data)
 				fixed_variable_values_additional
 				error("The two vectors must be equally long");
 			endif
+		endif
+
+		if length(csize_list) != 1
+			csize_list
+			error("As for now, only a csize_list of length 1 is supported. If you want to ",...
+					"use whatevere csize_list, please fix the loop below");
 		endif
 	% }CHECK_INPUT_DATA
 
@@ -87,8 +98,8 @@ function y = metric_vs_x_variable (input_data)
 				# Compute the x_variable_column, using the first z_value
 				z_value_ = z_variable_values{1};
 				z_variable_assumed_values = eval(z_variable_name);
-				idx_pr =  (strcmp(z_variable_assumed_values, z_value_ ) \
-							& ( cell2mat(id_rep) == id_rep_ ) \
+				idx_pr =  (strcmp(z_variable_assumed_values, z_value_ ) ...
+							& ( cell2mat(id_rep) == id_rep_ ) ...
 							& strcmp(csize, csize_) );
 
 				% CHECK{
@@ -99,7 +110,7 @@ function y = metric_vs_x_variable (input_data)
 						idx_pr
 						filename_list
 						filenames_selected = filename_list{idx_pr}
-						error(["The number of selected items MUST be at least",\
+						error(["The number of selected items MUST be at least",...
 								" the lenght of x_variable_values"] );
 					endif
 				endif
@@ -109,9 +120,9 @@ function y = metric_vs_x_variable (input_data)
 					% CHECK{
 						if severe_debug
 							if ! isscalar(fixed_variable_values_additional(idx_fixed_variable_additional) )
-								fixed_values = \
+								fixed_values = ...
 									fixed_variable_values_additional(idx_fixed_variable_additional)
-								fixed_variable_name = \
+								fixed_variable_name = ...
 									fixed_variable_names_additional(idx_fixed_variable_additional)
 								error("The fixed value MUST be a scalar");								
 							endif
@@ -121,25 +132,25 @@ function y = metric_vs_x_variable (input_data)
 					value = fixed_variable_values_additional{idx_fixed_variable_additional};
 
 					idx_pr_previous = idx_pr;
-					values_assumed = \
+					values_assumed = ...
 						eval(fixed_variable_names_additional(idx_fixed_variable_additional) );
-					idx_pr = idx_pr \
+					idx_pr = idx_pr ...
 						& cellfun(@isequal, values_assumed, {value} );
 
 					% CHECK{
 						if severe_debug
 							if ( sum(idx_pr == 1) == 0 )
-								files_previously_selected =  \
+								files_previously_selected =  ...
 									filename_list( idx_pr_previous)
-								variable_newly_considered = \
+								variable_newly_considered = ...
 									fixed_variable_names_additional{idx_fixed_variable_additional}
-								values_of_that_variable = \
-									eval(fixed_variable_names_additional(\
+								values_of_that_variable = ...
+									eval(fixed_variable_names_additional(...
 											idx_fixed_variable_additional) )
 								value_that_we_try_to_match = value
-								files_currently_selected =  \
+								files_currently_selected =  ...
 									filename_list( idx_pr)
-								error(["No results are matching when considering ",\
+								error(["No results are matching when considering ",...
 									variable_newly_considered]);
 							endif
 						endif % severe_debug
@@ -153,7 +164,7 @@ function y = metric_vs_x_variable (input_data)
 						original_data = eval(x_variable_name);
 						extracted_column = original_data(idx_pr) ;
 						x_variable_column;
-						if length(x_variable_column) != length(extracted_column) || \
+						if length(x_variable_column) != length(extracted_column) || ...
 								 !isequal( x_variable_column, extracted_column )
 							idx_pr_previous
 							idx_pr
@@ -162,7 +173,7 @@ function y = metric_vs_x_variable (input_data)
 							filenames = filename_list(idx_pr)
 							original_data
 							filtered_original_data = original_data(idx_pr)
-							filtered_original_data_transformed = \
+							filtered_original_data_transformed = ...
 								cellfun(@str2num, original_data(idx_pr) )
 							error("x_variable_column and extracted_column_column MUST match");
 						endif
@@ -179,8 +190,8 @@ function y = metric_vs_x_variable (input_data)
 					z_value_ = z_variable_values{z_idx};
 
 						z_variable_values_assumed = eval(z_variable_name);
-						idx =  strcmp(z_variable_values_assumed, z_value_ ) \
-								& cell2mat(id_rep) == id_rep_\
+						idx =  strcmp(z_variable_values_assumed, z_value_ ) ...
+								& cell2mat(id_rep) == id_rep_...
 								& strcmp(csize, csize_);
 
 						if severe_debug && sum(idx ) == 0
@@ -193,22 +204,22 @@ function y = metric_vs_x_variable (input_data)
 
 						idx_previous = [];
 						for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
-							value = fixed_variable_values_additional{\
+							value = fixed_variable_values_additional{...
 												idx_fixed_variable_additional};
 
-							values_assumed = \
-								eval(fixed_variable_names_additional(\
+							values_assumed = ...
+								eval(fixed_variable_names_additional(...
 										idx_fixed_variable_additional) );
 							idx_previous = idx;
-							idx = idx \
+							idx = idx ...
 								& cellfun(@isequal, values_assumed, {value} );
 
 							% CHECK{
 							if severe_debug
 								if sum(idx) == 0
-									fixed_var_name = fixed_variable_names_additional{\
+									fixed_var_name = fixed_variable_names_additional{...
 											idx_fixed_variable_additional};
-									error(["After considering ",fixed_var_name," no results are"\
+									error(["After considering ",fixed_var_name," no results are"...
 										" selected.Are you sure that variable is intended to be fixed?"]);
 								endif
 							endif
@@ -220,7 +231,7 @@ function y = metric_vs_x_variable (input_data)
 								original_data = eval(x_variable_name);
 								x_variable_column_for_check = original_data(idx);
 								if !isequal(x_variable_column_for_check,  x_variable_column )
-									fixed_variable_name = fixed_variable_names_additional(\
+									fixed_variable_name = fixed_variable_names_additional(...
 										idx_fixed_variable_additional)
 									values_assumed
 									value_to_match = value
@@ -238,8 +249,9 @@ function y = metric_vs_x_variable (input_data)
 						
 						for idx_metric = 1:length(metric_list)
 							column_list{idx_metric} = [];
+							metric_name = metric_list{idx_metric};
 		
-							switch ( metric_list{idx_metric} )
+							switch ( metric_name )
 								case "p_hit"
 									column_list{idx_metric} = cell2mat( p_hit(idx) );
 
@@ -247,31 +259,49 @@ function y = metric_vs_x_variable (input_data)
 									column_list{idx_metric} = cell2mat( total_cost(idx) );
 
 								case "per_request_cost"
-									column_list{idx_metric} = \
+									column_list{idx_metric} = ...
 										cell2mat( total_cost(idx) ) ./ cell2mat( client_requests(idx) );
 
 								case "hdistance"
 									column_list{idx_metric} = cell2mat( hdistance(idx) );
 
 								case "expensive_link_utilization"
-									column_list{idx_metric} = cell2mat( expensive_link_load(idx) ) ./ \
-											( cell2mat( expensive_link_load(idx) ) + \
+									column_list{idx_metric} = cell2mat( expensive_link_load(idx) ) ./ ...
+											( cell2mat( expensive_link_load(idx) ) + ...
 											  cell2mat( cheap_link_load(idx)) 	);
 
 								case "client_requests"
 									column_list{idx_metric} = cell2mat( client_requests(idx) );
 
 								case "decision_ratio"
-									column_list{idx_metric} = cell2mat( decision_yes(idx) ) ./ \
-											(	cell2mat( decision_yes(idx) ) + \
+									column_list{idx_metric} = cell2mat( decision_yes(idx) ) ./ ...
+											(	cell2mat( decision_yes(idx) ) + ...
 												cell2mat( decision_no(idx) ));
 
-								case "cost_savings"
-									column_list{idx_metric} = cell2mat( cost_savings(idx) );
-
-
+						% COMPARISON BASED METRICS{
 								case "cost_fraction"
 									column_list{idx_metric} = cell2mat( cost_fraction(idx) );
+
+								case "cost_savings_wrt_fix"
+									column_list{idx_metric} = ...
+											cell2mat( cost_savings_wrt_fix(idx) );
+
+								case "potential_reduction_wrt_costopt"
+									column_list{idx_metric} = ...
+											cell2mat( potential_reduction_wrt_costopt(idx) );
+
+								case "potential_reduction_wrt_costprobtailperf"
+									column_list{idx_metric} = cell2mat(...
+											potential_reduction_wrt_costprobtailperf(idx) );
+
+								case "potential_savings_wrt_costprobtailperf"
+									column_list{idx_metric} = cell2mat(...
+											potential_savings_wrt_costprobtailperf(idx) );
+
+								case "potential_savings_wrt_costopt"
+									column_list{idx_metric} = cell2mat(...
+											potential_savings_wrt_costopt(idx) );
+						% }COMPARISON BASED METRICS
 
 								otherwise
 									error(["metric ",metric_name," is not valid"]);
@@ -302,7 +332,7 @@ function y = metric_vs_x_variable (input_data)
 
 					for idx_metric = 1:length(metric_list)
 						% Add the column corresponding to decision_ to the matrices	
-						metric_matrix_list{idx_metric} = \
+						metric_matrix_list{idx_metric} = ...
 							[ metric_matrix_list{idx_metric}, column_list{idx_metric}' ];
 						% The matrix above is related to one seed only
 					endfor
@@ -312,7 +342,7 @@ function y = metric_vs_x_variable (input_data)
 					% Going along the rows of p_hit_matrix_over_seed, the price_ratios are changing
 					% Going along the comumns of p_hit_matrix_over_seed, the decision policies are changing
 					% Going along the 3rd dimension of p_hit_matrix_over_seed, the seeds are changing
-					matrix_over_seed_list{idx_metric} = cat( 3,\
+					matrix_over_seed_list{idx_metric} = cat( 3,...
 							matrix_over_seed_list{idx_metric}, metric_matrix_list{idx_metric});
 					
 					% CHECK MATRIX{
@@ -357,10 +387,10 @@ function y = metric_vs_x_variable (input_data)
 					endif
 				% }CHECK
 
-				fixed_variables{ fix_var_num + idx_fixed_variable_additional } =\
+				fixed_variables{ fix_var_num + idx_fixed_variable_additional } =...
 							fixed_variable_values_additional{idx_fixed_variable_additional};
 
-				fixed_variable_names{ fix_var_num + idx_fixed_variable_additional } =\
+				fixed_variable_names{ fix_var_num + idx_fixed_variable_additional } =...
 							new_fix_var_name;				
 			endfor
 
@@ -370,13 +400,17 @@ function y = metric_vs_x_variable (input_data)
 			text_data.comment = comment;
 			% }PREPARING TEXTUAL DATA
 
+	endfor %csize
+
+	for idx_metric = 1:length(metric_list)
 			metric = metric_list{idx_metric};
+			single_matrix_over_seed_list = matrix_over_seed_list{idx_metric};
 
 			common_out_filename = [ out_folder, metric,"_vs_", x_variable_name];
 			for idx_fixed_variable_additional = 1:length(fixed_variable_names_additional)
 					value = fixed_variable_values_additional{idx_fixed_variable_additional};
-					common_out_filename = [common_out_filename, "-",\
-						fixed_variable_names_additional{idx_fixed_variable_additional}, "_", value\
+					common_out_filename = [common_out_filename, "-",...
+						fixed_variable_names_additional{idx_fixed_variable_additional}, "_", value...
 						];
 			endfor
 			common_out_filename = [common_out_filename, "-ctlg_",ctlg_to_write_,"-csize_",csize_ ];
@@ -389,7 +423,8 @@ function y = metric_vs_x_variable (input_data)
 			% }CHECK
 
 			
-			mean_and_conf_matrices(input_data, matrix_over_seed_list, text_data,\
+			mean_and_conf_matrices(input_data, single_matrix_over_seed_list, text_data,...
 				 common_out_filename);
-	endfor %csize
+	endfor
+
 endfunction

@@ -1,5 +1,5 @@
 % metric_vs_priceratio
-function y = mean_and_conf_matrices (input_data, matrix_over_seed_list, text_data, common_out_filename)
+function y = mean_and_conf_matrices (input_data, single_metrix_matrix_over_seed_list, text_data, common_out_filename)
 	global severe_debug;
 
 	metric_list = input_data.metric_list;
@@ -23,27 +23,21 @@ function y = mean_and_conf_matrices (input_data, matrix_over_seed_list, text_dat
 	endfor
 
 
-
-	for idx_metric = 1:length(metric_list)
-
-
 		% CHECK MATRIX{
 					if severe_debug
-						if size(matrix_over_seed_list{idx_metric},1) != length(x_variable_values) || size(matrix_over_seed_list{idx_metric},2) != length(column_names)
+						if size(single_metrix_matrix_over_seed_list,1) != length(x_variable_values) || size(single_metrix_matrix_over_seed_list,2) != length(column_names)
 							fixed_variable_names_additional
 							fixed_variable_values_additional
 							x_variable_values
-							matrix_over_seed = matrix_over_seed_list{idx_metric}
+							single_metrix_matrix_over_seed_list
 							metric = metric_list{idx_metric}
-							error(["The number of rows in the matrix must be equal to the number of ",\
+							error(["The number of rows in the matrix must be equal to the number of ",...
 									"x variable.The number of columns must match the column names"]);
 						endif
 					endif
 		% }CHECK MATRIX
 
-				[mean_matrix, conf_matrix] = confidence_interval(matrix_over_seed_list{idx_metric});
-				mean_matrix_list{idx_metric} = mean_matrix;
-				conf_matrix_list{idx_metric} = conf_matrix;
+				[mean_matrix, conf_matrix] = confidence_interval(single_metrix_matrix_over_seed_list);
 
 				% CHECK MATRIX{
 					if severe_debug
@@ -53,22 +47,21 @@ function y = mean_and_conf_matrices (input_data, matrix_over_seed_list, text_dat
 							x_variable_values
 							mean_matrix
 							conf_matrix
-							metric_list{idx_metric}
-							error(["The number of rows in the matrix must be equal to the number of ",\
+							common_out_filename
+							error(["The number of rows in the matrix must be equal to the number of ",...
 									"x variable.The number of columns must match the column names"]);
 						endif
 					endif
 				% }CHECK MATRIX
 
 				% Print mean matrix
-				matrix = mean_matrix_list{idx_metric};
+				matrix = mean_matrix;
 				out_filename = [common_out_filename,"-mean.dat"];
 				print_table(out_filename, matrix, x_variable_column, column_names, fixed_variables,fixed_variable_names, comment);
 
 				% Print confidence interval matrix
-				matrix = conf_matrix_list{idx_metric};;
+				matrix = conf_matrix;
 				out_filename = [common_out_filename,"-conf.dat"];
 				print_table(out_filename, matrix, x_variable_column, column_names, fixed_variables,fixed_variable_names, comment);
 
-	endfor
 endfunction

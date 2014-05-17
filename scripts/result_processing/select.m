@@ -15,11 +15,16 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						weights_ = selection_tuple.weights;
 						metric_list = selection_tuple.metric_list;
 
+						if isequal(csize_, "0")
+							selection_tuple
+							error("ciao");
+						endif
+
 						decision_root_ = "";
 						if strmatch( "fix", decision_ )
 							decision_root_ = "fix";
 							target_decision_probability_ = ...
-								num2str( strrep(decision_,"fix","") )
+								num2str( strrep(decision_,"fix","") );
 
 						elseif strmatch("costopt", decision_)
 							decision_root_ = "costopt";
@@ -121,11 +126,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						[status, output] = system(command,1);
 						parsed.total_cost = str2num(output);
 
-						disp("prima di prova")
-						strcmp("hdistance",metric_list{:,:})
-						error("dopo di prova")
-
-					if strcmp("hdistance",metric_list{:,:})
+					if any( cellfun(@isequal,metric_list, {"hdistance"} ) )
 						string_to_search="hdistance ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
@@ -134,7 +135,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.hdistance = NaN;
 					endif
 
-					if strcmp("client_requests",metric_list{:,:})
+					if !isequal(decision_,"costopt")
 						string_to_search="downloads\\[0\\] ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
@@ -143,7 +144,9 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.client_requests = NaN;
 					endif
 
-					if strcmp("repo_load",metric_list{:,:})
+
+	% LINK LOAD COMPUTATION{
+					if !isequal(decision_,"costopt")
 						string_to_search="repo_load\\[4\\] ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
@@ -173,24 +176,60 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.cheap_link_load = NaN;
 						parsed.expensive_link_load = NaN;
 					endif
+		% CHECK{
+			if severe_debug
+						if (size(parsed.free_link_load) != [1,1] || ...
+							size(parsed.cheap_link_load) != [1,1] ...
+							||  size(parsed.expensive_link_load) != [1,1] )
 
-			if strcmp("cost_savings",metric_list{:,:}) && strmatch("costprob", decision_root_)
-				selection_tuple_of_fixed_counterpart = selection_tuple;
-				selection_tuple_of_fixed_counterpart.decision =...
-						 ["fix",target_decision_probability_];
-				selection_tuple_of_fixed_counterpart.xi = "1";
-				fixed_counterpart_parsed = select(selection_tuple_of_fixed_counterpart,...
-						resultdir, optimization_result_folder);
-				parsed.cost_savings = (fixed_counterpart_parsed.total_cost - parsed.total_cost)/...
-											fixed_counterpart_parsed.total_cost;
-			else
-				parsed.cost_savings = NaN;
+							cheap_link_load_size = size(parsed.cheap_link_load)
+							free_link_load = parsed.free_link_load
+							cheap_link_load = parsed.cheap_link_load
+							expensive_link_load = parsed.expensive_link_load
+							error("Error in the link load computation");
+						endif
 			endif
+		% }CHECK
+	% }LINK LOAD COMPUTATION
+
+
+
+	if !isequal(decision_,"costopt")
+		string_to_search="decision_yes\\[0\\] ";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output] = system(command,1);
+		parsed.decision_yes = str2num(output);
+
+		string_to_search="decision_no\\[0\\] ";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output] = system(command,1);
+		parsed.decision_no = str2num(output);
+
+		string_to_search="decision_ratio\\[0\\] ";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output] = system(command,1);
+		parsed.decision_ratio = str2num(output);
+	else
+		parsed.decision_yes = NaN;
+		parsed.decision_no = NaN;
+		parsed.decision_ratio = NaN;
+	endif
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%%%%%%%%%%% COMPARISON BASED METRICS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	% COMPUTE COST FRACTION{
+		% Comparison with no-cache case
 		parsed.cost_fraction = NaN;
 		% Comparison with the no-cache scenario
-		if strcmp("cost_fraction", metric_list{:,:} )
+		if (any( cellfun(@isequal,metric_list, {"cost_fraction"} ) ) || ...
+
+			% The following 2 metrics depend on cost_fraction
+			any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costprobtailperf"} ) )...
+			|| any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costopt"} ) )...
+		)
 			if isequal("costopt", decision_) && strcmp(csize_, "0")
 				parsed.cost_fraction = 1;
 			elseif isequal("costopt", decision_) && !strcmp(csize_, "0")
@@ -210,56 +249,93 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 		endif
 	% }COMPUTE COST FRACTION
 
-	% CHECK{
-		if severe_debug
-					if (size(parsed.free_link_load) != [1,1] || ...
-						size(parsed.cheap_link_load) != [1,1] ...
-						||  size(parsed.expensive_link_load) != [1,1] )
 
-						cheap_link_load_size = size(parsed.cheap_link_load)
-						free_link_load = parsed.free_link_load
-						cheap_link_load = parsed.cheap_link_load
-						expensive_link_load = parsed.expensive_link_load
-						error("Error in the link load computation");
-					endif
-		endif
-	% }CHECK
+	% COMPUTE POTENTIAL_REDUCTION_WRT_COSTOPT{
+		parsed.potential_reduction_wrt_costopt = NaN;
+		if any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costopt"} ) ) &&...
+					 !isequal("costopt", decision_) 
 
-	% COMPUTE POTENTIAL_REDUCTION{
-		% Comparison with costopt
-		if strcmp("potential_reduction", metric_list{:,:} ) && !isequal("costopt", decision_) 
 				selection_tuple_of_counterpart = selection_tuple;
 				selection_tuple_of_counterpart.decision = "costopt";
 				counterpart_parsed = select(selection_tuple_of_counterpart,...
 						resultdir, optimization_result_folder);
-				parsed.potential_reduction = ...
+				parsed.potential_reduction_wrt_costopt = ...
 						parsed.cost_fraction - counterpart_parsed.cost_fraction;
-		else
-				parsed.potential_reduction = NaN;
 		endif
-	% }COMPUTE POTENTIAL_REDUCTION
+	% }COMPUTE POTENTIAL_REDUCTION_WRT_COSTOPT
 
 
-	if strcmp("decision_ratio",metric_list{:,:})
-						string_to_search="decision_yes\\[0\\] ";
-						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-						[status, output] = system(command,1);
-						parsed.decision_yes = str2num(output);
+	% COMPUTE POTENTIAL_REDUCTION_WRT_COSTPROBTAILPERF{
+		parsed.potential_reduction_wrt_costprobtailperf = NaN;
+		if any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costprobtailperf"} ) )...
+				&& !isequal("costprobtailperf", decision_) 
 
-						string_to_search="decision_no\\[0\\] ";
-						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-						[status, output] = system(command,1);
-						parsed.decision_no = str2num(output);
+				selection_tuple_of_counterpart = selection_tuple;
+				selection_tuple_of_counterpart.decision = "costprobtailperf";
+				selection_tuple_of_counterpart.metric_list={"cost_fraction"};
+				counterpart_parsed = select(selection_tuple_of_counterpart,...
+						resultdir, optimization_result_folder);
+				parsed.potential_reduction_wrt_costprobtailperf = ...
+						parsed.cost_fraction - counterpart_parsed.cost_fraction;
+		endif
+	% }COMPUTE POTENTIAL_REDUCTION_WRT_COSTPROBTAILPERF
 
-						string_to_search="decision_ratio\\[0\\] ";
-						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-						[status, output] = system(command,1);
-						parsed.decision_ratio = str2num(output);
-	else
-						parsed.decision_yes = NaN;
-						parsed.decision_no = NaN;
-						parsed.decision_ratio = NaN;
-	endif
+
+	% COMPUTE COST_SAVINGS_WRT_FIX{
+		% Comparison with costopt
+			parsed.cost_savings_wrt_fix = NaN;
+			if any( cellfun(@isequal,metric_list, {"cost_savings_wrt_fix"} ) ) && ...
+					strmatch("costprobprodcorr", decision_root_)
+
+				selection_tuple_of_fixed_counterpart = selection_tuple;
+				selection_tuple_of_fixed_counterpart.decision =...
+						 ["fix",target_decision_probability_];
+				selection_tuple_of_fixed_counterpart.xi = "1";
+				fixed_counterpart_parsed = select(selection_tuple_of_fixed_counterpart,...
+						resultdir, optimization_result_folder);
+				parsed.cost_savings_wrt_fix =...
+					 (fixed_counterpart_parsed.total_cost - parsed.total_cost)/...
+					fixed_counterpart_parsed.total_cost;
+			endif
+	% }COMPUTE COST_SAVINGS_WRT_FIX
+
+	% COMPUTE POTENTIAL_SAVINGS_WRT_COSTPROBTAILPERF{
+		% Comparison with costopt
+			parsed.potential_savings_wrt_costprobtailperf = NaN;
+			if any(cellfun(@isequal,metric_list,{"potential_savings_wrt_costprobtailperf"} ) )...
+					&& !isequal("costprobtailperf", decision_) 			
+
+				selection_tuple_of_counterpart = selection_tuple;
+				selection_tuple_of_counterpart.decision ="costprobtailperf";
+				selection_tuple_of_counterpart.xi = "1";
+				counterpart_parsed = select(selection_tuple_of_counterpart,...
+						resultdir, optimization_result_folder);
+				parsed.potential_savings_wrt_costprobtailperf = ...
+					(parsed.total_cost - counterpart_parsed.total_cost)/...
+					parsed.total_cost;
+			endif
+	% }COMPUTE POTENTIAL_REDUCTION_WRT_COSTPROBTAILPERF
+
+	% COMPUTE POTENTIAL_SAVINGS_WRT_COSTOPT{
+			parsed.potential_savings_wrt_costopt = NaN;
+			if any( cellfun(@isequal,metric_list, {"potential_savings_wrt_costopt"} ) )...
+					&& !isequal("costopt", decision_) 			
+
+				selection_tuple_of_counterpart = selection_tuple;
+				selection_tuple_of_counterpart.decision ="costopt";
+				selection_tuple_of_counterpart.xi = "1";
+				counterpart_parsed = select(selection_tuple_of_counterpart,...
+						resultdir, optimization_result_folder);
+				parsed.potential_savings_wrt_costopt = ...
+					(parsed.total_cost - counterpart_parsed.total_cost)/...
+					parsed.total_cost;
+			endif
+	% }COMPUTE POTENTIAL_REDUCTION_WRT_COSTOPT
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 	# CHECK RESULTS{

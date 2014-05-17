@@ -75,8 +75,8 @@ function y = print_table (out_filename, matrix, x_variable_column, column_names,
 			endif
 		% }CHECK
 
-								fixed_variable_string = strcat(fixed_variable_string, \
-											fixed_variable_name,"=",fixed_variable_value	,\
+								fixed_variable_string = strcat(fixed_variable_string, ...
+											fixed_variable_name,"=",fixed_variable_value	,...
 											";\t");
 								% CHECK{
 								if severe_debug && !isequal( class(fixed_variable_string), "char")
@@ -92,10 +92,10 @@ function y = print_table (out_filename, matrix, x_variable_column, column_names,
 
 
 							header_old = save_header_format_string();
-							header_new = strcat (comment, "\n# Fixed data are:\n# "\
-										, fixed_variable_string \
-										, "\n# Columns are:\n#" \
-										, column_name_string, "\n"\
+							header_new = strcat (comment, "\n# Fixed data are:\n# "...
+										, fixed_variable_string ...
+										, "\n# Columns are:\n#" ...
+										, column_name_string, "\n"...
 										);
 
 							% CHECK{
