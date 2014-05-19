@@ -93,7 +93,7 @@ void IcnChannel::processMessage(cMessage *msg, simtime_t t, result_t& result)
 		{
 		    count++;
 			ccn_data* data_msg = (ccn_data*) msg;
-			data_msg->setCost(price);
+			data_msg->setCost(represented_price);
 		}
 
 }
