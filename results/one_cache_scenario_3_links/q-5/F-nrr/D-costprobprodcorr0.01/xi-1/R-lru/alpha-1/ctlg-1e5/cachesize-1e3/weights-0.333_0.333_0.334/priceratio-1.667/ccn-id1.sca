@@ -1,5 +1,5 @@
 version 2
-run General-50-20140516-20:24:49-28951
+run General-50-20140519-07:41:47-22359
 attr D costprobprodcorr0.01
 attr F nrr
 attr R lru
@@ -7,17 +7,17 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140516-20:24:49
+attr datetime 20140519-07:41:47
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=1.667, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1, $R=lru, $csize=1e3, $q=5"
-attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=1.667, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1, $R=lru, $csize=1e3, $q=5, $repetition=0"
-attr measurement "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=1.667, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1, $R=lru, $csize=1e3, $q=5"
+attr iterationvars "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=1.667, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1, $R=lru, $csize=1e3, $pricebits=5"
+attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=1.667, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1, $R=lru, $csize=1e3, $pricebits=5, $repetition=0"
+attr measurement "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=1.667, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1, $R=lru, $csize=1e3, $pricebits=5"
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
+attr pricebits 5
 attr priceratiovalue 1.667
-attr processid 28951
-attr q 5
+attr processid 22359
 attr rep 1
 attr repetition 0
 attr replication #0
@@ -31,8 +31,8 @@ attr xi 1
 scalar . 	a 	1
 scalar . 	csize 	1e3
 scalar . 	ctlg 	1e5
+scalar . 	pricebits 	5
 scalar . 	priceratiovalue 	1.667
-scalar . 	q 	5
 scalar . 	rep 	1
 scalar . 	ttl 	1000
 scalar . 	xi 	1
