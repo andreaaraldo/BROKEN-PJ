@@ -1,5 +1,5 @@
 version 2
-run General-353-20140516-22:27:16-29996
+run General-353-20140518-10:55:37-14953
 attr D never
 attr F nrr
 attr R lru
@@ -7,17 +7,17 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140516-22:27:16
+attr datetime 20140518-10:55:37
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=one_cache_scenario_3_links, $rep=3, $priceratiovalue=5, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=never, $xi=1, $R=lru, $csize=1e3, $q=2"
-attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=3, $priceratiovalue=5, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=never, $xi=1, $R=lru, $csize=1e3, $q=2, $repetition=0"
-attr measurement "$net=one_cache_scenario_3_links, $rep=3, $priceratiovalue=5, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=never, $xi=1, $R=lru, $csize=1e3, $q=2"
+attr iterationvars "$net=one_cache_scenario_3_links, $rep=3, $priceratiovalue=5, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=2"
+attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=3, $priceratiovalue=5, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=2, $repetition=0"
+attr measurement "$net=one_cache_scenario_3_links, $rep=3, $priceratiovalue=5, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=2"
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
+attr pricebits 2
 attr priceratiovalue 5
-attr processid 29996
-attr q 2
+attr processid 14953
 attr rep 3
 attr repetition 0
 attr replication #0
@@ -31,8 +31,8 @@ attr xi 1
 scalar . 	a 	1
 scalar . 	csize 	1e3
 scalar . 	ctlg 	1e5
+scalar . 	pricebits 	2
 scalar . 	priceratiovalue 	5
-scalar . 	q 	2
 scalar . 	rep 	3
 scalar . 	ttl 	1000
 scalar . 	xi 	1
