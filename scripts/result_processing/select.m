@@ -124,6 +124,14 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						string_to_search="total_cost ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
+						% CHECK{
+							lines_in_output = length(findstr(output,"\n",0));
+							if lines_in_output != 1
+								output
+								filename
+								error("Parsing error");
+							end
+						% }CHECK
 						parsed.total_cost = str2num(output);
 
 					if any( cellfun(@isequal,metric_list, {"hdistance"} ) )
@@ -178,7 +186,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 					endif
 		% CHECK{
 			if severe_debug
-						if (size(parsed.free_link_load) != [1,1] || ...
+				if (size(parsed.free_link_load) != [1,1] || ...
 							size(parsed.cheap_link_load) != [1,1] ...
 							||  size(parsed.expensive_link_load) != [1,1] )
 
@@ -187,7 +195,13 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 							cheap_link_load = parsed.cheap_link_load
 							expensive_link_load = parsed.expensive_link_load
 							error("Error in the link load computation");
-						endif
+				endif
+
+				if size(parsed.total_cost) != [1,1]
+					parsed.total_cost
+					filename
+					error("Error while parsing total_cost");
+				endif
 			endif
 		% }CHECK
 	% }LINK LOAD COMPUTATION
