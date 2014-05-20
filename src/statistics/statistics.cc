@@ -72,6 +72,42 @@ void statistics::initialize(){
     
 	total_replicas = *(content_distribution::total_replicas_p );
 
+	//<aa> {REPO POPULARITY
+	double pop_indication_sum = 0;
+	if ( content_distribution::popularity_indication_p != NULL )
+	{
+		for (unsigned repo_idx =0; repo_idx < content_distribution::popularity_indication_p->size();
+					 repo_idx++)
+		{
+			pop_indication_sum += (*content_distribution::popularity_indication_p)[repo_idx];
+		}
+
+		for (unsigned repo_idx =0; repo_idx < content_distribution::popularity_indication_p->size();
+					 repo_idx++)
+		{
+		    char name[30];
+			sprintf ( name, "repo_popularity[%u]",repo_idx);
+			double repo_popularity = 
+				(*content_distribution::popularity_indication_p)[repo_idx] / pop_indication_sum;
+			recordScalar(name,repo_popularity);
+		}
+
+
+		#ifdef SEVERE_DEBUG
+			if (fabs(1/pop_indication_sum -
+				 content_distribution::zipf.get_normalization_constant() ) > 1e-13
+			){
+				std::stringstream ermsg; 
+				ermsg<<"1/pop_indication_sum="<<1/pop_indication_sum<<
+					"; normalization_constant=" << 
+					content_distribution::zipf.get_normalization_constant()<<
+					". They MUST be equal";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+		#endif
+	} //else the info about the repo popularity has not been calculated
+	//</aa> }REPO POPULARITY
+
 
 
     //Extracting nodes (caches and cores)
@@ -264,28 +300,6 @@ void statistics::finish(){
     recordScalar(name,total_replicas);
     cout<<"total_replicas: "<<total_replicas<<endl;
 
-
-	//<aa> Repo popularity
-	double pop_indication_sum = 0;
-	if ( content_distribution::popularity_indication_p != NULL )
-	{
-		for (unsigned repo_idx =0; repo_idx < content_distribution::popularity_indication_p->size();
-					 repo_idx++)
-		{
-			pop_indication_sum += (*content_distribution::popularity_indication_p)[repo_idx];
-		}
-
-		for (unsigned repo_idx =0; repo_idx < content_distribution::popularity_indication_p->size();
-					 repo_idx++)
-		{
-			sprintf ( name, "repo_popularity[%u]",repo_idx);
-			double repo_popularity = 
-				(*content_distribution::popularity_indication_p)[repo_idx] / pop_indication_sum;
-			recordScalar(name,repo_popularity);
-		}
-	} //else the info about the repo popularity has not been calculated
-	//</aa>
-
     //<aa>
     #ifdef SEVERE_DEBUG
 		sprintf ( name, "interests_sent");
@@ -301,17 +315,6 @@ void statistics::finish(){
 				"this error and run again";
 			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
-
-		if (content_distribution::popularity_indication_p!=NULL &&
-			pop_indication_sum != content_distribution::zipf.get_normalization_constant() )
-		{
-			std::stringstream ermsg; 
-			ermsg<<"pop_indication_sum="<<pop_indication_sum<<"; normalization_constant=" << 
-				content_distribution::zipf.get_normalization_constant()<<
-				". They MUST be equal";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-
 	#endif
     //</aa>
 
