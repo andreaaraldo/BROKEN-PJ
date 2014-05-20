@@ -1,5 +1,5 @@
 version 2
-run General-15-20140510-19:40:15-30631
+run General-19-20140520-13:45:39-13124
 attr D tailandrank
 attr F nrr
 attr R lru
@@ -7,21 +7,22 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140510-19:40:15
+attr datetime 20140520-13:45:39
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3"
-attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $repetition=0"
-attr measurement "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3"
+attr iterationvars "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0"
+attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $repetition=0"
+attr measurement "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0"
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
+attr pricebits 0
 attr priceratiovalue 10
-attr processid 30631
+attr processid 13124
 attr rep 4
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 15
+attr runnumber 19
 attr seedset 4
 attr ttl 1000
 attr weights 0.333_0.333_0.334
@@ -30,6 +31,7 @@ attr xi 1
 scalar . 	a 	1
 scalar . 	csize 	1e3
 scalar . 	ctlg 	1e5
+scalar . 	pricebits 	0
 scalar . 	priceratiovalue 	10
 scalar . 	rep 	4
 scalar . 	ttl 	1000
@@ -41,6 +43,21 @@ scalar one_cache_scenario_3_links_network.content_distribution 	client-0 	0
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-0_card 	33272
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-1_card 	33152
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-2_card 	33576
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[0] 	0.28234107170654
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[1] 	0.30413978820018
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[2] 	0.41351914009327
+scalar one_cache_scenario_3_links_network.node[1].face$o[2].channel 	price[1] 	0
+scalar one_cache_scenario_3_links_network.node[1].face$o[2].channel 	represented_price[1] 	0
+scalar one_cache_scenario_3_links_network.node[2].face$o[2].channel 	price[2] 	0
+scalar one_cache_scenario_3_links_network.node[2].face$o[2].channel 	represented_price[2] 	0
+scalar one_cache_scenario_3_links_network.node[3].face$o[2].channel 	price[3] 	0
+scalar one_cache_scenario_3_links_network.node[3].face$o[2].channel 	represented_price[3] 	0
+scalar one_cache_scenario_3_links_network.node[4].face$o[1].channel 	price[4] 	0
+scalar one_cache_scenario_3_links_network.node[4].face$o[1].channel 	represented_price[4] 	0
+scalar one_cache_scenario_3_links_network.node[5].face$o[1].channel 	price[5] 	1
+scalar one_cache_scenario_3_links_network.node[5].face$o[1].channel 	represented_price[5] 	1
+scalar one_cache_scenario_3_links_network.node[6].face$o[1].channel 	price[6] 	10
+scalar one_cache_scenario_3_links_network.node[6].face$o[1].channel 	represented_price[6] 	10
 scalar one_cache_scenario_3_links_network.statistics 	p_hit 	0.3411945958758
 scalar one_cache_scenario_3_links_network.statistics 	interests 	45806.285714286
 scalar one_cache_scenario_3_links_network.statistics 	data 	20118.285714286
