@@ -1,5 +1,5 @@
 version 2
-run General-35-20140519-20:11:49-21358
+run General-140-20140520-14:54:09-23452
 attr D costprobtailperf
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140519-20:11:49
+attr datetime 20140520-14:54:09
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=one_cache_scenario_3_links, $rep=18, $priceratiovalue=10, $weights=0.25_0.25_0.5, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3, $pricebits=0"
@@ -17,12 +17,12 @@ attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 21358
+attr processid 23452
 attr rep 18
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 35
+attr runnumber 140
 attr seedset 18
 attr ttl 1000
 attr weights 0.25_0.25_0.5
@@ -43,6 +43,21 @@ scalar one_cache_scenario_3_links_network.content_distribution 	client-0 	0
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-0_card 	25184
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-1_card 	24960
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-2_card 	49856
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[0] 	0.30097890807709
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[1] 	0.21259338472729
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[2] 	0.48642770719562
+scalar one_cache_scenario_3_links_network.node[1].face$o[2].channel 	price[1] 	0
+scalar one_cache_scenario_3_links_network.node[1].face$o[2].channel 	represented_price[1] 	0
+scalar one_cache_scenario_3_links_network.node[2].face$o[2].channel 	price[2] 	0
+scalar one_cache_scenario_3_links_network.node[2].face$o[2].channel 	represented_price[2] 	0
+scalar one_cache_scenario_3_links_network.node[3].face$o[2].channel 	price[3] 	0
+scalar one_cache_scenario_3_links_network.node[3].face$o[2].channel 	represented_price[3] 	0
+scalar one_cache_scenario_3_links_network.node[4].face$o[1].channel 	price[4] 	0
+scalar one_cache_scenario_3_links_network.node[4].face$o[1].channel 	represented_price[4] 	0
+scalar one_cache_scenario_3_links_network.node[5].face$o[1].channel 	price[5] 	1
+scalar one_cache_scenario_3_links_network.node[5].face$o[1].channel 	represented_price[5] 	1
+scalar one_cache_scenario_3_links_network.node[6].face$o[1].channel 	price[6] 	10
+scalar one_cache_scenario_3_links_network.node[6].face$o[1].channel 	represented_price[6] 	10
 scalar one_cache_scenario_3_links_network.statistics 	p_hit 	0.31297082715094
 scalar one_cache_scenario_3_links_network.statistics 	interests 	47465.857142857
 scalar one_cache_scenario_3_links_network.statistics 	data 	21740.285714286
@@ -61,7 +76,7 @@ scalar one_cache_scenario_3_links_network.node[0].content_store 	misses[0] 	7609
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_yes[0] 	1212
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_no[0] 	74879
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_ratio[0] 	0.015928296381964
-scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	1.581010066692e-322
+scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	2.0910929255189e-316
 scalar one_cache_scenario_3_links_network.node[0].content_store 	xi[0] 	1
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	interests[1] 	24024
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	data[1] 	24024
