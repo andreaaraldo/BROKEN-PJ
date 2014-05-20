@@ -399,17 +399,13 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 		[status, output2] = system(command,1);
 		parsed.expensive_repo_popularity = str2num(output1);
 
-		% CHECK{
-			lines_in_output0 = length(findstr(output0,"\n",0));
-			lines_in_output1 = length(findstr(output1,"\n",0));
-			lines_in_output2 = length(findstr(output2,"\n",0));
-			if lines_in_output0 != 1 || lines_in_output1 != 1 || lines_in_output2 != 1
-				output0
-				output1
-				output2
-				filename
-				error("Parsing error");
-			end
+		lines_in_output0 = length(findstr(output0,"\n",0));
+		lines_in_output1 = length(findstr(output1,"\n",0));
+		lines_in_output2 = length(findstr(output2,"\n",0));
+		if lines_in_output0 != 1 || lines_in_output1 != 1 || lines_in_output2 != 1
+			parsed.free_repo_popularity = parsed.cheap_repo_popularity = ...
+			parsed.expensive_repo_popularity = NaN;
+		end
 		% }CHECK
 
 	% }REPO_POPULARITY
