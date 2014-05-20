@@ -73,6 +73,7 @@ void statistics::initialize(){
 	total_replicas = *(content_distribution::total_replicas_p );
 
 
+
     //Extracting nodes (caches and cores)
     caches = new base_cache*[num_nodes];
     cores = new core_layer*[num_nodes];
@@ -263,6 +264,28 @@ void statistics::finish(){
     recordScalar(name,total_replicas);
     cout<<"total_replicas: "<<total_replicas<<endl;
 
+
+	//<aa> Repo popularity
+	double pop_indication_sum = 0;
+	if ( content_distribution::popularity_indication_p != NULL )
+	{
+		for (unsigned repo_idx =0; repo_idx < content_distribution::popularity_indication_p->size();
+					 repo_idx++)
+		{
+			pop_indication_sum += (*content_distribution::popularity_indication_p)[repo_idx];
+		}
+
+		for (unsigned repo_idx =0; repo_idx < content_distribution::popularity_indication_p->size();
+					 repo_idx++)
+		{
+			sprintf ( name, "repo_popularity[%u]",repo_idx);
+			double repo_popularity = 
+				(*content_distribution::popularity_indication_p)[repo_idx] / pop_indication_sum;
+			recordScalar(name,repo_popularity);
+		}
+	} //else the info about the repo popularity has not been calculated
+	//</aa>
+
     //<aa>
     #ifdef SEVERE_DEBUG
 		sprintf ( name, "interests_sent");
@@ -271,11 +294,22 @@ void statistics::finish(){
 
 		if (global_interests_sent != global_tot_downloads){
 			std::stringstream ermsg; 
-			ermsg<<"interests_sent="<<global_interests_sent<<"; tot_downloads="<<global_tot_downloads<<
+			ermsg<<"interests_sent="<<global_interests_sent<<"; tot_downloads="<< 
+				global_tot_downloads<<
 				". If **.size==1 in omnetpp and all links has 0 delay, this "<<
 				" is an error. Otherwise, it is not. In the latter case, disable "<<
 				"this error and run again";
 			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+
+		if (content_distribution::popularity_indication_p!=NULL &&
+			pop_indication_sum != content_distribution::zipf.get_normalization_constant() )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"pop_indication_sum="<<pop_indication_sum<<"; normalization_constant=" << 
+				content_distribution::zipf.get_normalization_constant()<<
+				". They MUST be equal";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 
 	#endif

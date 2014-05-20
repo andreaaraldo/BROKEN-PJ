@@ -51,6 +51,10 @@ void zipf_distribution::zipf_initialize(){
     }
     c = 1.0 / c;
 
+	//<aa>
+	normalization_constant = c;
+	//</aa>
+
     //Normalize Zipf distribution
     for (vector<double>::iterator it = cdfZipf.begin() + 1; it!=cdfZipf.end();it++)
 	(*it) *= c;
@@ -60,6 +64,12 @@ void zipf_distribution::zipf_initialize(){
 
 
 }
+
+//<aa>
+double zipf_distribution::get_normalization_constant(){
+	return normalization_constant;
+}
+//</aa>
 
 
 //Binary search zipf

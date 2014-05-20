@@ -43,6 +43,8 @@ name_t  content_distribution::cut_off = 0;
 int  *content_distribution::repositories = 0;
 int  *content_distribution::clients = 0;
 int  *content_distribution::total_replicas_p;
+vector<double>  *content_distribution::popularity_indication_p;
+
 
 
 
@@ -117,7 +119,7 @@ void content_distribution::initialize(){
 		recordScalar(name,clients[i]);
     }
 
-
+	initialize_popularity_indication();
 	//</aa>
 
     //
@@ -130,6 +132,11 @@ void content_distribution::initialize(){
 	//<aa>
 	finalize_total_replica();
 	//</aa>
+}
+
+void content_distribution::initialize_popularity_indication()
+{
+	popularity_indication_p = NULL;
 }
 
 //<aa>
@@ -200,7 +207,7 @@ vector<int> content_distribution::binary_strings(int num_ones,int len){
 
 //<aa> Return a string of bit representing an object placement. 
 // There is a 1 in the i-th position iff the object is served by the i-th repo
-int content_distribution::choose_repos ( ){
+int content_distribution::choose_repos (int object_index ){
 	int repo_string = repo_strings[intrand(repo_strings.size())];
 
 	#ifdef SEVERE_DEBUG
@@ -266,7 +273,7 @@ void content_distribution::init_content()
 		} else {
 			// <aa> Choose a replica placement among all the possibile ones. 
 			// 		repos is a replica placement </aa>				
-			repo_t repos = choose_repos();
+			repo_t repos = choose_repos(d); //<aa>This method had no input parameters before</aa>
 			__srepo (d ,repos);
 
 			// <aa> Compute the chosen_repos
@@ -393,7 +400,6 @@ int *content_distribution::init_clients(vector<int> node_clients){
     return clients;
 
 }
-
 
 /**
 

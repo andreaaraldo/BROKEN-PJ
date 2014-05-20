@@ -50,7 +50,8 @@ class WeightedContentDistribution : public content_distribution{
 
     protected:
 		virtual void initialize();
-		virtual int choose_repos ();
+		virtual int choose_repos (int object_index);
+		virtual void initialize_popularity_indication();
 		virtual vector<int> binary_strings(int,int);
 		virtual void verify_prices();
 		virtual void verify_replica_number();
@@ -59,7 +60,8 @@ class WeightedContentDistribution : public content_distribution{
 
 	private:
 		std::vector<double> weights;
-		double* probabilities;
+
+		double* probabilities; //Probability that an object is assigne to a repo
 		bool replication_admitted;
 		double priceratio;
 		double xi;

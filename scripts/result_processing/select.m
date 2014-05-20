@@ -351,6 +351,23 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+	% REPO_CARDINALITY{
+		string_to_search="repo-0_card";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output] = system(command,1);
+		parsed.free_repo_cardinality = str2num(output);
+
+		string_to_search="repo-1_card";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output] = system(command,1);
+		parsed.cheap_repo_cardinality = str2num(output);
+
+		string_to_search="repo-2_card";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output] = system(command,1);
+		parsed.expensive_repo_cardinality = str2num(output);
+	% }REPO_CARDINALITY
+
 
 	# CHECK RESULTS{
 	if ( size(parsed.p_hit)!=[1 1] || size(parsed.total_cost)!=[1 1] || ...

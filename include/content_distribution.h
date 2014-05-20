@@ -53,7 +53,10 @@ class content_distribution : public cSimpleModule{
 		void handleMessage(cMessage *){;}
 
 		//<aa>
-		virtual int choose_repos();
+		//<aa>This method had no input parameters before</aa>
+		virtual int choose_repos(int object_index);
+		virtual void initialize_popularity_indication();
+
 		virtual void verify_replica_number();
 		virtual void finalize_total_replica();
 		//</aa>
@@ -63,6 +66,7 @@ class content_distribution : public cSimpleModule{
 		int degree; // <aa> The number of replicas for each object</aa>
 		int num_repos;
 		int cardF;
+
 
 
     public:
@@ -85,6 +89,8 @@ class content_distribution : public cSimpleModule{
 		//<aa>
 		static int *total_replicas_p; // The number of replicas that are 
 								// distributed among all the repos
+
+		static vector<double>* popularity_indication_p;
 		//</aa>
 
 

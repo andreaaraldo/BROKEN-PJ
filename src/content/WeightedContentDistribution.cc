@@ -63,7 +63,6 @@ void WeightedContentDistribution::initialize()
 		probabilities[repo_idx] = weights[repo_idx] / sum;
 
 	content_distribution::initialize();
-
 	
 	{// Other checks
 		if ( degree != -1 ){
@@ -87,6 +86,13 @@ void WeightedContentDistribution::initialize()
 	initialized = true;
 	#endif
 }
+
+void WeightedContentDistribution::initialize_popularity_indication()
+{
+	unsigned repo_num = weights.size();
+	popularity_indication_p = new vector<double>(repo_num); //http://stackoverflow.com/a/970555
+}
+
 
 #ifdef SEVERE_DEBUG
 /**
@@ -174,6 +180,7 @@ const vector<double> WeightedContentDistribution::get_weights(){
 	return weights;
 }
 
+
 const double WeightedContentDistribution::get_priceratio(){
 	#ifdef SEVERE_DEBUG
 	if (!isInitialized() ){
@@ -207,8 +214,6 @@ const double WeightedContentDistribution::get_alpha(){
 	return alpha;
 }
 
-
-
 // Override content_distribution::finalize_total_replica()
 void WeightedContentDistribution::finalize_total_replica(){
 	// Do nothing
@@ -227,7 +232,7 @@ vector<int> WeightedContentDistribution::binary_strings(int num_ones,int len){
 //		PAY ATTENTION: 
 //			- Verify the correctness of catalog_weights before calling
 //				this method. Their sum must be 1 and 
-int WeightedContentDistribution::choose_repos ( )
+int WeightedContentDistribution::choose_repos (int object_index )
 {
 	int assigned_repo = -1;
 
@@ -293,6 +298,9 @@ int WeightedContentDistribution::choose_repos ( )
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 	#endif
+
+	//Update the popularity_indication
+	(*popularity_indication_p)[assigned_repo] += 1./ pow(object_index,alpha);
 
 	return repo_string;
 }
