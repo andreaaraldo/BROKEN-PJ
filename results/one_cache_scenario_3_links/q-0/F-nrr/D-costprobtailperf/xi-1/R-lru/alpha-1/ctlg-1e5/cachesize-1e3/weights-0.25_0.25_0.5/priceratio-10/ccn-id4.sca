@@ -1,5 +1,5 @@
 version 2
-run General-40-20140509-21:59:07-26155
+run General-7-20140519-20:11:21-21330
 attr D costprobtailperf
 attr F nrr
 attr R lru
@@ -7,21 +7,22 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140509-21:59:07
+attr datetime 20140519-20:11:21
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.25_0.25_0.5, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3"
-attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.25_0.25_0.5, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3, $repetition=0"
-attr measurement "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.25_0.25_0.5, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3"
+attr iterationvars "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.25_0.25_0.5, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3, $pricebits=0"
+attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.25_0.25_0.5, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $repetition=0"
+attr measurement "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.25_0.25_0.5, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3, $pricebits=0"
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
+attr pricebits 0
 attr priceratiovalue 10
-attr processid 26155
+attr processid 21330
 attr rep 4
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 40
+attr runnumber 7
 attr seedset 4
 attr ttl 1000
 attr weights 0.25_0.25_0.5
@@ -30,6 +31,7 @@ attr xi 1
 scalar . 	a 	1
 scalar . 	csize 	1e3
 scalar . 	ctlg 	1e5
+scalar . 	pricebits 	0
 scalar . 	priceratiovalue 	10
 scalar . 	rep 	4
 scalar . 	ttl 	1000
@@ -59,7 +61,7 @@ scalar one_cache_scenario_3_links_network.node[0].content_store 	misses[0] 	7704
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_yes[0] 	1330
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_no[0] 	75714
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_ratio[0] 	0.01726286277971
-scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	1.4688872042773e-316
+scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	1.3394807398135e-316
 scalar one_cache_scenario_3_links_network.node[0].content_store 	xi[0] 	1
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	interests[1] 	25282
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	data[1] 	25282
