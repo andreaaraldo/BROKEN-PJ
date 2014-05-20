@@ -34,7 +34,7 @@ ifstream strategy_layer::frouting;
 void strategy_layer::initialize()
 {
 	//<aa>
-	cout << __FILE__ <<":"<<__LINE__<<"\nPAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this. To see the line where the error arises, search for \"here is the error\""<<endl;
+	cout << __FILE__ <<":"<<__LINE__<<"\nPAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this. To see the line where the exception may arise, search for \"here is the problem\""<<endl;
 	cout<<"\n\n"<<__FILE__<<__LINE__<< ":Attenzione, prima di inserire roba, sei sicuro che il vettore gia' esiste li'?"<<endl;
 
 	//</aa>
@@ -106,7 +106,7 @@ void strategy_layer::populate_routing_table(){
 					<<paths.size();
 				debug_message(__FILE__,__LINE__,msg.str().c_str());
 			}
-			//here is the error
+			//here is the problem
 			for (unsigned int i=0; i<paths.size(); i++){
 				int output_gate = node->getPath( paths[i] )->getLocalGate()->getIndex();
 				int distance = node->getDistanceToTarget();
