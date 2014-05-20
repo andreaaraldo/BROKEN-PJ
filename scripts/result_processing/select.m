@@ -354,19 +354,65 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 	% REPO_CARDINALITY{
 		string_to_search="repo-0_card";
 		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-		[status, output] = system(command,1);
-		parsed.free_repo_cardinality = str2num(output);
+		[status, output0] = system(command,1);
+		parsed.free_repo_cardinality = str2num(output0);
 
 		string_to_search="repo-1_card";
 		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-		[status, output] = system(command,1);
-		parsed.cheap_repo_cardinality = str2num(output);
+		[status, output1] = system(command,1);
+		parsed.cheap_repo_cardinality = str2num(output1);
 
 		string_to_search="repo-2_card";
 		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-		[status, output] = system(command,1);
-		parsed.expensive_repo_cardinality = str2num(output);
+		[status, output2] = system(command,1);
+		parsed.expensive_repo_cardinality = str2num(output2);
+
+		% CHECK{
+			lines_in_output0 = length(findstr(output0,"\n",0));
+			lines_in_output1 = length(findstr(output1,"\n",0));
+			lines_in_output2 = length(findstr(output2,"\n",0));
+			if lines_in_output0 != 1 || lines_in_output1 != 1 || lines_in_output2 != 1
+				output0
+				output1
+				output2
+				filename
+				error("Parsing error");
+			end
+		% }CHECK
+
 	% }REPO_CARDINALITY
+
+
+	% REPO_POPULARITY{
+		string_to_search="repo_popularity\\[0\\]";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output0] = system(command,1);
+		parsed.free_repo_popularity = str2num(output0);
+
+		string_to_search="repo_popularity\\[1\\]";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output1] = system(command,1);
+		parsed.cheap_repo_popularity = str2num(output1);
+
+		string_to_search="repo_popularity\\[2\\]";
+		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+		[status, output2] = system(command,1);
+		parsed.expensive_repo_popularity = str2num(output1);
+
+		% CHECK{
+			lines_in_output0 = length(findstr(output0,"\n",0));
+			lines_in_output1 = length(findstr(output1,"\n",0));
+			lines_in_output2 = length(findstr(output2,"\n",0));
+			if lines_in_output0 != 1 || lines_in_output1 != 1 || lines_in_output2 != 1
+				output0
+				output1
+				output2
+				filename
+				error("Parsing error");
+			end
+		% }CHECK
+
+	% }REPO_POPULARITY
 
 
 	# CHECK RESULTS{
