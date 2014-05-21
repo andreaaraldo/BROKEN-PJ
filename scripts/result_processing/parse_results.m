@@ -15,34 +15,35 @@ possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","cost
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 
 % The decision plocies that I want to plot
-decision_list={"costprobprodcorr0.01"};
 decision_list={"fix0.01","costprobprodcorr0.01","lce","costprobtailperf","tailandrank","never"}; 
+decision_list={"costprobprodcorr0.01", "costprobtailperf", "tailandrank"};
 
 xi_list = {"0","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
 xi_list = {"1"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0"};
 weights_list={"0.333_0.333_0.334","0.5_0.25_0.25","0.25_0.25_0.5","0_0.25_0.75","0.75_0_0.25"};
 weights_list={"0.333_0.333_0.334"};
-id_rep_list=1:20; # list of seeds
+id_rep_list=1:5; # list of seeds
 alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
+simtime_list = {"1800","18000","180000","1800000"};
 
 q_list={"0"};
 
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"cost_savings_wrt_fix","cost_fraction"};
+metric_list={"cost_fraction"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
 ctlg_="1e5"; 
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"priceratio", "alpha","decision","q"};
-x_variable_name = "xi";
-z_variable_name = "weights"; % Over the columns
+fixed_variable_names_additional = {"priceratio", "alpha","weights","q", "xi"};
+x_variable_name = "simtime";
+z_variable_name = "decision"; % Over the columns
 
 
 % {CHECK
@@ -57,49 +58,52 @@ i = 1;
 ############################################
 ##### PARSE FILES ##########################
 ############################################
-for idx_csize = 1:length(csize_list)
-	csize_ = csize_list{idx_csize};
-	csize_to_write = csize_to_write_list{ idx_csize};
-	for alpha_idx = 1:length(alpha_list)
-		for priceratio_idx = 1:length(priceratio_list)
-			for decision_idx = 1:length(decision_list)
-				for idx_xi = 1:length(xi_list)
-					xi_ = xi_list{idx_xi};
-					for idx_weight = 1:length(weights_list)
-						weights_ = weights_list{idx_weight};
-						for q_idx = 1:length(q_list)
-							for id_rep_ = id_rep_list
+for idx_simtime =  1:length(simtime_list)
+	simtime_ = simtime_list{idx_simtime};
+	for idx_csize = 1:length(csize_list)
+		csize_ = csize_list{idx_csize};
+		csize_to_write = csize_to_write_list{ idx_csize};
+		for alpha_idx = 1:length(alpha_list)
+			for priceratio_idx = 1:length(priceratio_list)
+				for decision_idx = 1:length(decision_list)
+					for idx_xi = 1:length(xi_list)
+						xi_ = xi_list{idx_xi};
+						for idx_weight = 1:length(weights_list)
+							weights_ = weights_list{idx_weight};
+							for q_idx = 1:length(q_list)
+								for id_rep_ = id_rep_list
 
-								selection_tuple.priceratio = priceratio_list{priceratio_idx};
-								selection_tuple.decision = decision_list{decision_idx};
-								selection_tuple.xi = xi_;
-								selection_tuple.forwarding = forwarding_;
-								selection_tuple.replacement = replacement_;
-								selection_tuple.alpha = alpha_list{alpha_idx};
-								selection_tuple.q = q_list{q_idx};
-								selection_tuple.ctlg = ctlg_;
-								selection_tuple.csize = csize_;
-								selection_tuple.id_rep = id_rep_;
-								selection_tuple.network = network;
-								selection_tuple.weights = weights_;
-								selection_tuple.metric_list = metric_list;
+									selection_tuple.priceratio = priceratio_list{priceratio_idx};
+									selection_tuple.decision = decision_list{decision_idx};
+									selection_tuple.xi = xi_;
+									selection_tuple.forwarding = forwarding_;
+									selection_tuple.replacement = replacement_;
+									selection_tuple.alpha = alpha_list{alpha_idx};
+									selection_tuple.q = q_list{q_idx};
+									selection_tuple.ctlg = ctlg_;
+									selection_tuple.csize = csize_;
+									selection_tuple.id_rep = id_rep_;
+									selection_tuple.network = network;
+									selection_tuple.weights = weights_;
+									selection_tuple.simtime = simtime_;
+									selection_tuple.metric_list = metric_list;
 
-								parsed_ = select(selection_tuple, resultdir,...
-									optimization_result_folder);
+									parsed_ = select(selection_tuple, resultdir,...
+										optimization_result_folder);
 
-								parsed(i) = parsed_;
-								i++;
-							endfor % seed loop
-						endfor % q_loop
-					endfor % weights loop
-				endfor % xi loop
+									parsed(i) = parsed_;
+									i++;
+								endfor % seed loop
+							endfor % q_loop
+						endfor % weights loop
+					endfor % xi loop
+				endfor
 			endfor
-		endfor
-	endfor %alpha for
-endfor %csize for
+		endfor %alpha for
+	endfor %csize for
+endfor %simtime
 
 scatter_plot(parsed);
-error("basta cosi")
 
 ##################################
 ### PREPARE DATA FOR PLOTTING ####

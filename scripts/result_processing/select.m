@@ -13,7 +13,10 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						id_rep_ = selection_tuple.id_rep;
 						network = selection_tuple.network;
 						weights_ = selection_tuple.weights;
+						simtime_ = selection_tuple.simtime;
+
 						metric_list = selection_tuple.metric_list;
+						
 
 						if isequal(csize_, "0")
 							selection_tuple
@@ -74,7 +77,8 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						% }CHECK
 
 						destination_folder = ...
-							strcat(resultdir,"/",network,"/q-",q_,...
+							strcat(resultdir,"/simtime-",simtime_,"/", ...
+							network,"/q-",q_,...
 							"/F-",forwarding_,...
 							"/D-",decision_,"/xi-",xi_,"/R-",replacement_,...
 							"/alpha-",alpha_,"/ctlg-",ctlg_,...
@@ -83,6 +87,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 
 						filename = strcat(destination_folder,"/ccn-id", ...
 										num2str(id_rep_),".sca");
+
 
 						if isequal(decision_,"costopt")
 							% This file does not exists yet
@@ -115,6 +120,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.priceratio = priceratio_;
 						parsed.id_rep = id_rep_;
 						parsed.weights = weights_;
+						parsed.simtime = simtime_;
 
 						string_to_search="p_hit\\[0\\] ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
@@ -127,8 +133,11 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						% CHECK{
 							lines_in_output = length(findstr(output,"\n",0));
 							if lines_in_output != 1
+								command
 								output
 								filename
+								command_pre = ["grep ","\"",string_to_search,"\""," "]
+								command_post = [command_pre,"\"",string_to_search,"\""," ",filename]
 								error("Parsing error");
 							end
 						% }CHECK
