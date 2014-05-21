@@ -1,5 +1,6 @@
 % result processing
 global severe_debug = true;
+global ignore_simtime = true;
 
 
 out_folder="~/temp/icn14_runs/";
@@ -15,18 +16,19 @@ possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","cost
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 
 % The decision plocies that I want to plot
-decision_list={"fix0.01","costprobprodcorr0.01","lce","costprobtailperf","tailandrank","never"}; 
+decision_list={"fix0.01","costprobprodcorr0.01","costprobtailperf"}; 
 
 xi_list = {"0","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
 xi_list = {"1"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0"};
 weights_list={"0.333_0.333_0.334","0.5_0.25_0.25","0.25_0.25_0.5","0_0.25_0.75","0.75_0_0.25"};
 weights_list={"0.333_0.333_0.334"};
-id_rep_list=1:2; # list of seeds
+id_rep_list=1:1; # list of seeds
 alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
 simtime_list = {"1800","18000","180000","1800000"};
+simtime_list = {"1800"};
 
 q_list={"0"};
 
@@ -37,8 +39,8 @@ metric_list={"cost_fraction"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
-ctlg_="1e5"; 
-ctlg_to_write_="1e5";
+ctlg_="1e7"; 
+ctlg_to_write_="1e7";
 
 fixed_variable_names_additional = {"priceratio", "alpha","weights","q", "xi"};
 x_variable_name = "simtime";

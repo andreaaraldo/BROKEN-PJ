@@ -188,9 +188,9 @@ bool statistics::stable(int n){
     }else 
         samples[n].push_back(0);
 
-    if ( fabs( samples[n].size() - window * 1./ts ) <= 0.001 ){ //variance each window seconds
-
-	var =variance(samples[n]); 
+    if ( fabs( samples[n].size() - window * 1./ts ) <= 0.001 )
+	{ //variance each window seconds
+		var =variance(samples[n]); 
         cout<<n<<"] variance = "<<var<<endl;
         if ( var <= 0.05){
             stabilization_time = simTime().dbl();
@@ -352,6 +352,13 @@ void statistics::clear_stat(){
 }
 
 void statistics::stability_has_been_reached(){
+	//<aa>
+	char name[30];
+	sprintf (name, "stabilization_time");
+	recordScalar(name,stabilization_time);
+	cout<<"stabilization_time: "<< stabilization_time <<endl;
+	//</aa>
+
 	clear_stat();
 }
 
