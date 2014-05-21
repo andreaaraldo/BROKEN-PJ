@@ -1,5 +1,5 @@
 version 2
-run General-12-20140520-19:59:41-17125
+run General-3-20140521-15:39:30-23242
 attr D costprobtailperf
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140520-19:59:41
+attr datetime 20140521-15:39:30
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobtailperf, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $mytime=1800"
@@ -18,12 +18,12 @@ attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 17125
+attr processid 23242
 attr rep 1
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 12
+attr runnumber 3
 attr seedset 1
 attr ttl 1000
 attr weights 0.333_0.333_0.334
@@ -48,6 +48,7 @@ scalar one_cache_scenario_3_links_network.content_distribution 	repo-2_card 	335
 scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[0] 	0.28686251265602
 scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[1] 	0.2886063426465
 scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[2] 	0.42453114469748
+scalar one_cache_scenario_3_links_network.statistics 	stabilization_time 	78.4
 scalar one_cache_scenario_3_links_network.node[1].face$o[2].channel 	price[1] 	0
 scalar one_cache_scenario_3_links_network.node[1].face$o[2].channel 	represented_price[1] 	0
 scalar one_cache_scenario_3_links_network.node[2].face$o[2].channel 	price[2] 	0
@@ -78,7 +79,7 @@ scalar one_cache_scenario_3_links_network.node[0].content_store 	misses[0] 	7717
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_yes[0] 	1415
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_no[0] 	75760
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_ratio[0] 	0.018334953028831
-scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	1.581010066692e-322
+scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	8.7268356509754e-317
 scalar one_cache_scenario_3_links_network.node[0].content_store 	xi[0] 	1
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	interests[1] 	31204
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	data[1] 	31204
