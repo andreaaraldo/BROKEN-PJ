@@ -134,6 +134,30 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						[status, output] = system(command,1);
 						parsed.p_hit = str2num(output);
 
+					% STABILIZATION_TIME{
+						parsed.stabilization_time = NaN;
+						string_to_search="stabilization_time ";
+						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
+						[status, output] = system(command,1);
+						lines_in_output = length(findstr(output,"\n",0));
+						if lines_in_output == 1
+							parsed.stabilization_time = str2num(output);
+						endif
+						%CHECK{
+							if lines_in_output > 1
+								command
+								output
+								filename
+								command_pre = ["grep ","\"",string_to_search,"\""," "]
+								command_post = [command_pre,"\"",string_to_search,"\""," ",filename]
+								error("Parsing error");
+							endif
+						%]CHECK
+					% }STABILIZATION_TIME
+
+
+
+
 						string_to_search="total_cost ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
@@ -167,6 +191,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 					else
 						parsed.client_requests = NaN;
 					endif
+
 
 
 	% LINK LOAD COMPUTATION{

@@ -1,6 +1,6 @@
 % result processing
 global severe_debug = true;
-global ignore_simtime = true;
+global ignore_simtime = false;
 
 
 out_folder="~/temp/icn14_runs/";
@@ -16,7 +16,7 @@ possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","cost
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 
 % The decision plocies that I want to plot
-decision_list={"fix0.01","costprobprodcorr0.01","costprobtailperf"}; 
+decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf"}; 
 
 xi_list = {"0","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
 xi_list = {"1"};
@@ -35,16 +35,16 @@ q_list={"0"};
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"cost_fraction"};
+metric_list={"stabilization_time"};
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
-ctlg_="1e7"; 
-ctlg_to_write_="1e7";
+ctlg_="1e5"; 
+ctlg_to_write_="1e5";
 
 fixed_variable_names_additional = {"priceratio", "alpha","weights","q", "xi"};
-x_variable_name = "simtime";
-z_variable_name = "decision"; % Over the columns
+x_variable_name = "decision";
+z_variable_name = "simtime"; % Over the columns
 
 
 % {CHECK

@@ -42,6 +42,7 @@ function y = metric_vs_x_variable (input_data)
 	priceratio = {input_data.parsed.priceratio};
 	id_rep = {input_data.parsed.id_rep};
 	p_hit = {input_data.parsed.p_hit};
+	stabilization_time = {input_data.parsed.stabilization_time};
 	total_cost = {input_data.parsed.total_cost};
 	hdistance = {input_data.parsed.hdistance};
 	client_requests = {input_data.parsed.client_requests};
@@ -302,6 +303,10 @@ function y = metric_vs_x_variable (input_data)
 								case "potential_savings_wrt_costopt"
 									column_list{idx_metric} = cell2mat(...
 											potential_savings_wrt_costopt(idx) );
+
+								case "stabilization_time"
+									column_list{idx_metric} = cell2mat(...
+											stabilization_time(idx) );
 						% }COMPARISON BASED METRICS
 
 								otherwise
