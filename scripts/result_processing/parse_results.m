@@ -16,14 +16,13 @@ possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","cost
 
 % The decision plocies that I want to plot
 decision_list={"fix0.01","costprobprodcorr0.01","lce","costprobtailperf","tailandrank","never"}; 
-decision_list={"costprobprodcorr0.01", "costprobtailperf", "tailandrank"};
 
 xi_list = {"0","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
 xi_list = {"1"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0"};
 weights_list={"0.333_0.333_0.334","0.5_0.25_0.25","0.25_0.25_0.5","0_0.25_0.75","0.75_0_0.25"};
 weights_list={"0.333_0.333_0.334"};
-id_rep_list=1:5; # list of seeds
+id_rep_list=1:2; # list of seeds
 alpha_list = {"1"};
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
