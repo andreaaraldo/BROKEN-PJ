@@ -284,6 +284,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 			% The following 2 metrics depend on cost_fraction
 			any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costprobtailperf"} ) )...
 			|| any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costopt"} ) )...
+			|| any( cellfun(@isequal,metric_list, {"cost_reduction_wrt_fix"} ) )
 		)
 			if isequal("costopt", decision_) && strcmp(csize_, "0")
 				parsed.cost_fraction = 1;
@@ -303,6 +304,31 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 			endif
 		endif
 	% }COMPUTE COST FRACTION
+
+
+	% COMPUTE COST_REDUCTION_WRT_FIX{
+		parsed.cost_reduction_wrt_fix = NaN;
+		if 	any( cellfun(@isequal,metric_list, {"cost_reduction_wrt_fix"} ) ) && ...
+			isequal("costprobprodcorr0.01",decision_)				
+
+				selection_tuple_of_counterpart = selection_tuple;
+				selection_tuple_of_counterpart.decision = "fix0.01";
+				counterpart_parsed = select(selection_tuple_of_counterpart,...
+						resultdir, optimization_result_folder);
+				parsed.cost_reduction_wrt_fix = ...
+						counterpart_parsed.cost_fraction - parsed.cost_fraction;
+
+			% CHECK{
+				if isnan(parsed.cost_reduction_wrt_fix)
+					fix_cost_fraction = counterpart_parsed.cost_fraction
+					our_cost_fraction = parsed.cost_fraction
+					cost_reduction_wrt_fix = parsed.cost_reduction_wrt_fix
+					errpr("Error in the cost_reduction calculation")
+				end
+			% }CHECK
+		endif
+
+	% }COMPUTE COST_REDUCTION_WRT_FIX
 
 
 	% COMPUTE POTENTIAL_REDUCTION_WRT_COSTOPT{
@@ -369,7 +395,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 					(parsed.total_cost - counterpart_parsed.total_cost)/...
 					parsed.total_cost;
 			endif
-	% }COMPUTE POTENTIAL_REDUCTION_WRT_COSTPROBTAILPERF
+	% }COMPUTE POTENTIAL_SAVINGS_WRT_COSTPROBTAILPERF
 
 	% COMPUTE POTENTIAL_SAVINGS_WRT_COSTOPT{
 			parsed.potential_savings_wrt_costopt = NaN;
@@ -385,7 +411,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 					(parsed.total_cost - counterpart_parsed.total_cost)/...
 					parsed.total_cost;
 			endif
-	% }COMPUTE POTENTIAL_REDUCTION_WRT_COSTOPT
+	% }COMPUTE POTENTIAL_SAVINGS_WRT_COSTOPT
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

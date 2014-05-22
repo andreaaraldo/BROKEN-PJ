@@ -51,6 +51,7 @@ function y = metric_vs_x_variable (input_data)
 	decision_yes = {input_data.parsed.decision_yes};
 	decision_no = {input_data.parsed.decision_no};
 	cost_fraction = {input_data.parsed.cost_fraction};
+	cost_reduction_wrt_fix = {input_data.parsed.cost_reduction_wrt_fix};
 	cost_savings_wrt_fix = {input_data.parsed.cost_savings_wrt_fix};
 	potential_reduction_wrt_costopt = {input_data.parsed.potential_reduction_wrt_costopt};
 	potential_reduction_wrt_costprobtailperf =...
@@ -287,6 +288,10 @@ function y = metric_vs_x_variable (input_data)
 								case "cost_savings_wrt_fix"
 									column_list{idx_metric} = ...
 											cell2mat( cost_savings_wrt_fix(idx) );
+
+								case "cost_reduction_wrt_fix"
+									column_list{idx_metric} = ...
+											cell2mat( cost_reduction_wrt_fix(idx) );
 
 								case "potential_reduction_wrt_costopt"
 									column_list{idx_metric} = ...
