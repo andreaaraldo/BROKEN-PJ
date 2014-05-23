@@ -313,6 +313,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 
 				selection_tuple_of_counterpart = selection_tuple;
 				selection_tuple_of_counterpart.decision = "fix0.01";
+				selection_tuple_of_counterpart.xi = "1";
 				counterpart_parsed = select(selection_tuple_of_counterpart,...
 						resultdir, optimization_result_folder);
 				parsed.cost_reduction_wrt_fix = ...
@@ -338,6 +339,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 
 				selection_tuple_of_counterpart = selection_tuple;
 				selection_tuple_of_counterpart.decision = "costopt";
+				selection_tuple_of_counterpart.xi = "1";
 				counterpart_parsed = select(selection_tuple_of_counterpart,...
 						resultdir, optimization_result_folder);
 				parsed.potential_reduction_wrt_costopt = ...
@@ -354,6 +356,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 				selection_tuple_of_counterpart = selection_tuple;
 				selection_tuple_of_counterpart.decision = "costprobtailperf";
 				selection_tuple_of_counterpart.metric_list={"cost_fraction"};
+				selection_tuple_of_counterpart.xi = "1";
 				counterpart_parsed = select(selection_tuple_of_counterpart,...
 						resultdir, optimization_result_folder);
 				parsed.potential_reduction_wrt_costprobtailperf = ...
