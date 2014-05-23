@@ -49,8 +49,8 @@ metric_list={"potential_reduction_wrt_costprobtailperf","cost_reduction_wrt_fix"
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
 replacement_="lru";
-ctlg_="1e7"; 
-ctlg_to_write_="1e7";
+ctlg_="1e6";
+ctlg_to_write_="1e6";
 
 fixed_variable_names_additional = {"simtime", "alpha","priceratio","q", "decision"};
 x_variable_name = "xi";
