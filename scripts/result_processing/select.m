@@ -303,6 +303,14 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 				parsed.cost_fraction = parsed.total_cost / never_counterpart_parsed.total_cost;
 			endif
 		endif
+
+		% CHECK{
+			if parsed.cost_fraction > 1
+				filename
+				cost_fraction = parsed.cost_fraction;
+				error("Cost fraction cannot be greater then 1");
+			endif
+		% }CHECK
 	% }COMPUTE COST FRACTION
 
 

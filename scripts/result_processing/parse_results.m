@@ -18,7 +18,7 @@ possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","cost
 
 % The decision plocies that I want to plot
 decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf"}; 
-decision_list={"costprobprodcorr0.01"};
+decision_list={"costprobprodcorr0.01","fix0.01","costprobtailperf", "never"};
 
 xi_list = {"0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"0.01","0.025","0.05","0.75","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
@@ -44,7 +44,7 @@ q_list={"0"};
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"potential_reduction_wrt_costprobtailperf","cost_reduction_wrt_fix"};
+metric_list={"cost_reduction_wrt_fix", "potential_reduction_wrt_costprobtailperf","total_cost"};
 
 network="one_cache_scenario_3_links";
 forwarding_="nrr";
@@ -52,8 +52,8 @@ replacement_="lru";
 ctlg_="1e6";
 ctlg_to_write_="1e6";
 
-fixed_variable_names_additional = {"simtime", "alpha","priceratio","q", "decision"};
-x_variable_name = "xi";
+fixed_variable_names_additional = {"simtime", "alpha","priceratio","q", "xi"};
+x_variable_name = "decision";
 z_variable_name = "weights"; % Over the columns
 
 
