@@ -44,6 +44,11 @@ class Costprobtailimperf: public Costprobtail{
 		{
 			return cost;
 		}
+
+
+		virtual bool decide_with_cache_not_full(chunk_t id, double cost){
+			return true;
+		}
 };
 //<//aa>
 #endif

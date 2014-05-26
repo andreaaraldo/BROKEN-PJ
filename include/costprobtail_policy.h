@@ -73,12 +73,13 @@ class Costprobtail: public Costprob{
 			}
 			#endif
 
+			chunk_t content_index = data_msg->getChunk();
+			double cost = data_msg->getCost();
+
 			if (! mycache->full() )
-				decision = true;
+				decision = decide_with_cache_not_full(content_index, cost);
 			else{
 
-				chunk_t content_index = data_msg->getChunk();
-				double cost = data_msg->getCost();
 				double new_content_weight = compute_content_weight(content_index,cost);
 //				cout << "new_content_index="<<content_index<<"; popularity_estimation_new="<<
 //					popularity_estimation<<"; cost of new="<<cost<<"; integral_cost_new="<<
@@ -141,6 +142,7 @@ class Costprobtail: public Costprob{
 		}
 
 		virtual double compute_content_weight(chunk_t id, double cost)=0;
+		virtual bool decide_with_cache_not_full(chunk_t id, double cost)=0;
 };
 //<//aa>
 #endif

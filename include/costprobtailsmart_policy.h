@@ -100,6 +100,11 @@ class Costprobtailsmart: public Costprobtail{
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			return 0;
 		}
+
+
+		virtual bool decide_with_cache_not_full(chunk_t id, double cost){
+			return true;
+		}
 };
 //<//aa>
 #endif

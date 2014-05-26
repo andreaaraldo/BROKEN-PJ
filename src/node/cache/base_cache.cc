@@ -37,6 +37,7 @@
 #include "costprobcoincorr_policy.h"
 #include "costprobcoinplain_policy.h"
 #include "costprobtailperf_policy.h"
+#include "costprobtailcons_policy.h"
 #include "costprobtailimperf_policy.h"
 #include "costprobtailsmart_policy.h"
 #include "error_handling.h"
@@ -108,6 +109,11 @@ void base_cache::initialize(){
 		{
 			sens = 0; // I don't need this parameter
 			decisor = new Costprobtailperf(sens, this );
+
+		}else if (decision_policy.find("costprobtailcons")==0)
+		{
+			sens = 0; // I don't need this parameter
+			decisor = new Costprobtailcons(sens, this );
 
 		}else if (decision_policy.find("costprobtailimperf")==0)
 		{

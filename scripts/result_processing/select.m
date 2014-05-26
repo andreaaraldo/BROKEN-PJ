@@ -86,7 +86,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						endif
 						if ignore_lambda == false
 							sim_folder_prefix = ...
-								strcat(sim_folder_prefix,"/lambda-",lambda_,"/");
+								strcat(sim_folder_prefix,"lambda-",lambda_,"/");
 						endif
 
 						destination_folder = ...
@@ -134,6 +134,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.id_rep = id_rep_;
 						parsed.weights = weights_;
 						parsed.simtime = simtime_;
+						parsed.lambda = lambda_;
 
 						string_to_search="p_hit\\[0\\] ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
