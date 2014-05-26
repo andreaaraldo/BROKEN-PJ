@@ -1,6 +1,7 @@
 % result processing
 global severe_debug = true;
 global ignore_simtime = false;
+global ignore_lambda = false;
 
 
 out_folder="~/temp/icn14_runs/";
@@ -9,7 +10,7 @@ optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 
 priceratio_list={"10","1.111","1.25","1.429","1.667","2","2.5","3.333","5"};
 priceratio_list={"1","2","5","10","100"};
-priceratio_list={"1","2","5","10"};
+priceratio_list={"1","2","5"};
 
 
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01",...
@@ -22,13 +23,14 @@ decision_list={"costprobprodcorr0.01"};
 
 xi_list = {"0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"1"};
-xi_list = {"0.01","0.025","0.05","0.75","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
+xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
+xi_list = {"0.01","0.025","0.05","0.075","1","1.25","1.50","1.75","2"};
 
 weights_list={"0.333_0.333_0.334","0.5_0.25_0.25","0.25_0.25_0.5","0_0.25_0.75","0.75_0_0.25"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0","0.5_0.5_0"};
 weights_list={"0.333_0.333_0.334"};
 
-id_rep_list=1:10; # list of seeds
+id_rep_list=1:20; # list of seeds
 alpha_list = {"0.8","1","1.2"};
 alpha_list = {"1"};
 
@@ -38,6 +40,8 @@ csize_to_write_list = {"1e3"};
 
 simtime_list = {"1800","18000","180000","1800000"};
 simtime_list = {"1800"};
+
+lambda_list = {"100"};
 
 q_list={"0"};
 
@@ -53,7 +57,7 @@ replacement_="lru";
 ctlg_="1e5";
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"simtime", "alpha","weights","q", "decision"};
+fixed_variable_names_additional = {"simtime", "alpha","weights","q", "decision","lambda"};
 x_variable_name = "xi";
 z_variable_name = "priceratio"; % Over the columns
 
@@ -72,47 +76,52 @@ i = 1;
 ############################################
 for idx_simtime =  1:length(simtime_list)
 	simtime_ = simtime_list{idx_simtime};
-	for idx_csize = 1:length(csize_list)
-		csize_ = csize_list{idx_csize};
-		csize_to_write = csize_to_write_list{ idx_csize};
-		for alpha_idx = 1:length(alpha_list)
-			for priceratio_idx = 1:length(priceratio_list)
-				for decision_idx = 1:length(decision_list)
-					for idx_xi = 1:length(xi_list)
-						xi_ = xi_list{idx_xi};
-						for idx_weight = 1:length(weights_list)
-							weights_ = weights_list{idx_weight};
-							for q_idx = 1:length(q_list)
-								for id_rep_ = id_rep_list
+	for idx_lambda = 1: length(lambda_list)
+		lambda_ = lambda_list{idx_lambda};
 
-									selection_tuple.priceratio = priceratio_list{priceratio_idx};
-									selection_tuple.decision = decision_list{decision_idx};
-									selection_tuple.xi = xi_;
-									selection_tuple.forwarding = forwarding_;
-									selection_tuple.replacement = replacement_;
-									selection_tuple.alpha = alpha_list{alpha_idx};
-									selection_tuple.q = q_list{q_idx};
-									selection_tuple.ctlg = ctlg_;
-									selection_tuple.csize = csize_;
-									selection_tuple.id_rep = id_rep_;
-									selection_tuple.network = network;
-									selection_tuple.weights = weights_;
-									selection_tuple.simtime = simtime_;
-									selection_tuple.metric_list = metric_list;
+		for idx_csize = 1:length(csize_list)
+			csize_ = csize_list{idx_csize};
+			csize_to_write = csize_to_write_list{ idx_csize};
+			for alpha_idx = 1:length(alpha_list)
+				for priceratio_idx = 1:length(priceratio_list)
+					for decision_idx = 1:length(decision_list)
+						for idx_xi = 1:length(xi_list)
+							xi_ = xi_list{idx_xi};
+							for idx_weight = 1:length(weights_list)
+								weights_ = weights_list{idx_weight};
+								for q_idx = 1:length(q_list)
+									for id_rep_ = id_rep_list
 
-									parsed_ = select(selection_tuple, resultdir,...
-										optimization_result_folder);
+										selection_tuple.priceratio = priceratio_list{priceratio_idx};
+										selection_tuple.decision = decision_list{decision_idx};
+										selection_tuple.xi = xi_;
+										selection_tuple.forwarding = forwarding_;
+										selection_tuple.replacement = replacement_;
+										selection_tuple.alpha = alpha_list{alpha_idx};
+										selection_tuple.q = q_list{q_idx};
+										selection_tuple.ctlg = ctlg_;
+										selection_tuple.csize = csize_;
+										selection_tuple.id_rep = id_rep_;
+										selection_tuple.network = network;
+										selection_tuple.weights = weights_;
+										selection_tuple.simtime = simtime_;
+										selection_tuple.lambda = lambda_;
+										selection_tuple.metric_list = metric_list;
 
-									parsed(i) = parsed_;
-									i++;
-								endfor % seed loop
-							endfor % q_loop
-						endfor % weights loop
-					endfor % xi loop
+										parsed_ = select(selection_tuple, resultdir,...
+											optimization_result_folder);
+
+										parsed(i) = parsed_;
+										i++;
+									endfor % seed loop
+								endfor % q_loop
+							endfor % weights loop
+						endfor % xi loop
+					endfor
 				endfor
-			endfor
-		endfor %alpha for
-	endfor %csize for
+			endfor %alpha for
+		endfor %csize for
+	endfor % lambda
 endfor %simtime
 
 scatter_plot(parsed);

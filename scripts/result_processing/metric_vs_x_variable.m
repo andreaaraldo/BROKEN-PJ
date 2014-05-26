@@ -61,6 +61,7 @@ function y = metric_vs_x_variable (input_data)
 	potential_savings_wrt_costopt = {input_data.parsed.potential_savings_wrt_costopt};
 	weights = {input_data.parsed.weights};
 	simtime = {input_data.parsed.simtime};
+	lambda = {input_data.parsed.lambda};
 
 
 

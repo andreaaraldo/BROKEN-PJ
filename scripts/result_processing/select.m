@@ -2,6 +2,7 @@
 function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 	global severe_debug
 	global ignore_simtime
+	global ignore_lambda
 
 						priceratio_ = selection_tuple.priceratio;
 						decision_ = selection_tuple.decision;
@@ -16,6 +17,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						network = selection_tuple.network;
 						weights_ = selection_tuple.weights;
 						simtime_ = selection_tuple.simtime;
+						lambda_ = selection_tuple.lambda;
 
 						metric_list = selection_tuple.metric_list;
 						
@@ -78,9 +80,13 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						endif
 						% }CHECK
 
-						sim_folder_prefix = strcat(resultdir,"/simtime-",simtime_,"/");
-						if ignore_simtime == true
-							sim_folder_prefix = strcat(resultdir,"/");
+						sim_folder_prefix = strcat(resultdir,"/");
+						if ignore_simtime == false
+							sim_folder_prefix = strcat(resultdir,"/simtime-",simtime_,"/");
+						endif
+						if ignore_lambda == false
+							sim_folder_prefix = ...
+								strcat(sim_folder_prefix,"/lambda-",lambda_,"/");
 						endif
 
 						destination_folder = ...
