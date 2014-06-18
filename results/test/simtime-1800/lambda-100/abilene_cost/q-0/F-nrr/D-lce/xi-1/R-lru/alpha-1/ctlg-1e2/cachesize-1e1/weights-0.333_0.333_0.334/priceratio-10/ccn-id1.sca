@@ -1,0 +1,54 @@
+version 2
+run General-0-20140618-18:40:14-5060
+attr D lce
+attr F nrr
+attr R lru
+attr a 1
+attr configname General
+attr csize 1e1
+attr ctlg 1e2
+attr datetime 20140618-18:40:14
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e2, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e1, $pricebits=0, $mytime=1800"
+attr iterationvars2 "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e2, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e1, $pricebits=0, $mytime=1800, $repetition=0"
+attr lambda 100
+attr measurement "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e2, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e1, $pricebits=0, $mytime=1800"
+attr mytime 1800
+attr net abilene_cost
+attr network networks.${net=abilene_cost}_network
+attr pricebits 0
+attr priceratiovalue 10
+attr processid 5060
+attr rep 1
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 1
+attr ttl 1000
+attr weights 0.333_0.333_0.334
+attr xi 1
+
+scalar . 	a 	1
+scalar . 	csize 	1e1
+scalar . 	ctlg 	1e2
+scalar . 	lambda 	100
+scalar . 	mytime 	1800
+scalar . 	pricebits 	0
+scalar . 	priceratiovalue 	10
+scalar . 	rep 	1
+scalar . 	ttl 	1000
+scalar . 	xi 	1
+scalar abilene_cost_network.content_distribution 	repo-0 	11
+scalar abilene_cost_network.content_distribution 	repo-1 	12
+scalar abilene_cost_network.content_distribution 	repo-2 	13
+scalar abilene_cost_network.content_distribution 	client-0 	3
+scalar abilene_cost_network.content_distribution 	client-1 	7
+scalar abilene_cost_network.content_distribution 	client-2 	10
+scalar abilene_cost_network.content_distribution 	repo-0_card 	35
+scalar abilene_cost_network.content_distribution 	repo-1_card 	37
+scalar abilene_cost_network.content_distribution 	repo-2_card 	28
+scalar abilene_cost_network.statistics 	repo_popularity[0] 	0.22656622368958
+scalar abilene_cost_network.statistics 	repo_popularity[1] 	0.24327997372272
+scalar abilene_cost_network.statistics 	repo_popularity[2] 	0.5301538025877
