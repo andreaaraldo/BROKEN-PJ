@@ -13,13 +13,10 @@ priceratio_list={"1","2","5","10","100"};
 priceratio_list={"10"};
 
 
-possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01",...
-			"fix1", "fix0",...
-			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
-
 % The decision plocies that I want to plot
 decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf","costprobtailcons"}; 
-decision_list={"lce","lcd","never","fix0.01"};
+decision_list={"fix0.1", "fix0.05", "fix0.01", "fix0.005", "fix0.001", "fix0.0001", "fix0.00001"};
+
 
 xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"1"};
