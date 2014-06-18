@@ -1,5 +1,5 @@
 version 2
-run General-2-20140618-15:57:55-16890
+run General-2-20140618-15:32:11-16761
 attr D fix0.01
 attr F spr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140618-15:57:55
+attr datetime 20140618-15:32:11
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=1000, $D=fix0.01, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $mytime=1800"
@@ -19,7 +19,7 @@ attr net abilene_cost
 attr network networks.${net=abilene_cost}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 16890
+attr processid 16761
 attr rep 1
 attr repetition 0
 attr replication #0
@@ -66,6 +66,7 @@ scalar abilene_cost_network.node[12].face$o[1].channel 	represented_price[12] 	1
 scalar abilene_cost_network.node[13].face$o[1].channel 	price[13] 	10
 scalar abilene_cost_network.node[13].face$o[1].channel 	represented_price[13] 	10
 scalar abilene_cost_network.statistics 	p_hit 	0.17259521297294
+scalar abilene_cost_network.statistics 	inner_hit 	inf
 scalar abilene_cost_network.statistics 	interests 	113255.5
 scalar abilene_cost_network.statistics 	data 	74738.071428571
 scalar abilene_cost_network.statistics 	hdistance 	2.4326559793785
@@ -73,7 +74,6 @@ scalar abilene_cost_network.statistics 	avg_time 	0
 scalar abilene_cost_network.statistics 	downloads 	539244
 scalar abilene_cost_network.statistics 	total_cost 	1007640
 scalar abilene_cost_network.statistics 	total_replicas 	100000
-scalar abilene_cost_network.statistics 	inner_hit 	0.5074938246879
 scalar abilene_cost_network.statistics 	interests_sent 	539244
 scalar abilene_cost_network.node[0].core_layer 	interests[0] 	100380
 scalar abilene_cost_network.node[0].core_layer 	data[0] 	89640

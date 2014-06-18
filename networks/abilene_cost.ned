@@ -53,7 +53,7 @@ connections allowunconnected:
 	node[9].face++ <--> node[8].face++;
 
 	// Attach the repos
-	node[0].face++ <--> IcnChannel{price_desc=0;} <-->node[11].face++;
-	node[5].face++ <--> IcnChannel{price_desc=cheap_price;} <-->node[12].face++;
-	node[9].face++ <--> IcnChannel{price_desc=expensive_price;} <-->node[13].face++;
+	node[0].face++ <--> IcnChannel{price_desc=0; max_price=expensive_price; } <-->node[11].face++;
+	node[5].face++ <--> IcnChannel{price_desc=cheap_price; max_price=expensive_price;} <-->node[12].face++;
+	node[9].face++ <--> IcnChannel{price_desc=expensive_price; max_price=expensive_price;} <-->node[13].face++;
 }

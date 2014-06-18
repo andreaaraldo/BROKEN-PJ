@@ -213,9 +213,13 @@ void statistics::finish(){
     uint32_t global_interests = 0;
     uint32_t global_data      = 0;
 
+    //<aa>
+    uint32_t global_repo_load = 0;
+    //</aa>
+
     double global_avg_distance = 0;
     simtime_t global_avg_time = 0;
-    double global_tot_downloads = 0;
+    uint32_t global_tot_downloads = 0;
 
     //<aa>
     #ifdef SEVERE_DEBUG
@@ -230,6 +234,7 @@ void statistics::finish(){
 			global_miss += caches[i]->miss;
 			global_data += cores[i]->data;
 			global_interests += cores[i]->interests;
+			global_repo_load += cores[i]->repo_load;
 
 
 			#ifdef SEVERE_DEBUG
@@ -258,6 +263,8 @@ void statistics::finish(){
 	//</aa>
 
     //Print and store global statistics
+
+    //global_hit is the sum of the hits of each cache
     sprintf (name, "p_hit");
     recordScalar(name,global_hit * 1./(global_hit+global_miss));
     cout<<"p_hit/cache: "<<global_hit *1./(global_hit+global_miss)<<endl;
@@ -301,7 +308,20 @@ void statistics::finish(){
     cout<<"total_replicas: "<<total_replicas<<endl;
 
     //<aa>
+    // It accounts for the fraction of traffic that does not exit the network,
+    // thus not reaching the repos, because it is satisfied by some cache inside
+    // the network
+    sprintf (name, "inner_hit");
+    recordScalar(name , (double) (global_tot_downloads - global_repo_load) / global_tot_downloads) ;
+
     #ifdef SEVERE_DEBUG
+	if (global_tot_downloads == 0)
+	{
+	       	std::stringstream ermsg;
+		ermsg<<"global_tot_downloads == 0";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+
 		sprintf ( name, "interests_sent");
 		recordScalar(name,global_interests_sent);
 		cout<<"interests_sent: "<<global_interests_sent<<endl;
