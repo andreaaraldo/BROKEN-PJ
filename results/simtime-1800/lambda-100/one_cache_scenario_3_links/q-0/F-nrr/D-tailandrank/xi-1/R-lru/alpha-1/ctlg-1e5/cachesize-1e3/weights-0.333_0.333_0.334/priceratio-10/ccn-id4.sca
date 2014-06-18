@@ -1,5 +1,5 @@
 version 2
-run General-76-20140521-01:05:05-18188
+run General-19-20140520-15:03:23-31200
 attr D tailandrank
 attr F nrr
 attr R lru
@@ -7,23 +7,22 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140521-01:05:05
+attr datetime 20140520-15:03:23
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $mytime=1800"
-attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $mytime=1800, $repetition=0"
-attr measurement "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $mytime=1800"
-attr mytime 1800
+attr iterationvars "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0"
+attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $repetition=0"
+attr measurement "$net=one_cache_scenario_3_links, $rep=4, $priceratiovalue=10, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=tailandrank, $xi=1, $R=lru, $csize=1e3, $pricebits=0"
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 18188
+attr processid 31200
 attr rep 4
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 76
+attr runnumber 19
 attr seedset 4
 attr ttl 1000
 attr weights 0.333_0.333_0.334
@@ -32,7 +31,6 @@ attr xi 1
 scalar . 	a 	1
 scalar . 	csize 	1e3
 scalar . 	ctlg 	1e5
-scalar . 	mytime 	1800
 scalar . 	pricebits 	0
 scalar . 	priceratiovalue 	10
 scalar . 	rep 	4

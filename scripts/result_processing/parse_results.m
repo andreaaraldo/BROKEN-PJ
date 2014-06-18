@@ -10,7 +10,7 @@ optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 
 priceratio_list={"10","1.111","1.25","1.429","1.667","2","2.5","3.333","5"};
 priceratio_list={"1","2","5","10","100"};
-priceratio_list={"2","5"};
+priceratio_list={"10"};
 
 
 possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","costprob0.01",...
@@ -18,17 +18,17 @@ possible_decisions={"lce", "fix0.1", "prob_cache", "fix0.01","costprob0.1","cost
 			 "costprob0","never","costprob0.02","fix0.0001", "costprob0.0002"};
 
 % The decision plocies that I want to plot
-decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf"}; 
-decision_list={"costprobprodcorr0.01"};
+decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf","costprobtailcons"}; 
+decision_list={"lce","lcd","never","fix0.01"};
 
-xi_list = {"1"};
 xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
+xi_list = {"1"};
 
 weights_list={"0.333_0.333_0.334","0.5_0.25_0.25","0.25_0.25_0.5","0_0.25_0.75","0.75_0_0.25"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0","0.5_0.5_0"};
 weights_list={"0.333_0.333_0.334"};
 
-id_rep_list=1:20; # list of seeds
+id_rep_list=1:1; # list of seeds
 alpha_list = {"0.8","1","1.2"};
 alpha_list = {"1"};
 
@@ -46,16 +46,21 @@ q_list={"0"};
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"cost_reduction_wrt_fix", "potential_reduction_wrt_costprobtailperf","total_cost"};
+metric_list={"cost_fraction"};
 
 network="one_cache_scenario_3_links";
+network="abilene_cost";
+
 forwarding_="nrr";
+forwarding_="spr";
+
+
 replacement_="lru";
 ctlg_="1e5";
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"simtime", "alpha","weights","q", "decision","lambda"};
-x_variable_name = "xi";
+fixed_variable_names_additional = {"simtime", "alpha","weights","q", "xi","lambda"};
+x_variable_name = "decision";
 z_variable_name = "priceratio"; % Over the columns
 
 

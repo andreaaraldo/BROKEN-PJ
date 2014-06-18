@@ -64,6 +64,10 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 								decision_root_ = "costprobtailperf";
 								target_decision_probability_ = NaN;
 
+							elseif strmatch( "costprobtailcons", decision_ )
+								decision_root_ = "costprobtailcons";
+								target_decision_probability_ = NaN;
+
 							elseif strmatch( "costprobtailsmart", decision_ )
 								decision_root_ = "costprobtailsmart";
 								target_decision_probability_ = ...
