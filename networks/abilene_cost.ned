@@ -19,8 +19,8 @@ network abilene_cost_network extends base_network{
 
 		double cheap_price = 1;
 		double expensive_price = priceratio;
-		num_clients = 3;
-		node_clients = "3,7,10";
+		num_clients = 2;
+		node_clients = "0,11";
 		num_repos = 3;
 		node_repos = "11,12,13";
 

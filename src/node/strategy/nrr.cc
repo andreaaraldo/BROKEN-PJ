@@ -91,46 +91,80 @@ bool *nrr::exploit(ccn_interest *interest){
 
     int repository,
 	node,
-	outif,
+	output_iface,
 	gsize,
 	times;
+
+	output_iface = -1;
 
     gsize = __get_outer_interfaces();
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
 
-    //find the first occurrence in the sorted vector of caches.
-    if (interest->getTarget() == -1 || interest->getTarget() == getIndex() ){
-	vector<Centry>::iterator it = std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()));
 
-	vector<int> repos = interest->get_repos();
-	repository = nearest(repos);
-
-	//<aa>
-	const int_f FIB_entry = get_FIB_entry(repository);
-	//</aa>
-	if (it!=cfib.end() && it->len <= FIB_entry.len+1){//found!!!
-	    times = std::count_if (cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
-	    int select = intrand(times);
-	    it+=select;
-	    node = it->cache->getIndex();
-	    outif = FIB_entry.id;
-	    interest->setTarget(node);
-	}else{//not found
-	    outif = FIB_entry.id;
-	    interest->setTarget(repository);
+	#ifdef SEVERE_DEBUG
+	if (interest->getTarget() == getIndex() ){
+		std::stringstream ermsg; 
+		ermsg<<"I am node "<<getIndex()<<".I am the target for  an interest for chunk " 			<< interest->getChunk() <<" but I do not have that chunk";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
+	#endif
 
+    //find the first occurrence in the sorted vector of caches.
+    if (interest->getTarget() == -1 
+		//<aa> 	The interest has no target node () the preferential node to be sent 
+		// 		to</aa>
+		|| interest->getTarget() == getIndex() 
+		// <aa> The target of the interest is this node </aa>
+
+	){
+		vector<Centry>::iterator it = 
+			std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()) );
+
+		vector<int> repos = interest->get_repos();
+		repository = nearest(repos);
+
+		//<aa>
+		const int_f FIB_entry = get_FIB_entry(repository);
+		//</aa>
+		if (it!=cfib.end() && it->len <= FIB_entry.len+1)
+		{//found!!!
+			//<aa>	It is possible to reach the content through the interface indicated
+			//		by it. Moreover, this path is not longer than the path related to
+			//		the FIB_entry </aa>
+
+			times = std::count_if (
+					cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
+			int select = intrand(times);
+			it+=select;
+			node = it->cache->getIndex();
+			output_iface = FIB_entry.id;
+			interest->setTarget(node);
+		}else{//not found
+			//<aa> There are no alternatives to the FIB entry to reach the content</aa>
+			output_iface = FIB_entry.id;
+			interest->setTarget(repository);
+		}
 
     }else {
+		//<aa>	The interest has already a target that is not this node. 
+		// I will send the
+		//		interest toward that target </aa>
 		const int_f FIB_entry2 = get_FIB_entry(interest->getTarget() );
-		outif = FIB_entry2.id;
+		output_iface = FIB_entry2.id;
     }
 
+	#ifdef SEVERE_DEBUG
+	if ( output_iface == -1 ){
+		std::stringstream ermsg; 
+		ermsg<<"I am node "<<getIndex()<<".The output iface for interest for chunk "
+			<< interest->getChunk() <<" was not satisfied";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
 
-    decision[outif] = true;
+    decision[output_iface] = true;
     return decision;
-
 }
 
 int nrr::nearest(vector<int>& repositories){

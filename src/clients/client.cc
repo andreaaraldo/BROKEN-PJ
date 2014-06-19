@@ -44,35 +44,38 @@ void client::initialize(){
 
     int num_clients = getAncestorPar("num_clients");
     active = false;
-    if (find(content_distribution::clients , content_distribution::clients + num_clients ,getNodeIndex()) 
-	    != content_distribution::clients + num_clients){
+    if (find(content_distribution::clients , 
+			content_distribution::clients + num_clients ,getNodeIndex()
+		) 
+	  != content_distribution::clients + num_clients
+	){
 
-	active = true;
+		active = true;
 
-	//Parameters initialization
-	check_time      = par("check_time");
-	lambda          = par ("lambda");
-	RTT             = par("RTT");
+		//Parameters initialization
+		check_time      = par("check_time");
+		lambda          = par ("lambda");
+		RTT             = par("RTT");
 
-	//Allocating file statistics
-	client_stats = new client_stat_entry[__file_bulk+1];
+		//Allocating file statistics
+		client_stats = new client_stat_entry[__file_bulk+1];
 
-	//Initialize average stats
-	avg_distance = 0;
-	avg_time = 0;
-	tot_downloads = 0;
-	tot_chunks = 0;
+		//Initialize average stats
+		avg_distance = 0;
+		avg_time = 0;
+		tot_downloads = 0;
+		tot_chunks = 0;
 
-	//<aa>
-	#ifdef SEVERE_DEBUG
-	interests_sent = 0;
-	#endif
-	//</aa>
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		interests_sent = 0;
+		#endif
+		//</aa>
 
-	arrival = new cMessage("arrival", ARRIVAL );
-	timer = new cMessage("timer", TIMER);
-	scheduleAt( simTime() + exponential(1./lambda), arrival);
-	scheduleAt( simTime() + check_time, timer  );
+		arrival = new cMessage("arrival", ARRIVAL );
+		timer = new cMessage("timer", TIMER);
+		scheduleAt( simTime() + exponential(1./lambda), arrival);
+		scheduleAt( simTime() + check_time, timer  );
 
     }
 }
@@ -160,7 +163,7 @@ void client::handle_timers(cMessage *timer){
 				name_t object_name = i->first;
 				chunk_t object_id = __sid(chunk, object_name);
 				std::stringstream ermsg; 
-				ermsg<<"Client was not able to retrieve object "<<object_id<< " before the timeout expired. This is not necessarily a bug. If you expect such an event and you think it is not a bug, disable this error";
+				ermsg<<"Client attached to node "<< getNodeIndex() <<" was not able to retrieve object "<<object_id<< " before the timeout expired. This is not necessarily a bug. If you expect such an event and you think it is not a bug, disable this error message";
 				
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			#endif

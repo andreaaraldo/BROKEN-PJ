@@ -155,9 +155,10 @@ void core_layer::handleMessage(cMessage *in){
 void core_layer::finish(){
 	//<aa>
 	#ifdef SEVERE_DEBUG
-	if (	data+repo_load != \
-			(int) (ContentStore->get_decision_yes() + ContentStore->get_decision_no() ) 
-	){
+		if (	data+repo_load != \
+				(int) (ContentStore->get_decision_yes() + 
+						ContentStore->get_decision_no() ) 
+		){
 			std::stringstream msg; 
 			msg<<"node["<<getIndex()<<"]: "<<
 				"decision_yes=="<<ContentStore->get_decision_yes()<<
@@ -165,13 +166,26 @@ void core_layer::finish(){
 				"; repo_load=="<<repo_load<<
 				"; data="<<data<<
 				". The sum of decision_yes+decision_no MUST be equal to data+repo_load";
-		    severe_error(__FILE__, __LINE__, msg.str().c_str() );
-	}
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+		}
+
+		if (repo_load != repo_interest)
+		{
+			std::stringstream msg; 
+			msg<<"node["<<getIndex()<<"]: "<<
+				"repo_load=="<<repo_load<<
+				"; repo_interest=="<<repo_interest;
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+
+		}	
+
 	#endif
 	//</aa>
 
     char name [30];
+
     //Total interests
+	// <aa> Parts of these interests will be satisfied by the local cache; the remaining part will be sent to the local repo (if present) and partly sarisfied there. For the remaining part, a FIB entry will be searched to forward the intereset. If no FIB entry is found, the interest will be discarded </aa>
     sprintf ( name, "interests[%d]", getIndex());
     recordScalar (name, interests);
 
@@ -184,6 +198,7 @@ void core_layer::finish(){
     sprintf ( name, "data[%d]", getIndex());
     recordScalar (name, data);
 
+	//<aa> Interests sent to the repository attached to this node</aa>
     if (repo_interest != 0){
 	sprintf ( name, "repo_int[%d]", getIndex());
 	recordScalar(name, repo_interest);
@@ -341,13 +356,76 @@ void core_layer::handle_data(ccn_data *data_msg){
 
 
 void core_layer::handle_decision(bool* decision,ccn_interest *interest){
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	bool interest_has_been_forwarded = false;
+	#endif
+	//</aa>
+
     if (my_btw > interest->getBtw())
-	interest->setBtw(my_btw);
+		interest->setBtw(my_btw);
 
     for (int i = 0; i < __get_outer_interfaces(); i++)
-	if (decision[i] == true && !__check_client(i)
-		&& interest->getArrivalGate()->getIndex() != i)
-	    sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
+	{
+		//<aa>
+		#ifdef SEVERE_DEBUG
+			if (decision[i] == true && __check_client(i) )
+			{
+				std::stringstream msg; 
+				msg<<"I am node "<< getIndex()<<" and the interface supposed to give"<<
+					" access to chunk "<< interest->getChunk() <<" is "<<i
+					<<". This is impossible "<<
+					" since that interface is to reach a client and you cannot access"
+					<< " a content from a client ";
+				severe_error(__FILE__, __LINE__, msg.str().c_str() );
+			}
+		#endif
+		//</aa>
+
+		if (decision[i] == true && !__check_client(i)
+			//&& interest->getArrivalGate()->getIndex() != i
+		){
+			sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
+			interest_has_been_forwarded = true;
+		}
+	}
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		if (! interest_has_been_forwarded)
+		{
+			int affirmative_decision_from_arrival_gate = 0;
+			int affirmative_decision_from_client = 0;
+			int last_affermative_decision = -1;
+
+			for (int i = 0; i < __get_outer_interfaces(); i++)
+			{
+				if (decision[i] == true)
+				{
+					if ( __check_client(i) ){
+						affirmative_decision_from_client++;
+						last_affermative_decision = i;
+					}
+					if ( interest->getArrivalGate()->getIndex() == i ){
+						affirmative_decision_from_arrival_gate++;
+						last_affermative_decision = i;
+					}
+				}
+			}
+			std::stringstream msg; 
+			msg<<"I am node "<< getIndex()<<" and interest for chunk "<<
+				interest->getChunk()<<" has not been forwarded. "<<
+				". One of the possible repositories of this chunk is "<< 
+				interest->get_repos()[0] <<" and the target of the interest is "<<
+				interest->getTarget() <<
+				". affirmative_decision_for_client = "<<
+				affirmative_decision_from_client<<
+				". affirmative_decision_for_arrival_gate = "<<
+				affirmative_decision_from_arrival_gate<<
+				". I would have sent the interest to interface "<<
+				last_affermative_decision;
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+		}
+	#endif
 }
 
 
