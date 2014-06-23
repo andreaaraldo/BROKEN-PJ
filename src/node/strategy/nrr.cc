@@ -78,8 +78,8 @@ bool *nrr::get_decision(cMessage *in){
 
     bool *decision;
     if (in->getKind() == CCN_I){
-	ccn_interest *interest = (ccn_interest *)in;
-	decision = exploit(interest);
+		ccn_interest *interest = (ccn_interest *)in;
+		decision = exploit(interest);
     }
     return decision;
 
@@ -102,12 +102,27 @@ bool *nrr::exploit(ccn_interest *interest){
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
 
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		if (interest->getChunk() == 243 && interest->getOrigin()==0)
+		{
+			std::stringstream ermsg; 
+			ermsg<<"I am node "<<getIndex()<<
+				"; I received interest for object ="<<interest->getChunk() <<
+				" issued by client attached to node "<< interest->getOrigin()<<
+				". its target is "<<interest->getTarget()<<
+				". Serial number="<<interest->getSerialNumber();
+			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+	//</aa>
+
     //find the first occurrence in the sorted vector of caches.
     if (interest->getTarget() == -1 
 		//<aa> 	The interest has no target node () the preferential node to be sent 
 		// 		to</aa>
-		|| interest->getTarget() == getIndex()
-		// <aa> The target of the interest is this node </aa>
+		// || interest->getTarget() == getIndex()
+		//<aa> The target of the interest is this node </aa>
 
 	){
 		vector<Centry>::iterator it = 
@@ -118,9 +133,8 @@ bool *nrr::exploit(ccn_interest *interest){
 
 		//<aa>
 		const int_f FIB_entry = get_FIB_entry(repository);
-
-
 		//</aa>
+
 		if (it!=cfib.end() && it->len <= FIB_entry.len+1)
 		{//found!!!
 			//<aa>	It is possible to reach the content through the interface indicated
@@ -176,6 +190,7 @@ bool *nrr::exploit(ccn_interest *interest){
 					std::stringstream ermsg; 
 					ermsg<<"I am node "<<getIndex()<<". I set node "<<
 						 node <<" as target for chunk "<<interest->getChunk() <<
+						". Serial number="<<interest->getSerialNumber()<<
 						". But node "<< 
 						node<<" does not contain that chunk."<<
 						times<<" nodes are holding the chunk in question.";
@@ -186,7 +201,8 @@ bool *nrr::exploit(ccn_interest *interest){
 				{
 					std::stringstream ermsg; 
 					ermsg<<"I am node "<<getIndex()<<". I set node "<<node <<
-						" as target for chunk "<<interest->getChunk() <<
+						" as target for interest for chunk "<<interest->getChunk() <<
+						". Serial number="<<interest->getSerialNumber()<<
 						". To reach that node I should use interface  "<< 
 						get_FIB_entry(interest->getTarget() ).id <<
 						"; but I set interface "<<
@@ -204,24 +220,27 @@ bool *nrr::exploit(ccn_interest *interest){
 
     }
 	//<aa>
-//	else if (interest->getTarget() == getIndex() )
-//	{
-//		#ifdef SEVERE_DEBUG
-//			std::stringstream ermsg; 
-//			ermsg<<"I am node "<<getIndex()<<
-//				".I am the target for  an interest for chunk "<<
-//				interest->getChunk() <<" but I do not have that chunk. I set the repo"
-//				<<" as target node";
-//			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-//		#endif
-//		vector<int> repos = interest->get_repos();
-//		repository = nearest(repos);
-//		const int_f FIB_entry = get_FIB_entry(repository);
+	else if (interest->getTarget() == getIndex() )
+	{
+		vector<int> repos = interest->get_repos();
+		repository = nearest(repos);
+		const int_f FIB_entry = get_FIB_entry(repository);
 
-//		output_iface = FIB_entry.id;
-//		interest->setTarget(repository);
-//	}
-//	//</aa>
+		output_iface = FIB_entry.id;
+		interest->setTarget(repository);
+		interest->setAggregate(false);
+
+		#ifdef SEVERE_DEBUG
+			std::stringstream ermsg; 
+			ermsg<<"I am node "<<getIndex()<<
+				".I am the target for  an interest for chunk "<<
+				interest->getChunk() <<", issued by client attached to node "<< interest->getOrigin()<<
+				". Serial number "<<interest->getSerialNumber() <<
+				" but I do not have that chunk. I set the repo "<<repository<<" as target node";
+			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+		#endif
+	}
+	//</aa>
 	else 
 	{
 		//<aa>	The interest has already a target that is not this node. 
@@ -231,14 +250,17 @@ bool *nrr::exploit(ccn_interest *interest){
 		output_iface = FIB_entry2.id;
     }
 
+	//<aa>
 	#ifdef SEVERE_DEBUG
 	if ( output_iface == -1 ){
 		std::stringstream ermsg; 
 		ermsg<<"I am node "<<getIndex()<<".The output iface for interest for chunk "
-			<< interest->getChunk() <<" was not satisfied";
+			<< interest->getChunk() <<" issued by client attached to node "<< interest->getOrigin()<<
+			" was not assigned";
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
 	#endif
+	//</aa>
 
     decision[output_iface] = true;
     return decision;

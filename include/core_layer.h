@@ -58,6 +58,8 @@ class core_layer : public abstract_node{
 		//<aa>
 		#ifdef SEVERE_DEBUG
 		bool it_has_a_repo_attached;
+
+		vector<int> get_interfaces_inPIT(chunk_t chunk);
 		#endif
 		//</aa>
 

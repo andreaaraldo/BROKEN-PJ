@@ -222,6 +222,26 @@ void core_layer::handle_interest(ccn_interest *int_msg){
     chunk_t chunk = int_msg->getChunk();
     double int_btw = int_msg->getBtw();
 
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+				if (	int_msg->getChunk()==384 && int_msg->getOrigin()==0 
+						&& int_msg->getSerialNumber()==2854
+				){
+					std::stringstream msg; 
+					msg<<"I am node "<< getIndex()<<". I received an interest for chunk "<<
+							int_msg->getChunk() <<" issued by client "<<
+							int_msg->getOrigin()<<" serial no="<<int_msg->getSerialNumber()<<
+							". The target of the interest is "<<int_msg->getTarget()<<
+							". ContentStore->lookup(chunk)="<<( ContentStore->lookup(chunk) )<<
+							". my_bitmask & __repo(int_msg->get_name() )="<<
+							( my_bitmask & __repo(int_msg->get_name() ) );
+					debug_message(__FILE__, __LINE__, msg.str().c_str() );
+				}
+	#endif
+	//</aa>
+
+
     if (ContentStore->lookup(chunk)){
         //
         //a) Check in your Content Store
@@ -266,6 +286,22 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
         ContentStore->store(data_msg);
 
+		//<aa>
+		#ifdef SEVERE_DEBUG
+			if (int_msg->getChunk() == 384 && int_msg->getOrigin()==0)
+			{
+				std::stringstream ermsg; 
+				ermsg<<"I am node "<<getIndex()<<
+					"; I'm satisfying interest for object ="<<int_msg->getChunk() <<
+					" issued by client attached to node "<< int_msg->getOrigin()<<
+					". its target is "<<int_msg->getTarget()<<
+					". Serial no="<<int_msg->getSerialNumber();
+				debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+		#endif
+		//</aa>
+
+
         send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
 
 		//<aa>
@@ -289,11 +325,14 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
 
-        if (	pitIt==PIT.end() || //<aa> there is no such an entry in the PIT 
+		//<aa> Forward the message if it is the case </aa>
+        if (	pitIt==PIT.end()//<aa> there is no such an entry in the PIT 
 								// thus I have to forward the interest</aa>
-			(pitIt != PIT.end() && int_msg->getNfound()) ||
+			|| (pitIt != PIT.end() && int_msg->getNfound()) ||
 		    simTime() - PIT[chunk].time > 2*RTT ||			
-			/*//<aa>*/! interest_aggregation //</aa>
+			//<aa>
+			!interest_aggregation || int_msg->getAggregate()==false
+			//</aa>
         ){
 	    	bool * decision = strategy->get_decision(int_msg);
 	    	handle_decision(decision,int_msg);
@@ -309,6 +348,20 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 		
 		//<aa>
 		#ifdef SEVERE_DEBUG
+		if (int_msg->getChunk() == 384)
+		{
+			vector<int> interface_vector = get_interfaces_inPIT(int_msg->getChunk() );
+			std::stringstream ermsg; 
+			ermsg<<"I am node "<<getIndex()<<"; I received interest for "<<int_msg->getChunk() <<
+					" issued by client "<< int_msg->getOrigin()<<". its target is "<<int_msg->getTarget()<<
+					". Serial no="<<int_msg->getSerialNumber()<<
+					". The interface that I added in the PIT are ";
+			for (int iface = 0; iface<interface_vector.size(); iface++)
+				ermsg<<iface<<", ";
+			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+
+		}
+
 		check_if_correct(__LINE__);
 		#endif
 		//</aa>
@@ -323,6 +376,31 @@ void core_layer::handle_interest(ccn_interest *int_msg){
     //</aa>
 }
 
+
+//<aa>
+#ifdef SEVERE_DEBUG
+vector<int> core_layer::get_interfaces_inPIT(chunk_t chunk)
+{
+	vector<int> interface_vector;
+    unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
+    if ( pitIt != PIT.end() )
+	{
+	    interface_t interfaces = 0;
+		interfaces = (pitIt->second).interfaces;//get interface list
+		int i = 0;
+		while (interfaces)
+		{
+			if ( interfaces & 1 ){
+				interface_vector.push_back(i);
+			}
+			i++;
+			interfaces >>= 1;
+		}
+	}
+	return interface_vector;
+}
+#endif
+//</aa>
 
 
 /*
@@ -344,24 +422,46 @@ void core_layer::handle_data(ccn_data *data_msg){
 
     unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
-    //If someone had previously requested the data 
-    if ( pitIt != PIT.end() ){
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		int copies_sent = 0;
+	#endif
+	//</aa>
 
-	ContentStore->store(data_msg);
-	interfaces = (pitIt->second).interfaces;//get interface list
-	i = 0;
-	while (interfaces){
-	    if ( interfaces & 1 )
-		send(data_msg->dup(), "face$o", i ); //follow bread crumbs back
-	    i++;
-	    interfaces >>= 1;
-	}
+
+    //If someone had previously requested the data 
+    if ( pitIt != PIT.end() )
+	{
+		ContentStore->store(data_msg);
+		interfaces = (pitIt->second).interfaces;//get interface list
+		i = 0;
+		while (interfaces){
+			if ( interfaces & 1 ){
+				send(data_msg->dup(), "face$o", i ); //follow bread crumbs back
+				//<aa>
+				#ifdef SEVERE_DEBUG
+					copies_sent++;
+				#endif
+				//</aa>
+			}
+			i++;
+			interfaces >>= 1;
+		}
     }
     PIT.erase(chunk); //erase pending interests for that data file
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
+
+	if (	data_msg->getChunk()==384)
+	{
+		std::stringstream msg; 
+		msg<<"I am node "<< getIndex()<<". I received chunk "<<data_msg->getChunk()<<
+			" and I sent back "<<copies_sent<<" copies";
+		debug_message(__FILE__, __LINE__, msg.str().c_str() );
+	}
+
 	#endif
 	//</aa>
 }
@@ -399,6 +499,23 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 		){
 			sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
 			interest_has_been_forwarded = true;
+
+			//<aa>
+			#ifdef SEVERE_DEBUG
+				if (	interest->getChunk()==384 && interest->getOrigin()==0 
+						&& interest->getSerialNumber()==2854
+				){
+					std::stringstream msg; 
+					msg<<"I am node "<< getIndex()<<" and the interface supposed to give"<<
+							" access to chunk "<< interest->getChunk() <<" issued by client "<<
+							interest->getOrigin()<<" serial no="<<interest->getSerialNumber()<<
+							" is "<<i<<". The target of the interest is "<<interest->getTarget();
+					debug_message(__FILE__, __LINE__, msg.str().c_str() );
+				}
+			#endif
+			//</aa>
+
+
 		}
 	}
 	//<aa>

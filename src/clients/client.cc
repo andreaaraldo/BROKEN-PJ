@@ -188,12 +188,6 @@ void client::request_file(){
     name_t name = content_distribution::zipf.value(dblrand());
     current_downloads.insert(pair<name_t, download >(name, download (0,simTime() ) ) );
     send_interest(name, 0 ,-1);
-
-    //<aa>
-    #ifdef SEVERE_DEBUG
-	interests_sent+=1;
-    #endif
-    //</aa>
 }
 
 void client::resend_interest(name_t name,cnumber_t number, int toward){
@@ -230,10 +224,12 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
     interest->setChunk(chunk);
     interest->setHops(-1);
     interest->setTarget(toward);
+	interest->setSerialNumber(interests_sent);
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
 	interest->setOrigin( getNodeIndex() );
+	interests_sent++;
 	#endif
 	//</aa>
 
