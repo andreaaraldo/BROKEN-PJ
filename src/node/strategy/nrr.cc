@@ -130,16 +130,78 @@ bool *nrr::exploit(ccn_interest *interest){
 		if (it!=cfib.end() && it->len <= FIB_entry.len+1)
 		{//found!!!
 			//<aa>	It is possible to reach the content through the interface indicated
-			//		by it. Moreover, this path is not longer than the path related to
+			//		by 'it'. Moreover, this path is not longer than the path related to
 			//		the FIB_entry </aa>
 
-			times = std::count_if (
-					cfib.begin(),cfib.end(),lookup_len(interest->getChunk(),it->len));
-			int select = intrand(times);
-			it+=select;
-			node = it->cache->getIndex();
-			output_iface = FIB_entry.id;
+
+			//<aa>
+			vector<int> potential_targets;
+			for (vector<Centry>::iterator it2 = cfib.begin(); it2 != cfib.end(); 
+				it2++) 
+			{
+					if (it2->cache->fake_lookup(interest->getChunk() ) && 
+						it2->len == it->len
+					){
+						potential_targets.push_back( it2->cache->getIndex() );
+					}
+			}
+			int select = intrand(potential_targets.size() );
+			node = potential_targets[select];
+			// The previous lines of code replace :
+			//			times = std::count_if (cfib.begin(),cfib.end(),
+			//						lookup_len(interest->getChunk(),it->len) );
+			//			int select = intrand(times);
+			//			it+=select;
+			//			node = it->cache->getIndex();
+			//</aa>
+
+			//<aa> Slightly modified
+			output_iface = get_FIB_entry(node).id;
+			//</aa>
 			interest->setTarget(node);
+
+			//<aa>
+			#ifdef SEVERE_DEBUG
+				times = std::count_if (cfib.begin(),cfib.end(),
+						lookup_len(interest->getChunk(),it->len) );
+				if (times == 1){
+					// The node calculated above should be obtained also as follows
+					int select = intrand(times);
+					it+=select;
+					int node_verification = it->cache->getIndex();
+					if (node_verification != node){
+						std::stringstream ermsg; 
+						ermsg<<"I am node "<<getIndex()<<". node="<< node <<
+							"; node_verification="<<node_verification<<
+							". They must be the same.";
+						severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+					}
+				}
+
+				if ( it->cache->fake_lookup(interest->getChunk() ) == false ){
+					std::stringstream ermsg; 
+					ermsg<<"I am node "<<getIndex()<<". I set node "<<
+						 node <<" as target for chunk "<<interest->getChunk() <<
+						". But node "<< 
+						node<<" does not contain that chunk."<<
+						times<<" nodes are holding the chunk in question.";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				}
+
+				if ( output_iface != get_FIB_entry(interest->getTarget() ).id )
+				{
+					std::stringstream ermsg; 
+					ermsg<<"I am node "<<getIndex()<<". I set node "<<node <<
+						" as target for chunk "<<interest->getChunk() <<
+						". To reach that node I should use interface  "<< 
+						get_FIB_entry(interest->getTarget() ).id <<
+						"; but I set interface "<<
+						output_iface <<" as output interface. This is an error";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				}
+			#endif
+			//</aa>
+
 		}else{//not found
 			//<aa> There are no alternatives to the FIB entry to reach the content</aa>
 			output_iface = FIB_entry.id;

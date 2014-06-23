@@ -230,6 +230,13 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
     interest->setChunk(chunk);
     interest->setHops(-1);
     interest->setTarget(toward);
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	interest->setOrigin( getNodeIndex() );
+	#endif
+	//</aa>
+
     send(interest, "client_port$o");
 }
 
