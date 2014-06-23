@@ -55,6 +55,11 @@ class core_layer : public abstract_node{
     
     public:
     	void check_if_correct(int line);
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		bool it_has_a_repo_attached;
+		#endif
+		//</aa>
 
     protected:
     //Standard node Omnet++ functions
@@ -84,8 +89,11 @@ class core_layer : public abstract_node{
 		unsigned int my_bitmask;
 		double my_btw;
 		double RTT;
-		static int repo_interest;
-		int repo_load; //<aa> number of chunks satisfied by the attached repositoery </aa>
+		static int repo_interest; 	// <aa> total number of interests set to one of the
+									// repositories of the network </aa>
+
+		//<aa> number of chunks satisfied by the repository attached to this node</aa>
+		int repo_load; 
 	
 
 		//Architecture data structures

@@ -46,16 +46,30 @@ void  core_layer::initialize(){
 	interest_aggregation = par("interest_aggregation");
 	transparent_to_hops = par("transparent_to_hops");
 	//</aa>
-    //repo_load = 0;  //<aa> Disabled this. The reset is inside clear_stat() </aa>
+    repo_load = 0;
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
     int num_repos = getAncestorPar("num_repos");
 
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		it_has_a_repo_attached = false;
+	#endif
+	//</aa>
+
     int i = 0;
     my_bitmask = 0;
     for (i = 0; i < num_repos; i++)
-	if (content_distribution::repositories[i] == getIndex())
-	    break;
+	{
+		if (content_distribution::repositories[i] == getIndex() ){
+			//<aa>
+			#ifdef SEVERE_DEBUG
+				it_has_a_repo_attached = true;
+			#endif
+			//</aa>
+			break;
+		}
+	}
     my_bitmask = (1<<i);//recall that the width of the repository bitset is only num_repos
 
     //Getting the content store
@@ -72,7 +86,6 @@ void  core_layer::initialize(){
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
 	#endif
-
 	//</aa>
 
 }
@@ -90,7 +103,6 @@ void core_layer::handleMessage(cMessage *in){
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
 	char* last_received;
-	
 	#endif
 	//</aa>
 
@@ -168,17 +180,6 @@ void core_layer::finish(){
 				". The sum of decision_yes+decision_no MUST be equal to data+repo_load";
 			severe_error(__FILE__, __LINE__, msg.str().c_str() );
 		}
-
-		if (repo_load != repo_interest)
-		{
-			std::stringstream msg; 
-			msg<<"node["<<getIndex()<<"]: "<<
-				"repo_load=="<<repo_load<<
-				"; repo_interest=="<<repo_interest;
-			severe_error(__FILE__, __LINE__, msg.str().c_str() );
-
-		}	
-
 	#endif
 	//</aa>
 
@@ -331,6 +332,11 @@ void core_layer::handle_interest(ccn_interest *int_msg){
  * interested interfaces.
  */
 void core_layer::handle_data(ccn_data *data_msg){
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	check_if_correct(__LINE__);
+	#endif
+	//</aa>
 
     int i = 0;
     interface_t interfaces = 0;
@@ -352,6 +358,12 @@ void core_layer::handle_data(ccn_data *data_msg){
 	}
     }
     PIT.erase(chunk); //erase pending interests for that data file
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	check_if_correct(__LINE__);
+	#endif
+	//</aa>
 }
 
 
@@ -483,6 +495,15 @@ void core_layer::check_if_correct(int line)
 				"; unsatisfied_interests="<<unsatisfied_interests<<
 				"; interests_satisfied_by_cache="<<interests_satisfied_by_cache;
 		    severe_error(__FILE__, line, msg.str().c_str() );
+	}
+
+	if (!it_has_a_repo_attached && repo_load>0 )
+	{
+			std::stringstream msg; 
+			msg<<"node["<<getIndex()<<"] has no repo attached. "<<
+				"repo_load=="<<repo_load<<
+				"; repo_interest=="<<repo_interest;
+			severe_error(__FILE__, line, msg.str().c_str() );
 	}
 }
 #endif

@@ -54,13 +54,14 @@ void nrr::initialize(){
 
     cTopology topo;
     topo.extractByNedTypeName(ctype);
-    for (int i = 0;i<topo.getNumNodes();i++){
-	if (i==getIndex()) continue;
-	base_cache *cptr = (base_cache *)topo.getNode(i)->getModule()->getModuleByRelativePath("content_store");
-	//<aa>
-	const int_f FIB_entry = get_FIB_entry(i);
-	if (FIB_entry.len <= TTL)
-	    cfib.push_back( Centry ( cptr, FIB_entry.len ) );
+    for (int i = 0;i<topo.getNumNodes();i++)
+	{
+		if (i==getIndex()) continue;
+		base_cache *cptr = (base_cache *)topo.getNode(i)->getModule()->getModuleByRelativePath("content_store");
+		//<aa>
+		const int_f FIB_entry = get_FIB_entry(i);
+		if (FIB_entry.len <= TTL)
+			cfib.push_back( Centry ( cptr, FIB_entry.len ) );
     }	
     //Commented the following if block
 	//</aa>
@@ -101,20 +102,11 @@ bool *nrr::exploit(ccn_interest *interest){
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
 
-
-	#ifdef SEVERE_DEBUG
-	if (interest->getTarget() == getIndex() ){
-		std::stringstream ermsg; 
-		ermsg<<"I am node "<<getIndex()<<".I am the target for  an interest for chunk " 			<< interest->getChunk() <<" but I do not have that chunk";
-		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
-	#endif
-
     //find the first occurrence in the sorted vector of caches.
     if (interest->getTarget() == -1 
 		//<aa> 	The interest has no target node () the preferential node to be sent 
 		// 		to</aa>
-		|| interest->getTarget() == getIndex() 
+		|| interest->getTarget() == getIndex()
 		// <aa> The target of the interest is this node </aa>
 
 	){
@@ -126,6 +118,8 @@ bool *nrr::exploit(ccn_interest *interest){
 
 		//<aa>
 		const int_f FIB_entry = get_FIB_entry(repository);
+
+
 		//</aa>
 		if (it!=cfib.end() && it->len <= FIB_entry.len+1)
 		{//found!!!
@@ -208,7 +202,28 @@ bool *nrr::exploit(ccn_interest *interest){
 			interest->setTarget(repository);
 		}
 
-    }else {
+    }
+	//<aa>
+//	else if (interest->getTarget() == getIndex() )
+//	{
+//		#ifdef SEVERE_DEBUG
+//			std::stringstream ermsg; 
+//			ermsg<<"I am node "<<getIndex()<<
+//				".I am the target for  an interest for chunk "<<
+//				interest->getChunk() <<" but I do not have that chunk. I set the repo"
+//				<<" as target node";
+//			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+//		#endif
+//		vector<int> repos = interest->get_repos();
+//		repository = nearest(repos);
+//		const int_f FIB_entry = get_FIB_entry(repository);
+
+//		output_iface = FIB_entry.id;
+//		interest->setTarget(repository);
+//	}
+//	//</aa>
+	else 
+	{
 		//<aa>	The interest has already a target that is not this node. 
 		// I will send the
 		//		interest toward that target </aa>
