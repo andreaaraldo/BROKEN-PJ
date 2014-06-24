@@ -167,19 +167,20 @@ void core_layer::handleMessage(cMessage *in){
 void core_layer::finish(){
 	//<aa>
 	#ifdef SEVERE_DEBUG
-		if (	data+repo_load != \
-				(int) (ContentStore->get_decision_yes() + 
-						ContentStore->get_decision_no() ) 
-		){
-			std::stringstream msg; 
-			msg<<"node["<<getIndex()<<"]: "<<
-				"decision_yes=="<<ContentStore->get_decision_yes()<<
-				"; decision_no=="<<ContentStore->get_decision_no()<<
-				"; repo_load=="<<repo_load<<
-				"; data="<<data<<
-				". The sum of decision_yes+decision_no MUST be equal to data+repo_load";
-			severe_error(__FILE__, __LINE__, msg.str().c_str() );
-		}
+	check_if_correct(__LINE__);
+//		if (	data+repo_load != \
+//				(int) (ContentStore->get_decision_yes() + 
+//						ContentStore->get_decision_no() ) 
+//		){
+//			std::stringstream msg; 
+//			msg<<"node["<<getIndex()<<"]: "<<
+//				"decision_yes=="<<ContentStore->get_decision_yes()<<
+//				"; decision_no=="<<ContentStore->get_decision_no()<<
+//				"; repo_load=="<<repo_load<<
+//				"; data="<<data<<
+//				". The sum of decision_yes+decision_no MUST be equal to data+repo_load";
+//			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+//		}
 	#endif
 	//</aa>
 
@@ -225,8 +226,8 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
-				if (	int_msg->getChunk()==384 && int_msg->getOrigin()==0 
-						&& int_msg->getSerialNumber()==2854
+				if (	int_msg->getChunk()==2 && int_msg->getOrigin()==5
+						//&& int_msg->getSerialNumber()==2854
 				){
 					std::stringstream msg; 
 					msg<<"I am node "<< getIndex()<<". I received an interest for chunk "<<
@@ -288,7 +289,7 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
-			if (int_msg->getChunk() == 384 && int_msg->getOrigin()==0)
+			if (int_msg->getChunk() == 2 && int_msg->getOrigin()==5)
 			{
 				std::stringstream ermsg; 
 				ermsg<<"I am node "<<getIndex()<<
@@ -324,19 +325,29 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
         unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
+		//<aa>
+		bool i_will_forward_interest = false;
+		//</aa>
 
-		//<aa> Forward the message if it is the case </aa>
-        if (	pitIt==PIT.end()//<aa> there is no such an entry in the PIT 
-								// thus I have to forward the interest</aa>
-			|| (pitIt != PIT.end() && int_msg->getNfound()) ||
-		    simTime() - PIT[chunk].time > 2*RTT ||			
-			//<aa>
-			!interest_aggregation || int_msg->getAggregate()==false
-			//</aa>
+		//<aa> Insert a new PIT entry for this object, if not present. If present and invalid, reset the
+		// old entry. If present and valid, do nothing </aa>
+        if (	
+			//<aa> there is no such an entry in the PIT thus I have to forward the interest</aa>
+			pitIt==PIT.end()
+
+			//<aa> There is a PIT entry but it is invalid (the PIT entry has been invalidated by client
+			// because a timer expired and the object has not been found </aa>
+			|| (pitIt != PIT.end() && int_msg->getNfound() ) 
+
+			//<aa> Too much time has been passed since the old PIT entry was added </aa>
+			|| simTime() - PIT[chunk].time > 2*RTT
         ){
-	    	bool * decision = strategy->get_decision(int_msg);
-	    	handle_decision(decision,int_msg);
-	    	delete [] decision;//free memory for the decision array
+			//<aa> Replaces the lines
+			//		bool * decision = strategy->get_decision(int_msg);
+			//		handle_decision(decision,int_msg);
+			// 		delete [] decision;//free memory for the decision array
+			i_will_forward_interest = true;
+			//</aa>
 
 	    	if (pitIt!=PIT.end())
 				PIT.erase(chunk);
@@ -344,20 +355,40 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	    	PIT[chunk].time = simTime(); 
 		}
 
-		__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
-		
+		//<aa>
+		if (int_msg->getTarget() == getIndex() )
+		{	// I am the target of this interest but I have no more the object
+			// Therefore, this interest cannot be aggregated with the others
+			int_msg->setAggregate(false);
+		}
+
+		if ( !interest_aggregation || int_msg->getAggregate()==false )
+			i_will_forward_interest = true;
+
+		if (i_will_forward_interest)
+		{  	bool * decision = strategy->get_decision(int_msg);
+	    	handle_decision(decision,int_msg);
+	    	delete [] decision;//free memory for the decision array
+		}
+		#ifdef SEVERE_DEBUG
+		interface_t old_PIT_string = PIT[chunk].interfaces;
+		#endif
+
+		//</aa>
+
+		__sface( ( PIT[chunk].interfaces ) , int_msg->getArrivalGate()->getIndex());
+
 		//<aa>
 		#ifdef SEVERE_DEBUG
-		if (int_msg->getChunk() == 384)
+		if (int_msg->getChunk() == 2)
 		{
-			vector<int> interface_vector = get_interfaces_inPIT(int_msg->getChunk() );
 			std::stringstream ermsg; 
 			ermsg<<"I am node "<<getIndex()<<"; I received interest for "<<int_msg->getChunk() <<
 					" issued by client "<< int_msg->getOrigin()<<". its target is "<<int_msg->getTarget()<<
 					". Serial no="<<int_msg->getSerialNumber()<<
-					". The interface that I added in the PIT are ";
-			for (int iface = 0; iface<interface_vector.size(); iface++)
-				ermsg<<iface<<", ";
+					". old PIT string = "<<old_PIT_string<<
+					". new PIT string is now "<< (PIT[int_msg->getChunk()].interfaces)<<
+					". Will I forward interest? "<< i_will_forward_interest;
 			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 
 		}
@@ -379,13 +410,18 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 //<aa>
 #ifdef SEVERE_DEBUG
-vector<int> core_layer::get_interfaces_inPIT(chunk_t chunk)
+vector<int> core_layer::get_interfaces_in_PIT(chunk_t chunk)
 {
+	std::stringstream ermsg; 
+	ermsg<<"get_interfaces_in_PIT(..) does not work properly. Fix it before using it";
+	severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
 	vector<int> interface_vector;
     unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
+    interface_t interfaces = 0;
+
     if ( pitIt != PIT.end() )
 	{
-	    interface_t interfaces = 0;
 		interfaces = (pitIt->second).interfaces;//get interface list
 		int i = 0;
 		while (interfaces)
@@ -397,6 +433,7 @@ vector<int> core_layer::get_interfaces_inPIT(chunk_t chunk)
 			interfaces >>= 1;
 		}
 	}
+
 	return interface_vector;
 }
 #endif
@@ -409,13 +446,8 @@ vector<int> core_layer::get_interfaces_inPIT(chunk_t chunk)
  * within your content store. Finally propagate the interests towards all the
  * interested interfaces.
  */
-void core_layer::handle_data(ccn_data *data_msg){
-	//<aa>
-	#ifdef SEVERE_DEBUG
-	check_if_correct(__LINE__);
-	#endif
-	//</aa>
-
+void core_layer::handle_data(ccn_data *data_msg)
+{
     int i = 0;
     interface_t interfaces = 0;
     chunk_t chunk = data_msg -> getChunk(); //Get information about the file
@@ -447,21 +479,28 @@ void core_layer::handle_data(ccn_data *data_msg){
 			i++;
 			interfaces >>= 1;
 		}
-    }
+    } 
+	//<aa> 
+	// Otherwise the data are unrequested
+	#ifdef SEVERE_DEBUG
+		else unsolicited_data++;
+	#endif
+
+
     PIT.erase(chunk); //erase pending interests for that data file
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
 
-	if (	data_msg->getChunk()==384)
+	if (	data_msg->getChunk()==2)
 	{
 		std::stringstream msg; 
 		msg<<"I am node "<< getIndex()<<". I received chunk "<<data_msg->getChunk()<<
 			" and I sent back "<<copies_sent<<" copies";
+//			". PIT string="<<(pitIt->second).interfaces;
 		debug_message(__FILE__, __LINE__, msg.str().c_str() );
 	}
-
 	#endif
 	//</aa>
 }
@@ -502,14 +541,16 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 
 			//<aa>
 			#ifdef SEVERE_DEBUG
-				if (	interest->getChunk()==384 && interest->getOrigin()==0 
-						&& interest->getSerialNumber()==2854
+				int next_hop_node = 
+					getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
+
+				if (	interest->getChunk()==2 && interest->getOrigin()==5
+						//&& interest->getSerialNumber()==2854
 				){
 					std::stringstream msg; 
-					msg<<"I am node "<< getIndex()<<" and the interface supposed to give"<<
-							" access to chunk "<< interest->getChunk() <<" issued by client "<<
-							interest->getOrigin()<<" serial no="<<interest->getSerialNumber()<<
-							" is "<<i<<". The target of the interest is "<<interest->getTarget();
+					msg<<"I am node "<< getIndex()<<". I sent the interest "<< interest->getSerialNumber()
+						<<" for chunk "<<interest->getChunk() <<" issued by client "<<interest->getOrigin()
+						<<" to the node "<<next_hop_node<< " through interface "<<i;;
 					debug_message(__FILE__, __LINE__, msg.str().c_str() );
 				}
 			#endif
@@ -591,6 +632,7 @@ void core_layer::clear_stat(){
     repo_load = 0;
     
    	#ifdef SEVERE_DEBUG
+	unsolicited_data = 0;
 	discarded_interests = 0;
 	unsatisfied_interests = 0;
 	interests_satisfied_by_cache = 0;
@@ -621,6 +663,20 @@ void core_layer::check_if_correct(int line)
 				"repo_load=="<<repo_load<<
 				"; repo_interest=="<<repo_interest;
 			severe_error(__FILE__, line, msg.str().c_str() );
+	}
+
+	if (	ContentStore->get_decision_yes() + ContentStore->get_decision_no() +  
+						(unsigned) unsolicited_data
+						!=  (unsigned) data + repo_load
+	){
+					std::stringstream ermsg; 
+					ermsg<<"caches["<<getIndex()<<"]->decision_yes="<<ContentStore->get_decision_yes()<<
+						"; caches[i]->decision_no="<< ContentStore->get_decision_no()<<
+						"; cores[i]->data="<< data<<
+						"; cores[i]->repo_load="<< repo_load<<
+						"; cores[i]->unsolicited_data="<< unsolicited_data<<
+						". The sum of "<< "decision_yes + decision_no + unsolicited_data must be data";
+					severe_error(__FILE__,line,ermsg.str().c_str() );
 	}
 }
 #endif

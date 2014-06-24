@@ -59,7 +59,7 @@ class core_layer : public abstract_node{
 		#ifdef SEVERE_DEBUG
 		bool it_has_a_repo_attached;
 
-		vector<int> get_interfaces_inPIT(chunk_t chunk);
+		vector<int> get_interfaces_in_PIT(chunk_t chunk);
 		#endif
 		//</aa>
 
@@ -109,6 +109,8 @@ class core_layer : public abstract_node{
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
+		int unsolicited_data;	// Data received by the node but not requested by anyone
+
 		int discarded_interests; //number of incoming interests discarded
 								 // because their TTL is > max hops
 		int unsatisfied_interests;	//number of interests for contents that are neither

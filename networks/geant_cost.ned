@@ -1,6 +1,7 @@
 package networks;
+import modules.channels.IcnChannel;
 
-network geant_network extends base_network{
+network geant_cost_network extends base_network{
 
     parameters:
         //Number of ccn nodes

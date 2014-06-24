@@ -236,21 +236,23 @@ void statistics::finish(){
 			global_interests += cores[i]->interests;
 			global_repo_load += cores[i]->repo_load;
 
-
+			//<aa>
 			#ifdef SEVERE_DEBUG
-			if (	caches[i]->decision_yes + caches[i]->decision_no != 
-					(unsigned) cores[i]->data + cores[i]->repo_load
-			){
-				std::stringstream ermsg; 
-				ermsg<<"caches["<<i<<"]->decision_yes="<<caches[i]->decision_yes<<
-					"; caches[i]->decision_no="<<caches[i]->decision_no<<
-					"; cores[i]->data="<<cores[i]->data<<
-					"; cores[i]->repo_load="<<cores[i]->repo_load<<
-					". The sum of "<< "decision_yes and decision_no must be data";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
+				if (	caches[i]->decision_yes + caches[i]->decision_no +  
+						(unsigned) cores[i]->unsolicited_data
+						!=  (unsigned) cores[i]->data + cores[i]->repo_load
+				){
+					std::stringstream ermsg; 
+					ermsg<<"caches["<<i<<"]->decision_yes="<<caches[i]->decision_yes<<
+						"; caches[i]->decision_no="<<caches[i]->decision_no<<
+						"; cores[i]->data="<<cores[i]->data<<
+						"; cores[i]->repo_load="<<cores[i]->repo_load<<
+						"; cores[i]->unsolicited_data="<<cores[i]->unsolicited_data<<
+						". The sum of "<< "decision_yes and decision_no must be data";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				}
 			#endif
-
+			//</aa>
 		}
     }
 
@@ -331,8 +333,7 @@ void statistics::finish(){
 			ermsg<<"interests_sent="<<global_interests_sent<<"; tot_downloads="<< 
 				global_tot_downloads<<
 				". If **.size==1 in omnetpp and all links has 0 delay, this "<<
-				" is an error. Otherwise, it is not. In the latter case, disable "<<
-				"this error and run again";
+				" is an error. Otherwise, it is not";
 			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 	#endif

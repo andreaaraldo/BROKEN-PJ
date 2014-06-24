@@ -16,7 +16,9 @@ packet ccn_interest{
 
 	double btw = 0; //Maximum betweenness centrality along the traveled path (used by the btw DS).
 	int TTL = 10000; //Maximum number of hops (after the packet is discarded)
-	bool nfound = false; //Set by a client once the timer for a given object is expired, and used by the core in order to invalidate PIT's entries)
+
+	bool nfound = false;	//Set by a client once the timer for a given object is expired, and used 
+							// by the core in order to invalidate PIT's entries)
 
 	int capacity = 0;
 	int origin = -1; //Origin of the interest (rarely used)

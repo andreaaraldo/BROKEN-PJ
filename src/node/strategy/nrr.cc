@@ -104,6 +104,8 @@ bool *nrr::exploit(ccn_interest *interest){
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
+		vector<Centry>::iterator node_it; // This iterator will point to the target node
+
 		if (interest->getChunk() == 243 && interest->getOrigin()==0)
 		{
 			std::stringstream ermsg; 
@@ -144,23 +146,57 @@ bool *nrr::exploit(ccn_interest *interest){
 
 			//<aa>
 			vector<int> potential_targets;
-			for (vector<Centry>::iterator it2 = cfib.begin(); it2 != cfib.end(); 
-				it2++) 
+			int select;
+
+			// Compute target node: dummy way
 			{
-					if (it2->cache->fake_lookup(interest->getChunk() ) && 
-						it2->len == it->len
-					){
-						potential_targets.push_back( it2->cache->getIndex() );
-					}
+				#ifdef SEVERE_DEBUG
+					vector< vector<Centry>::iterator > potential_targets_it;
+				#endif
+
+				for (vector<Centry>::iterator it2 = cfib.begin(); it2 != cfib.end(); 
+					it2++) 
+				{
+						if (it2->len == it->len && it2->cache->fake_lookup(interest->getChunk() ) )
+						{	potential_targets.push_back( it2->cache->getIndex() );
+							#ifdef SEVERE_DEBUG
+								potential_targets_it.push_back(it2);
+							#endif
+						}
+				}
+				select = intrand(potential_targets.size() );			
+				node = potential_targets[select];
+				#ifdef SEVERE_DEBUG
+					node_it = potential_targets_it[select];
+				#endif
 			}
-			int select = intrand(potential_targets.size() );
-			node = potential_targets[select];
-			// The previous lines of code replace :
-			//			times = std::count_if (cfib.begin(),cfib.end(),
-			//						lookup_len(interest->getChunk(),it->len) );
-			//			int select = intrand(times);
-			//			it+=select;
-			//			node = it->cache->getIndex();
+
+
+			//<aa>
+			// The previous block of code replace :
+			// Compute target node: efficient way
+			if (false) //This is the old code. It is more efficient but it has some problem
+			{
+				times = std::count_if (cfib.begin(),cfib.end(),
+						lookup_len(interest->getChunk(),it->len) );
+				int select = intrand(times);
+				it+=select;
+				// node = it->cache->getIndex();
+
+				#ifdef SEVERE_DEBUG
+				if ( it->cache->fake_lookup(interest->getChunk() ) == false )
+				{
+					std::stringstream ermsg; 
+					ermsg<<"I am node "<<getIndex()<<". I set node "<<
+						 node <<" as target for chunk "<<interest->getChunk() <<
+						". Serial number="<<interest->getSerialNumber()<<
+						". But node "<< 
+						node<<" does not contain that chunk."<<
+						times<<" nodes are holding the chunk in question.";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				}
+				#endif
+			}
 			//</aa>
 
 			//<aa> Slightly modified
@@ -186,7 +222,7 @@ bool *nrr::exploit(ccn_interest *interest){
 					}
 				}
 
-				if ( it->cache->fake_lookup(interest->getChunk() ) == false ){
+				if ( node_it->cache->fake_lookup(interest->getChunk() ) == false ){
 					std::stringstream ermsg; 
 					ermsg<<"I am node "<<getIndex()<<". I set node "<<
 						 node <<" as target for chunk "<<interest->getChunk() <<

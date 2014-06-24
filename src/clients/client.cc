@@ -163,8 +163,10 @@ void client::handle_timers(cMessage *timer){
 				name_t object_name = i->first;
 				chunk_t object_id = __sid(chunk, object_name);
 				std::stringstream ermsg; 
-				ermsg<<"Client attached to node "<< getNodeIndex() <<" was not able to retrieve object "<<object_id<< " before the timeout expired. This is not necessarily a bug. If you expect such an event and you think it is not a bug, disable this error message";
-				
+				ermsg<<"Client attached to node "<< getNodeIndex() <<" was not able to retrieve object "
+					<<object_id<< " before the timeout expired. Serial number of the interest="<< 
+					i->second.serial_number <<". This is not necessarily a bug. If you expect "<<
+					"such an event and you think it is not a bug, disable this error message";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			#endif
 			//</aa>
@@ -186,7 +188,15 @@ void client::handle_timers(cMessage *timer){
 void client::request_file(){
 
     name_t name = content_distribution::zipf.value(dblrand());
-    current_downloads.insert(pair<name_t, download >(name, download (0,simTime() ) ) );
+	
+	//<aa>
+	struct download new_download = download (0,simTime() );
+	#ifdef SEVERE_DEBUG
+		new_download.serial_number = interests_sent;
+	#endif
+	//</aa>
+
+    current_downloads.insert(pair<name_t, download >(name, new_download ) );
     send_interest(name, 0 ,-1);
 }
 
