@@ -275,7 +275,8 @@ bool base_cache::fake_lookup(chunk_t chunk){
 
 
 //Clear all the statistics
-void base_cache::clear_stat(){
+void base_cache::clear_stat()
+{
     hit = miss = 0; //local statistics
 
 	//<aa>
@@ -293,6 +294,13 @@ uint32_t base_cache::get_decision_yes(){
 uint32_t base_cache::get_decision_no(){
 	return decision_no;
 }
+void base_cache::set_decision_yes(uint32_t n){
+	decision_yes = n;
+}
+void base_cache::set_decision_no(uint32_t n){
+	decision_no = n;
+}
+
 const DecisionPolicy* base_cache::get_decisor(){
 	return decisor;
 }

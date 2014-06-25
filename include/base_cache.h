@@ -79,6 +79,8 @@ class base_cache : public abstract_node{
 		//<aa>
 		virtual uint32_t get_decision_yes();
 		virtual uint32_t get_decision_no();
+		virtual void set_decision_yes(uint32_t n);
+		virtual void set_decision_no(uint32_t n);
 		virtual const DecisionPolicy* get_decisor();
 
 		#ifdef SEVERE_DEBUG

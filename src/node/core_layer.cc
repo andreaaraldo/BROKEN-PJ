@@ -629,6 +629,9 @@ void core_layer::clear_stat(){
     //<aa>
     repo_interest = 0;
     repo_load = 0;
+	ContentStore->set_decision_yes(0);
+	ContentStore->set_decision_no(0);
+
     
    	#ifdef SEVERE_DEBUG
 	unsolicited_data = 0;
