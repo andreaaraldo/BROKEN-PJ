@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgc 4.3 from packets/ccn_interest.msg.
+// Generated file, do not edit! Created by opp_msgc 4.4 from packets/ccn_interest.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -11,6 +11,8 @@
 #include <iostream>
 #include <sstream>
 #include "ccn_interest_m.h"
+
+USING_NAMESPACE
 
 // Template rule which fires if a struct or class doesn't have operator<<
 template<typename T>
@@ -30,7 +32,7 @@ void doUnpacking(cCommBuffer *, T& t) {
 
 
 
-ccn_interest_Base::ccn_interest_Base(const char *name, int kind) : cPacket(name,kind)
+ccn_interest_Base::ccn_interest_Base(const char *name, int kind) : ::cPacket(name,kind)
 {
     this->hops_var = 0;
     this->target_var = -1;
@@ -45,7 +47,7 @@ ccn_interest_Base::ccn_interest_Base(const char *name, int kind) : cPacket(name,
     this->aggregate_var = true;
 }
 
-ccn_interest_Base::ccn_interest_Base(const ccn_interest_Base& other) : cPacket(other)
+ccn_interest_Base::ccn_interest_Base(const ccn_interest_Base& other) : ::cPacket(other)
 {
     copy(other);
 }
@@ -57,7 +59,7 @@ ccn_interest_Base::~ccn_interest_Base()
 ccn_interest_Base& ccn_interest_Base::operator=(const ccn_interest_Base& other)
 {
     if (this==&other) return *this;
-    cPacket::operator=(other);
+    ::cPacket::operator=(other);
     copy(other);
     return *this;
 }
@@ -80,7 +82,7 @@ void ccn_interest_Base::copy(const ccn_interest_Base& other)
 
 void ccn_interest_Base::parsimPack(cCommBuffer *b)
 {
-    cPacket::parsimPack(b);
+    ::cPacket::parsimPack(b);
     // field path is abstract -- please do packing in customized class
     doPacking(b,this->chunk_var);
     doPacking(b,this->hops_var);
@@ -98,7 +100,7 @@ void ccn_interest_Base::parsimPack(cCommBuffer *b)
 
 void ccn_interest_Base::parsimUnpack(cCommBuffer *b)
 {
-    cPacket::parsimUnpack(b);
+    ::cPacket::parsimUnpack(b);
     // field path is abstract -- please do unpacking in customized class
     doUnpacking(b,this->chunk_var);
     doUnpacking(b,this->hops_var);
