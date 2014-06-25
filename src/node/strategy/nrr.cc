@@ -106,20 +106,19 @@ bool *nrr::exploit(ccn_interest *interest){
 	#ifdef SEVERE_DEBUG
 		vector<Centry>::iterator node_it; // This iterator will point to the target node
 
-		if (interest->getChunk() == 243 && interest->getOrigin()==0)
-		{
-			std::stringstream ermsg; 
-			ermsg<<"I am node "<<getIndex()<<
-				"; I received interest for object ="<<interest->getChunk() <<
-				" issued by client attached to node "<< interest->getOrigin()<<
-				". its target is "<<interest->getTarget()<<
-				". Serial number="<<interest->getSerialNumber();
-			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
+//		if (interest->getChunk() == 243 && interest->getOrigin()==0)
+//		{
+//			std::stringstream ermsg; 
+//			ermsg<<"I am node "<<getIndex()<<
+//				"; I received interest for object ="<<interest->getChunk() <<
+//				" issued by client attached to node "<< interest->getOrigin()<<
+//				". its target is "<<interest->getTarget()<<
+//				". Serial number="<<interest->getSerialNumber();
+//			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+//		}
 	#endif
 	//</aa>
 
-    //find the first occurrence in the sorted vector of caches.
     if (interest->getTarget() == -1 
 		//<aa> 	The interest has no target node () the preferential node to be sent 
 		// 		to</aa>
@@ -127,6 +126,7 @@ bool *nrr::exploit(ccn_interest *interest){
 		//<aa> The target of the interest is this node </aa>
 
 	){
+	    //find the first occurrence in the sorted vector of caches.
 		vector<Centry>::iterator it = 
 			std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()) );
 
@@ -140,7 +140,7 @@ bool *nrr::exploit(ccn_interest *interest){
 		if (it!=cfib.end() && it->len <= FIB_entry.len+1)
 		{//found!!!
 			//<aa>	It is possible to reach the content through the interface indicated
-			//		by 'it'. Moreover, this path is not longer than the path related to
+			//		by 'it'. Moreover, this path is shorter than the path related to
 			//		the FIB_entry </aa>
 
 
@@ -153,11 +153,12 @@ bool *nrr::exploit(ccn_interest *interest){
 				#ifdef SEVERE_DEBUG
 					vector< vector<Centry>::iterator > potential_targets_it;
 				#endif
-
-				for (vector<Centry>::iterator it2 = cfib.begin(); it2 != cfib.end(); 
+				// Take all the targets with minimum distance and randomly choose one of them
+				for (vector<Centry>::iterator it2 = cfib.begin(); 
+					it2 != cfib.end() && it2->len == it->len;
 					it2++) 
 				{
-						if (it2->len == it->len && it2->cache->fake_lookup(interest->getChunk() ) )
+						if (it2->cache->fake_lookup(interest->getChunk() ) )
 						{	potential_targets.push_back( it2->cache->getIndex() );
 							#ifdef SEVERE_DEBUG
 								potential_targets_it.push_back(it2);
@@ -266,15 +267,15 @@ bool *nrr::exploit(ccn_interest *interest){
 		interest->setTarget(repository);
 		interest->setAggregate(false);
 
-		#ifdef SEVERE_DEBUG
-			std::stringstream ermsg; 
-			ermsg<<"I am node "<<getIndex()<<
-				".I am the target for  an interest for chunk "<<
-				interest->getChunk() <<", issued by client attached to node "<< interest->getOrigin()<<
-				". Serial number "<<interest->getSerialNumber() <<
-				" but I do not have that chunk. I set the repo "<<repository<<" as target node";
-			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-		#endif
+//		#ifdef SEVERE_DEBUG
+//			std::stringstream ermsg; 
+//			ermsg<<"I am node "<<getIndex()<<
+//				".I am the target for  an interest for chunk "<<
+//				interest->getChunk() <<", issued by client attached to node "<< interest->getOrigin()<<
+//				". Serial number "<<interest->getSerialNumber() <<
+//				" but I do not have that chunk. I set the repo "<<repository<<" as target node";
+//			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+//		#endif
 	}
 	//</aa>
 	else 

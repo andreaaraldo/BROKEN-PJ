@@ -225,21 +225,21 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 
 	//<aa>
-	#ifdef SEVERE_DEBUG
-				if (	int_msg->getChunk()==2 && int_msg->getOrigin()==5
-						//&& int_msg->getSerialNumber()==2854
-				){
-					std::stringstream msg; 
-					msg<<"I am node "<< getIndex()<<". I received an interest for chunk "<<
-							int_msg->getChunk() <<" issued by client "<<
-							int_msg->getOrigin()<<" serial no="<<int_msg->getSerialNumber()<<
-							". The target of the interest is "<<int_msg->getTarget()<<
-							". ContentStore->lookup(chunk)="<<( ContentStore->lookup(chunk) )<<
-							". my_bitmask & __repo(int_msg->get_name() )="<<
-							( my_bitmask & __repo(int_msg->get_name() ) );
-					debug_message(__FILE__, __LINE__, msg.str().c_str() );
-				}
-	#endif
+//	#ifdef SEVERE_DEBUG
+//				if (	int_msg->getChunk()==2 && int_msg->getOrigin()==5
+//						//&& int_msg->getSerialNumber()==2854
+//				){
+//					std::stringstream msg; 
+//					msg<<"I am node "<< getIndex()<<". I received an interest for chunk "<<
+//							int_msg->getChunk() <<" issued by client "<<
+//							int_msg->getOrigin()<<" serial no="<<int_msg->getSerialNumber()<<
+//							". The target of the interest is "<<int_msg->getTarget()<<
+//							". ContentStore->lookup(chunk)="<<( ContentStore->lookup(chunk) )<<
+//							". my_bitmask & __repo(int_msg->get_name() )="<<
+//							( my_bitmask & __repo(int_msg->get_name() ) );
+//					debug_message(__FILE__, __LINE__, msg.str().c_str() );
+//				}
+//	#endif
 	//</aa>
 
 
@@ -288,18 +288,18 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         ContentStore->store(data_msg);
 
 		//<aa>
-		#ifdef SEVERE_DEBUG
-			if (int_msg->getChunk() == 2 && int_msg->getOrigin()==5)
-			{
-				std::stringstream ermsg; 
-				ermsg<<"I am node "<<getIndex()<<
-					"; I'm satisfying interest for object ="<<int_msg->getChunk() <<
-					" issued by client attached to node "<< int_msg->getOrigin()<<
-					". its target is "<<int_msg->getTarget()<<
-					". Serial no="<<int_msg->getSerialNumber();
-				debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-		#endif
+//		#ifdef SEVERE_DEBUG
+//			if (int_msg->getChunk() == 2 && int_msg->getOrigin()==5)
+//			{
+//				std::stringstream ermsg; 
+//				ermsg<<"I am node "<<getIndex()<<
+//					"; I'm satisfying interest for object ="<<int_msg->getChunk() <<
+//					" issued by client attached to node "<< int_msg->getOrigin()<<
+//					". its target is "<<int_msg->getTarget()<<
+//					". Serial no="<<int_msg->getSerialNumber();
+//				debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+//			}
+//		#endif
 		//</aa>
 
 
@@ -380,18 +380,18 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
-		if (int_msg->getChunk() == 2)
-		{
-			std::stringstream ermsg; 
-			ermsg<<"I am node "<<getIndex()<<"; I received interest for "<<int_msg->getChunk() <<
-					" issued by client "<< int_msg->getOrigin()<<". its target is "<<int_msg->getTarget()<<
-					". Serial no="<<int_msg->getSerialNumber()<<
-					". old PIT string = "<<old_PIT_string<<
-					". new PIT string is now "<< (PIT[int_msg->getChunk()].interfaces)<<
-					". Will I forward interest? "<< i_will_forward_interest;
-			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+//		if (int_msg->getChunk() == 2)
+//		{
+//			std::stringstream ermsg; 
+//			ermsg<<"I am node "<<getIndex()<<"; I received interest for "<<int_msg->getChunk() <<
+//					" issued by client "<< int_msg->getOrigin()<<". its target is "<<int_msg->getTarget()<<
+//					". Serial no="<<int_msg->getSerialNumber()<<
+//					". old PIT string = "<<old_PIT_string<<
+//					". new PIT string is now "<< (PIT[int_msg->getChunk()].interfaces)<<
+//					". Will I forward interest? "<< i_will_forward_interest;
+//			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 
-		}
+//		}
 
 		check_if_correct(__LINE__);
 		#endif
@@ -493,14 +493,13 @@ void core_layer::handle_data(ccn_data *data_msg)
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
 
-	if (	data_msg->getChunk()==2)
-	{
-		std::stringstream msg; 
-		msg<<"I am node "<< getIndex()<<". I received chunk "<<data_msg->getChunk()<<
-			" and I sent back "<<copies_sent<<" copies";
-//			". PIT string="<<(pitIt->second).interfaces;
-		debug_message(__FILE__, __LINE__, msg.str().c_str() );
-	}
+//	if (	data_msg->getChunk()==2)
+//	{
+//		std::stringstream msg; 
+//		msg<<"I am node "<< getIndex()<<". I received chunk "<<data_msg->getChunk()<<
+//			" and I sent back "<<copies_sent<<" copies";
+//		debug_message(__FILE__, __LINE__, msg.str().c_str() );
+//	}
 	#endif
 	//</aa>
 }
@@ -540,20 +539,20 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 			interest_has_been_forwarded = true;
 
 			//<aa>
-			#ifdef SEVERE_DEBUG
-				int next_hop_node = 
-					getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
+//			#ifdef SEVERE_DEBUG
+//				int next_hop_node = 
+//					getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
 
-				if (	interest->getChunk()==2 && interest->getOrigin()==5
-						//&& interest->getSerialNumber()==2854
-				){
-					std::stringstream msg; 
-					msg<<"I am node "<< getIndex()<<". I sent the interest "<< interest->getSerialNumber()
-						<<" for chunk "<<interest->getChunk() <<" issued by client "<<interest->getOrigin()
-						<<" to the node "<<next_hop_node<< " through interface "<<i;;
-					debug_message(__FILE__, __LINE__, msg.str().c_str() );
-				}
-			#endif
+//				if (	interest->getChunk()==2 && interest->getOrigin()==5
+//						//&& interest->getSerialNumber()==2854
+//				){
+//					std::stringstream msg; 
+//					msg<<"I am node "<< getIndex()<<". I sent the interest "<< interest->getSerialNumber()
+//						<<" for chunk "<<interest->getChunk() <<" issued by client "<<interest->getOrigin()
+//						<<" to the node "<<next_hop_node<< " through interface "<<i;;
+//					debug_message(__FILE__, __LINE__, msg.str().c_str() );
+//				}
+//			#endif
 			//</aa>
 
 
