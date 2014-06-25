@@ -155,12 +155,17 @@ bool *nrr::exploit(ccn_interest *interest){
 				#endif
 				// Take all the targets with minimum distance and randomly choose one of them
 				for (vector<Centry>::iterator it2 = cfib.begin(); 
-					it2 != cfib.end() && it2->len == it->len;
-					it2++) 
-				{
+					it2 != cfib.end() && it2->len <= it->len;
+					it2++
+				){
 						if (it2->cache->fake_lookup(interest->getChunk() ) )
 						{	potential_targets.push_back( it2->cache->getIndex() );
 							#ifdef SEVERE_DEBUG
+								if (it2->len < it->len){
+									std::stringstream ermsg; 
+									ermsg<<"I am node "<<getIndex()<<". ERROR ";
+									severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+								}
 								potential_targets_it.push_back(it2);
 							#endif
 						}
