@@ -6,6 +6,10 @@ network abilene_network extends base_network{
         //Number of ccn nodes
     	n = 11;
 
+		//<aa>
+		//node[*].core_layer.interest_aggregation =  false; 
+		//<aa>
+
 connections allowunconnected:
 	node[1].face++ <--> { delay = 5.48ms; } <--> node[0].face++;
 	node[10].face++ <--> { delay = 3.80ms; } <--> node[0].face++;

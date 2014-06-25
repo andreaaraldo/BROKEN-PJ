@@ -108,7 +108,8 @@ void content_distribution::initialize(){
     //
     //Clients initialization
     //
-    if (num_clients < 0) //If num_clients is < 0 all nodes of the network are clients
+    if (num_clients < 0) 
+		//If num_clients is < 0 all nodes of the network are clients
 		num_clients = nodes;
     tokenizer = cStringTokenizer(getAncestorPar("node_clients"),",");
     clients = init_clients (tokenizer.asIntVector());
@@ -327,7 +328,22 @@ void content_distribution::init_content()
 int *content_distribution::init_repos(vector<int> node_repos){
 
     if (node_repos.size() > (unsigned) num_repos)
-		error("You try to distribute too many repositories.");
+		error("You are trying to distribute too many repositories.");
+
+	//<aa>
+		for (int i=0; i < node_repos.size(); i++ )
+		{
+			int r = node_repos[i];
+			int max_node_index = nodes - 1;
+			if (r > max_node_index)
+			{
+		        std::stringstream ermsg; 
+				ermsg<<"You are trying to associate a repo to a node "<<r
+					<<" that does not exist ";
+			    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}		
+		}
+	//</aa>
 
 
 	int i = 0;
@@ -374,19 +390,37 @@ int *content_distribution::init_repos(vector<int> node_repos){
 */
 int *content_distribution::init_clients(vector<int> node_clients){
 
+	// CHECK INPUT{
     if (node_clients.size() > (unsigned) num_clients)
-	error("You try to distribute too much clients.");
+		error("You try to distribute too much clients.");
+
+	//<aa>
+		for (int i=0; i < node_clients.size(); i++ )
+		{
+			int r = node_clients[i];
+			int max_node_index = nodes - 1;
+			if (r > max_node_index)
+			{
+		        std::stringstream ermsg; 
+				ermsg<<"You are trying to associate a client to a node "<<r
+					<<" that does not exist ";
+			    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}		
+		}
+	//</aa>
+	// }CHECK INPUT
 
     if (clients != 0)
-	return clients;
+		return clients;
 
     int *clients = new int [num_clients];
 
     int i = 0;
-    while (node_clients.size()){
-	int r = node_clients[i];
-	node_clients.pop_back();
-	clients[i++] = r;
+    while (node_clients.size() )
+	{
+		int r = node_clients[i];
+		node_clients.pop_back();
+		clients[i++] = r;
     }
 
     int new_c;

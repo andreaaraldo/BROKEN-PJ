@@ -133,8 +133,10 @@ inline chunk_t next_chunk (chunk_t c){
 //-----------
 //PIT handling 
 //-----------
-//Each entry within a PIT contains a field who indicates through
+//Each entry within a PIT contains a field that indicates through
 //which interface the back-coming interest should be sent
+//<aa>	This field is f, a bit string that contains a 1 in the i-th place
+// if the i-th is set </aa>
 //
 #define __sface(f,b)  ( f = f | (1<<b)  ) //Set the b-th bit
 #define __uface(f,b)  ( f = f & ~(1<<b) ) //Unset the b-th bit

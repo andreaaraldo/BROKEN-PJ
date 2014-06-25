@@ -55,6 +55,13 @@ class core_layer : public abstract_node{
     
     public:
     	void check_if_correct(int line);
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		bool it_has_a_repo_attached;
+
+		vector<int> get_interfaces_in_PIT(chunk_t chunk);
+		#endif
+		//</aa>
 
     protected:
     //Standard node Omnet++ functions
@@ -84,8 +91,11 @@ class core_layer : public abstract_node{
 		unsigned int my_bitmask;
 		double my_btw;
 		double RTT;
-		static int repo_interest;
-		int repo_load; //<aa> number of chunks satisfied by the attached repositoery </aa>
+		static int repo_interest; 	// <aa> total number of interests set to one of the
+									// repositories of the network </aa>
+
+		//<aa> number of chunks satisfied by the repository attached to this node</aa>
+		int repo_load; 
 	
 
 		//Architecture data structures
@@ -99,6 +109,8 @@ class core_layer : public abstract_node{
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
+		int unsolicited_data;	// Data received by the node but not requested by anyone
+
 		int discarded_interests; //number of incoming interests discarded
 								 // because their TTL is > max hops
 		int unsatisfied_interests;	//number of interests for contents that are neither

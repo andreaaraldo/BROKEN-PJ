@@ -33,12 +33,6 @@ ifstream strategy_layer::frouting;
 
 void strategy_layer::initialize()
 {
-	//<aa>
-	cout << __FILE__ <<":"<<__LINE__<<"\nPAY ATTENTION: if one of the nodes in attached to nothing, a segmentation fault will arise. Insert some code to avoid this. To see the line where the exception may arise, search for \"here is the problem\""<<endl;
-	cout<<"\n\n"<<__FILE__<<__LINE__<< ":Attenzione, prima di inserire roba, sei sicuro che il vettore gia' esiste li'?"<<endl;
-
-	//</aa>
-
     for (int i = 0; i<getParentModule()->gateSize("face$o");i++)
     {
 	int index ;
@@ -86,31 +80,32 @@ void strategy_layer::populate_routing_table(){
     //int rand_out; //<aa> I disabled this line</aa>
     //As the node topology is defined as a vector of nodes (see Omnet++ manual), cTopology 
     //associates the node i with the node whose Index is i.
-    for (int d = 0; d < topo.getNumNodes(); d++)
+
+	//<aa> Find the paths toward all the other nodes <aa>
+    for (int dest = 0; dest < topo.getNumNodes(); dest++)
     {
     	//<aa>If the module d is not myself</aa>
-		if (d!=getParentModule()->getIndex())
+		if (dest != getParentModule()->getIndex())
 		{
-			cTopology::Node *to   = topo.getNode( d ); //destination node
-			topo.weightedMultiShortestPathsTo( to ); 
-			
+			cTopology::Node *to   = topo.getNode( dest ); //destination node
+			topo.weightedMultiShortestPathsTo( to );
+			if ( node->getNumPaths() == 0)
+			{
+				cout << "strategy_layer.cc:"<<__LINE__<<": ERROR: No paths connecting"
+					<<" node "<<getParentModule()->getIndex() <<" to node "<< dest <<
+					" have been found"<<endl;
+				exit(-5);
+			}
 
 			//<aa>
-			vector<int> paths = choose_paths(node->getNumPaths());
-			if (getParentModule()->getIndex() == 0 && d==3)
-			{
-				std::stringstream msg; 
-				int node_index = getParentModule()->getIndex();
-				msg<<"I'm node "<<node_index;
-				msg<<". To reach node "<<d<<" I have "<<node->getNumPaths()<<" alternatives, i.e. "
-					<<paths.size();
-				debug_message(__FILE__,__LINE__,msg.str().c_str());
-			}
+			// Choose the paths toward dest
+			vector<int> paths = choose_paths(node->getNumPaths() );
 			//here is the problem
 			for (unsigned int i=0; i<paths.size(); i++){
-				int output_gate = node->getPath( paths[i] )->getLocalGate()->getIndex();
+				// The output gate and the distance to reach dest
+				int output_gate = node->getPath( i )->getLocalGate()->getIndex();
 				int distance = node->getDistanceToTarget();
-				add_FIB_entry(d, output_gate, distance);
+				add_FIB_entry(dest, output_gate, distance);
 			}
 			//</aa>
 			

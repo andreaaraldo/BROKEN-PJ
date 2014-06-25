@@ -46,16 +46,30 @@ void  core_layer::initialize(){
 	interest_aggregation = par("interest_aggregation");
 	transparent_to_hops = par("transparent_to_hops");
 	//</aa>
-    //repo_load = 0;  //<aa> Disabled this. The reset is inside clear_stat() </aa>
+    repo_load = 0;
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
     int num_repos = getAncestorPar("num_repos");
 
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		it_has_a_repo_attached = false;
+	#endif
+	//</aa>
+
     int i = 0;
     my_bitmask = 0;
     for (i = 0; i < num_repos; i++)
-	if (content_distribution::repositories[i] == getIndex())
-	    break;
+	{
+		if (content_distribution::repositories[i] == getIndex() ){
+			//<aa>
+			#ifdef SEVERE_DEBUG
+				it_has_a_repo_attached = true;
+			#endif
+			//</aa>
+			break;
+		}
+	}
     my_bitmask = (1<<i);//recall that the width of the repository bitset is only num_repos
 
     //Getting the content store
@@ -72,7 +86,6 @@ void  core_layer::initialize(){
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
 	#endif
-
 	//</aa>
 
 }
@@ -90,7 +103,6 @@ void core_layer::handleMessage(cMessage *in){
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
 	char* last_received;
-	
 	#endif
 	//</aa>
 
@@ -155,23 +167,27 @@ void core_layer::handleMessage(cMessage *in){
 void core_layer::finish(){
 	//<aa>
 	#ifdef SEVERE_DEBUG
-	if (	data+repo_load != \
-			(int) (ContentStore->get_decision_yes() + ContentStore->get_decision_no() ) 
-	){
-			std::stringstream msg; 
-			msg<<"node["<<getIndex()<<"]: "<<
-				"decision_yes=="<<ContentStore->get_decision_yes()<<
-				"; decision_no=="<<ContentStore->get_decision_no()<<
-				"; repo_load=="<<repo_load<<
-				"; data="<<data<<
-				". The sum of decision_yes+decision_no MUST be equal to data+repo_load";
-		    severe_error(__FILE__, __LINE__, msg.str().c_str() );
-	}
+	check_if_correct(__LINE__);
+//		if (	data+repo_load != \
+//				(int) (ContentStore->get_decision_yes() + 
+//						ContentStore->get_decision_no() ) 
+//		){
+//			std::stringstream msg; 
+//			msg<<"node["<<getIndex()<<"]: "<<
+//				"decision_yes=="<<ContentStore->get_decision_yes()<<
+//				"; decision_no=="<<ContentStore->get_decision_no()<<
+//				"; repo_load=="<<repo_load<<
+//				"; data="<<data<<
+//				". The sum of decision_yes+decision_no MUST be equal to data+repo_load";
+//			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+//		}
 	#endif
 	//</aa>
 
     char name [30];
+
     //Total interests
+	// <aa> Parts of these interests will be satisfied by the local cache; the remaining part will be sent to the local repo (if present) and partly sarisfied there. For the remaining part, a FIB entry will be searched to forward the intereset. If no FIB entry is found, the interest will be discarded </aa>
     sprintf ( name, "interests[%d]", getIndex());
     recordScalar (name, interests);
 
@@ -184,6 +200,7 @@ void core_layer::finish(){
     sprintf ( name, "data[%d]", getIndex());
     recordScalar (name, data);
 
+	//<aa> Interests sent to the repository attached to this node</aa>
     if (repo_interest != 0){
 	sprintf ( name, "repo_int[%d]", getIndex());
 	recordScalar(name, repo_interest);
@@ -205,6 +222,26 @@ void core_layer::finish(){
 void core_layer::handle_interest(ccn_interest *int_msg){
     chunk_t chunk = int_msg->getChunk();
     double int_btw = int_msg->getBtw();
+
+
+	//<aa>
+//	#ifdef SEVERE_DEBUG
+//				if (	int_msg->getChunk()==2 && int_msg->getOrigin()==5
+//						//&& int_msg->getSerialNumber()==2854
+//				){
+//					std::stringstream msg; 
+//					msg<<"I am node "<< getIndex()<<". I received an interest for chunk "<<
+//							int_msg->getChunk() <<" issued by client "<<
+//							int_msg->getOrigin()<<" serial no="<<int_msg->getSerialNumber()<<
+//							". The target of the interest is "<<int_msg->getTarget()<<
+//							". ContentStore->lookup(chunk)="<<( ContentStore->lookup(chunk) )<<
+//							". my_bitmask & __repo(int_msg->get_name() )="<<
+//							( my_bitmask & __repo(int_msg->get_name() ) );
+//					debug_message(__FILE__, __LINE__, msg.str().c_str() );
+//				}
+//	#endif
+	//</aa>
+
 
     if (ContentStore->lookup(chunk)){
         //
@@ -250,6 +287,22 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
         ContentStore->store(data_msg);
 
+		//<aa>
+//		#ifdef SEVERE_DEBUG
+//			if (int_msg->getChunk() == 2 && int_msg->getOrigin()==5)
+//			{
+//				std::stringstream ermsg; 
+//				ermsg<<"I am node "<<getIndex()<<
+//					"; I'm satisfying interest for object ="<<int_msg->getChunk() <<
+//					" issued by client attached to node "<< int_msg->getOrigin()<<
+//					". its target is "<<int_msg->getTarget()<<
+//					". Serial no="<<int_msg->getSerialNumber();
+//				debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+//			}
+//		#endif
+		//</aa>
+
+
         send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
 
 		//<aa>
@@ -272,16 +325,29 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
         unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
+		//<aa>
+		bool i_will_forward_interest = false;
+		//</aa>
 
-        if (	pitIt==PIT.end() || //<aa> there is no such an entry in the PIT 
-								// thus I have to forward the interest</aa>
-			(pitIt != PIT.end() && int_msg->getNfound()) ||
-		    simTime() - PIT[chunk].time > 2*RTT ||			
-			/*//<aa>*/! interest_aggregation //</aa>
+		//<aa> Insert a new PIT entry for this object, if not present. If present and invalid, reset the
+		// old entry. If present and valid, do nothing </aa>
+        if (	
+			//<aa> there is no such an entry in the PIT thus I have to forward the interest</aa>
+			pitIt==PIT.end()
+
+			//<aa> There is a PIT entry but it is invalid (the PIT entry has been invalidated by client
+			// because a timer expired and the object has not been found </aa>
+			|| (pitIt != PIT.end() && int_msg->getNfound() ) 
+
+			//<aa> Too much time has been passed since the old PIT entry was added </aa>
+			|| simTime() - PIT[chunk].time > 2*RTT
         ){
-	    	bool * decision = strategy->get_decision(int_msg);
-	    	handle_decision(decision,int_msg);
-	    	delete [] decision;//free memory for the decision array
+			//<aa> Replaces the lines
+			//		bool * decision = strategy->get_decision(int_msg);
+			//		handle_decision(decision,int_msg);
+			// 		delete [] decision;//free memory for the decision array
+			i_will_forward_interest = true;
+			//</aa>
 
 	    	if (pitIt!=PIT.end())
 				PIT.erase(chunk);
@@ -289,10 +355,44 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	    	PIT[chunk].time = simTime(); 
 		}
 
-		__sface(PIT[chunk].interfaces, int_msg->getArrivalGate()->getIndex());
-		
+		//<aa>
+		if (int_msg->getTarget() == getIndex() )
+		{	// I am the target of this interest but I have no more the object
+			// Therefore, this interest cannot be aggregated with the others
+			int_msg->setAggregate(false);
+		}
+
+		if ( !interest_aggregation || int_msg->getAggregate()==false )
+			i_will_forward_interest = true;
+
+		if (i_will_forward_interest)
+		{  	bool * decision = strategy->get_decision(int_msg);
+	    	handle_decision(decision,int_msg);
+	    	delete [] decision;//free memory for the decision array
+		}
+		#ifdef SEVERE_DEBUG
+		interface_t old_PIT_string = PIT[chunk].interfaces;
+		#endif
+
+		//</aa>
+
+		__sface( ( PIT[chunk].interfaces ) , int_msg->getArrivalGate()->getIndex());
+
 		//<aa>
 		#ifdef SEVERE_DEBUG
+//		if (int_msg->getChunk() == 2)
+//		{
+//			std::stringstream ermsg; 
+//			ermsg<<"I am node "<<getIndex()<<"; I received interest for "<<int_msg->getChunk() <<
+//					" issued by client "<< int_msg->getOrigin()<<". its target is "<<int_msg->getTarget()<<
+//					". Serial no="<<int_msg->getSerialNumber()<<
+//					". old PIT string = "<<old_PIT_string<<
+//					". new PIT string is now "<< (PIT[int_msg->getChunk()].interfaces)<<
+//					". Will I forward interest? "<< i_will_forward_interest;
+//			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+
+//		}
+
 		check_if_correct(__LINE__);
 		#endif
 		//</aa>
@@ -308,6 +408,37 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 }
 
 
+//<aa>
+#ifdef SEVERE_DEBUG
+vector<int> core_layer::get_interfaces_in_PIT(chunk_t chunk)
+{
+	std::stringstream ermsg; 
+	ermsg<<"get_interfaces_in_PIT(..) does not work properly. Fix it before using it";
+	severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
+	vector<int> interface_vector;
+    unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
+    interface_t interfaces = 0;
+
+    if ( pitIt != PIT.end() )
+	{
+		interfaces = (pitIt->second).interfaces;//get interface list
+		int i = 0;
+		while (interfaces)
+		{
+			if ( interfaces & 1 ){
+				interface_vector.push_back(i);
+			}
+			i++;
+			interfaces >>= 1;
+		}
+	}
+
+	return interface_vector;
+}
+#endif
+//</aa>
+
 
 /*
  * Handle incoming data packets. First check within the PIT if there are
@@ -315,39 +446,155 @@ void core_layer::handle_interest(ccn_interest *int_msg){
  * within your content store. Finally propagate the interests towards all the
  * interested interfaces.
  */
-void core_layer::handle_data(ccn_data *data_msg){
-
+void core_layer::handle_data(ccn_data *data_msg)
+{
     int i = 0;
     interface_t interfaces = 0;
     chunk_t chunk = data_msg -> getChunk(); //Get information about the file
 
     unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
-    //If someone had previously requested the data 
-    if ( pitIt != PIT.end() ){
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		int copies_sent = 0;
+	#endif
+	//</aa>
 
-	ContentStore->store(data_msg);
-	interfaces = (pitIt->second).interfaces;//get interface list
-	i = 0;
-	while (interfaces){
-	    if ( interfaces & 1 )
-		send(data_msg->dup(), "face$o", i ); //follow bread crumbs back
-	    i++;
-	    interfaces >>= 1;
-	}
-    }
+
+    //If someone had previously requested the data 
+    if ( pitIt != PIT.end() )
+	{
+		ContentStore->store(data_msg);
+		interfaces = (pitIt->second).interfaces;//get interface list
+		i = 0;
+		while (interfaces){
+			if ( interfaces & 1 ){
+				send(data_msg->dup(), "face$o", i ); //follow bread crumbs back
+				//<aa>
+				#ifdef SEVERE_DEBUG
+					copies_sent++;
+				#endif
+				//</aa>
+			}
+			i++;
+			interfaces >>= 1;
+		}
+    } 
+	//<aa> 
+	// Otherwise the data are unrequested
+	#ifdef SEVERE_DEBUG
+		else unsolicited_data++;
+	#endif
+
+
     PIT.erase(chunk); //erase pending interests for that data file
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	check_if_correct(__LINE__);
+
+//	if (	data_msg->getChunk()==2)
+//	{
+//		std::stringstream msg; 
+//		msg<<"I am node "<< getIndex()<<". I received chunk "<<data_msg->getChunk()<<
+//			" and I sent back "<<copies_sent<<" copies";
+//		debug_message(__FILE__, __LINE__, msg.str().c_str() );
+//	}
+	#endif
+	//</aa>
 }
 
 
 void core_layer::handle_decision(bool* decision,ccn_interest *interest){
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	bool interest_has_been_forwarded = false;
+	#endif
+	//</aa>
+
     if (my_btw > interest->getBtw())
-	interest->setBtw(my_btw);
+		interest->setBtw(my_btw);
 
     for (int i = 0; i < __get_outer_interfaces(); i++)
-	if (decision[i] == true && !__check_client(i)
-		&& interest->getArrivalGate()->getIndex() != i)
-	    sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
+	{
+		//<aa>
+		#ifdef SEVERE_DEBUG
+			if (decision[i] == true && __check_client(i) )
+			{
+				std::stringstream msg; 
+				msg<<"I am node "<< getIndex()<<" and the interface supposed to give"<<
+					" access to chunk "<< interest->getChunk() <<" is "<<i
+					<<". This is impossible "<<
+					" since that interface is to reach a client and you cannot access"
+					<< " a content from a client ";
+				severe_error(__FILE__, __LINE__, msg.str().c_str() );
+			}
+		#endif
+		//</aa>
+
+		if (decision[i] == true && !__check_client(i)
+			//&& interest->getArrivalGate()->getIndex() != i
+		){
+			sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
+			interest_has_been_forwarded = true;
+
+			//<aa>
+//			#ifdef SEVERE_DEBUG
+//				int next_hop_node = 
+//					getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
+
+//				if (	interest->getChunk()==2 && interest->getOrigin()==5
+//						//&& interest->getSerialNumber()==2854
+//				){
+//					std::stringstream msg; 
+//					msg<<"I am node "<< getIndex()<<". I sent the interest "<< interest->getSerialNumber()
+//						<<" for chunk "<<interest->getChunk() <<" issued by client "<<interest->getOrigin()
+//						<<" to the node "<<next_hop_node<< " through interface "<<i;;
+//					debug_message(__FILE__, __LINE__, msg.str().c_str() );
+//				}
+//			#endif
+			//</aa>
+
+
+		}
+	}
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		if (! interest_has_been_forwarded)
+		{
+			int affirmative_decision_from_arrival_gate = 0;
+			int affirmative_decision_from_client = 0;
+			int last_affermative_decision = -1;
+
+			for (int i = 0; i < __get_outer_interfaces(); i++)
+			{
+				if (decision[i] == true)
+				{
+					if ( __check_client(i) ){
+						affirmative_decision_from_client++;
+						last_affermative_decision = i;
+					}
+					if ( interest->getArrivalGate()->getIndex() == i ){
+						affirmative_decision_from_arrival_gate++;
+						last_affermative_decision = i;
+					}
+				}
+			}
+			std::stringstream msg; 
+			msg<<"I am node "<< getIndex()<<" and interest for chunk "<<
+				interest->getChunk()<<" has not been forwarded. "<<
+				". One of the possible repositories of this chunk is "<< 
+				interest->get_repos()[0] <<" and the target of the interest is "<<
+				interest->getTarget() <<
+				". affirmative_decision_for_client = "<<
+				affirmative_decision_from_client<<
+				". affirmative_decision_for_arrival_gate = "<<
+				affirmative_decision_from_arrival_gate<<
+				". I would have sent the interest to interface "<<
+				last_affermative_decision;
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+		}
+	#endif
 }
 
 
@@ -384,6 +631,7 @@ void core_layer::clear_stat(){
     repo_load = 0;
     
    	#ifdef SEVERE_DEBUG
+	unsolicited_data = 0;
 	discarded_interests = 0;
 	unsatisfied_interests = 0;
 	interests_satisfied_by_cache = 0;
@@ -405,6 +653,29 @@ void core_layer::check_if_correct(int line)
 				"; unsatisfied_interests="<<unsatisfied_interests<<
 				"; interests_satisfied_by_cache="<<interests_satisfied_by_cache;
 		    severe_error(__FILE__, line, msg.str().c_str() );
+	}
+
+	if (!it_has_a_repo_attached && repo_load>0 )
+	{
+			std::stringstream msg; 
+			msg<<"node["<<getIndex()<<"] has no repo attached. "<<
+				"repo_load=="<<repo_load<<
+				"; repo_interest=="<<repo_interest;
+			severe_error(__FILE__, line, msg.str().c_str() );
+	}
+
+	if (	ContentStore->get_decision_yes() + ContentStore->get_decision_no() +  
+						(unsigned) unsolicited_data
+						!=  (unsigned) data + repo_load
+	){
+					std::stringstream ermsg; 
+					ermsg<<"caches["<<getIndex()<<"]->decision_yes="<<ContentStore->get_decision_yes()<<
+						"; caches[i]->decision_no="<< ContentStore->get_decision_no()<<
+						"; cores[i]->data="<< data<<
+						"; cores[i]->repo_load="<< repo_load<<
+						"; cores[i]->unsolicited_data="<< unsolicited_data<<
+						". The sum of "<< "decision_yes + decision_no + unsolicited_data must be data";
+					severe_error(__FILE__,line,ermsg.str().c_str() );
 	}
 }
 #endif
