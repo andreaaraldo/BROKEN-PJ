@@ -40,6 +40,12 @@ struct download {
     simtime_t start; //start time (for statistic purposes)
     simtime_t last; //last time a chunk has been downloaded
 
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		int serial_number;
+	#endif
+	//</aa>
+
     download (double m = 0,simtime_t t = 0):chunk(m),start(t),last(t){;}
 };
 

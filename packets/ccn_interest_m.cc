@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgc 4.3 from packets/ccn_interest.msg.
+// Generated file, do not edit! Created by opp_msgc 4.4 from packets/ccn_interest.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -11,6 +11,8 @@
 #include <iostream>
 #include <sstream>
 #include "ccn_interest_m.h"
+
+USING_NAMESPACE
 
 // Template rule which fires if a struct or class doesn't have operator<<
 template<typename T>
@@ -30,7 +32,7 @@ void doUnpacking(cCommBuffer *, T& t) {
 
 
 
-ccn_interest_Base::ccn_interest_Base(const char *name, int kind) : cPacket(name,kind)
+ccn_interest_Base::ccn_interest_Base(const char *name, int kind) : ::cPacket(name,kind)
 {
     this->hops_var = 0;
     this->target_var = -1;
@@ -41,9 +43,11 @@ ccn_interest_Base::ccn_interest_Base(const char *name, int kind) : cPacket(name,
     this->capacity_var = 0;
     this->origin_var = -1;
     this->Delay_var = 0;
+    this->serialNumber_var = 0;
+    this->aggregate_var = true;
 }
 
-ccn_interest_Base::ccn_interest_Base(const ccn_interest_Base& other) : cPacket(other)
+ccn_interest_Base::ccn_interest_Base(const ccn_interest_Base& other) : ::cPacket(other)
 {
     copy(other);
 }
@@ -55,7 +59,7 @@ ccn_interest_Base::~ccn_interest_Base()
 ccn_interest_Base& ccn_interest_Base::operator=(const ccn_interest_Base& other)
 {
     if (this==&other) return *this;
-    cPacket::operator=(other);
+    ::cPacket::operator=(other);
     copy(other);
     return *this;
 }
@@ -72,11 +76,13 @@ void ccn_interest_Base::copy(const ccn_interest_Base& other)
     this->capacity_var = other.capacity_var;
     this->origin_var = other.origin_var;
     this->Delay_var = other.Delay_var;
+    this->serialNumber_var = other.serialNumber_var;
+    this->aggregate_var = other.aggregate_var;
 }
 
 void ccn_interest_Base::parsimPack(cCommBuffer *b)
 {
-    cPacket::parsimPack(b);
+    ::cPacket::parsimPack(b);
     // field path is abstract -- please do packing in customized class
     doPacking(b,this->chunk_var);
     doPacking(b,this->hops_var);
@@ -88,11 +94,13 @@ void ccn_interest_Base::parsimPack(cCommBuffer *b)
     doPacking(b,this->capacity_var);
     doPacking(b,this->origin_var);
     doPacking(b,this->Delay_var);
+    doPacking(b,this->serialNumber_var);
+    doPacking(b,this->aggregate_var);
 }
 
 void ccn_interest_Base::parsimUnpack(cCommBuffer *b)
 {
-    cPacket::parsimUnpack(b);
+    ::cPacket::parsimUnpack(b);
     // field path is abstract -- please do unpacking in customized class
     doUnpacking(b,this->chunk_var);
     doUnpacking(b,this->hops_var);
@@ -104,6 +112,8 @@ void ccn_interest_Base::parsimUnpack(cCommBuffer *b)
     doUnpacking(b,this->capacity_var);
     doUnpacking(b,this->origin_var);
     doUnpacking(b,this->Delay_var);
+    doUnpacking(b,this->serialNumber_var);
+    doUnpacking(b,this->aggregate_var);
 }
 
 chunk_t& ccn_interest_Base::getChunk()
@@ -206,6 +216,26 @@ void ccn_interest_Base::setDelay(double Delay)
     this->Delay_var = Delay;
 }
 
+int ccn_interest_Base::getSerialNumber() const
+{
+    return serialNumber_var;
+}
+
+void ccn_interest_Base::setSerialNumber(int serialNumber)
+{
+    this->serialNumber_var = serialNumber;
+}
+
+bool ccn_interest_Base::getAggregate() const
+{
+    return aggregate_var;
+}
+
+void ccn_interest_Base::setAggregate(bool aggregate)
+{
+    this->aggregate_var = aggregate;
+}
+
 class ccn_interestDescriptor : public cClassDescriptor
 {
   public:
@@ -254,7 +284,7 @@ const char *ccn_interestDescriptor::getProperty(const char *propertyname) const
 int ccn_interestDescriptor::getFieldCount(void *object) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 11+basedesc->getFieldCount(object) : 11;
+    return basedesc ? 13+basedesc->getFieldCount(object) : 13;
 }
 
 unsigned int ccn_interestDescriptor::getFieldTypeFlags(void *object, int field) const
@@ -277,8 +307,10 @@ unsigned int ccn_interestDescriptor::getFieldTypeFlags(void *object, int field) 
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISEDITABLE,
+        FD_ISEDITABLE,
+        FD_ISEDITABLE,
     };
-    return (field>=0 && field<11) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<13) ? fieldTypeFlags[field] : 0;
 }
 
 const char *ccn_interestDescriptor::getFieldName(void *object, int field) const
@@ -301,8 +333,10 @@ const char *ccn_interestDescriptor::getFieldName(void *object, int field) const
         "capacity",
         "origin",
         "Delay",
+        "serialNumber",
+        "aggregate",
     };
-    return (field>=0 && field<11) ? fieldNames[field] : NULL;
+    return (field>=0 && field<13) ? fieldNames[field] : NULL;
 }
 
 int ccn_interestDescriptor::findField(void *object, const char *fieldName) const
@@ -320,6 +354,8 @@ int ccn_interestDescriptor::findField(void *object, const char *fieldName) const
     if (fieldName[0]=='c' && strcmp(fieldName, "capacity")==0) return base+8;
     if (fieldName[0]=='o' && strcmp(fieldName, "origin")==0) return base+9;
     if (fieldName[0]=='D' && strcmp(fieldName, "Delay")==0) return base+10;
+    if (fieldName[0]=='s' && strcmp(fieldName, "serialNumber")==0) return base+11;
+    if (fieldName[0]=='a' && strcmp(fieldName, "aggregate")==0) return base+12;
     return basedesc ? basedesc->findField(object, fieldName) : -1;
 }
 
@@ -343,8 +379,10 @@ const char *ccn_interestDescriptor::getFieldTypeString(void *object, int field) 
         "int",
         "int",
         "double",
+        "int",
+        "bool",
     };
-    return (field>=0 && field<11) ? fieldTypeStrings[field] : NULL;
+    return (field>=0 && field<13) ? fieldTypeStrings[field] : NULL;
 }
 
 const char *ccn_interestDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
@@ -396,6 +434,8 @@ std::string ccn_interestDescriptor::getFieldAsString(void *object, int field, in
         case 8: return long2string(pp->getCapacity());
         case 9: return long2string(pp->getOrigin());
         case 10: return double2string(pp->getDelay());
+        case 11: return long2string(pp->getSerialNumber());
+        case 12: return bool2string(pp->getAggregate());
         default: return "";
     }
 }
@@ -420,6 +460,8 @@ bool ccn_interestDescriptor::setFieldAsString(void *object, int field, int i, co
         case 8: pp->setCapacity(string2long(value)); return true;
         case 9: pp->setOrigin(string2long(value)); return true;
         case 10: pp->setDelay(string2double(value)); return true;
+        case 11: pp->setSerialNumber(string2long(value)); return true;
+        case 12: pp->setAggregate(string2bool(value)); return true;
         default: return false;
     }
 }
@@ -444,8 +486,10 @@ const char *ccn_interestDescriptor::getFieldStructName(void *object, int field) 
         NULL,
         NULL,
         NULL,
+        NULL,
+        NULL,
     };
-    return (field>=0 && field<11) ? fieldStructNames[field] : NULL;
+    return (field>=0 && field<13) ? fieldStructNames[field] : NULL;
 }
 
 void *ccn_interestDescriptor::getFieldStructPointer(void *object, int field, int i) const
