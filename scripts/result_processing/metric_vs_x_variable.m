@@ -20,8 +20,8 @@ function y = metric_vs_x_variable (input_data)
 	resultdir = input_data.resultdir;
 	metric_list = input_data.metric_list;
 
-	network = input_data.network;
-	forwarding_ = input_data.forwarding_;
+	network_list = input_data.network_list;
+	forwarding_list = input_data.forwarding_list;
 	replacement_ = input_data.replacement_;
 	ctlg_ = input_data.ctlg_; 
 	ctlg_to_write_ = input_data.ctlg_to_write_;
@@ -33,6 +33,7 @@ function y = metric_vs_x_variable (input_data)
 	filename_list = {input_data.parsed.filename_list};
 	decision = {input_data.parsed.decision};
 	xi = {input_data.parsed.xi};
+	network = {input_data.parsed.network};
 	forwarding = {input_data.parsed.forwarding};
 	replacement = {input_data.parsed.replacement};
 	alpha = {input_data.parsed.alpha};
@@ -377,8 +378,9 @@ function y = metric_vs_x_variable (input_data)
 			% matrix_over_seed_list{idx_metric} is now complete
 
 			% {PREPARING TEXTUAL DATA
-			fixed_variables = { network; forwarding_; replacement_;	ctlg_; csize_; num2str(id_rep_list) };
-			fixed_variable_names = {"network"; "forwarding"; "replacement"; "ctlg";"csize"; "seed_list"};
+			% Adding here the variables that never change
+			fixed_variables = { replacement_; ctlg_; csize_; num2str(id_rep_list) };
+			fixed_variable_names = {"replacement"; "ctlg";"csize"; "seed_list"};
 			fix_var_num = length(fixed_variables);
 
 			% CHECK{

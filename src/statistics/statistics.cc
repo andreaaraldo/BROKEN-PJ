@@ -297,9 +297,10 @@ void statistics::finish(){
     recordScalar(name,global_avg_time * 1./num_clients);
     cout<<"Time/client: "<<global_avg_time * 1./num_clients<<endl;
 
+
+	//<aa> Sum of the download of all users//</aa>
     sprintf ( name, "downloads");
     recordScalar(name,global_tot_downloads);
-    cout<<"Downloads/client: "<<global_tot_downloads * 1./num_clients<<endl;
 
     sprintf ( name, "total_cost");
     recordScalar(name,total_cost);
@@ -310,9 +311,8 @@ void statistics::finish(){
     cout<<"total_replicas: "<<total_replicas<<endl;
 
     //<aa>
-    // It accounts for the fraction of traffic that does not exit the network,
-    // thus not reaching the repos, because it is satisfied by some cache inside
-    // the network
+    // It is the fraction of traffic that is satisfied by some cache inside
+    // the network and thus does not exit the network </aa>
     sprintf (name, "inner_hit");
     recordScalar(name , (double) (global_tot_downloads - global_repo_load) / global_tot_downloads) ;
 

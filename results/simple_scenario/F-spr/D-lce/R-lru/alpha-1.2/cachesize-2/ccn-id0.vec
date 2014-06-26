@@ -1,0 +1,91 @@
+version 2
+run General-4-20140408-17:15:00-22544
+attr D lce
+attr F spr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 2
+attr datetime 20140408-17:15:00
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=2"
+attr iterationvars2 "$net=simple_scenario, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=2, $repetition=0"
+attr measurement "$net=simple_scenario, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=lce, $R=lru, $csize=2"
+attr net simple_scenario
+attr network networks.${net=simple_scenario}_network
+attr processid 22544
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 4
+attr seedset 0
+attr ttl 1000
+
+vector 24  simple_scenario_network.node[0].content_store  hit_node[0]  ETV
+24	41475	1	0.375
+24	41475	2	0.2
+24	41475	3	0.16666666666667
+24	41475	4	0
+24	41475	5	0.25
+24	41475	6	0
+24	41475	7	0
+24	41475	8	0.33333333333333
+24	41475	9	0
+24	41475	10	0
+vector 25  simple_scenario_network.node[1].content_store  hit_node[1]  ETV
+25	41475	1	0.33333333333333
+25	41475	2	-nan
+25	41475	3	-nan
+25	41475	4	0.16666666666667
+25	41475	5	-nan
+25	41475	6	-nan
+25	41475	7	-nan
+25	41475	8	-nan
+25	41475	9	-nan
+25	41475	10	-nan
+vector 26  simple_scenario_network.node[2].content_store  hit_node[2]  ETV
+26	41475	1	-nan
+26	41475	2	0
+26	41475	3	0.2
+26	41475	4	-nan
+26	41475	5	0.33333333333333
+26	41475	6	0
+26	41475	7	0
+26	41475	8	0
+26	41475	9	0
+26	41475	10	0
+vector 27  simple_scenario_network.node[3].content_store  hit_node[3]  ETV
+27	41475	1	0
+27	41475	2	-nan
+27	41475	3	-nan
+27	41475	4	0
+27	41475	5	-nan
+27	41475	6	-nan
+27	41475	7	-nan
+27	41475	8	-nan
+27	41475	9	-nan
+27	41475	10	-nan
+vector 28  simple_scenario_network.node[4].content_store  hit_node[4]  ETV
+28	41475	1	-nan
+28	41475	2	0
+28	41475	3	0
+28	41475	4	-nan
+28	41475	5	0
+28	41475	6	0
+28	41475	7	0
+28	41475	8	0
+28	41475	9	0
+28	41475	10	0
+vector 29  simple_scenario_network.client[0]  hdistance[0]  ETV
+29	41475	1	2.3176020408163
+29	41475	2	2.6
+29	41475	3	2.5388349514563
+29	41475	4	2.5343137254902
+29	41475	5	2.046875
+29	41475	6	2.7156862745098
+29	41475	7	3
+29	41475	8	2.6333333333333
+29	41475	9	2.625730994152
+29	41475	10	3

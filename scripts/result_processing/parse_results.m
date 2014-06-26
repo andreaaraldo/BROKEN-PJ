@@ -4,7 +4,7 @@ global ignore_simtime = false;
 global ignore_lambda = false;
 
 
-out_folder="~/temp/icn14_runs/";
+out_folder="/tmp/icn14_runs/";
 optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 
 
@@ -15,11 +15,11 @@ priceratio_list={"10"};
 
 % The decision plocies that I want to plot
 decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf","costprobtailcons"}; 
-decision_list={"fix0.1", "fix0.05", "fix0.01", "fix0.005", "fix0.001", "fix0.0001", "fix0.00001"};
+decision_list={"lce","fix0.1", "fix0.05", "fix0.01", "fix0.005", "fix0.001", "fix0.0001", "fix0.00001"};
+decision_list={"costprobprodcorr0.01"};
 
-
-xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"1"};
+xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 
 weights_list={"0.333_0.333_0.334","0.5_0.25_0.25","0.25_0.25_0.5","0_0.25_0.75","0.75_0_0.25"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0_0.5", "0.75_0_0.25", "0.75_0.25_0","0.5_0.5_0"};
@@ -43,22 +43,23 @@ q_list={"0"};
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"cost_fraction"};
+metric_list={"p_hit"};
 
-network="one_cache_scenario_3_links";
-network="abilene_cost";
+network_list={"one_cache_scenario_3_links"};
+network_list={"abilene_cost","geant_cost"};
 
-forwarding_="nrr";
-forwarding_="spr";
+forwarding_list={"spr"};
+forwarding_list={"nrr"};
 
 
 replacement_="lru";
 ctlg_="1e5";
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"simtime", "alpha","weights","q", "xi","lambda"};
-x_variable_name = "decision";
-z_variable_name = "priceratio"; % Over the columns
+fixed_variable_names_additional = {"simtime", "alpha","weights",...
+			"q", "decision","lambda","priceratio","forwarding"};
+x_variable_name = "xi";
+z_variable_name = "network"; % Over the columns
 
 
 % {CHECK
@@ -89,29 +90,35 @@ for idx_simtime =  1:length(simtime_list)
 							for idx_weight = 1:length(weights_list)
 								weights_ = weights_list{idx_weight};
 								for q_idx = 1:length(q_list)
-									for id_rep_ = id_rep_list
+									for id_forwarding = 1:length(forwarding_list)
+										for id_network = 1:length(network_list)
+											for id_rep_ = id_rep_list
 
-										selection_tuple.priceratio = priceratio_list{priceratio_idx};
-										selection_tuple.decision = decision_list{decision_idx};
-										selection_tuple.xi = xi_;
-										selection_tuple.forwarding = forwarding_;
-										selection_tuple.replacement = replacement_;
-										selection_tuple.alpha = alpha_list{alpha_idx};
-										selection_tuple.q = q_list{q_idx};
-										selection_tuple.ctlg = ctlg_;
-										selection_tuple.csize = csize_;
-										selection_tuple.id_rep = id_rep_;
-										selection_tuple.network = network;
-										selection_tuple.weights = weights_;
-										selection_tuple.simtime = simtime_;
-										selection_tuple.lambda = lambda_;
-										selection_tuple.metric_list = metric_list;
+												selection_tuple.priceratio = ...
+														priceratio_list{priceratio_idx};
+												selection_tuple.decision = decision_list{decision_idx};
+												selection_tuple.xi = xi_;
+												selection_tuple.forwarding = ...
+														forwarding_list{id_forwarding};
+												selection_tuple.replacement = replacement_;
+												selection_tuple.alpha = alpha_list{alpha_idx};
+												selection_tuple.q = q_list{q_idx};
+												selection_tuple.ctlg = ctlg_;
+												selection_tuple.csize = csize_;
+												selection_tuple.id_rep = id_rep_;
+												selection_tuple.network = network_list{id_network};
+												selection_tuple.weights = weights_;
+												selection_tuple.simtime = simtime_;
+												selection_tuple.lambda = lambda_;
+												selection_tuple.metric_list = metric_list;
 
-										parsed_ = select(selection_tuple, resultdir,...
-											optimization_result_folder);
+												parsed_ = select(selection_tuple, resultdir,...
+													optimization_result_folder);
 
-										parsed(i) = parsed_;
-										i++;
+												parsed(i) = parsed_;
+												i++;
+											endfor % network loop
+										endfor % forwarding loop
 									endfor % seed loop
 								endfor % q_loop
 							endfor % weights loop
@@ -128,6 +135,7 @@ scatter_plot(parsed);
 ##################################
 ### PREPARE DATA FOR PLOTTING ####
 ######### FUNCTION ###############
+##################################
 input_data.out_folder = out_folder;
 
 input_data.priceratio_list = priceratio_list;
@@ -142,8 +150,8 @@ input_data.csize_to_write_list = csize_to_write_list;
 input_data.resultdir = resultdir;
 input_data.metric_list = metric_list;
 
-input_data.network = network;
-input_data.forwarding_ = forwarding_;
+input_data.network_list = network_list;
+input_data.forwarding_list = forwarding_list;
 input_data.replacement_ = replacement_;
 input_data.ctlg_ = ctlg_; 
 input_data.ctlg_to_write_ = ctlg_to_write_;

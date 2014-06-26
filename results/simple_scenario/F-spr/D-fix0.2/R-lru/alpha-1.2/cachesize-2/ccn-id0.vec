@@ -1,0 +1,91 @@
+version 2
+run General-5-20140408-17:15:00-22544
+attr D fix0.2
+attr F spr
+attr R lru
+attr a 1.2
+attr configname General
+attr csize 2
+attr datetime 20140408-17:15:00
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=simple_scenario, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=fix0.2, $R=lru, $csize=2"
+attr iterationvars2 "$net=simple_scenario, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=fix0.2, $R=lru, $csize=2, $repetition=0"
+attr measurement "$net=simple_scenario, $rep=0, $a=1.2, $F=spr, $ttl=1000, $D=fix0.2, $R=lru, $csize=2"
+attr net simple_scenario
+attr network networks.${net=simple_scenario}_network
+attr processid 22544
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 5
+attr seedset 0
+attr ttl 1000
+
+vector 30  simple_scenario_network.node[0].content_store  hit_node[0]  ETV
+30	39569	1	0.21428571428571
+30	39569	2	0
+30	39569	3	0
+30	39569	4	0.2
+30	39569	5	0
+30	39569	6	0.33333333333333
+30	39569	7	-nan
+30	39569	8	0
+30	39569	9	0
+30	39569	10	0
+vector 31  simple_scenario_network.node[1].content_store  hit_node[1]  ETV
+31	39569	1	0.90909090909091
+31	39569	2	-nan
+31	39569	3	-nan
+31	39569	4	0
+31	39569	5	-nan
+31	39569	6	-nan
+31	39569	7	-nan
+31	39569	8	-nan
+31	39569	9	-nan
+31	39569	10	-nan
+vector 32  simple_scenario_network.node[2].content_store  hit_node[2]  ETV
+32	39569	1	-nan
+32	39569	2	0.4
+32	39569	3	0.5
+32	39569	4	-nan
+32	39569	5	0
+32	39569	6	0
+32	39569	7	-nan
+32	39569	8	0
+32	39569	9	0
+32	39569	10	0
+vector 33  simple_scenario_network.node[3].content_store  hit_node[3]  ETV
+33	39569	1	0
+33	39569	2	-nan
+33	39569	3	-nan
+33	39569	4	0
+33	39569	5	-nan
+33	39569	6	-nan
+33	39569	7	-nan
+33	39569	8	-nan
+33	39569	9	-nan
+33	39569	10	-nan
+vector 34  simple_scenario_network.node[4].content_store  hit_node[4]  ETV
+34	39569	1	-nan
+34	39569	2	0
+34	39569	3	0
+34	39569	4	-nan
+34	39569	5	0
+34	39569	6	0
+34	39569	7	-nan
+34	39569	8	0
+34	39569	9	0
+34	39569	10	0
+vector 35  simple_scenario_network.client[0]  hdistance[0]  ETV
+35	39569	1	2.4401260504202
+35	39569	2	2.1413333333333
+35	39569	3	2.0108695652174
+35	39569	4	2.510447761194
+35	39569	5	2.6
+35	39569	6	2.5030303030303
+35	39569	7	0
+35	39569	8	2.741935483871
+35	39569	9	3
+35	39569	10	3

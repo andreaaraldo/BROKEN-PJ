@@ -7,6 +7,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						priceratio_ = selection_tuple.priceratio;
 						decision_ = selection_tuple.decision;
 						xi_ = selection_tuple.xi;
+						network_ = selection_tuple.network;
 						forwarding_ = selection_tuple.forwarding;
 						replacement_ = selection_tuple.replacement;
 						alpha_ = selection_tuple.alpha;
@@ -129,6 +130,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.target_decision_probability = target_decision_probability_;
 						parsed.xi = xi_;
 						parsed.forwarding = forwarding_;
+						parsed.network = network_;
 						parsed.replacement = replacement_;
 						parsed.alpha = alpha_;
 						parsed.q = q_;
@@ -140,10 +142,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.simtime = simtime_;
 						parsed.lambda = lambda_;
 
-						string_to_search="p_hit\\[0\\] ";
-						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-						[status, output] = system(command,1);
-						parsed.p_hit = str2num(output);
+						[status, parsed.p_hit] = my_grep("inner_hit ", filename, true);
 
 					% STABILIZATION_TIME{
 						parsed.stabilization_time = NaN;
@@ -195,7 +194,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 					endif
 
 					if !isequal(decision_,"costopt")
-						string_to_search="downloads\\[0\\] ";
+						string_to_search="downloads ";
 						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
 						[status, output] = system(command,1);
 						parsed.client_requests = str2num(output);
@@ -206,27 +205,28 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 
 
 	% LINK LOAD COMPUTATION{
+					% Find where the repositories are attached
+					[status, repo_free_node] = my_grep("repo-0 ",filename, false);
+					[status, repo_cheap_node] = my_grep("repo-1 ",filename, false);
+					[status, repo_expensive_node] = my_grep("repo-2 ",filename, false);
+
 					if !isequal(decision_,"costopt")
-						string_to_search="repo_load\\[4\\] ";
-						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-						[status, output] = system(command,1);
+						[status, output] = my_grep(["repo_load\\[",repo_free_node,"\\]" ], filename,false);
 						parsed.free_link_load = str2num(output);
 						if size(parsed.free_link_load) == [0,0]
 							parsed.free_link_load = 0;
 						endif
 
-						string_to_search="repo_load\\[5\\] ";
-						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-						[status, output] = system(command,1);
+						[status, output] = ...
+								my_grep(["repo_load\\[",repo_cheap_node,"\\]" ], filename,false);
 						parsed.cheap_link_load = str2num(output);
 						if size(parsed.cheap_link_load) == [0,0]
 							parsed.cheap_link_load = 0;
 						endif
 
 
-						string_to_search="repo_load\\[6\\] ";
-						command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-						[status, output] = system(command,1);
+						[status, output] = ...
+								my_grep(["repo_load\\[",repo_expensive_node,"\\]" ], filename,false);
 						parsed.expensive_link_load = str2num(output);
 						if size(parsed.expensive_link_load) == [0,0]
 							parsed.expensive_link_load = 0;
@@ -236,6 +236,8 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.cheap_link_load = NaN;
 						parsed.expensive_link_load = NaN;
 					endif
+
+
 		% CHECK{
 			if severe_debug
 				if (size(parsed.free_link_load) != [1,1] || ...
