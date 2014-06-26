@@ -17,6 +17,7 @@ priceratio_list={"10"};
 decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf","costprobtailcons"}; 
 decision_list={"lce","fix0.1", "fix0.05", "fix0.01", "fix0.005", "fix0.001", "fix0.0001", "fix0.00001"};
 decision_list={"costprobprodcorr0.01"};
+decision_list={"lce","fix0.01","costprobprodcorr0.01","costprobprodplain0.01", "costprobcoincorr0.5", "costprobcoinplain0.5", "costprobcoincorr0.1", "costprobcoinplain0.1","costprobcoincorr0.01", "costprobcoinplain0.01"};
 
 xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"1"};
@@ -44,11 +45,11 @@ resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
 metric_list={"cost_reduction_wrt_fix"};
-metric_list={"decision_ratio"};
+metric_list={"decision_ratio","cost_fraction","p_hit"};
 
 
 network_list={"one_cache_scenario_3_links"};
-network_list={"abilene_cost","geant_cost"};
+network_list={"abilene_cost"};
 
 forwarding_list={"nrr"};
 
@@ -58,8 +59,8 @@ ctlg_="1e5";
 ctlg_to_write_="1e5";
 
 fixed_variable_names_additional = {"simtime", "alpha","weights",...
-			"q", "decision","lambda","priceratio","xi"};
-x_variable_name = "forwarding";
+			"q", "forwarding","lambda","priceratio","xi"};
+x_variable_name = "decision";
 z_variable_name = "network"; % Over the columns
 
 
