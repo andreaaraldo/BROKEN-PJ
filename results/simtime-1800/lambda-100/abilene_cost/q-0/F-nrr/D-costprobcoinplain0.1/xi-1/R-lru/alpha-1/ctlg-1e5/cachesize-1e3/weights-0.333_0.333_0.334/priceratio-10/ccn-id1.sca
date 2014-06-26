@@ -1,0 +1,227 @@
+version 2
+run General-4-20140626-15:49:51-10439
+attr D costprobcoinplain0.1
+attr F nrr
+attr R lru
+attr a 1
+attr configname General
+attr csize 1e3
+attr ctlg 1e5
+attr datetime 20140626-15:49:51
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobcoinplain0.1, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $mytime=1800"
+attr iterationvars2 "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobcoinplain0.1, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $mytime=1800, $repetition=0"
+attr lambda 100
+attr measurement "$net=abilene_cost, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobcoinplain0.1, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $mytime=1800"
+attr mytime 1800
+attr net abilene_cost
+attr network networks.${net=abilene_cost}_network
+attr pricebits 0
+attr priceratiovalue 10
+attr processid 10439
+attr rep 1
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 4
+attr seedset 1
+attr ttl 1000
+attr weights 0.333_0.333_0.334
+attr xi 1
+
+scalar . 	a 	1
+scalar . 	csize 	1e3
+scalar . 	ctlg 	1e5
+scalar . 	lambda 	100
+scalar . 	mytime 	1800
+scalar . 	pricebits 	0
+scalar . 	priceratiovalue 	10
+scalar . 	rep 	1
+scalar . 	ttl 	1000
+scalar . 	xi 	1
+scalar abilene_cost_network.content_distribution 	repo-0 	11
+scalar abilene_cost_network.content_distribution 	repo-1 	12
+scalar abilene_cost_network.content_distribution 	repo-2 	13
+scalar abilene_cost_network.content_distribution 	client-0 	5
+scalar abilene_cost_network.content_distribution 	client-1 	0
+scalar abilene_cost_network.content_distribution 	client-2 	9
+scalar abilene_cost_network.content_distribution 	repo-0_card 	33396
+scalar abilene_cost_network.content_distribution 	repo-1_card 	33039
+scalar abilene_cost_network.content_distribution 	repo-2_card 	33565
+scalar abilene_cost_network.statistics 	repo_popularity[0] 	0.28686251265602
+scalar abilene_cost_network.statistics 	repo_popularity[1] 	0.2886063426465
+scalar abilene_cost_network.statistics 	repo_popularity[2] 	0.42453114469748
+scalar abilene_cost_network.statistics 	stabilization_time 	104.4
+scalar abilene_cost_network.node[1].face$o[4].channel 	price[1] 	0
+scalar abilene_cost_network.node[1].face$o[4].channel 	represented_price[1] 	0
+scalar abilene_cost_network.node[7].face$o[4].channel 	price[7] 	0
+scalar abilene_cost_network.node[7].face$o[4].channel 	represented_price[7] 	0
+scalar abilene_cost_network.node[10].face$o[4].channel 	price[10] 	0
+scalar abilene_cost_network.node[10].face$o[4].channel 	represented_price[10] 	0
+scalar abilene_cost_network.node[11].face$o[1].channel 	price[11] 	0
+scalar abilene_cost_network.node[11].face$o[1].channel 	represented_price[11] 	0
+scalar abilene_cost_network.node[12].face$o[1].channel 	price[12] 	1
+scalar abilene_cost_network.node[12].face$o[1].channel 	represented_price[12] 	1
+scalar abilene_cost_network.node[13].face$o[1].channel 	price[13] 	10
+scalar abilene_cost_network.node[13].face$o[1].channel 	represented_price[13] 	10
+scalar abilene_cost_network.statistics 	p_hit 	0.16430395835116
+scalar abilene_cost_network.statistics 	interests 	116895.71428571
+scalar abilene_cost_network.statistics 	data 	78338.928571429
+scalar abilene_cost_network.statistics 	hdistance 	2.5338482201992
+scalar abilene_cost_network.statistics 	avg_time 	0.010041089397
+scalar abilene_cost_network.statistics 	downloads 	539624
+scalar abilene_cost_network.statistics 	total_cost 	1015579
+scalar abilene_cost_network.statistics 	total_replicas 	100000
+scalar abilene_cost_network.statistics 	inner_hit 	0.49829510918714
+scalar abilene_cost_network.statistics 	interests_sent 	539795
+scalar abilene_cost_network.node[0].core_layer 	interests[0] 	184919
+scalar abilene_cost_network.node[0].core_layer 	data[0] 	117823
+scalar abilene_cost_network.node[0].core_layer 	repo_int[0] 	270732
+scalar abilene_cost_network.node[0].content_store 	p_hit[0] 	0.36253711084313
+scalar abilene_cost_network.node[0].content_store 	hits[0] 	67040
+scalar abilene_cost_network.node[0].content_store 	misses[0] 	117879
+scalar abilene_cost_network.node[0].content_store 	decision_yes[0] 	11727
+scalar abilene_cost_network.node[0].content_store 	decision_no[0] 	106096
+scalar abilene_cost_network.node[0].content_store 	decision_ratio[0] 	0.099530651910068
+scalar abilene_cost_network.node[0].content_store 	correction_factor[0] 	0.01
+scalar abilene_cost_network.node[0].content_store 	xi[0] 	1
+scalar abilene_cost_network.node[1].core_layer 	interests[1] 	172968
+scalar abilene_cost_network.node[1].core_layer 	data[1] 	166503
+scalar abilene_cost_network.node[1].content_store 	p_hit[1] 	0.037376855834605
+scalar abilene_cost_network.node[1].content_store 	hits[1] 	6465
+scalar abilene_cost_network.node[1].content_store 	misses[1] 	166503
+scalar abilene_cost_network.node[1].content_store 	decision_yes[1] 	16763
+scalar abilene_cost_network.node[1].content_store 	decision_no[1] 	149739
+scalar abilene_cost_network.node[1].content_store 	decision_ratio[1] 	0.10067746933971
+scalar abilene_cost_network.node[1].content_store 	correction_factor[1] 	0.01
+scalar abilene_cost_network.node[1].content_store 	xi[1] 	1
+scalar abilene_cost_network.node[2].core_layer 	interests[2] 	111925
+scalar abilene_cost_network.node[2].core_layer 	data[2] 	104454
+scalar abilene_cost_network.node[2].content_store 	p_hit[2] 	0.066750055840965
+scalar abilene_cost_network.node[2].content_store 	hits[2] 	7471
+scalar abilene_cost_network.node[2].content_store 	misses[2] 	104454
+scalar abilene_cost_network.node[2].content_store 	decision_yes[2] 	10317
+scalar abilene_cost_network.node[2].content_store 	decision_no[2] 	94135
+scalar abilene_cost_network.node[2].content_store 	decision_ratio[2] 	0.098772641979091
+scalar abilene_cost_network.node[2].content_store 	correction_factor[2] 	0.01
+scalar abilene_cost_network.node[2].content_store 	xi[2] 	1
+scalar abilene_cost_network.node[3].core_layer 	interests[3] 	103528
+scalar abilene_cost_network.node[3].core_layer 	data[3] 	98389
+scalar abilene_cost_network.node[3].content_store 	p_hit[3] 	0.049629085851171
+scalar abilene_cost_network.node[3].content_store 	hits[3] 	5138
+scalar abilene_cost_network.node[3].content_store 	misses[3] 	98390
+scalar abilene_cost_network.node[3].content_store 	decision_yes[3] 	9923
+scalar abilene_cost_network.node[3].content_store 	decision_no[3] 	88465
+scalar abilene_cost_network.node[3].content_store 	decision_ratio[3] 	0.10085579542221
+scalar abilene_cost_network.node[3].content_store 	correction_factor[3] 	0.01
+scalar abilene_cost_network.node[3].content_store 	xi[3] 	1
+scalar abilene_cost_network.node[4].core_layer 	interests[4] 	74484
+scalar abilene_cost_network.node[4].core_layer 	data[4] 	69127
+scalar abilene_cost_network.node[4].content_store 	p_hit[4] 	0.071908060791579
+scalar abilene_cost_network.node[4].content_store 	hits[4] 	5356
+scalar abilene_cost_network.node[4].content_store 	misses[4] 	69128
+scalar abilene_cost_network.node[4].content_store 	decision_yes[4] 	6795
+scalar abilene_cost_network.node[4].content_store 	decision_no[4] 	62332
+scalar abilene_cost_network.node[4].content_store 	decision_ratio[4] 	0.098297336785916
+scalar abilene_cost_network.node[4].content_store 	correction_factor[4] 	0.01
+scalar abilene_cost_network.node[4].content_store 	xi[4] 	1
+scalar abilene_cost_network.node[5].core_layer 	interests[5] 	180709
+scalar abilene_cost_network.node[5].core_layer 	data[5] 	118540
+scalar abilene_cost_network.node[5].content_store 	p_hit[5] 	0.34364641495443
+scalar abilene_cost_network.node[5].content_store 	hits[5] 	62100
+scalar abilene_cost_network.node[5].content_store 	misses[5] 	118609
+scalar abilene_cost_network.node[5].content_store 	decision_yes[5] 	11991
+scalar abilene_cost_network.node[5].content_store 	decision_no[5] 	106549
+scalar abilene_cost_network.node[5].content_store 	decision_ratio[5] 	0.1011557280243
+scalar abilene_cost_network.node[5].content_store 	correction_factor[5] 	0.01
+scalar abilene_cost_network.node[5].content_store 	xi[5] 	1
+scalar abilene_cost_network.node[6].core_layer 	interests[6] 	49029
+scalar abilene_cost_network.node[6].core_layer 	data[6] 	37127
+scalar abilene_cost_network.node[6].content_store 	p_hit[6] 	0.24275428827837
+scalar abilene_cost_network.node[6].content_store 	hits[6] 	11902
+scalar abilene_cost_network.node[6].content_store 	misses[6] 	37127
+scalar abilene_cost_network.node[6].content_store 	decision_yes[6] 	3609
+scalar abilene_cost_network.node[6].content_store 	decision_no[6] 	33518
+scalar abilene_cost_network.node[6].content_store 	decision_ratio[6] 	0.097206884477604
+scalar abilene_cost_network.node[6].content_store 	correction_factor[6] 	0.01
+scalar abilene_cost_network.node[6].content_store 	xi[6] 	1
+scalar abilene_cost_network.node[7].core_layer 	interests[7] 	99137
+scalar abilene_cost_network.node[7].core_layer 	data[7] 	93363
+scalar abilene_cost_network.node[7].content_store 	p_hit[7] 	0.058232546879571
+scalar abilene_cost_network.node[7].content_store 	hits[7] 	5773
+scalar abilene_cost_network.node[7].content_store 	misses[7] 	93364
+scalar abilene_cost_network.node[7].content_store 	decision_yes[7] 	9370
+scalar abilene_cost_network.node[7].content_store 	decision_no[7] 	83993
+scalar abilene_cost_network.node[7].content_store 	decision_ratio[7] 	0.10036095669591
+scalar abilene_cost_network.node[7].content_store 	correction_factor[7] 	0.01
+scalar abilene_cost_network.node[7].content_store 	xi[7] 	1
+scalar abilene_cost_network.node[8].core_layer 	interests[8] 	55508
+scalar abilene_cost_network.node[8].core_layer 	data[8] 	38674
+scalar abilene_cost_network.node[8].content_store 	p_hit[8] 	0.30327160049002
+scalar abilene_cost_network.node[8].content_store 	hits[8] 	16834
+scalar abilene_cost_network.node[8].content_store 	misses[8] 	38674
+scalar abilene_cost_network.node[8].content_store 	decision_yes[8] 	3892
+scalar abilene_cost_network.node[8].content_store 	decision_no[8] 	34782
+scalar abilene_cost_network.node[8].content_store 	decision_ratio[8] 	0.1006360862595
+scalar abilene_cost_network.node[8].content_store 	correction_factor[8] 	0.01
+scalar abilene_cost_network.node[8].content_store 	xi[8] 	1
+scalar abilene_cost_network.node[9].core_layer 	interests[9] 	186648
+scalar abilene_cost_network.node[9].core_layer 	data[9] 	117730
+scalar abilene_cost_network.node[9].content_store 	p_hit[9] 	0.36899404226137
+scalar abilene_cost_network.node[9].content_store 	hits[9] 	68872
+scalar abilene_cost_network.node[9].content_store 	misses[9] 	117776
+scalar abilene_cost_network.node[9].content_store 	decision_yes[9] 	11967
+scalar abilene_cost_network.node[9].content_store 	decision_no[9] 	105763
+scalar abilene_cost_network.node[9].content_store 	decision_ratio[9] 	0.10164783827402
+scalar abilene_cost_network.node[9].content_store 	correction_factor[9] 	0.01
+scalar abilene_cost_network.node[9].content_store 	xi[9] 	1
+scalar abilene_cost_network.node[10].core_layer 	interests[10] 	146953
+scalar abilene_cost_network.node[10].core_layer 	data[10] 	135015
+scalar abilene_cost_network.node[10].content_store 	p_hit[10] 	0.081243662939852
+scalar abilene_cost_network.node[10].content_store 	hits[10] 	11939
+scalar abilene_cost_network.node[10].content_store 	misses[10] 	135014
+scalar abilene_cost_network.node[10].content_store 	decision_yes[10] 	13594
+scalar abilene_cost_network.node[10].content_store 	decision_no[10] 	121420
+scalar abilene_cost_network.node[10].content_store 	decision_ratio[10] 	0.10068585480024
+scalar abilene_cost_network.node[10].content_store 	correction_factor[10] 	0.01
+scalar abilene_cost_network.node[10].content_store 	xi[10] 	1
+scalar abilene_cost_network.node[11].core_layer 	interests[11] 	93728
+scalar abilene_cost_network.node[11].core_layer 	repo_load[11] 	93728
+scalar abilene_cost_network.node[11].core_layer 	data[11] 	0
+scalar abilene_cost_network.node[11].content_store 	p_hit[11] 	0
+scalar abilene_cost_network.node[11].content_store 	hits[11] 	0
+scalar abilene_cost_network.node[11].content_store 	misses[11] 	93728
+scalar abilene_cost_network.node[11].content_store 	decision_yes[11] 	0
+scalar abilene_cost_network.node[11].content_store 	decision_no[11] 	93728
+scalar abilene_cost_network.node[11].content_store 	decision_ratio[11] 	0
+scalar abilene_cost_network.node[12].core_layer 	interests[12] 	83829
+scalar abilene_cost_network.node[12].core_layer 	repo_load[12] 	83829
+scalar abilene_cost_network.node[12].core_layer 	data[12] 	0
+scalar abilene_cost_network.node[12].content_store 	p_hit[12] 	0
+scalar abilene_cost_network.node[12].content_store 	hits[12] 	0
+scalar abilene_cost_network.node[12].content_store 	misses[12] 	83829
+scalar abilene_cost_network.node[12].content_store 	decision_yes[12] 	0
+scalar abilene_cost_network.node[12].content_store 	decision_no[12] 	83829
+scalar abilene_cost_network.node[12].content_store 	decision_ratio[12] 	0
+scalar abilene_cost_network.node[13].core_layer 	interests[13] 	93175
+scalar abilene_cost_network.node[13].core_layer 	repo_load[13] 	93175
+scalar abilene_cost_network.node[13].core_layer 	data[13] 	0
+scalar abilene_cost_network.node[13].content_store 	p_hit[13] 	0
+scalar abilene_cost_network.node[13].content_store 	hits[13] 	0
+scalar abilene_cost_network.node[13].content_store 	misses[13] 	93175
+scalar abilene_cost_network.node[13].content_store 	decision_yes[13] 	0
+scalar abilene_cost_network.node[13].content_store 	decision_no[13] 	93175
+scalar abilene_cost_network.node[13].content_store 	decision_ratio[13] 	0
+scalar abilene_cost_network.client[0] 	hdistance[0] 	2.3125488999251
+scalar abilene_cost_network.client[0] 	downloads[0] 	180215
+scalar abilene_cost_network.client[0] 	avg_time[0] 	0.009724492492
+scalar abilene_cost_network.client[0] 	interests_sent[0] 	180271
+scalar abilene_cost_network.client[5] 	hdistance[5] 	3.193882371248
+scalar abilene_cost_network.client[5] 	downloads[5] 	179939
+scalar abilene_cost_network.client[5] 	avg_time[5] 	0.01171610608
+scalar abilene_cost_network.client[5] 	interests_sent[5] 	180008
+scalar abilene_cost_network.client[9] 	hdistance[9] 	2.0951133894244
+scalar abilene_cost_network.client[9] 	downloads[9] 	179470
+scalar abilene_cost_network.client[9] 	avg_time[9] 	0.008682669621
+scalar abilene_cost_network.client[9] 	interests_sent[9] 	179516
