@@ -263,20 +263,15 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 
 
 	if !isequal(decision_,"costopt")
-		string_to_search="decision_yes\\[0\\] ";
-		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-		[status, output] = system(command,1);
-		parsed.decision_yes = str2num(output);
-
-		string_to_search="decision_no\\[0\\] ";
-		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-		[status, output] = system(command,1);
-		parsed.decision_no = str2num(output);
-
-		string_to_search="decision_ratio\\[0\\] ";
-		command = ["grep ","\"",string_to_search,"\""," ",filename," | awk \'{print $4}\' "];
-		[status, output] = system(command,1);
-		parsed.decision_ratio = str2num(output);
+		[status, decision_yes_vector] = my_grep("decision_yes\\[[0-9]*\\] ",filename,true);
+		[status, decision_no_vector] = my_grep("decision_no\\[[0-9]*\\] ",filename,true);
+		% The last 3 rows are relative to the fake nodes attached to the repos
+		decision_yes_vector = decision_yes_vector(1:(length(decision_yes_vector)-3),:);
+		decision_no_vector = decision_no_vector(1:(length(decision_no_vector)-3),:);
+		decision_ratio_vector = decision_yes_vector ./ (decision_yes_vector+decision_no_vector);
+		parsed.decision_yes = sum(decision_yes_vector);
+		parsed.decision_no = sum(decision_no_vector);
+		parsed.decision_ratio = mean(decision_ratio_vector);
 	else
 		parsed.decision_yes = NaN;
 		parsed.decision_no = NaN;
