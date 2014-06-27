@@ -19,6 +19,8 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						weights_ = selection_tuple.weights;
 						simtime_ = selection_tuple.simtime;
 						lambda_ = selection_tuple.lambda;
+						window_ = selection_tuple.window;
+						variance_ = selection_tuple.variance;
 
 						metric_list = selection_tuple.metric_list;
 						
@@ -85,17 +87,15 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						endif
 						% }CHECK
 
-						sim_folder_prefix = strcat(resultdir,"/");
-						if ignore_simtime == false
-							sim_folder_prefix = strcat(resultdir,"/simtime-",simtime_,"/");
-						endif
-						if ignore_lambda == false
-							sim_folder_prefix = ...
-								strcat(sim_folder_prefix,"lambda-",lambda_,"/");
+						if ignore_simtime == true
+							error("You cannot ignore simtime");
 						endif
 
+						sim_folder_prefix = strcat(resultdir,"/variance-",variance_,"/window-",window_,...
+								"/simtime-",simtime_,"/lambda-",lambda_);
+						
 						destination_folder = ...
-							strcat(sim_folder_prefix, ...
+							strcat(sim_folder_prefix, "/",...
 							network,"/q-",q_,...
 							"/F-",forwarding_,...
 							"/D-",decision_,"/xi-",xi_,"/R-",replacement_,...
@@ -141,6 +141,8 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.weights = weights_;
 						parsed.simtime = simtime_;
 						parsed.lambda = lambda_;
+						parsed.window = window_;
+						parsed.variance = variance_;
 
 						[status, parsed.p_hit] = my_grep("inner_hit ", filename, true);
 

@@ -63,6 +63,8 @@ function y = metric_vs_x_variable (input_data)
 	weights = {input_data.parsed.weights};
 	simtime = {input_data.parsed.simtime};
 	lambda = {input_data.parsed.lambda};
+	window = {input_data.parsed.window};
+	variance = {input_data.parsed.variance};
 
 
 

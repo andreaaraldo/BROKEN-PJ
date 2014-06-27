@@ -7,7 +7,7 @@ global ignore_lambda = false;
 out_folder="/tmp/icn14_runs/";
 optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 
-id_rep_list=1:10; # list of seeds
+id_rep_list=1:1; # list of seeds
 
 priceratio_list={"10","1.111","1.25","1.429","1.667","2","2.5","3.333","5"};
 priceratio_list={"1","2","5","10","100"};
@@ -18,7 +18,7 @@ priceratio_list={"10"};
 decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf","costprobtailcons"}; 
 decision_list={"lce","fix0.1", "fix0.05", "fix0.01", "fix0.005", "fix0.001", "fix0.0001", "fix0.00001"};
 decision_list={"lce","fix0.01","costprobprodcorr0.01","costprobprodplain0.01", "costprobcoincorr0.5", "costprobcoinplain0.5", "costprobcoincorr0.1", "costprobcoinplain0.1","costprobcoincorr0.01", "costprobcoinplain0.01"};
-decision_list={"lce","fix0.01","costprobprodcorr0.01"};
+decision_list={"costprobprodcorr0.01"};
 
 xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"1"};
@@ -37,6 +37,10 @@ csize_to_write_list = {"1e3"};
 simtime_list = {"1800","18000","180000","1800000"};
 simtime_list = {"1800"};
 
+% The time window in which the samples to evaluate the stabilization are collected
+window_list = {"60"};
+variance_list = {"0.05"};
+
 lambda_list = {"100"};
 
 q_list={"0"};
@@ -45,7 +49,7 @@ resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
 metric_list={"cost_fraction"};
-metric_list={"decision_ratio","cost_fraction","p_hit"};
+metric_list={"cost_reduction_wrt_fix"};
 
 
 network_list={"one_cache_scenario_3_links"};
@@ -58,7 +62,7 @@ replacement_="lru";
 ctlg_="1e5";
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"simtime", "alpha","weights",...
+fixed_variable_names_additional = {"window","variance","simtime", "alpha","weights",...
 			"q", "forwarding","lambda","priceratio","xi"};
 x_variable_name = "decision";
 z_variable_name = "network"; % Over the columns
@@ -76,62 +80,69 @@ i = 1;
 ############################################
 ##### PARSE FILES ##########################
 ############################################
-for idx_simtime =  1:length(simtime_list)
-	simtime_ = simtime_list{idx_simtime};
-	for idx_lambda = 1: length(lambda_list)
-		lambda_ = lambda_list{idx_lambda};
+for idx_window = 1:length(window_list)
+	for idx_variance = 1:length(variance_list)
+		for idx_simtime =  1:length(simtime_list)
+			simtime_ = simtime_list{idx_simtime};
+			for idx_lambda = 1: length(lambda_list)
+				lambda_ = lambda_list{idx_lambda};
 
-		for idx_csize = 1:length(csize_list)
-			csize_ = csize_list{idx_csize};
-			csize_to_write = csize_to_write_list{ idx_csize};
-			for alpha_idx = 1:length(alpha_list)
-				for priceratio_idx = 1:length(priceratio_list)
-					for decision_idx = 1:length(decision_list)
-						for idx_xi = 1:length(xi_list)
-							xi_ = xi_list{idx_xi};
-							for idx_weight = 1:length(weights_list)
-								weights_ = weights_list{idx_weight};
-								for q_idx = 1:length(q_list)
-									for id_forwarding = 1:length(forwarding_list)
-										for id_network = 1:length(network_list)
-											for id_rep_ = id_rep_list
+				for idx_csize = 1:length(csize_list)
+					csize_ = csize_list{idx_csize};
+					csize_to_write = csize_to_write_list{ idx_csize};
+					for alpha_idx = 1:length(alpha_list)
+						for priceratio_idx = 1:length(priceratio_list)
+							for decision_idx = 1:length(decision_list)
+								for idx_xi = 1:length(xi_list)
+									xi_ = xi_list{idx_xi};
+									for idx_weight = 1:length(weights_list)
+										weights_ = weights_list{idx_weight};
+										for q_idx = 1:length(q_list)
+											for id_forwarding = 1:length(forwarding_list)
+												for id_network = 1:length(network_list)
+													for id_rep_ = id_rep_list
 
-												selection_tuple.priceratio = ...
-														priceratio_list{priceratio_idx};
-												selection_tuple.decision = decision_list{decision_idx};
-												selection_tuple.xi = xi_;
-												selection_tuple.forwarding = ...
-														forwarding_list{id_forwarding};
-												selection_tuple.replacement = replacement_;
-												selection_tuple.alpha = alpha_list{alpha_idx};
-												selection_tuple.q = q_list{q_idx};
-												selection_tuple.ctlg = ctlg_;
-												selection_tuple.csize = csize_;
-												selection_tuple.id_rep = id_rep_;
-												selection_tuple.network = network_list{id_network};
-												selection_tuple.weights = weights_;
-												selection_tuple.simtime = simtime_;
-												selection_tuple.lambda = lambda_;
-												selection_tuple.metric_list = metric_list;
+														selection_tuple.priceratio = ...
+																priceratio_list{priceratio_idx};
+														selection_tuple.decision = ...
+																decision_list{decision_idx};
+														selection_tuple.xi = xi_;
+														selection_tuple.forwarding = ...
+																forwarding_list{id_forwarding};
+														selection_tuple.replacement = replacement_;
+														selection_tuple.alpha = alpha_list{alpha_idx};
+														selection_tuple.q = q_list{q_idx};
+														selection_tuple.ctlg = ctlg_;
+														selection_tuple.csize = csize_;
+														selection_tuple.id_rep = id_rep_;
+														selection_tuple.network = network_list{id_network};
+														selection_tuple.weights = weights_;
+														selection_tuple.simtime = simtime_;
+														selection_tuple.window = window_list{idx_window};
+														selection_tuple.variance = ...
+																variance_list{idx_variance};
+														selection_tuple.lambda = lambda_;
+														selection_tuple.metric_list = metric_list;
 
-												parsed_ = select(selection_tuple, resultdir,...
-													optimization_result_folder);
+														parsed_ = select(selection_tuple, resultdir,...
+															optimization_result_folder);
 
-												parsed(i) = parsed_;
-												i++;
-											endfor % network loop
-										endfor % forwarding loop
-									endfor % seed loop
-								endfor % q_loop
-							endfor % weights loop
-						endfor % xi loop
-					endfor
-				endfor
-			endfor %alpha for
-		endfor %csize for
-	endfor % lambda
-endfor %simtime
-
+														parsed(i) = parsed_;
+														i++;
+													endfor % network loop
+												endfor % forwarding loop
+											endfor % seed loop
+										endfor % q_loop
+									endfor % weights loop
+								endfor % xi loop
+							endfor
+						endfor
+					endfor %alpha for
+				endfor %csize for
+			endfor % lambda
+		endfor %simtime
+	endfor % window
+endfor % variance loop
 scatter_plot(parsed);
 
 ##################################
