@@ -166,8 +166,8 @@ double variance(std::vector<T> v){
     unsigned int N = v.size();
 
     for (typename std::vector<T>::iterator i = v.begin(); i != v.end(); i++){
-	s += *i;
-	ss += (*i)*(*i);
+		s += *i;
+		ss += (*i)*(*i);
     }
     return (double)(1./N)* (sqrt(N*ss- s*s));
 

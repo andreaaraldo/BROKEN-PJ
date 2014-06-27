@@ -105,6 +105,9 @@ class statistics : public cSimpleModule{
 	double partial_n;
 	double time_steady;
 	double stabilization_time;
+	//<aa>
+	double variance_threshold;
+	//</aa>
 
 	//Stabilization samples
 	vector< vector <double> > samples;

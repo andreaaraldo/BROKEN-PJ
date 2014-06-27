@@ -52,8 +52,12 @@ void statistics::initialize(){
     window      = par("window");
     time_steady = par("steady");
     partial_n 	= par("partial_n");
+	//<aa>
+	variance_threshold = par("variance_threshold");
+	//</aa>
+
     if (partial_n == -1)
-	partial_n = num_nodes;
+		partial_n = num_nodes;
 
 
     cTopology topo;
@@ -182,7 +186,7 @@ bool statistics::stable(int n){
     double var = 0.0;
     double rate = caches[n]->hit * 1./ ( caches[n]->hit + caches[n]->miss );
 
-    //Only hit rates matter, not alse the misses
+    //Only hit rates matter, not also the misses
     if (caches[n]->hit != 0 ){
         samples[n].push_back( rate );
     }else 
@@ -191,8 +195,8 @@ bool statistics::stable(int n){
     if ( fabs( samples[n].size() - window * 1./ts ) <= 0.001 )
 	{ //variance each window seconds
 		var =variance(samples[n]); 
-        cout<<n<<"] variance = "<<var<<endl;
-        if ( var <= 0.05){
+        // cout<<n<<"] variance = "<<var<<endl; //<aa> I disabled this line </aa>
+        if ( var <= variance_threshold){
             stabilization_time = simTime().dbl();
             stable = true;
         }
