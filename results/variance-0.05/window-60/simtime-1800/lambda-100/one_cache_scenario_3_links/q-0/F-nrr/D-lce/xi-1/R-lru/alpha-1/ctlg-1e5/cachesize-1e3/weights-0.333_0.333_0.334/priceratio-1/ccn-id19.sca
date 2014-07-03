@@ -1,9 +1,5 @@
 version 2
-<<<<<<< HEAD
-run General-108-20140509-21:33:30-21576
-=======
-run General-108-20140509-21:30:47-16150
->>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
+run General-433-20140703-16:54:38-13051
 attr D lce
 attr F nrr
 attr R lru
@@ -11,40 +7,42 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-<<<<<<< HEAD
-attr datetime 20140509-21:33:30
-=======
-attr datetime 20140509-21:30:47
->>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
+attr datetime 20140703-16:54:38
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=1, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e3"
-attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=1, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e3, $repetition=0"
-attr measurement "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=1, $weights=0.333_0.333_0.334, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e3"
+attr iterationvars "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=1, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=1, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
+attr lambda 100
+attr measurement "$net=one_cache_scenario_3_links, $rep=19, $priceratiovalue=1, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr mytime 1800
 attr net one_cache_scenario_3_links
-attr network networks.${net=one_cache_scenario_3_links}_network
+attr network "networks.${net= one_cache_scenario_3_links}_network"
+attr pricebits 0
 attr priceratiovalue 1
-<<<<<<< HEAD
-attr processid 21576
-=======
-attr processid 16150
->>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
+attr processid 13051
 attr rep 19
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 108
+attr runnumber 433
 attr seedset 19
 attr ttl 1000
+attr variance 0.05
 attr weights 0.333_0.333_0.334
+attr window 60
 attr xi 1
 
 scalar . 	a 	1
 scalar . 	csize 	1e3
 scalar . 	ctlg 	1e5
+scalar . 	lambda 	100
+scalar . 	mytime 	1800
+scalar . 	pricebits 	0
 scalar . 	priceratiovalue 	1
 scalar . 	rep 	19
 scalar . 	ttl 	1000
+scalar . 	variance 	0.05
+scalar . 	window 	60
 scalar . 	xi 	1
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-0 	4
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-1 	5
@@ -53,6 +51,22 @@ scalar one_cache_scenario_3_links_network.content_distribution 	client-0 	0
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-0_card 	33368
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-1_card 	33389
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-2_card 	33243
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[0] 	0.2704974433948
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[1] 	0.39472808551936
+scalar one_cache_scenario_3_links_network.statistics 	repo_popularity[2] 	0.33477447108584
+scalar one_cache_scenario_3_links_network.statistics 	stabilization_time 	77.4
+scalar one_cache_scenario_3_links_network.node[1].face$o[2].channel 	price[1] 	0
+scalar one_cache_scenario_3_links_network.node[1].face$o[2].channel 	represented_price[1] 	0
+scalar one_cache_scenario_3_links_network.node[2].face$o[2].channel 	price[2] 	0
+scalar one_cache_scenario_3_links_network.node[2].face$o[2].channel 	represented_price[2] 	0
+scalar one_cache_scenario_3_links_network.node[3].face$o[2].channel 	price[3] 	0
+scalar one_cache_scenario_3_links_network.node[3].face$o[2].channel 	represented_price[3] 	0
+scalar one_cache_scenario_3_links_network.node[4].face$o[1].channel 	price[4] 	0
+scalar one_cache_scenario_3_links_network.node[4].face$o[1].channel 	represented_price[4] 	0
+scalar one_cache_scenario_3_links_network.node[5].face$o[1].channel 	price[5] 	1
+scalar one_cache_scenario_3_links_network.node[5].face$o[1].channel 	represented_price[5] 	1
+scalar one_cache_scenario_3_links_network.node[6].face$o[1].channel 	price[6] 	1
+scalar one_cache_scenario_3_links_network.node[6].face$o[1].channel 	represented_price[6] 	1
 scalar one_cache_scenario_3_links_network.statistics 	p_hit 	0.25444084600317
 scalar one_cache_scenario_3_links_network.statistics 	interests 	51124.428571429
 scalar one_cache_scenario_3_links_network.statistics 	data 	25410.857142857
@@ -61,6 +75,7 @@ scalar one_cache_scenario_3_links_network.statistics 	avg_time 	0
 scalar one_cache_scenario_3_links_network.statistics 	downloads 	179995
 scalar one_cache_scenario_3_links_network.statistics 	total_cost 	59063
 scalar one_cache_scenario_3_links_network.statistics 	total_replicas 	100000
+scalar one_cache_scenario_3_links_network.statistics 	inner_hit 	0.50588627461874
 scalar one_cache_scenario_3_links_network.statistics 	interests_sent 	179995
 scalar one_cache_scenario_3_links_network.node[0].core_layer 	interests[0] 	179995
 scalar one_cache_scenario_3_links_network.node[0].core_layer 	data[0] 	88938
