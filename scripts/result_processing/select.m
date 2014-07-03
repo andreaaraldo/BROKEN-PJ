@@ -144,7 +144,12 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 						parsed.window = window_;
 						parsed.variance = variance_;
 
-						[status, parsed.p_hit] = my_grep("inner_hit ", filename, true);
+						parsed.p_hit = NaN;
+						if isequal( network_, "one_cache_scenario_3_links")
+							[status, parsed.p_hit] = my_grep("p_hit\\[0\\] ", filename, true);
+						else
+							[status, parsed.p_hit] = my_grep("inner_hit ", filename, true);
+						endif
 
 					% STABILIZATION_TIME{
 						parsed.stabilization_time = NaN;
