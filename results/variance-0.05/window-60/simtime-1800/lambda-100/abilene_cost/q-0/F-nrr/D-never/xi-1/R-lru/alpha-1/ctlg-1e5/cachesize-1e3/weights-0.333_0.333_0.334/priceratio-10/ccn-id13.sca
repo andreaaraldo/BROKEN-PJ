@@ -1,5 +1,9 @@
 version 2
+<<<<<<< HEAD
 run General-40-20140627-19:11:37-11412
+=======
+run General-40-20140630-13:25:47-25921
+>>>>>>> e1705686414f379fcb9d06a9e50f5d7fe13c2c97
 attr D never
 attr F nrr
 attr R lru
@@ -7,7 +11,11 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
+<<<<<<< HEAD
 attr datetime 20140627-19:11:37
+=======
+attr datetime 20140630-13:25:47
+>>>>>>> e1705686414f379fcb9d06a9e50f5d7fe13c2c97
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene_cost, $rep=13, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
@@ -19,7 +27,11 @@ attr net abilene_cost
 attr network "networks.${net=geant_cost, abilene_cost}_network"
 attr pricebits 0
 attr priceratiovalue 10
+<<<<<<< HEAD
 attr processid 11412
+=======
+attr processid 25921
+>>>>>>> e1705686414f379fcb9d06a9e50f5d7fe13c2c97
 attr rep 13
 attr repetition 0
 attr replication #0
