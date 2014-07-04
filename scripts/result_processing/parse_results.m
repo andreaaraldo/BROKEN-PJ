@@ -11,7 +11,7 @@ id_rep_list=1:1; # list of seeds
 
 priceratio_list={"10","1.111","1.25","1.429","1.667","2","2.5","3.333","5"};
 priceratio_list={"1","2","5","10","100"};
-priceratio_list={"1","2","5","10","100"};
+priceratio_list={"10"};
 
 
 % The decision plocies that I want to plot
@@ -48,14 +48,14 @@ q_list={"0"};
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"cost_fraction"};
 metric_list={"cost_reduction_wrt_fix"};
+metric_list={"cost_fraction"};
 
 
 network_list={"one_cache_scenario_3_links","abilene_cost","geant_cost"};
-network_list={"one_cache_scenario_3_links"};
+network_list={"abilene_cost"};
 
-forwarding_list={"nrr"};
+forwarding_list={"spr","nrr"};
 
 
 replacement_="lru";
@@ -63,9 +63,9 @@ ctlg_="1e5";
 ctlg_to_write_="1e5";
 
 fixed_variable_names_additional = {"window","variance","simtime", "alpha","weights",...
-			"q", "forwarding","lambda","network","xi"};
-x_variable_name = "priceratio";
-z_variable_name = "decision"; % Over the columns
+			"q", "priceratio","lambda","network","xi"};
+x_variable_name = "decision";
+z_variable_name = "forwarding"; % Over the columns
 
 
 % {CHECK
