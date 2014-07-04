@@ -108,6 +108,12 @@ void base_cache::initialize(){
 		}else if (decision_policy.find("costprobtailperf")==0)
 		{
 			sens = 0; // I don't need this parameter
+
+					std::stringstream ermsg; 
+					ermsg<<"Are you sure to use costprobtailperf. It has "<<
+						"been proved to be bad. You should prefer costprobtailcons";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
 			decisor = new Costprobtailperf(sens, this );
 
 		}else if (decision_policy.find("costprobtailcons")==0)
