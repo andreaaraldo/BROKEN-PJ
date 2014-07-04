@@ -64,6 +64,8 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 									num2str( strrep(decision_,"costprobcoincorr","") );
 
 							elseif strmatch( "costprobtailperf", decision_ )
+								error("Are you sure you want to use costprobtailperf.",...
+									" It has been proved to be bad. Use costprobtailcons, instead");
 								decision_root_ = "costprobtailperf";
 								target_decision_probability_ = NaN;
 
