@@ -1,5 +1,5 @@
 version 2
-run General-20-20140707-20:27:24-30271
+run General-17-20140707-20:27:17-30268
 attr D fix0.01
 attr F nrr
 attr R lru
@@ -7,30 +7,30 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140707-20:27:24
+attr datetime 20140707-20:27:17
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=fix0.01, $xi=1.25, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
-attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=fix0.01, $xi=1.25, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
+attr iterationvars "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=fix0.01, $xi=0.25, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr iterationvars2 "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=fix0.01, $xi=0.25, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
 attr lambda 100
-attr measurement "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=fix0.01, $xi=1.25, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr measurement "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=fix0.01, $xi=0.25, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
 attr mytime 1800
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 30271
+attr processid 30268
 attr rep 1
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 20
+attr runnumber 17
 attr seedset 1
 attr ttl 1000
 attr variance 0.05
 attr weights 0.333_0.333_0.334
 attr window 60
-attr xi 1.25
+attr xi 0.25
 
 scalar . 	a 	1
 scalar . 	csize 	1e3
@@ -43,7 +43,7 @@ scalar . 	rep 	1
 scalar . 	ttl 	1000
 scalar . 	variance 	0.05
 scalar . 	window 	60
-scalar . 	xi 	1.25
+scalar . 	xi 	0.25
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-0 	4
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-1 	5
 scalar one_cache_scenario_3_links_network.content_distribution 	repo-2 	6
