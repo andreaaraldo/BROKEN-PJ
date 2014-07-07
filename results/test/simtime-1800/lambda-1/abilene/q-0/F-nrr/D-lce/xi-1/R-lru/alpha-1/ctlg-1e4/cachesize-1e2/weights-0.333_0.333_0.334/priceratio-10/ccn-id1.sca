@@ -1,5 +1,5 @@
 version 2
-run General-0-20140619-17:45:25-14349
+run General-0-20140620-16:13:22-3741
 attr D lce
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e2
 attr ctlg 1e4
-attr datetime 20140619-17:45:25
+attr datetime 20140620-16:13:22
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=1, $a=1, $ctlg=1e4, $F=nrr, $ttl=1000, $D=lce, $xi=1, $R=lru, $csize=1e2, $pricebits=0, $mytime=1800"
@@ -19,7 +19,7 @@ attr net abilene
 attr network networks.${net=abilene}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 14349
+attr processid 3741
 attr rep 1
 attr repetition 0
 attr replication #0
@@ -41,9 +41,7 @@ scalar . 	rep 	1
 scalar . 	ttl 	1000
 scalar . 	xi 	1
 scalar abilene_network.content_distribution 	repo-0 	0
-scalar abilene_network.content_distribution 	repo-1 	3
 scalar abilene_network.content_distribution 	client-0 	0
 scalar abilene_network.content_distribution 	client-1 	3
 scalar abilene_network.content_distribution 	client-2 	7
-scalar abilene_network.content_distribution 	repo-0_card 	4987
-scalar abilene_network.content_distribution 	repo-1_card 	5013
+scalar abilene_network.content_distribution 	repo-0_card 	10000
