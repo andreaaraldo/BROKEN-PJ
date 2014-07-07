@@ -55,10 +55,8 @@ function y = metric_vs_x_variable (input_data)
 	cost_reduction_wrt_fix = {input_data.parsed.cost_reduction_wrt_fix};
 	cost_savings_wrt_fix = {input_data.parsed.cost_savings_wrt_fix};
 	potential_reduction_wrt_costopt = {input_data.parsed.potential_reduction_wrt_costopt};
-	potential_reduction_wrt_costprobtailperf =...
-				{input_data.parsed.potential_reduction_wrt_costprobtailperf};
-	potential_savings_wrt_costprobtailperf =...
-				 {input_data.parsed.potential_savings_wrt_costprobtailperf};
+	potential_reduction_wrt_costprobtailcons =...
+				{input_data.parsed.potential_reduction_wrt_costprobtailcons};
 	potential_savings_wrt_costopt = {input_data.parsed.potential_savings_wrt_costopt};
 	weights = {input_data.parsed.weights};
 	simtime = {input_data.parsed.simtime};
@@ -301,9 +299,9 @@ function y = metric_vs_x_variable (input_data)
 									column_list{idx_metric} = ...
 											cell2mat( potential_reduction_wrt_costopt(idx) );
 
-								case "potential_reduction_wrt_costprobtailperf"
+								case "potential_reduction_wrt_costprobtailcons"
 									column_list{idx_metric} = cell2mat(...
-											potential_reduction_wrt_costprobtailperf(idx) );
+											potential_reduction_wrt_costprobtailcons(idx) );
 
 								case "potential_savings_wrt_costprobtailperf"
 									column_list{idx_metric} = cell2mat(...

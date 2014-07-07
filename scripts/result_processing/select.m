@@ -299,7 +299,7 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 		if (any( cellfun(@isequal,metric_list, {"cost_fraction"} ) ) || ...
 
 			% The following 2 metrics depend on cost_fraction
-			any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costprobtailperf"} ) )...
+			any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costprobtailcons"} ) )...
 			|| any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costopt"} ) )...
 			|| any( cellfun(@isequal,metric_list, {"cost_reduction_wrt_fix"} ) )
 		)
@@ -373,21 +373,21 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 	% }COMPUTE POTENTIAL_REDUCTION_WRT_COSTOPT
 
 
-	% COMPUTE POTENTIAL_REDUCTION_WRT_COSTPROBTAILPERF{
-		parsed.potential_reduction_wrt_costprobtailperf = NaN;
-		if any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costprobtailperf"} ) )...
-				&& !isequal("costprobtailperf", decision_) 
+	% COMPUTE potential_reduction_wrt_costprobtailcons{
+		parsed.potential_reduction_wrt_costprobtailcons = NaN;
+		if any( cellfun(@isequal,metric_list, {"potential_reduction_wrt_costprobtailcons"} ) )...
+				&& !isequal("costprobtailcons", decision_) 
 
 				selection_tuple_of_counterpart = selection_tuple;
-				selection_tuple_of_counterpart.decision = "costprobtailperf";
+				selection_tuple_of_counterpart.decision = "costprobtailcons";
 				selection_tuple_of_counterpart.metric_list={"cost_fraction"};
 				selection_tuple_of_counterpart.xi = "1";
 				counterpart_parsed = select(selection_tuple_of_counterpart,...
 						resultdir, optimization_result_folder);
-				parsed.potential_reduction_wrt_costprobtailperf = ...
+				parsed.potential_reduction_wrt_costprobtailcons = ...
 						parsed.cost_fraction - counterpart_parsed.cost_fraction;
 		endif
-	% }COMPUTE POTENTIAL_REDUCTION_WRT_COSTPROBTAILPERF
+	% }COMPUTE potential_reduction_wrt_costprobtailcons
 
 
 	% COMPUTE COST_SAVINGS_WRT_FIX{
@@ -408,22 +408,22 @@ function parsed = select(selection_tuple, resultdir, optimization_result_folder)
 			endif
 	% }COMPUTE COST_SAVINGS_WRT_FIX
 
-	% COMPUTE POTENTIAL_SAVINGS_WRT_COSTPROBTAILPERF{
+	% COMPUTE POTENTIAL_SAVINGS_WRT_costprobtailcons{
 		% Comparison with costopt
-			parsed.potential_savings_wrt_costprobtailperf = NaN;
-			if any(cellfun(@isequal,metric_list,{"potential_savings_wrt_costprobtailperf"} ) )...
-					&& !isequal("costprobtailperf", decision_) 			
+			parsed.potential_savings_wrt_costprobtailcons = NaN;
+			if any(cellfun(@isequal,metric_list,{"potential_savings_wrt_costprobtailcons"} ) )...
+					&& !isequal("costprobtailcons", decision_) 			
 
 				selection_tuple_of_counterpart = selection_tuple;
-				selection_tuple_of_counterpart.decision ="costprobtailperf";
+				selection_tuple_of_counterpart.decision ="costprobtailcons";
 				selection_tuple_of_counterpart.xi = "1";
 				counterpart_parsed = select(selection_tuple_of_counterpart,...
 						resultdir, optimization_result_folder);
-				parsed.potential_savings_wrt_costprobtailperf = ...
+				parsed.potential_savings_wrt_costprobtailcons = ...
 					(parsed.total_cost - counterpart_parsed.total_cost)/...
 					parsed.total_cost;
 			endif
-	% }COMPUTE POTENTIAL_SAVINGS_WRT_COSTPROBTAILPERF
+	% }COMPUTE POTENTIAL_SAVINGS_WRT_costprobtailcons
 
 	% COMPUTE POTENTIAL_SAVINGS_WRT_COSTOPT{
 			parsed.potential_savings_wrt_costopt = NaN;

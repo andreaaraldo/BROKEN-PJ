@@ -10,8 +10,8 @@ optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 id_rep_list=1:20; # list of seeds
 
 priceratio_list={"10","1.111","1.25","1.429","1.667","2","2.5","3.333","5"};
+priceratio_list={"1","2","5","10","100"};
 priceratio_list={"10"};
-priceratio_list={"1","2","5","10"};
 
 
 % The decision plocies that I want to plot
@@ -19,7 +19,7 @@ decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtai
 decision_list={"lce","fix0.1", "fix0.05", "fix0.01", "fix0.005", "fix0.001", "fix0.0001", "fix0.00001"};
 decision_list={"lce","fix0.01","costprobprodcorr0.01","costprobprodplain0.01", "costprobcoincorr0.5", "costprobcoinplain0.5", "costprobcoincorr0.1", "costprobcoinplain0.1","costprobcoincorr0.01", "costprobcoinplain0.01"};
 decision_list={"lce","fix0.01","tailandrank","costprobprodcorr0.01","costprobtailcons"};
-decision_list={"tailandrank"};
+decision_list={"costprobprodcorr0.01"};
 
 xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"1"};
@@ -49,8 +49,8 @@ q_list={"0"};
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"cost_reduction_wrt_fix"};
 metric_list={"cost_fraction"};
+metric_list={"cost_reduction_wrt_fix","potential_reduction_wrt_costprobtailcons"};
 
 
 network_list={"one_cache_scenario_3_links","abilene_cost","geant_cost"};
@@ -63,9 +63,9 @@ replacement_="lru";
 ctlg_="1e5";
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"window","variance","simtime", "alpha","weights",...
+fixed_variable_names_additional = {"window","variance","simtime", "priceratio","weights",...
 			"q", "forwarding","lambda","network","xi"};
-x_variable_name = "priceratio";
+x_variable_name = "alpha";
 z_variable_name = "decision"; % Over the columns
 
 
