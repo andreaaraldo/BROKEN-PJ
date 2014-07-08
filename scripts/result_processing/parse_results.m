@@ -25,19 +25,16 @@ xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50",
 xi_list = {"1"};
 
 weights_list={"0.333_0.333_0.334","0.5_0.25_0.25","0.25_0.25_0.5","0_0.25_0.75","0.75_0_0.25"};
-weights_list={"0.333_0.333_0.334"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0.5_0", "0.75_0_0.25", "0.75_0.25_0","0.5_0.5_0"};
 weights_list={"0_0.25_0.75","0.25_0_0.75","0_0.5_0.5","0.25_0.25_0.5","0.5_0_0.5","0_0.75_0.25","0.333_0.333_0.334","0.25_0.5_0.25","0.5_0.25_0.25","0.75_0_0.25"};
+weights_list={"0.333_0.333_0.334"};
 
 alpha_list = {"0.8","1","1.2"};
 alpha_list = {"1"};
 
 
-csize_list = {"1e3"};
-csize_to_write_list = {"1e3"};
-
 simtime_list = {"1800","18000","180000","1800000"};
-simtime_list = {"1800"};
+simtime_list = {"180"};
 
 % The time window in which the samples to evaluate the stabilization are collected
 window_list = {"60"};
@@ -61,8 +58,12 @@ forwarding_list={"nrr"};
 
 
 replacement_="lru";
-ctlg_="1e5";
-ctlg_to_write_="1e5";
+
+csize_list = {"1e2"};
+csize_to_write_list = {"1e2"};
+
+ctlg_="1e4";
+ctlg_to_write_="1e4";
 
 fixed_variable_names_additional = {"window","variance","simtime", "priceratio","alpha",...
 			"q", "forwarding","lambda","network","xi"};
