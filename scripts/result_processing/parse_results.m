@@ -18,8 +18,8 @@ priceratio_list={"10"};
 decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtailperf","costprobtailcons"}; 
 decision_list={"lce","fix0.1", "fix0.05", "fix0.01", "fix0.005", "fix0.001", "fix0.0001", "fix0.00001"};
 decision_list={"lce","fix0.01","costprobprodcorr0.01","costprobprodplain0.01", "costprobcoincorr0.5", "costprobcoinplain0.5", "costprobcoincorr0.1", "costprobcoinplain0.1","costprobcoincorr0.01", "costprobcoinplain0.01"};
-decision_list={"costprobprodcorr0.01"};
 decision_list={"lce","fix0.01","tailandrank","costprobprodcorr0.01","costprobtailcons"};
+decision_list={"costprobprodcorr0.01"};
 
 xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"1"};
@@ -34,7 +34,7 @@ alpha_list = {"1"};
 
 
 simtime_list = {"1800","18000","180000","1800000"};
-simtime_list = {"180"};
+simtime_list = {"1800"};
 
 % The time window in which the samples to evaluate the stabilization are collected
 window_list = {"60"};
@@ -47,28 +47,28 @@ q_list={"0"};
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"cost_fraction"};
-metric_list={"cost_reduction_wrt_fix","potential_reduction_wrt_costprobtailcons"};
+metric_list={"cost_reduction_wrt_fix","cost_fraction"};
+metric_list={"potential_reduction_wrt_costprobtailcons"};
 
 
 network_list={"one_cache_scenario_3_links","abilene_cost","geant_cost"};
-network_list={"one_cache_scenario_3_links"};
+network_list={"abilene_cost","geant_cost"};
 
-forwarding_list={"nrr"};
+forwarding_list={"spr","nrr"};
 
 
 replacement_="lru";
 
-csize_list = {"1e2"};
-csize_to_write_list = {"1e2"};
+csize_list = {"1e3"};
+csize_to_write_list = {"1e3"};
 
-ctlg_="1e4";
-ctlg_to_write_="1e4";
+ctlg_="1e5";
+ctlg_to_write_="1e5";
 
 fixed_variable_names_additional = {"window","variance","simtime", "priceratio","alpha",...
-			"q", "forwarding","lambda","network","xi"};
-x_variable_name = "weights";
-z_variable_name = "decision"; % Over the columns
+			"q", "weights","lambda","decision","xi"};
+x_variable_name = "forwarding";
+z_variable_name = "network"; % Over the columns
 
 
 % {CHECK
