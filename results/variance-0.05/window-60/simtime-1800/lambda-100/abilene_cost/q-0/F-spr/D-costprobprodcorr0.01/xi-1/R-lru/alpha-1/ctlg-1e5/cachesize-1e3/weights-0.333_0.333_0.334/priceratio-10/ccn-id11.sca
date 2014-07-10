@@ -1,7 +1,4 @@
 version 2
-<<<<<<< HEAD
-run General-31-20140627-19:01:03-11400
-=======
 run General-31-20140630-13:16:25-25894
 >>>>>>> e1705686414f379fcb9d06a9e50f5d7fe13c2c97
 attr D costprobprodcorr0.01
@@ -11,9 +8,6 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-<<<<<<< HEAD
-attr datetime 20140627-19:01:03
-=======
 attr datetime 20140630-13:16:25
 >>>>>>> e1705686414f379fcb9d06a9e50f5d7fe13c2c97
 attr experiment General
@@ -27,9 +21,6 @@ attr net abilene_cost
 attr network "networks.${net=geant_cost, abilene_cost}_network"
 attr pricebits 0
 attr priceratiovalue 10
-<<<<<<< HEAD
-attr processid 11400
-=======
 attr processid 25894
 >>>>>>> e1705686414f379fcb9d06a9e50f5d7fe13c2c97
 attr rep 11

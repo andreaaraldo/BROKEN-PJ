@@ -1,7 +1,4 @@
 version 2
-<<<<<<< HEAD
-run General-96-20140509-21:33:06-21564
-=======
 run General-96-20140509-21:30:27-16136
 >>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
 attr D lce
@@ -11,9 +8,6 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-<<<<<<< HEAD
-attr datetime 20140509-21:33:06
-=======
 attr datetime 20140509-21:30:27
 >>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
 attr experiment General
@@ -24,9 +18,6 @@ attr measurement "$net=one_cache_scenario_3_links, $rep=17, $priceratiovalue=1, 
 attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr priceratiovalue 1
-<<<<<<< HEAD
-attr processid 21564
-=======
 attr processid 16136
 >>>>>>> 5a1cd357b9423dce8e0355d28b561f2ae7219918
 attr rep 17

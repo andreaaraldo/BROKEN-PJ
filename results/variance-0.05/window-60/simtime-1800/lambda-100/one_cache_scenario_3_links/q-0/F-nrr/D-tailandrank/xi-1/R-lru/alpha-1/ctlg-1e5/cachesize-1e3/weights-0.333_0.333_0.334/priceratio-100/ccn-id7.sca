@@ -1,7 +1,4 @@
 version 2
-<<<<<<< HEAD
-run General-6-20140704-18:09:18-17622
-=======
 run General-0-20140704-18:40:36-11164
 >>>>>>> 5df2a97bc0b60059d7d42307a4bdd658561d8109
 attr D tailandrank
@@ -11,9 +8,6 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-<<<<<<< HEAD
-attr datetime 20140704-18:09:18
-=======
 attr datetime 20140704-18:40:36
 >>>>>>> 5df2a97bc0b60059d7d42307a4bdd658561d8109
 attr experiment General
@@ -27,18 +21,12 @@ attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr pricebits 0
 attr priceratiovalue 100
-<<<<<<< HEAD
-attr processid 17622
-=======
 attr processid 11164
 >>>>>>> 5df2a97bc0b60059d7d42307a4bdd658561d8109
 attr rep 7
 attr repetition 0
 attr replication #0
 attr resultdir results
-<<<<<<< HEAD
-attr runnumber 6
-=======
 attr runnumber 0
 >>>>>>> 5df2a97bc0b60059d7d42307a4bdd658561d8109
 attr seedset 7
