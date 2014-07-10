@@ -33,9 +33,6 @@ alpha_list = {"0.8","1","1.2"};
 alpha_list = {"1"};
 
 
-simtime_list = {"1800","18000","180000","1800000"};
-simtime_list = {"1800"};
-
 % The time window in which the samples to evaluate the stabilization are collected
 window_list = {"60"};
 variance_list = {"0.05"};
@@ -47,27 +44,31 @@ q_list={"0"};
 resultdir="~/software/ccnsim/results";
 
 % See select.m for all the possible metrics
-metric_list={"cost_reduction_wrt_fix","cost_fraction"};
-metric_list={"potential_reduction_wrt_costprobtailcons"};
+metric_list={"cost_reduction_wrt_fix","cost_fraction", "potential_reduction_wrt_costprobtailcons"};
+metric_list={"cost_reduction_wrt_fix","potential_reduction_wrt_costprobtailcons"};
 
 
 network_list={"one_cache_scenario_3_links","abilene_cost","geant_cost"};
-network_list={"abilene_cost","geant_cost"};
+network_list={"one_cache_scenario_3_links"};
 
 forwarding_list={"spr","nrr"};
+forwarding_list={"nrr"};
 
 
 replacement_="lru";
 
-csize_list = {"1e3"};
-csize_to_write_list = {"1e3"};
+simtime_list = {"1800","18000","180000","1800000"};
+simtime_list = {"18000"};
 
-ctlg_="1e5";
-ctlg_to_write_="1e5";
+csize_list = {"1e4"};
+csize_to_write_list = {"1e4"};
+
+ctlg_="1e6";
+ctlg_to_write_="1e6";
 
 fixed_variable_names_additional = {"window","variance","simtime", "priceratio","alpha",...
-			"q", "weights","lambda","decision","xi"};
-x_variable_name = "forwarding";
+			"q", "weights","lambda","forwarding","xi"};
+x_variable_name = "decision";
 z_variable_name = "network"; % Over the columns
 
 
