@@ -1,5 +1,5 @@
 version 2
-run General-13-20140709-06:14:00-29428
+run General-55-20140713-21:42:08-23029
 attr D costprobtailcons
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e6
 attr ctlg 1e8
-attr datetime 20140709-06:14:00
+attr datetime 20140713-21:42:08
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=one_cache_scenario_3_links, $rep=14, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e8, $F=nrr, $ttl=1000, $D=costprobtailcons, $xi=1, $R=lru, $csize=1e6, $pricebits=0, $window=60, $variance=0.05, $mytime=1800000"
@@ -19,12 +19,12 @@ attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 29428
+attr processid 23029
 attr rep 14
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 13
+attr runnumber 55
 attr seedset 14
 attr ttl 1000
 attr variance 0.05
@@ -86,7 +86,7 @@ scalar one_cache_scenario_3_links_network.node[0].content_store 	misses[0] 	9882
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_yes[0] 	1407426
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_no[0] 	97414458
 scalar one_cache_scenario_3_links_network.node[0].content_store 	decision_ratio[0] 	0.014242047844382
-scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	1.4081938088271e-316
+scalar one_cache_scenario_3_links_network.node[0].content_store 	correction_factor[0] 	1.581010066692e-322
 scalar one_cache_scenario_3_links_network.node[0].content_store 	xi[0] 	1
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	interests[1] 	69403133
 scalar one_cache_scenario_3_links_network.node[1].core_layer 	data[1] 	69403133
