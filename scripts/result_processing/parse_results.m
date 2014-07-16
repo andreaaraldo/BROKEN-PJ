@@ -58,13 +58,13 @@ forwarding_list={"nrr"};
 replacement_="lru";
 
 simtime_list = {"1800","18000","180000","1800000"};
-simtime_list = {"18000"};
+simtime_list = {"180000"};
 
-csize_list = {"1e4"};
-csize_to_write_list = {"1e4"};
+csize_list = {"1e3"};
+csize_to_write_list = {"1e3"};
 
-ctlg_="1e6";
-ctlg_to_write_="1e6";
+ctlg_="1e7";
+ctlg_to_write_="1e7";
 
 fixed_variable_names_additional = {"window","variance","simtime", "priceratio","alpha",...
 			"q", "weights","lambda","forwarding","xi"};
