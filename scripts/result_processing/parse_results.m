@@ -10,8 +10,7 @@ optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 id_rep_list=1:20; # list of seeds
 
 priceratio_list={"10","1.111","1.25","1.429","1.667","2","2.5","3.333","5"};
-priceratio_list={"100"};
-priceratio_list={"100"};
+priceratio_list={"10"};
 
 
 % The decision plocies that I want to plot
@@ -68,10 +67,10 @@ csize_to_write_list = {"1e3"};
 ctlg_="1e5";
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"window","variance","simtime", "priceratio","alpha",...
-			"q", "weights","lambda","forwarding","xi"};
-x_variable_name = "decision";
-z_variable_name = "network"; % Over the columns
+fixed_variable_names_additional = {"window","variance","simtime", "network","alpha",...
+			"q", "weights","lambda","forwarding","decision"};
+x_variable_name = "xi";
+z_variable_name = "priceratio"; % Over the columns
 
 
 % {CHECK
