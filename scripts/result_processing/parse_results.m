@@ -11,7 +11,7 @@ id_rep_list=1:20; # list of seeds
 
 priceratio_list={"10","1.111","1.25","1.429","1.667","2","2.5","3.333","5"};
 priceratio_list={"100"};
-priceratio_list={"10"};
+priceratio_list={"100"};
 
 
 % The decision plocies that I want to plot
