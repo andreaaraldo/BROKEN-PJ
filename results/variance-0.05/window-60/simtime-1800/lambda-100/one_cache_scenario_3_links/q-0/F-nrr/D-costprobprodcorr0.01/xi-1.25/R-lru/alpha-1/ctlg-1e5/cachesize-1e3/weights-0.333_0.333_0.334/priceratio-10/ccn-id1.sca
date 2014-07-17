@@ -1,5 +1,5 @@
 version 2
-run General-36-20140707-20:27:52-30288
+run General-4-20140717-10:26:39-15903
 attr D costprobprodcorr0.01
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140707-20:27:52
+attr datetime 20140717-10:26:39
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=one_cache_scenario_3_links, $rep=1, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=1000, $D=costprobprodcorr0.01, $xi=1.25, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
@@ -19,12 +19,12 @@ attr net one_cache_scenario_3_links
 attr network networks.${net=one_cache_scenario_3_links}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 30288
+attr processid 15903
 attr rep 1
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 36
+attr runnumber 4
 attr seedset 1
 attr ttl 1000
 attr variance 0.05
