@@ -10,8 +10,8 @@ optimization_result_folder="~/shared_with_servers/icn14_runs/greedy_algo";
 id_rep_list=1:20; # list of seeds
 
 priceratio_list={"10","1.111","1.25","1.429","1.667","2","2.5","3.333","5"};
-priceratio_list={"1","2","5","10","100"};
 priceratio_list={"10"};
+priceratio_list={"2","5","10","100"};
 
 
 % The decision plocies that I want to plot
@@ -21,8 +21,10 @@ decision_list={"lce","fix0.01","costprobprodcorr0.01","costprobprodplain0.01", "
 decision_list={"lce","fix0.01","tailandrank","costprobprodcorr0.01","costprobtailcons"};
 decision_list={"costprobprodcorr0.01"};
 
-xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"1"};
+xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
+xi_list = {"0.01","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
+
 
 weights_list={"0.333_0.333_0.334","0.5_0.25_0.25","0.25_0.25_0.5","0_0.25_0.75","0.75_0_0.25"};
 weights_list={"0.333_0.333_0.334","0_0.25_0.75", "0_0.5_0.5", "0_0.75_0.25", "0.25_0_0.75", "0.25_0.25_0.5", "0.25_0.5_0.25", "0.25_0.75_0", "0.5_0.25_0.25", "0.5_0.5_0", "0.75_0_0.25", "0.75_0.25_0","0.5_0.5_0"};
@@ -58,13 +60,13 @@ forwarding_list={"nrr"};
 replacement_="lru";
 
 simtime_list = {"1800","18000","180000","1800000"};
-simtime_list = {"180000"};
+simtime_list = {"1800"};
 
 csize_list = {"1e3"};
 csize_to_write_list = {"1e3"};
 
-ctlg_="1e7";
-ctlg_to_write_="1e7";
+ctlg_="1e5";
+ctlg_to_write_="1e5";
 
 fixed_variable_names_additional = {"window","variance","simtime", "priceratio","alpha",...
 			"q", "weights","lambda","forwarding","xi"};
