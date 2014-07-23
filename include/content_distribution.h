@@ -72,6 +72,7 @@ class content_distribution : public cSimpleModule{
     public:
 		void init_content();
 		int *init_repos(vector<int>);
+		virtual double *init_repo_prices();
 		int *init_clients(vector<int>);
 
 		static vector<file> catalog;
@@ -84,6 +85,7 @@ class content_distribution : public cSimpleModule{
 		// <aa> repositories[i] = d means that the i-th repository 
 		// is attached to node[d] </aa>
 		static int  *repositories;
+		static double  *repo_prices; // repo_prices[i] is the price of the i-th repo
 		static int  *clients;
 
 		//<aa>

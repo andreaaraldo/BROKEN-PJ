@@ -60,7 +60,11 @@ class core_layer : public abstract_node{
 		bool it_has_a_repo_attached;
 
 		vector<int> get_interfaces_in_PIT(chunk_t chunk);
+		bool is_it_initialized;
 		#endif
+
+		double get_repo_price();
+		//void set_repo_price(double price);
 		//</aa>
 
     protected:
@@ -72,6 +76,10 @@ class core_layer : public abstract_node{
 	//<aa> See ned file
 	bool interest_aggregation;
 	bool transparent_to_hops;
+	//</aa>
+
+	//<aa>
+	double repo_price; //the price of the attached repository.
 	//</aa>
 
     //Custom functions

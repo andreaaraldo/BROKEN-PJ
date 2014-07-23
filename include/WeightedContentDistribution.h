@@ -42,6 +42,8 @@ class WeightedContentDistribution : public content_distribution{
 		virtual const double get_priceratio();
 		virtual const double get_xi();
 		virtual const double get_alpha();
+		virtual double *init_repo_prices(); //This method ovveride father's one
+
 
 		#ifdef SEVERE_DEBUG
 		virtual bool isInitialized();

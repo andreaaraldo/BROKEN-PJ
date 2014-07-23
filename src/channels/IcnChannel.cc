@@ -24,6 +24,11 @@ Define_Channel(IcnChannel);
 
 void IcnChannel::initialize()
 {
+        std::stringstream ermsg; 
+		ermsg<<"ICN Channel has to be removed";
+		debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+
+
         cDatarateChannel::initialize();
         double price_asc = par("price_asc");
         double price_desc = par("price_desc");
@@ -31,7 +36,6 @@ void IcnChannel::initialize()
         #ifdef SEVERE_DEBUG
 		cTopology topo;
 		topo.extractByNedTypeName(cStringTokenizer("modules.statistics.statistics").asVector() );
-        std::stringstream ermsg; 
 	    int num_nodes = topo.getNumNodes();
 		if (num_nodes!=1) {
 			ermsg<<"Number of statistics nodes: "<<num_nodes;
@@ -93,7 +97,7 @@ void IcnChannel::processMessage(cMessage *msg, simtime_t t, result_t& result)
 		{
 		    count++;
 			ccn_data* data_msg = (ccn_data*) msg;
-			data_msg->setCost(represented_price);
+			//data_msg->setCost(represented_price);
 		}
 
 }

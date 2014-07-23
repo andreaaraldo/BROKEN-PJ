@@ -90,9 +90,14 @@ void statistics::initialize(){
 					 repo_idx++)
 		{
 		    char name[30];
+
+			sprintf ( name, "popularity_indication[%u]",repo_idx);
+			double popularity_indication = 
+				(*content_distribution::popularity_indication_p)[repo_idx];
+			recordScalar(name,popularity_indication);
+
 			sprintf ( name, "repo_popularity[%u]",repo_idx);
-			double repo_popularity = 
-				(*content_distribution::popularity_indication_p)[repo_idx] / pop_indication_sum;
+			double repo_popularity = popularity_indication / pop_indication_sum;
 			recordScalar(name,repo_popularity);
 		}
 
@@ -131,6 +136,8 @@ void statistics::initialize(){
     full_check = new cMessage("full_check", FULL_CHECK);
     stable_check = new cMessage("stable_check",STABLE_CHECK);
     end = new cMessage("end",END);
+
+	cout<<endl;
 
     //Start checking for full
     scheduleAt(simTime() + ts, full_check);
@@ -219,6 +226,7 @@ void statistics::finish(){
 
     //<aa>
     uint32_t global_repo_load = 0;
+	long total_cost_other = 0;
     //</aa>
 
     double global_avg_distance = 0;
@@ -231,7 +239,11 @@ void statistics::finish(){
     #endif
     //</aa>
 
-    for (int i = 0; i<num_nodes; i++){
+    for (int i = 0; i<num_nodes; i++)
+	{
+			total_cost_other += cores[i]->repo_load * cores[i]->get_repo_price();
+			cout << "statistics.cc: num_nodes="<<num_nodes<<"; repo_price = "<< cores[i]->get_repo_price() <<endl;
+
 		if (cores[i]->interests){
 			//Check if the given node got involved within the interest/data process
 			global_hit  += caches[i]->hit;
@@ -262,6 +274,7 @@ void statistics::finish(){
 
 	//<aa>
 	long total_cost = 0;
+
 	for (unsigned i = 0; i<icn_channels.size() ;i++){
 		IcnChannel* ch = (IcnChannel*) icn_channels[i];
 		total_cost += ch->get_cost() ;
@@ -310,6 +323,11 @@ void statistics::finish(){
     recordScalar(name,total_cost);
     cout<<"total_cost: "<<total_cost<<endl;
 
+    sprintf ( name, "total_cost_other");
+    recordScalar(name,total_cost_other);
+    cout<<"total_cost_other: "<<total_cost_other<<endl;
+
+
     sprintf ( name, "total_replicas");
     recordScalar(name,total_replicas);
     cout<<"total_replicas: "<<total_replicas<<endl;
@@ -354,13 +372,11 @@ void statistics::finish(){
     //}
 }
 
-void statistics::clear_stat(){
+void statistics::clear_stat()
+{
     for (int i = 0;i<num_clients;i++)
 	if (clients[i]->active)
 	    clients[i]->clear_stat();
-
-    for (int i = 0;i<num_nodes;i++)
-	    cores[i]->clear_stat();
 
     for (int i = 0;i<num_nodes;i++)
 	    caches[i]->clear_stat();

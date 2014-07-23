@@ -41,6 +41,9 @@ name_t  content_distribution::stabilization_bulk = 0;
 name_t  content_distribution::perfile_bulk = 0;
 name_t  content_distribution::cut_off = 0;
 int  *content_distribution::repositories = 0;
+//<aa>
+double  *content_distribution::repo_prices = 0;
+//</aa>
 int  *content_distribution::clients = 0;
 int  *content_distribution::total_replicas_p;
 vector<double>  *content_distribution::popularity_indication_p;
@@ -98,6 +101,9 @@ void content_distribution::initialize(){
     //
     cStringTokenizer tokenizer(getAncestorPar("node_repos"),",");
     repositories = init_repos(tokenizer.asIntVector());
+	//<aa>
+    repo_prices = init_repo_prices();
+	//</aa>
 
     //Useful for statitics: write out the name of each repository within the network
     for (int i = 0; i < num_repos; i++){
@@ -327,23 +333,25 @@ void content_distribution::init_content()
 */
 int *content_distribution::init_repos(vector<int> node_repos){
 
-    if (node_repos.size() > (unsigned) num_repos)
-		error("You are trying to distribute too many repositories.");
+	//INPUT CHECK{
+		if (node_repos.size() > (unsigned) num_repos)
+			error("You are trying to distribute too many repositories.");
 
-	//<aa>
-		for (int i=0; i < node_repos.size(); i++ )
-		{
-			int r = node_repos[i];
-			int max_node_index = nodes - 1;
-			if (r > max_node_index)
+		//<aa>
+			for (int i=0; i < node_repos.size(); i++ )
 			{
-		        std::stringstream ermsg; 
-				ermsg<<"You are trying to associate a repo to a node "<<r
-					<<" that does not exist ";
-			    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}		
-		}
-	//</aa>
+				int r = node_repos[i];
+				int max_node_index = nodes - 1;
+				if (r > max_node_index)
+				{
+				    std::stringstream ermsg; 
+					ermsg<<"You are trying to associate a repo to a node "<<r
+						<<" that does not exist ";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				}		
+			}
+		//</aa>
+	//}INPUT CHECK
 
 
 	int i = 0;
@@ -381,6 +389,28 @@ int *content_distribution::init_repos(vector<int> node_repos){
 }
 
 
+//<aa>
+double *content_distribution::init_repo_prices()
+{
+	double *repo_prices = new double[num_repos];
+	// <aa> Construct repo_prices array. repo_prices[i] will be the price of the i-th 		//		repository </aa>
+	for (int i=0; i<num_repos; i++)
+		repo_prices[i] = 0;
+    
+    //<aa>
+    #ifdef SEVERE_DEBUG
+		std::stringstream ss;
+		ss<<"Prices are";
+		for (int j=0; j<num_repos; j++)
+			ss<<" "<<repo_prices[j];
+		ss<<endl;
+		debug_message(__FILE__,__LINE__, ss.str().c_str() );
+    #endif
+    //</aa>
+
+    return repo_prices;
+}
+//</aa>
 
 /*
 * Initialize the clients vector. This vector is composed by the clients

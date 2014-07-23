@@ -45,6 +45,7 @@ void  core_layer::initialize(){
 	//<aa>
 	interest_aggregation = par("interest_aggregation");
 	transparent_to_hops = par("transparent_to_hops");
+	// Notice that repo_price has been initialized by WeightedContentDistribution
 	//</aa>
     repo_load = 0;
     nodes = getAncestorPar("n"); //Number of nodes
@@ -53,6 +54,7 @@ void  core_layer::initialize(){
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
+		is_it_initialized = false;
 		it_has_a_repo_attached = false;
 	#endif
 	//</aa>
@@ -65,10 +67,12 @@ void  core_layer::initialize(){
 			//<aa>
 			#ifdef SEVERE_DEBUG
 				it_has_a_repo_attached = true;
+				repo_price = content_distribution::repo_prices[i];
 			#endif
 			//</aa>
 			break;
-		}
+		} else
+				repo_price = 0;
 	}
     my_bitmask = (1<<i);//recall that the width of the repository bitset is only num_repos
 
@@ -85,6 +89,7 @@ void  core_layer::initialize(){
 
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
+	is_it_initialized = true;
 	#endif
 	//</aa>
 
@@ -273,6 +278,13 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 	// we are mimicking a message sent to the repository
 	//
         ccn_data* data_msg = compose_data(chunk);
+	
+		//<aa>
+		data_msg->setCost(repo_price); 	// I fix in the data msg the cost of the object
+										// that is the price of the repository
+		//</aa>
+
+
 		repo_interest++;
 		repo_load++;
 
@@ -682,4 +694,26 @@ void core_layer::check_if_correct(int line)
 	}
 }
 #endif
+//</aa>
+
+//<aa>
+double core_layer::get_repo_price()
+{
+	#ifdef SEVERE_DEBUG
+	if (!is_it_initialized)
+	{
+			std::stringstream msg; 
+			msg<<"I am node "<< getIndex()<<". Someone called this method before I was"
+				" initialized";
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
+	#endif
+
+	return repo_price;
+}
+
+//void core_layer::set_repo_price(double price)
+//{
+//	repo_price = price;
+//}
 //</aa>

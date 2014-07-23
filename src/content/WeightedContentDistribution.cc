@@ -26,14 +26,15 @@
 
 #include "ccnsim.h"
 #include "WeightedContentDistribution.h"
+#include "content_distribution.h"
 #include "IcnChannel.h"
 #include <error_handling.h>
+#include <core_layer.h>
 
 Register_Class(WeightedContentDistribution);
 
 void WeightedContentDistribution::initialize()
 {
-
 	const char *str = par("weights").stringValue();
 	weights = cStringTokenizer(str,"_").asDoubleVector();
 	replication_admitted = par("replication_admitted");
@@ -63,7 +64,8 @@ void WeightedContentDistribution::initialize()
 		probabilities[repo_idx] = weights[repo_idx] / sum;
 
 	content_distribution::initialize();
-	
+
+
 	{// Other checks
 		if ( degree != -1 ){
 			ermsg<<"degree is "<<degree <<". But with this content distribution model "<<
@@ -87,12 +89,50 @@ void WeightedContentDistribution::initialize()
 	#endif
 }
 
+
+
 void WeightedContentDistribution::initialize_popularity_indication()
 {
 	unsigned repo_num = weights.size();
 	popularity_indication_p = new vector<double>(repo_num); //http://stackoverflow.com/a/970555
 }
 
+//<aa>
+// Overwrite content_distribution::init_repo_prices()
+double *WeightedContentDistribution::init_repo_prices()
+{
+	#ifdef SEVERE_DEBUG
+		if (num_repos != 3)
+		{
+		    std::stringstream ermsg; 
+			ermsg<<"num_repos="<<num_repos<<"; while it MUST be 3 ";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+
+	double price_permutations[6][3] = { 
+		{0,1,priceratio},
+		{0,priceratio,1},
+		{1,0,priceratio},
+		{1,priceratio,0},
+		{priceratio,0,1},
+		{priceratio,1,0}
+	}; // -1 stands for priceratio
+
+	double* selected_price_permutation = price_permutations[intrand(6)];	
+
+	double *repo_prices = new double[num_repos];
+	for (int repo_idx=0; repo_idx < num_repos; repo_idx++)
+	{
+		repo_prices[repo_idx] = selected_price_permutation[repo_idx];
+	}
+
+	cout<<"repo_prices is ";
+	for (int i=0; i<3; i++) cout<<repo_prices[i] <<"; ";	
+	cout<<endl;
+    return repo_prices;
+}
+//</aa>
 
 #ifdef SEVERE_DEBUG
 /**
@@ -101,13 +141,16 @@ void WeightedContentDistribution::initialize_popularity_indication()
  */
 void WeightedContentDistribution::verify_prices()
 {
+
 	if ((unsigned) num_repos != weights.size() ){
-        std::stringstream ermsg; 
-		ermsg<<"num_repos="<<num_repos<<"; while weights vector has "<<weights.size()
-				<<" elements";
-		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		    std::stringstream ermsg; 
+			ermsg<<"num_repos="<<num_repos<<"; while weights vector has "<<
+					weights.size()<<" elements";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
+
 	vector<double> repo_prices(weights.size() );
+
 
 	// Retrieve repo_prices
 	for (int repo_idx=0; repo_idx < num_repos; repo_idx++)
@@ -304,3 +347,5 @@ int WeightedContentDistribution::choose_repos (int object_index )
 
 	return repo_string;
 }
+
+
