@@ -68,30 +68,30 @@ class core_layer : public abstract_node{
 		//</aa>
 
     protected:
-    //Standard node Omnet++ functions
-	virtual void initialize();
-	virtual void handleMessage(cMessage *);
-	virtual void finish();
+		//Standard node Omnet++ functions
+		virtual void initialize();
+		virtual void handleMessage(cMessage *);
+		virtual void finish();
 
-	//<aa> See ned file
-	bool interest_aggregation;
-	bool transparent_to_hops;
-	//</aa>
+		//<aa> See ned file
+		bool interest_aggregation;
+		bool transparent_to_hops;
+		//</aa>
 
-	//<aa>
-	double repo_price; //the price of the attached repository.
-	//</aa>
+		//<aa>
+		double repo_price; //the price of the attached repository.
+		//</aa>
 
-    //Custom functions
-	void handle_interest(ccn_interest *);
-	void handle_ghost(ccn_interest *);
-	void handle_data(ccn_data *);
-	void handle_decision(bool *, ccn_interest *);
+		//Custom functions
+		void handle_interest(ccn_interest *);
+		void handle_ghost(ccn_interest *);
+		void handle_data(ccn_data *);
+		void handle_decision(bool *, ccn_interest *);
 
 
-	bool check_ownership(vector<int>);
-	ccn_data *compose_data(uint64_t);	
-	void clear_stat();
+		bool check_ownership(vector<int>);
+		ccn_data *compose_data(uint64_t);	
+		void clear_stat();
 
     private:
 		unsigned long max_pit;

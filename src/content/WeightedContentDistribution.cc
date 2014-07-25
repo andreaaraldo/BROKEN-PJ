@@ -165,15 +165,7 @@ void WeightedContentDistribution::verify_prices()
    		topo.extractByNedTypeName(ctype);
 		cTopology::Node *node = topo.getNode(node_idx);
 
-		if ( node->getModule()->gateSize("face$o") != 2)
-		{
-	        std::stringstream ermsg; 
-			ermsg<<"Found "<< node->getModule()->gateSize("face$o")<<
-				" ports."<<
-				"The nodes attached to a repo admit only 2 output ports: port 0 attached "
-				<<" to the client and port 1 attached the next node toward the clients";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
+
 		cGate *gate = node->getModule()->gate("face$o", 1);
 		IcnChannel *ch = (IcnChannel*) gate->getChannel();
 		repo_prices[repo_idx] = ch->get_price();

@@ -7,9 +7,7 @@ network abilene_cost_network extends base_network{
 
     parameters:
         //Number of ccn nodes
-		int num_caching_nodes = 11; // All nodes in 0..num_caching_nodes-1 are caching
-    	n = num_caching_nodes+3; 	//The 3 additional nodes are fake nodes to which
-					//we will attach the repos
+    	n = 11;
 
 		int priceratio;
 		double xi;
@@ -22,19 +20,12 @@ network abilene_cost_network extends base_network{
 		num_clients = 3;
 		node_clients = "5,0,9";
 		num_repos = 3;
-		node_repos = "11,12,13";
+		node_repos = "10,7,1";
 
 
-		int single_cachesize = ceil(cachesize / num_caching_nodes );
+		int single_cachesize = ceil(cachesize / n );
 		node[0..10].content_store.C = single_cachesize;
 		node[0..10].content_store.DS = decision_policy;
-
-
-		// The following nodes are "fake"
-		node[11..13].content_store.C =  0;
-		node[11..13].core_layer.interest_aggregation =  false; 
-		node[11..13].core_layer.transparent_to_hops = true;
-		node[11..13].content_store.DS = "never";
 
 connections allowunconnected:
 	node[1].face++ <--> { delay = 5.48ms; } <--> node[0].face++;
@@ -52,8 +43,4 @@ connections allowunconnected:
 	node[8].face++ <--> { delay = 3.77ms; } <--> node[7].face++;
 	node[9].face++ <--> { delay = 7.36ms; } <--> node[8].face++;
 
-	// Attach the repos
-	node[10].face++ <--> IcnChannel{price_desc=0; max_price=expensive_price; delay = 0.00001ms; } <-->node[11].face++;
-	node[7].face++ <--> IcnChannel{price_desc=cheap_price; max_price=expensive_price; delay = 0.00001ms; } <-->node[12].face++;
-	node[1].face++ <--> IcnChannel{price_desc=expensive_price; max_price=expensive_price; delay = 0.00001ms; } <-->node[13].face++;
 }

@@ -650,6 +650,7 @@ void core_layer::clear_stat(){
 	discarded_interests = 0;
 	unsatisfied_interests = 0;
 	interests_satisfied_by_cache = 0;
+	check_if_correct(__LINE__);
 	#endif
     //</aa>
 }

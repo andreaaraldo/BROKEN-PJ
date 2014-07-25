@@ -379,6 +379,9 @@ void statistics::clear_stat()
 	    clients[i]->clear_stat();
 
     for (int i = 0;i<num_nodes;i++)
+        cores[i]->clear_stat();
+
+    for (int i = 0;i<num_nodes;i++)
 	    caches[i]->clear_stat();
 
 	#ifdef SEVERE_DEBUG

@@ -26,7 +26,7 @@ void IcnChannel::initialize()
 {
         std::stringstream ermsg; 
 		ermsg<<"ICN Channel has to be removed";
-		debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 
 
         cDatarateChannel::initialize();
