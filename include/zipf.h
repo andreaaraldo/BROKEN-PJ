@@ -39,6 +39,7 @@ class zipf_distribution{
 		//<aa>
 		double get_normalization_constant();
 		//</aa> 
+		
 
     private:
 		vector<double> cdfZipf;

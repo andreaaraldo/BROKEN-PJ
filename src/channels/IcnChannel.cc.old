@@ -108,14 +108,26 @@ void IcnChannel::clear_stat(){
 
 
 double IcnChannel::get_cost(){
+        std::stringstream ermsg; 
+		ermsg<<"ICN Channel has to be removed";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
     return count*price;
 }
 
 double IcnChannel::get_price(){
+        std::stringstream ermsg; 
+		ermsg<<"ICN Channel has to be removed";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
     return price;
 }
 
 double IcnChannel::get_represented_price(){
+        std::stringstream ermsg; 
+		ermsg<<"ICN Channel has to be removed";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
     return represented_price;
 }
 

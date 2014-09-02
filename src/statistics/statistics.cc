@@ -30,9 +30,7 @@
 #include "lru_cache.h"
 
 //<aa>
-//#include "core_layer.h"
 #include "error_handling.h"
-#include "IcnChannel.h"
 //</aa>
 
 
@@ -77,40 +75,34 @@ void statistics::initialize(){
 	total_replicas = *(content_distribution::total_replicas_p );
 
 	//<aa> {REPO POPULARITY
-	double pop_indication_sum = 0;
-	if ( content_distribution::popularity_indication_p != NULL )
+	if ( content_distribution::repo_popularity_p != NULL )
 	{
-		for (unsigned repo_idx =0; repo_idx < content_distribution::popularity_indication_p->size();
-					 repo_idx++)
-		{
-			pop_indication_sum += (*content_distribution::popularity_indication_p)[repo_idx];
-		}
 
-		for (unsigned repo_idx =0; repo_idx < content_distribution::popularity_indication_p->size();
+		for (unsigned repo_idx =0; repo_idx < content_distribution::repo_popularity_p->size();
 					 repo_idx++)
 		{
 		    char name[30];
 
-			sprintf ( name, "popularity_indication[%u]",repo_idx);
-			double popularity_indication = 
-				(*content_distribution::popularity_indication_p)[repo_idx];
-			recordScalar(name,popularity_indication);
-
 			sprintf ( name, "repo_popularity[%u]",repo_idx);
-			double repo_popularity = popularity_indication / pop_indication_sum;
+			double repo_popularity = 
+				(*content_distribution::repo_popularity_p)[repo_idx];
 			recordScalar(name,repo_popularity);
 		}
 
 
 		#ifdef SEVERE_DEBUG
-			if (fabs(1/pop_indication_sum -
-				 content_distribution::zipf.get_normalization_constant() ) > 1e-13
-			){
+			double repo_popularity_sum = 0;
+			for (unsigned repo_idx =0; repo_idx < content_distribution::repo_popularity_p->size();
+				 repo_idx++)
+			{
+				repo_popularity_sum += (*content_distribution::repo_popularity_p)[repo_idx];	
+			}
+
+			if ( ! double_equality(repo_popularity_sum, 1) )
+			{
 				std::stringstream ermsg; 
-				ermsg<<"1/pop_indication_sum="<<1/pop_indication_sum<<
-					"; normalization_constant=" << 
-					content_distribution::zipf.get_normalization_constant()<<
-					". They MUST be equal";
+				ermsg<<"pop_indication_sum="<<repo_popularity_sum<<
+					". It must be 1";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
 		#endif
@@ -226,7 +218,7 @@ void statistics::finish(){
 
     //<aa>
     uint32_t global_repo_load = 0;
-	long total_cost_other = 0;
+	long total_cost = 0;
     //</aa>
 
     double global_avg_distance = 0;
@@ -241,7 +233,7 @@ void statistics::finish(){
 
     for (int i = 0; i<num_nodes; i++)
 	{
-			total_cost_other += cores[i]->repo_load * cores[i]->get_repo_price();
+			total_cost += cores[i]->repo_load * cores[i]->get_repo_price();
 			cout << "statistics.cc: num_nodes="<<num_nodes<<"; repo_price = "<< cores[i]->get_repo_price() <<endl;
 
 		if (cores[i]->interests){
@@ -271,15 +263,6 @@ void statistics::finish(){
 			//</aa>
 		}
     }
-
-	//<aa>
-	long total_cost = 0;
-
-	for (unsigned i = 0; i<icn_channels.size() ;i++){
-		IcnChannel* ch = (IcnChannel*) icn_channels[i];
-		total_cost += ch->get_cost() ;
-	}
-	//</aa>
 
     //Print and store global statistics
 
@@ -323,10 +306,6 @@ void statistics::finish(){
     recordScalar(name,total_cost);
     cout<<"total_cost: "<<total_cost<<endl;
 
-    sprintf ( name, "total_cost_other");
-    recordScalar(name,total_cost_other);
-    cout<<"total_cost_other: "<<total_cost_other<<endl;
-
 
     sprintf ( name, "total_replicas");
     recordScalar(name,total_replicas);
@@ -354,7 +333,7 @@ void statistics::finish(){
 			std::stringstream ermsg; 
 			ermsg<<"interests_sent="<<global_interests_sent<<"; tot_downloads="<< 
 				global_tot_downloads<<
-				". If **.size==1 in omnetpp and all links has 0 delay, this "<<
+				". If **.size==1 in omnetpp.ini and all links have 0 delay, this "<<
 				" is an error. Otherwise, it is not";
 			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
@@ -389,10 +368,6 @@ void statistics::clear_stat()
 		ermsg<<"Clearing stats of "<<icn_channels.size()<<" icn channels"<<endl;
 		debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 	#endif
-	for (unsigned i = 0; i<icn_channels.size() ;i++){
-		IcnChannel* ch = (IcnChannel*) icn_channels[i];
-		ch->clear_stat();
-	}
 }
 
 void statistics::stability_has_been_reached(){

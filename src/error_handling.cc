@@ -29,6 +29,9 @@
 #include <sstream>
 #include<iostream>
 #include <cstdlib>
+#include <cmath> // for using fabs
+#include <limits> // for using numeric_limits
+
 using namespace std;
 
 void generic_message(const char* source_file_name, int code_line, const char* tag,
@@ -61,6 +64,13 @@ void debug_message(const char* source_file_name, int code_line,
 		std::stringstream error_message)
 {
 	debug_message(source_file_name, code_line, error_message.str().c_str() );
+}
+
+bool double_equality( double a, double b)
+{
+	if ( fabs(a-b) > std::numeric_limits<double>::epsilon() )
+		return false;
+	return true;
 }
 
 

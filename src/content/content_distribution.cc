@@ -46,7 +46,7 @@ double  *content_distribution::repo_prices = 0;
 //</aa>
 int  *content_distribution::clients = 0;
 int  *content_distribution::total_replicas_p;
-vector<double>  *content_distribution::popularity_indication_p;
+vector<double>  *content_distribution::repo_popularity_p;
 
 
 
@@ -126,7 +126,7 @@ void content_distribution::initialize(){
 		recordScalar(name,clients[i]);
     }
 
-	initialize_popularity_indication();
+	initialize_repo_popularity();
 	//</aa>
 
     //
@@ -141,10 +141,13 @@ void content_distribution::initialize(){
 	//</aa>
 }
 
-void content_distribution::initialize_popularity_indication()
+//<aa>
+void content_distribution::initialize_repo_popularity()
 {
-	popularity_indication_p = NULL;
+	// By default, the repo popularity is not computed
+	repo_popularity_p = NULL;
 }
+//</aa>
 
 //<aa>
 void content_distribution::finalize_total_replica(){
@@ -312,11 +315,15 @@ void content_distribution::init_content()
 
     }
 
-	// <aa> Record the repository cardinality
+	// <aa> Record the repository cardinality and price
 	for (int repo_idx = 0; repo_idx < num_repos; repo_idx++){
 	    char name[15];
 		sprintf(name,"repo-%d_card",repo_idx);
 		recordScalar(name, repo_card[repo_idx] );
+
+		sprintf(name,"repo-%d_price",repo_idx);
+		recordScalar(name, repo_prices[repo_idx] ); 
+
 	}
     // </aa>
 }

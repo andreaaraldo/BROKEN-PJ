@@ -38,5 +38,6 @@ void severe_error(const char* source_file_name, int code_line,
 void debug_message(const char* source_file_name, int code_line, 
 				std::stringstream message);
 
+bool double_equality (double a, double b);
 #endif
 

@@ -30,10 +30,6 @@
 #include <boost/unordered_map.hpp>
 #include <vector>
 
-//<aa>
-#include "IcnChannel.h"
-//#include "core_layer.h"
-//</aa>
 
 class client;
 class core_layer;

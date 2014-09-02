@@ -125,8 +125,8 @@ void client::finish(){
 			std::stringstream ermsg; 
 			ermsg<<"interests_sent="<<interests_sent<<"; tot_downloads="<<tot_downloads<<
 				". If **.size==1 in omnetpp and all links has 0 delay, this "<<
-				" is an error. Otherwise, it is not. In the latter case, disable "<<
-				"this error and run again";
+				" is an error. Otherwise, it is not. In the latter case, ignore "<<
+				"this message";
 			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 
 		}

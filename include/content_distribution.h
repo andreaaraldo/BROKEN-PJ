@@ -55,7 +55,7 @@ class content_distribution : public cSimpleModule{
 		//<aa>
 		//<aa>This method had no input parameters before</aa>
 		virtual int choose_repos(int object_index);
-		virtual void initialize_popularity_indication();
+		virtual void initialize_repo_popularity();
 
 		virtual void verify_replica_number();
 		virtual void finalize_total_replica();
@@ -92,7 +92,10 @@ class content_distribution : public cSimpleModule{
 		static int *total_replicas_p; // The number of replicas that are 
 								// distributed among all the repos
 
-		static vector<double>* popularity_indication_p;
+		static vector<double>* repo_popularity_p; // A value is associated to each
+														  // repository representing the sum
+														  // of the popularity of the 
+														  // contained objects
 		//</aa>
 
 

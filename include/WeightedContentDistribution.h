@@ -53,9 +53,8 @@ class WeightedContentDistribution : public content_distribution{
     protected:
 		virtual void initialize();
 		virtual int choose_repos (int object_index);
-		virtual void initialize_popularity_indication();
+		virtual void initialize_repo_popularity();
 		virtual vector<int> binary_strings(int,int);
-		virtual void verify_prices();
 		virtual void verify_replica_number();
 		virtual void finalize_total_replica();
 

@@ -27,7 +27,6 @@
 #include "ccnsim.h"
 #include "WeightedContentDistribution.h"
 #include "content_distribution.h"
-#include "IcnChannel.h"
 #include <error_handling.h>
 #include <core_layer.h>
 
@@ -74,13 +73,26 @@ void WeightedContentDistribution::initialize()
 		}
 
 		#ifdef SEVERE_DEBUG
-		verify_prices();
 		if (!replication_admitted && *total_replicas_p != cardF)
 		{
 	        std::stringstream ermsg; 
 			ermsg<<"total_replicas="<<*total_replicas_p<<"; cardF="<<cardF<<". ";
 			ermsg<<"Since replication_admitted==false, There MUST be 1 replica for each content ";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		
+	
+		// Verify popularity indication
+		double repo_popularity_sum = 0;
+		for (unsigned repo_idx = 0; repo_idx < repo_popularity_p->size(); repo_idx++){
+			repo_popularity_sum += (*repo_popularity_p)[repo_idx];
+		}
+		if ( !double_equality(repo_popularity_sum, 1))
+		{
+	        std::stringstream ermsg; 
+			ermsg<<"The sum of the popularity indications must be 1, but it is "<<
+						repo_popularity_sum;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );		
 		}
 		#endif
 	}
@@ -91,10 +103,10 @@ void WeightedContentDistribution::initialize()
 
 
 
-void WeightedContentDistribution::initialize_popularity_indication()
+void WeightedContentDistribution::initialize_repo_popularity()
 {
 	unsigned repo_num = weights.size();
-	popularity_indication_p = new vector<double>(repo_num); //http://stackoverflow.com/a/970555
+	repo_popularity_p = new vector<double>(repo_num); //http://stackoverflow.com/a/970555
 }
 
 //<aa>
@@ -119,7 +131,11 @@ double *WeightedContentDistribution::init_repo_prices()
 		{priceratio,1,0}
 	}; // -1 stands for priceratio
 
-	double* selected_price_permutation = price_permutations[intrand(6)];	
+	double* selected_price_permutation = price_permutations[intrand(6)];
+	selected_price_permutation = price_permutations[0];		
+		    std::stringstream ermsg; 
+			ermsg<<"\n\n\nATTENZIONE: ELIMINARE QUESTA RIGA ALTRIMENTI E' RANDOM A PPA FINTA";
+			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 
 	double *repo_prices = new double[num_repos];
 	for (int repo_idx=0; repo_idx < num_repos; repo_idx++)
@@ -134,62 +150,6 @@ double *WeightedContentDistribution::init_repo_prices()
 }
 //</aa>
 
-#ifdef SEVERE_DEBUG
-/**
- * from_repo_to_channel[repo_idx]   is the pointer to the IcnChannel through which you can 
- *									reach the repository repo_idx
- */
-void WeightedContentDistribution::verify_prices()
-{
-
-	if ((unsigned) num_repos != weights.size() ){
-		    std::stringstream ermsg; 
-			ermsg<<"num_repos="<<num_repos<<"; while weights vector has "<<
-					weights.size()<<" elements";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
-
-	vector<double> repo_prices(weights.size() );
-
-
-	// Retrieve repo_prices
-	for (int repo_idx=0; repo_idx < num_repos; repo_idx++)
-	{
-		// get the node associated to the repository
-		int node_idx = repositories[repo_idx];
-		// The repository is attached to node[node_idx]
-
-	    vector<string> ctype;
-	    ctype.push_back("modules.node.node");
-		cTopology topo;
-   		topo.extractByNedTypeName(ctype);
-		cTopology::Node *node = topo.getNode(node_idx);
-
-
-		cGate *gate = node->getModule()->gate("face$o", 1);
-		IcnChannel *ch = (IcnChannel*) gate->getChannel();
-		repo_prices[repo_idx] = ch->get_price();
-	}
-
-	// Verify the price correctness
-	for (int repo_idx=0; repo_idx < num_repos-1; repo_idx++){
-		if (repo_prices[repo_idx] > repo_prices[repo_idx+1] )
-		{
-	        std::stringstream ermsg; 
-			ermsg<<"Prices must be non descending. This is due to the way choose_repo() works."
-				<<".\nrepo "<<repo_idx<<" has price "<<repo_prices[repo_idx] <<" while repo "
-				<<repo_idx+1<<" has price "<<repo_prices[repo_idx+1]
-				<<".\nrepos are attached to the following nodes: ";			
-			for (int repo_idx2=0; repo_idx2 < num_repos; repo_idx2++)
-				ermsg << repositories[repo_idx2] << ",";
-			ermsg << ".\n Prices are:";
-			for (int repo_idx2=0; repo_idx2 < num_repos; repo_idx2++)
-				ermsg << repo_prices[repo_idx2] << ",";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-	}
-}
-#endif
 
 #ifdef SEVERE_DEBUG
 // Override content_distribution::verify_replica_number()
@@ -334,8 +294,9 @@ int WeightedContentDistribution::choose_repos (int object_index )
 		}
 	#endif
 
-	//Update the popularity_indication
-	(*popularity_indication_p)[assigned_repo] += 1./ pow(object_index,alpha);
+	//Update the repo_popularity
+	(*repo_popularity_p)[assigned_repo] += 
+			zipf.get_normalization_constant() / pow(object_index,alpha);
 
 	return repo_string;
 }
