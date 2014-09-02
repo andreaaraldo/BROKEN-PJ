@@ -20,7 +20,7 @@ network abilene_cost_network extends base_network{
 		num_clients = 3;
 		node_clients = "5,0,9";
 		num_repos = 3;
-		node_repos = "10,7,1";
+		node_repos = "1,7,10";
 
 
 		int single_cachesize = ceil(cachesize / n );
