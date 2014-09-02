@@ -68,7 +68,7 @@ void debug_message(const char* source_file_name, int code_line,
 
 bool double_equality( double a, double b)
 {
-	if ( fabs(a-b) > std::numeric_limits<double>::epsilon() )
+	if ( fabs(a-b) > std::numeric_limits<double>::epsilon() * 1e2 )
 		return false;
 	return true;
 }

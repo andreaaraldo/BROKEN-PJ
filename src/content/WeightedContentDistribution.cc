@@ -87,11 +87,11 @@ void WeightedContentDistribution::initialize()
 		for (unsigned repo_idx = 0; repo_idx < repo_popularity_p->size(); repo_idx++){
 			repo_popularity_sum += (*repo_popularity_p)[repo_idx];
 		}
-		if ( !double_equality(repo_popularity_sum, 1))
+		if ( !double_equality(repo_popularity_sum, 1) )
 		{
 	        std::stringstream ermsg; 
 			ermsg<<"The sum of the popularity indications must be 1, but it is "<<
-						repo_popularity_sum;
+					repo_popularity_sum<<". The differencer is "<< 1-repo_popularity_sum;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );		
 		}
 		#endif
@@ -132,10 +132,6 @@ double *WeightedContentDistribution::init_repo_prices()
 	}; // -1 stands for priceratio
 
 	double* selected_price_permutation = price_permutations[intrand(6)];
-	selected_price_permutation = price_permutations[0];		
-		    std::stringstream ermsg; 
-			ermsg<<"\n\n\nATTENZIONE: ELIMINARE QUESTA RIGA ALTRIMENTI E' RANDOM A PPA FINTA";
-			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 
 	double *repo_prices = new double[num_repos];
 	for (int repo_idx=0; repo_idx < num_repos; repo_idx++)

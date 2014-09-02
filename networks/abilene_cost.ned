@@ -15,14 +15,6 @@ network abilene_cost_network extends base_network{
 		string decision_policy;
 
 
-		double cheap_price = 1;
-		double expensive_price = priceratio;
-		num_clients = 3;
-		node_clients = "5,0,9";
-		num_repos = 3;
-		node_repos = "1,7,10";
-
-
 		int single_cachesize = ceil(cachesize / n );
 		node[0..10].content_store.C = single_cachesize;
 		node[0..10].content_store.DS = decision_policy;

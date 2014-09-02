@@ -5,9 +5,7 @@ network geant_cost_network extends base_network{
 
     parameters:
         //Number of ccn nodes
-		int num_caching_nodes = 22; // All nodes in 0..num_caching_nodes-1 are caching
-    	n = num_caching_nodes+3; 	//The 3 additional nodes are fake nodes to which
-					//we will attach the repos
+    	n = 22;
 
 		int priceratio;
 		double xi;
@@ -15,24 +13,9 @@ network geant_cost_network extends base_network{
 		string decision_policy;
 
 
-		double cheap_price = 1;
-		double expensive_price = priceratio;
-		num_clients = 5;
-		node_clients = "20,10,12,9,5";
-		num_repos = 3;
-		node_repos = "22,23,24";
-
-
 		int single_cachesize = ceil(cachesize / num_caching_nodes );
 		node[0..21].content_store.C = single_cachesize;
 		node[0..21].content_store.DS = decision_policy;
-
-
-		// The following nodes are "fake"
-		node[22..24].content_store.C =  0;
-		node[22..24].core_layer.interest_aggregation =  false; 
-		node[22..24].core_layer.transparent_to_hops = true;
-		node[22..24].content_store.DS = "never";
 
 
 
@@ -76,9 +59,5 @@ network geant_cost_network extends base_network{
 	node[8].face++ <--> { delay = 0.97ms; } <--> node[7].face++;
 	node[9].face++ <--> { delay = 0.54ms; } <--> node[8].face++;
 
-	// Attach the repos
-	node[7].face++ <--> IcnChannel{price_desc=0; max_price=expensive_price; delay = 0.00001ms; } <-->node[22].face++;
-	node[8].face++ <--> IcnChannel{price_desc=cheap_price; max_price=expensive_price; delay = 0.00001ms; } <-->node[23].face++;
-	node[21].face++ <--> IcnChannel{price_desc=expensive_price; max_price=expensive_price; delay = 0.00001ms; } <-->node[24].face++;
 
 }
