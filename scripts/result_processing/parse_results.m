@@ -18,7 +18,7 @@ decision_list={"lce","fix0.01","costprobprodcorr0.01","tailandrank","costprobtai
 decision_list={"lce","fix0.1", "fix0.05", "fix0.01", "fix0.005", "fix0.001", "fix0.0001", "fix0.00001"};
 decision_list={"lce","fix0.01","costprobprodcorr0.01","costprobprodplain0.01", "costprobcoincorr0.5", "costprobcoinplain0.5", "costprobcoincorr0.1", "costprobcoinplain0.1","costprobcoincorr0.01", "costprobcoinplain0.01"};
 decision_list={"lce","fix0.01","tailandrank","costprobprodcorr0.01","costprobtailcons"};
-decision_list={"lce","fix0.01","costprobprodcorr0.01"};
+decision_list={"costprobprodcorr0.01"};
 
 xi_list = {"0.01","0.025","0.05","0.075","0.25","0.50","0.75","1","1.25","1.50","1.75","2","3","5","8"};
 xi_list = {"0.01","0.25","0.50","0.75","1","1.25","1.50","1.75","2"};
@@ -50,11 +50,10 @@ metric_list={"cost_reduction_wrt_fix"};
 
 
 network_list={"one_cache_scenario_3_links","abilene_cost","geant_cost"};
-network_list={"abilene_cost"};
+network_list={"abilene_cost","geant_cost"};
 
 forwarding_list={"spr","nrr"};
 forwarding_list={"nrr"};
-
 
 replacement_="lru";
 
@@ -67,10 +66,10 @@ csize_to_write_list = {"1e3"};
 ctlg_="1e5";
 ctlg_to_write_="1e5";
 
-fixed_variable_names_additional = {"window","variance","simtime", "network","alpha",...
-			"q", "weights","lambda","forwarding","xi"};
-x_variable_name = "decision";
-z_variable_name = "priceratio"; % Over the columns
+fixed_variable_names_additional = {"window","variance","simtime", "decision","alpha",...
+			"q", "weights","lambda","priceratio","xi"};
+x_variable_name = "network";
+z_variable_name = "forwarding"; % Over the columns
 
 
 % {CHECK
