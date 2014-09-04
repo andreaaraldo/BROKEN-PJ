@@ -59,11 +59,15 @@ void client::initialize(){
 
 		//Allocating file statistics
 		//client_stats = new client_stat_entry[__file_bulk+1];
-		//<aa> The following line replace the previous one
+		//<aa> The following line replace the previous one.
+		// ATTENZIONE, RIPORTARE COME PRIMA. QUESTA MODIFICA NON SERVE A NULLA
 		client_stats = (client_stat_entry*) calloc ( __file_bulk+1, sizeof(client_stat_entry) );
+		cout <<"sizeof(client_stat_entry)="<<sizeof(client_stat_entry)<<endl;
+		printf("memory [%x,%x]\n",(void*)client_stats, (void*)client_stats + (__file_bulk+1)*sizeof(client_stat_entry) );
 		//</aa>
 
 		cout<<"Cancella que' "<<client_stats[3].tot_chunks<<endl;
+		printf("Accessed area %x\n",&(client_stats[3] ));
 
 		//Initialize average stats
 		avg_distance = 0;
@@ -253,8 +257,9 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
 
 
 
-void client::handle_incoming_chunk (ccn_data *data_message){
-
+void client::handle_incoming_chunk (ccn_data *data_message)
+{
+	printf("ATTENZIONE, client_stats is in %x\n",client_stats);
     cnumber_t chunk_num = data_message -> get_chunk_num();
     name_t name      = data_message -> get_name();
     filesize_t size      = data_message -> get_size();
@@ -265,6 +270,10 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     //tot_chunks++;
     tot_downloads+=1./size;
 
+	//<aa>
+	if (name==3)
+		cout << "Attenzione, arrivo col 3"<<endl;
+	//</aa>
 
     // File statistics. Doing statistics for all files would be tremendously
     // slow for huge catalog size, and at the same time quite useless
@@ -273,15 +282,27 @@ void client::handle_incoming_chunk (ccn_data *data_message){
 	//<aa> This code is to understand where access out of the memory mapped happens
 	#ifdef SEVERE_DEBUG
 		cout <<"uela name="<<name<<" __file_bulk="<<__file_bulk<<endl;
-		int hops = data_message->getHops();
+		if (name==3)
+				printf("Accessed area %x\n",&(client_stats[name] ));
+		cout <<"avg_distance="<< client_stats[name].avg_distance <<endl;
+
 		unsigned prova = client_stats[name].tot_chunks;
-	        client_stat_entry entry = client_stats[name];
+        client_stat_entry entry = client_stats[name];
 	#endif
 	//</aa>
 
         client_stats[name].avg_distance = (client_stats[name].tot_chunks*avg_distance+data_message->getHops())/(client_stats[name].tot_chunks+1);
         client_stats[name].tot_chunks++;
         client_stats[name].tot_downloads+=1./size;
+
+	//<aa> This code is to understand where access out of the memory mapped happens
+	#ifdef SEVERE_DEBUG
+		cout <<"uela2 name="<<name<<" __file_bulk="<<__file_bulk<<endl;
+		cout <<"avg_distance="<< client_stats[name].avg_distance <<endl;
+		prova = client_stats[name].tot_chunks;
+        entry = client_stats[name];
+	#endif
+	//</aa>
     }
 
 

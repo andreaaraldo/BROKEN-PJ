@@ -1,7 +1,7 @@
 version 2
-run General-1-20140904-16:29:01-16162
-attr D never
-attr F spr
+run General-6-20140904-16:29:01-16167
+attr D lce
+attr F nrr
 attr R lru
 attr a 1
 attr configname General
@@ -10,21 +10,21 @@ attr ctlg 1e5
 attr datetime 20140904-16:29:01
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
-attr iterationvars2 "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
+attr iterationvars "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=lce, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr iterationvars2 "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=lce, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
 attr lambda 100
-attr measurement "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr measurement "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=lce, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
 attr mytime 1800
 attr net dtelecom_cost
 attr network networks.${net=dtelecom_cost,level3_cost,tiger_cost}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 16162
+attr processid 16167
 attr rep 11
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 1
+attr runnumber 6
 attr seedset 11
 attr ttl 10
 attr variance 0.05
@@ -60,33 +60,33 @@ scalar dtelecom_cost_network.statistics 	repo_popularity[0] 	0.24856711779961
 scalar dtelecom_cost_network.statistics 	repo_popularity[1] 	0.37383897696026
 scalar dtelecom_cost_network.statistics 	repo_popularity[2] 	0.37759390524014
 scalar dtelecom_cost_network.statistics 	stabilization_time 	36060
-scalar dtelecom_cost_network.statistics 	p_hit 	0
-scalar dtelecom_cost_network.statistics 	interests 	23007.044117647
-scalar dtelecom_cost_network.statistics 	data 	15061.75
-scalar dtelecom_cost_network.statistics 	hdistance 	2.9161146914906
-scalar dtelecom_cost_network.statistics 	avg_time 	0.005965451578
-scalar dtelecom_cost_network.statistics 	downloads 	536429
-scalar dtelecom_cost_network.statistics 	total_cost 	2161379
+scalar dtelecom_cost_network.statistics 	p_hit 	0.082159323006673
+scalar dtelecom_cost_network.statistics 	interests 	20959.455882353
+scalar dtelecom_cost_network.statistics 	data 	13014.102941176
+scalar dtelecom_cost_network.statistics 	hdistance 	2.423837510682
+scalar dtelecom_cost_network.statistics 	avg_time 	0.00512029858
+scalar dtelecom_cost_network.statistics 	downloads 	538923
+scalar dtelecom_cost_network.statistics 	total_cost 	1660106
 scalar dtelecom_cost_network.statistics 	total_replicas 	100000
-scalar dtelecom_cost_network.statistics 	inner_hit 	0.0068527242188621
+scalar dtelecom_cost_network.statistics 	inner_hit 	0.21850616878478
 scalar dtelecom_cost_network.statistics 	interests_sent 	540283
 scalar dtelecom_cost_network.node[0].core_layer 	interests[0] 	0
 scalar dtelecom_cost_network.node[0].core_layer 	data[0] 	0
-scalar dtelecom_cost_network.node[0].core_layer 	repo_int[0] 	532753
+scalar dtelecom_cost_network.node[0].core_layer 	repo_int[0] 	421165
 scalar dtelecom_cost_network.node[0].content_store 	p_hit[0] 	-nan
 scalar dtelecom_cost_network.node[0].content_store 	hits[0] 	0
 scalar dtelecom_cost_network.node[0].content_store 	misses[0] 	0
 scalar dtelecom_cost_network.node[0].content_store 	decision_yes[0] 	0
 scalar dtelecom_cost_network.node[0].content_store 	decision_no[0] 	0
 scalar dtelecom_cost_network.node[0].content_store 	decision_ratio[0] 	0
-scalar dtelecom_cost_network.node[1].core_layer 	interests[1] 	491443
-scalar dtelecom_cost_network.node[1].core_layer 	data[1] 	487770
-scalar dtelecom_cost_network.node[1].content_store 	p_hit[1] 	0
-scalar dtelecom_cost_network.node[1].content_store 	hits[1] 	0
-scalar dtelecom_cost_network.node[1].content_store 	misses[1] 	491443
-scalar dtelecom_cost_network.node[1].content_store 	decision_yes[1] 	0
-scalar dtelecom_cost_network.node[1].content_store 	decision_no[1] 	487770
-scalar dtelecom_cost_network.node[1].content_store 	decision_ratio[1] 	0
+scalar dtelecom_cost_network.node[1].core_layer 	interests[1] 	428020
+scalar dtelecom_cost_network.node[1].core_layer 	data[1] 	412843
+scalar dtelecom_cost_network.node[1].content_store 	p_hit[1] 	0.033944675482454
+scalar dtelecom_cost_network.node[1].content_store 	hits[1] 	14529
+scalar dtelecom_cost_network.node[1].content_store 	misses[1] 	413491
+scalar dtelecom_cost_network.node[1].content_store 	decision_yes[1] 	412313
+scalar dtelecom_cost_network.node[1].content_store 	decision_no[1] 	0
+scalar dtelecom_cost_network.node[1].content_store 	decision_ratio[1] 	1
 scalar dtelecom_cost_network.node[2].core_layer 	interests[2] 	0
 scalar dtelecom_cost_network.node[2].core_layer 	data[2] 	0
 scalar dtelecom_cost_network.node[2].content_store 	p_hit[2] 	-nan
@@ -159,15 +159,15 @@ scalar dtelecom_cost_network.node[10].content_store 	misses[10] 	0
 scalar dtelecom_cost_network.node[10].content_store 	decision_yes[10] 	0
 scalar dtelecom_cost_network.node[10].content_store 	decision_no[10] 	0
 scalar dtelecom_cost_network.node[10].content_store 	decision_ratio[10] 	0
-scalar dtelecom_cost_network.node[11].core_layer 	interests[11] 	202663
-scalar dtelecom_cost_network.node[11].core_layer 	repo_load[11] 	202663
+scalar dtelecom_cost_network.node[11].core_layer 	interests[11] 	158749
+scalar dtelecom_cost_network.node[11].core_layer 	repo_load[11] 	153165
 scalar dtelecom_cost_network.node[11].core_layer 	data[11] 	0
-scalar dtelecom_cost_network.node[11].content_store 	p_hit[11] 	0
-scalar dtelecom_cost_network.node[11].content_store 	hits[11] 	0
-scalar dtelecom_cost_network.node[11].content_store 	misses[11] 	202663
-scalar dtelecom_cost_network.node[11].content_store 	decision_yes[11] 	0
-scalar dtelecom_cost_network.node[11].content_store 	decision_no[11] 	202663
-scalar dtelecom_cost_network.node[11].content_store 	decision_ratio[11] 	0
+scalar dtelecom_cost_network.node[11].content_store 	p_hit[11] 	0.035175024724565
+scalar dtelecom_cost_network.node[11].content_store 	hits[11] 	5584
+scalar dtelecom_cost_network.node[11].content_store 	misses[11] 	153165
+scalar dtelecom_cost_network.node[11].content_store 	decision_yes[11] 	153165
+scalar dtelecom_cost_network.node[11].content_store 	decision_no[11] 	0
+scalar dtelecom_cost_network.node[11].content_store 	decision_ratio[11] 	1
 scalar dtelecom_cost_network.node[12].core_layer 	interests[12] 	0
 scalar dtelecom_cost_network.node[12].core_layer 	data[12] 	0
 scalar dtelecom_cost_network.node[12].content_store 	p_hit[12] 	-nan
@@ -216,14 +216,14 @@ scalar dtelecom_cost_network.node[17].content_store 	misses[17] 	0
 scalar dtelecom_cost_network.node[17].content_store 	decision_yes[17] 	0
 scalar dtelecom_cost_network.node[17].content_store 	decision_no[17] 	0
 scalar dtelecom_cost_network.node[17].content_store 	decision_ratio[17] 	0
-scalar dtelecom_cost_network.node[18].core_layer 	interests[18] 	180503
-scalar dtelecom_cost_network.node[18].core_layer 	data[18] 	178752
-scalar dtelecom_cost_network.node[18].content_store 	p_hit[18] 	0
-scalar dtelecom_cost_network.node[18].content_store 	hits[18] 	0
-scalar dtelecom_cost_network.node[18].content_store 	misses[18] 	180503
-scalar dtelecom_cost_network.node[18].content_store 	decision_yes[18] 	0
-scalar dtelecom_cost_network.node[18].content_store 	decision_no[18] 	178752
-scalar dtelecom_cost_network.node[18].content_store 	decision_ratio[18] 	0
+scalar dtelecom_cost_network.node[18].core_layer 	interests[18] 	188317
+scalar dtelecom_cost_network.node[18].core_layer 	data[18] 	157622
+scalar dtelecom_cost_network.node[18].content_store 	p_hit[18] 	0.15972535671235
+scalar dtelecom_cost_network.node[18].content_store 	hits[18] 	30079
+scalar dtelecom_cost_network.node[18].content_store 	misses[18] 	158238
+scalar dtelecom_cost_network.node[18].content_store 	decision_yes[18] 	157622
+scalar dtelecom_cost_network.node[18].content_store 	decision_no[18] 	0
+scalar dtelecom_cost_network.node[18].content_store 	decision_ratio[18] 	1
 scalar dtelecom_cost_network.node[19].core_layer 	interests[19] 	0
 scalar dtelecom_cost_network.node[19].core_layer 	data[19] 	0
 scalar dtelecom_cost_network.node[19].content_store 	p_hit[19] 	-nan
@@ -232,14 +232,14 @@ scalar dtelecom_cost_network.node[19].content_store 	misses[19] 	0
 scalar dtelecom_cost_network.node[19].content_store 	decision_yes[19] 	0
 scalar dtelecom_cost_network.node[19].content_store 	decision_no[19] 	0
 scalar dtelecom_cost_network.node[19].content_store 	decision_ratio[19] 	0
-scalar dtelecom_cost_network.node[20].core_layer 	interests[20] 	179671
-scalar dtelecom_cost_network.node[20].core_layer 	data[20] 	178804
-scalar dtelecom_cost_network.node[20].content_store 	p_hit[20] 	0
-scalar dtelecom_cost_network.node[20].content_store 	hits[20] 	0
-scalar dtelecom_cost_network.node[20].content_store 	misses[20] 	179671
-scalar dtelecom_cost_network.node[20].content_store 	decision_yes[20] 	0
-scalar dtelecom_cost_network.node[20].content_store 	decision_no[20] 	178804
-scalar dtelecom_cost_network.node[20].content_store 	decision_ratio[20] 	0
+scalar dtelecom_cost_network.node[20].core_layer 	interests[20] 	187247
+scalar dtelecom_cost_network.node[20].core_layer 	data[20] 	157135
+scalar dtelecom_cost_network.node[20].content_store 	p_hit[20] 	0.15911069336224
+scalar dtelecom_cost_network.node[20].content_store 	hits[20] 	29793
+scalar dtelecom_cost_network.node[20].content_store 	misses[20] 	157454
+scalar dtelecom_cost_network.node[20].content_store 	decision_yes[20] 	157135
+scalar dtelecom_cost_network.node[20].content_store 	decision_no[20] 	0
+scalar dtelecom_cost_network.node[20].content_store 	decision_ratio[20] 	1
 scalar dtelecom_cost_network.node[21].core_layer 	interests[21] 	0
 scalar dtelecom_cost_network.node[21].core_layer 	data[21] 	0
 scalar dtelecom_cost_network.node[21].content_store 	p_hit[21] 	-nan
@@ -304,14 +304,14 @@ scalar dtelecom_cost_network.node[28].content_store 	misses[28] 	0
 scalar dtelecom_cost_network.node[28].content_store 	decision_yes[28] 	0
 scalar dtelecom_cost_network.node[28].content_store 	decision_no[28] 	0
 scalar dtelecom_cost_network.node[28].content_store 	decision_ratio[28] 	0
-scalar dtelecom_cost_network.node[29].core_layer 	interests[29] 	180109
-scalar dtelecom_cost_network.node[29].core_layer 	data[29] 	178873
-scalar dtelecom_cost_network.node[29].content_store 	p_hit[29] 	0
-scalar dtelecom_cost_network.node[29].content_store 	hits[29] 	0
-scalar dtelecom_cost_network.node[29].content_store 	misses[29] 	180109
-scalar dtelecom_cost_network.node[29].content_store 	decision_yes[29] 	0
-scalar dtelecom_cost_network.node[29].content_store 	decision_no[29] 	178873
-scalar dtelecom_cost_network.node[29].content_store 	decision_ratio[29] 	0
+scalar dtelecom_cost_network.node[29].core_layer 	interests[29] 	187639
+scalar dtelecom_cost_network.node[29].core_layer 	data[29] 	157359
+scalar dtelecom_cost_network.node[29].content_store 	p_hit[29] 	0.15903410271852
+scalar dtelecom_cost_network.node[29].content_store 	hits[29] 	29841
+scalar dtelecom_cost_network.node[29].content_store 	misses[29] 	157798
+scalar dtelecom_cost_network.node[29].content_store 	decision_yes[29] 	157359
+scalar dtelecom_cost_network.node[29].content_store 	decision_no[29] 	0
+scalar dtelecom_cost_network.node[29].content_store 	decision_ratio[29] 	1
 scalar dtelecom_cost_network.node[30].core_layer 	interests[30] 	0
 scalar dtelecom_cost_network.node[30].core_layer 	data[30] 	0
 scalar dtelecom_cost_network.node[30].content_store 	p_hit[30] 	-nan
@@ -336,15 +336,15 @@ scalar dtelecom_cost_network.node[32].content_store 	misses[32] 	0
 scalar dtelecom_cost_network.node[32].content_store 	decision_yes[32] 	0
 scalar dtelecom_cost_network.node[32].content_store 	decision_no[32] 	0
 scalar dtelecom_cost_network.node[32].content_store 	decision_ratio[32] 	0
-scalar dtelecom_cost_network.node[33].core_layer 	interests[33] 	134749
-scalar dtelecom_cost_network.node[33].core_layer 	repo_load[33] 	134749
+scalar dtelecom_cost_network.node[33].core_layer 	interests[33] 	131401
+scalar dtelecom_cost_network.node[33].core_layer 	repo_load[33] 	128456
 scalar dtelecom_cost_network.node[33].core_layer 	data[33] 	0
-scalar dtelecom_cost_network.node[33].content_store 	p_hit[33] 	0
-scalar dtelecom_cost_network.node[33].content_store 	hits[33] 	0
-scalar dtelecom_cost_network.node[33].content_store 	misses[33] 	134749
-scalar dtelecom_cost_network.node[33].content_store 	decision_yes[33] 	0
-scalar dtelecom_cost_network.node[33].content_store 	decision_no[33] 	134749
-scalar dtelecom_cost_network.node[33].content_store 	decision_ratio[33] 	0
+scalar dtelecom_cost_network.node[33].content_store 	p_hit[33] 	0.022412310408597
+scalar dtelecom_cost_network.node[33].content_store 	hits[33] 	2945
+scalar dtelecom_cost_network.node[33].content_store 	misses[33] 	128456
+scalar dtelecom_cost_network.node[33].content_store 	decision_yes[33] 	128456
+scalar dtelecom_cost_network.node[33].content_store 	decision_no[33] 	0
+scalar dtelecom_cost_network.node[33].content_store 	decision_ratio[33] 	1
 scalar dtelecom_cost_network.node[34].core_layer 	interests[34] 	0
 scalar dtelecom_cost_network.node[34].core_layer 	data[34] 	0
 scalar dtelecom_cost_network.node[34].content_store 	p_hit[34] 	-nan
@@ -353,15 +353,15 @@ scalar dtelecom_cost_network.node[34].content_store 	misses[34] 	0
 scalar dtelecom_cost_network.node[34].content_store 	decision_yes[34] 	0
 scalar dtelecom_cost_network.node[34].content_store 	decision_no[34] 	0
 scalar dtelecom_cost_network.node[34].content_store 	decision_ratio[34] 	0
-scalar dtelecom_cost_network.node[35].core_layer 	interests[35] 	195341
-scalar dtelecom_cost_network.node[35].core_layer 	repo_load[35] 	195341
+scalar dtelecom_cost_network.node[35].core_layer 	interests[35] 	143870
+scalar dtelecom_cost_network.node[35].core_layer 	repo_load[35] 	139544
 scalar dtelecom_cost_network.node[35].core_layer 	data[35] 	0
-scalar dtelecom_cost_network.node[35].content_store 	p_hit[35] 	0
-scalar dtelecom_cost_network.node[35].content_store 	hits[35] 	0
-scalar dtelecom_cost_network.node[35].content_store 	misses[35] 	195341
-scalar dtelecom_cost_network.node[35].content_store 	decision_yes[35] 	0
-scalar dtelecom_cost_network.node[35].content_store 	decision_no[35] 	195341
-scalar dtelecom_cost_network.node[35].content_store 	decision_ratio[35] 	0
+scalar dtelecom_cost_network.node[35].content_store 	p_hit[35] 	0.030068812122055
+scalar dtelecom_cost_network.node[35].content_store 	hits[35] 	4326
+scalar dtelecom_cost_network.node[35].content_store 	misses[35] 	139544
+scalar dtelecom_cost_network.node[35].content_store 	decision_yes[35] 	139544
+scalar dtelecom_cost_network.node[35].content_store 	decision_no[35] 	0
+scalar dtelecom_cost_network.node[35].content_store 	decision_ratio[35] 	1
 scalar dtelecom_cost_network.node[36].core_layer 	interests[36] 	0
 scalar dtelecom_cost_network.node[36].core_layer 	data[36] 	0
 scalar dtelecom_cost_network.node[36].content_store 	p_hit[36] 	-nan
@@ -618,15 +618,15 @@ scalar dtelecom_cost_network.node[67].content_store 	misses[67] 	0
 scalar dtelecom_cost_network.node[67].content_store 	decision_yes[67] 	0
 scalar dtelecom_cost_network.node[67].content_store 	decision_no[67] 	0
 scalar dtelecom_cost_network.node[67].content_store 	decision_ratio[67] 	0
-scalar dtelecom_cost_network.client[18] 	hdistance[18] 	2.7483440744719
-scalar dtelecom_cost_network.client[18] 	downloads[18] 	178752
-scalar dtelecom_cost_network.client[18] 	avg_time[18] 	0.006902846029
+scalar dtelecom_cost_network.client[18] 	hdistance[18] 	2.2601280739983
+scalar dtelecom_cost_network.client[18] 	downloads[18] 	179896
+scalar dtelecom_cost_network.client[18] 	avg_time[18] 	0.005731778579
 scalar dtelecom_cost_network.client[18] 	interests_sent[18] 	180503
-scalar dtelecom_cost_network.client[20] 	hdistance[20] 	3
-scalar dtelecom_cost_network.client[20] 	downloads[20] 	178804
-scalar dtelecom_cost_network.client[20] 	avg_time[20] 	0.004644788394
+scalar dtelecom_cost_network.client[20] 	hdistance[20] 	2.5062028513601
+scalar dtelecom_cost_network.client[20] 	downloads[20] 	179353
+scalar dtelecom_cost_network.client[20] 	avg_time[20] 	0.00408574302
 scalar dtelecom_cost_network.client[20] 	interests_sent[20] 	179671
-scalar dtelecom_cost_network.client[29] 	hdistance[29] 	3
-scalar dtelecom_cost_network.client[29] 	downloads[29] 	178873
-scalar dtelecom_cost_network.client[29] 	avg_time[29] 	0.006348720311
+scalar dtelecom_cost_network.client[29] 	hdistance[29] 	2.5051816066877
+scalar dtelecom_cost_network.client[29] 	downloads[29] 	179674
+scalar dtelecom_cost_network.client[29] 	avg_time[29] 	0.005543374142
 scalar dtelecom_cost_network.client[29] 	interests_sent[29] 	180109

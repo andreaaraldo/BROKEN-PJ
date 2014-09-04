@@ -1,7 +1,7 @@
 version 2
-run General-1-20140904-16:29:01-16162
+run General-5-20140904-16:29:01-16166
 attr D never
-attr F spr
+attr F nrr
 attr R lru
 attr a 1
 attr configname General
@@ -10,21 +10,21 @@ attr ctlg 1e5
 attr datetime 20140904-16:29:01
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
-attr iterationvars2 "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
+attr iterationvars "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr iterationvars2 "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
 attr lambda 100
-attr measurement "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr measurement "$net=dtelecom_cost, $rep=11, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=never, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
 attr mytime 1800
 attr net dtelecom_cost
 attr network networks.${net=dtelecom_cost,level3_cost,tiger_cost}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 16162
+attr processid 16166
 attr rep 11
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 1
+attr runnumber 5
 attr seedset 11
 attr ttl 10
 attr variance 0.05
