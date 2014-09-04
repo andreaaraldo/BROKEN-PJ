@@ -1,7 +1,7 @@
 package networks;
 import modules.*;
 
-network dtelecom_network extends base_network{
+network dtelecom_cost_network extends base_network{
 
     parameters:
         //Number of ccn nodes

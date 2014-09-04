@@ -1,6 +1,6 @@
 package networks;
 
-network level3_network extends base_network{
+network level3_cost_network extends base_network{
 
     parameters:
         //Number of ccn nodes

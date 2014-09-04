@@ -1,6 +1,6 @@
 package networks;
 
-network tiger_network extends base_network{
+network tiger_cost_network extends base_network{
 
     parameters:
     	n = 22;
