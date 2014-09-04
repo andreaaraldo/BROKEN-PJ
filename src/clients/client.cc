@@ -58,7 +58,12 @@ void client::initialize(){
 		RTT             = par("RTT");
 
 		//Allocating file statistics
-		client_stats = new client_stat_entry[__file_bulk+1];
+		//client_stats = new client_stat_entry[__file_bulk+1];
+		//<aa> The following line replace the previous one
+		client_stats = (client_stat_entry*) calloc ( __file_bulk+1, sizeof(client_stat_entry) );
+		//</aa>
+
+		cout<<"Cancella que' "<<client_stats[3].tot_chunks<<endl;
 
 		//Initialize average stats
 		avg_distance = 0;
@@ -265,6 +270,15 @@ void client::handle_incoming_chunk (ccn_data *data_message){
     // slow for huge catalog size, and at the same time quite useless
     // (statistics for the 12345234th file are not so meaningful at all)
     if (name <= __file_bulk){
+	//<aa> This code is to understand where access out of the memory mapped happens
+	#ifdef SEVERE_DEBUG
+		cout <<"uela name="<<name<<" __file_bulk="<<__file_bulk<<endl;
+		int hops = data_message->getHops();
+		unsigned prova = client_stats[name].tot_chunks;
+	        client_stat_entry entry = client_stats[name];
+	#endif
+	//</aa>
+
         client_stats[name].avg_distance = (client_stats[name].tot_chunks*avg_distance+data_message->getHops())/(client_stats[name].tot_chunks+1);
         client_stats[name].tot_chunks++;
         client_stats[name].tot_downloads+=1./size;
