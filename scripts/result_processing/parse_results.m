@@ -53,7 +53,6 @@ network_list={"one_cache_scenario_3_links","abilene_cost","geant_cost"};
 network_list={"abilene_cost","geant_cost"};
 
 forwarding_list={"spr","nrr"};
-forwarding_list={"nrr"};
 
 replacement_="lru";
 

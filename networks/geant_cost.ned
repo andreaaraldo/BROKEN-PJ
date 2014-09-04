@@ -12,7 +12,6 @@ network geant_cost_network extends base_network{
 		int cachesize;
 		string decision_policy;
 
-
 		int single_cachesize = ceil(cachesize / n );
 		node[0..21].content_store.C = single_cachesize;
 		node[0..21].content_store.DS = decision_policy;
