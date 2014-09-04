@@ -1,0 +1,61 @@
+version 2
+run General-3-20140904-16:34:59-28376
+attr D fix0.01
+attr F spr
+attr R lru
+attr a 1
+attr configname General
+attr csize 1e3
+attr ctlg 1e5
+attr datetime 20140904-16:34:59
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=dtelecom_cost, $rep=16, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=fix0.01, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr iterationvars2 "$net=dtelecom_cost, $rep=16, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=fix0.01, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
+attr lambda 100
+attr measurement "$net=dtelecom_cost, $rep=16, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=fix0.01, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr mytime 1800
+attr net dtelecom_cost
+attr network networks.${net=dtelecom_cost,level3_cost,tiger_cost}_network
+attr pricebits 0
+attr priceratiovalue 10
+attr processid 28376
+attr rep 16
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 3
+attr seedset 16
+attr ttl 10
+attr variance 0.05
+attr weights 0.333_0.333_0.334
+attr window 60
+attr xi 1
+
+scalar . 	a 	1
+scalar . 	csize 	1e3
+scalar . 	ctlg 	1e5
+scalar . 	lambda 	100
+scalar . 	mytime 	1800
+scalar . 	pricebits 	0
+scalar . 	priceratiovalue 	10
+scalar . 	rep 	16
+scalar . 	ttl 	10
+scalar . 	variance 	0.05
+scalar . 	window 	60
+scalar . 	xi 	1
+scalar dtelecom_cost_network.content_distribution 	repo-0 	42
+scalar dtelecom_cost_network.content_distribution 	repo-1 	45
+scalar dtelecom_cost_network.content_distribution 	repo-2 	40
+scalar dtelecom_cost_network.content_distribution 	client-0 	54
+scalar dtelecom_cost_network.content_distribution 	client-1 	12
+scalar dtelecom_cost_network.content_distribution 	client-2 	5
+scalar dtelecom_cost_network.content_distribution 	repo-0_card 	33300
+scalar dtelecom_cost_network.content_distribution 	repo-0_price 	10
+scalar dtelecom_cost_network.content_distribution 	repo-1_card 	33211
+scalar dtelecom_cost_network.content_distribution 	repo-1_price 	1
+scalar dtelecom_cost_network.content_distribution 	repo-2_card 	33489
+scalar dtelecom_cost_network.content_distribution 	repo-2_price 	0
+scalar dtelecom_cost_network.statistics 	repo_popularity[0] 	0.31793473216777
+scalar dtelecom_cost_network.statistics 	repo_popularity[1] 	0.35852522072214
+scalar dtelecom_cost_network.statistics 	repo_popularity[2] 	0.32354004711011
