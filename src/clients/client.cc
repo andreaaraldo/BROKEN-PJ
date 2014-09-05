@@ -58,16 +58,7 @@ void client::initialize(){
 		RTT             = par("RTT");
 
 		//Allocating file statistics
-		//client_stats = new client_stat_entry[__file_bulk+1];
-		//<aa> The following line replace the previous one.
-		// ATTENZIONE, RIPORTARE COME PRIMA. QUESTA MODIFICA NON SERVE A NULLA
-		client_stats = (client_stat_entry*) calloc ( __file_bulk+1, sizeof(client_stat_entry) );
-		cout <<"sizeof(client_stat_entry)="<<sizeof(client_stat_entry)<<endl;
-		printf("memory [%x,%x]\n",(void*)client_stats, (void*)client_stats + (__file_bulk+1)*sizeof(client_stat_entry) );
-		//</aa>
-
-		cout<<"Cancella que' "<<client_stats[3].tot_chunks<<endl;
-		printf("Accessed area %x\n",&(client_stats[3] ));
+		client_stats = new client_stat_entry[__file_bulk+1];
 
 		//Initialize average stats
 		avg_distance = 0;
@@ -90,21 +81,55 @@ void client::initialize(){
 }
 
 
-void client::handleMessage(cMessage *in){
-   
+void client::handleMessage(cMessage *in)
+{
     if (in->isSelfMessage()){
-	handle_timers(in);
-	return;
+		handle_timers(in);
+		return;
     }
 
-    switch (in->getKind()){
-	case CCN_D:
+    switch (in->getKind() )
 	{
-	    ccn_data *data_message = (ccn_data *) in;
-	    handle_incoming_chunk (data_message);
-	    delete  data_message;
-	}
+		case CCN_D:
+		{
+			//<aa>
+			#ifdef SEVERE_DEBUG
+			if (!active){
+				std::stringstream ermsg; 
+				ermsg<<"I am the client attached to node "<<getNodeIndex()<<
+					". I received a data but I shoud not as I am not active";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+			#endif
+			//</aa>
+
+			ccn_data *data_message = (ccn_data *) in;
+			handle_incoming_chunk (data_message);
+			delete  data_message;
+			break; //<aa> I added this line</aa>
+		}
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		default:
+			std::stringstream ermsg; 
+			ermsg<<"A client can only receive data, while this is a message"<<
+				" of a kind "<<in->getKind();
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		#endif
+		//</aa>
     }
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		if (client_stats == 0)
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The pointer client_stats points to 0. This is an error."<<
+				" Is this node active? "<<active;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+	//</aa>
 }
 
 int client::getNodeIndex(){
@@ -194,14 +219,28 @@ void client::handle_timers(cMessage *timer){
 
 
 //Generate interest requests 
-void client::request_file(){
-
+void client::request_file()
+{
     name_t name = content_distribution::zipf.value(dblrand());
 	
 	//<aa>
 	struct download new_download = download (0,simTime() );
 	#ifdef SEVERE_DEBUG
 		new_download.serial_number = interests_sent;
+
+		if (!active){
+			std::stringstream ermsg; 
+			ermsg<<"Client attached to node "<< getNodeIndex() <<" is requesting file but it "
+				<<"shoud not as it is not active";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+
+		if (getNodeIndex() == 18){
+			std::stringstream ermsg; 
+			ermsg<<"I am node "<< getNodeIndex() <<" and I am requesting a file";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		
 	#endif
 	//</aa>
 
@@ -259,10 +298,31 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
 
 void client::handle_incoming_chunk (ccn_data *data_message)
 {
-	printf("ATTENZIONE, client_stats is in %x\n",client_stats);
+
     cnumber_t chunk_num = data_message -> get_chunk_num();
     name_t name      = data_message -> get_name();
     filesize_t size      = data_message -> get_size();
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+		if ( !is_waiting_for(name) )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"Client attached to node "<< getNodeIndex() <<" is receiving object "
+				<<name<<" but it is not waiting for it" <<endl;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		
+
+		if (client_stats == 0)
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The pointer client_stats points to 0. This is an error";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+	//</aa>
+
 
     //----------Statistics-----------------
     // Average clients statistics
@@ -270,39 +330,17 @@ void client::handle_incoming_chunk (ccn_data *data_message)
     //tot_chunks++;
     tot_downloads+=1./size;
 
-	//<aa>
-	if (name==3)
-		cout << "Attenzione, arrivo col 3"<<endl;
-	//</aa>
-
     // File statistics. Doing statistics for all files would be tremendously
     // slow for huge catalog size, and at the same time quite useless
     // (statistics for the 12345234th file are not so meaningful at all)
     if (name <= __file_bulk){
-	//<aa> This code is to understand where access out of the memory mapped happens
-	#ifdef SEVERE_DEBUG
-		cout <<"uela name="<<name<<" __file_bulk="<<__file_bulk<<endl;
-		if (name==3)
-				printf("Accessed area %x\n",&(client_stats[name] ));
-		cout <<"avg_distance="<< client_stats[name].avg_distance <<endl;
 
-		unsigned prova = client_stats[name].tot_chunks;
-        client_stat_entry entry = client_stats[name];
-	#endif
-	//</aa>
-
-        client_stats[name].avg_distance = (client_stats[name].tot_chunks*avg_distance+data_message->getHops())/(client_stats[name].tot_chunks+1);
+        client_stats[name].avg_distance = 
+				(client_stats[name].tot_chunks*avg_distance+data_message->getHops())/
+				(client_stats[name].tot_chunks+1);
         client_stats[name].tot_chunks++;
         client_stats[name].tot_downloads+=1./size;
 
-	//<aa> This code is to understand where access out of the memory mapped happens
-	#ifdef SEVERE_DEBUG
-		cout <<"uela2 name="<<name<<" __file_bulk="<<__file_bulk<<endl;
-		cout <<"avg_distance="<< client_stats[name].avg_distance <<endl;
-		prova = client_stats[name].tot_chunks;
-        entry = client_stats[name];
-	#endif
-	//</aa>
     }
 
 
@@ -316,25 +354,29 @@ void client::handle_incoming_chunk (ccn_data *data_message)
     ii = current_downloads.equal_range(name);
     it = ii.first;
 
-    while (it != ii.second){
-        if ( it->second.chunk == chunk_num ){
+    while (it != ii.second)
+	{
+        if ( it->second.chunk == chunk_num )
+		{
             it->second.chunk++;
-            if (it->second.chunk< __size(name) ){ 
-        	it->second.last = simTime();
-        	//if the file is not yet completed send the next interest
-        	send_interest(name, it->second.chunk, data_message->getTarget());
-            } else { 
-        	//if the file is completed delete the entry from the pendent file list
-		simtime_t completion_time = simTime()-it->second.start;
-		avg_time = (tot_chunks*avg_time+completion_time )*1./(tot_chunks+1);
-        	if (current_downloads.count(name)==1){
-        	    current_downloads.erase(name);
-        	    break;
-        	} else{
-        	    current_downloads.erase(it++);
-        	    continue;
-        	}
-            }
+            if (it->second.chunk< __size(name) )
+			{ 
+		    	it->second.last = simTime();
+		    	//if the file is not yet completed send the next interest
+		    	send_interest(name, it->second.chunk, data_message->getTarget());
+            }else{ 
+	        	//if the file is completed delete the entry from the pendent file list
+				simtime_t completion_time = simTime()-it->second.start;
+				avg_time = (tot_chunks*avg_time+completion_time )*1./(tot_chunks+1);
+		    	if (current_downloads.count(name)==1)
+				{
+		    	    current_downloads.erase(name);
+		    	    break;
+		    	}else{
+		    	    current_downloads.erase(it++);
+		    	    continue;
+		    	}
+			}
         }
         ++it;
     }
@@ -344,6 +386,15 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 }
 
 void client::clear_stat(){
+	#ifdef SEVERE_DEBUG
+		if (client_stats == 0)
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The pointer client_stats points to 0. This is an error";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+
 
     avg_distance = 0;
     avg_time = 0;
@@ -359,4 +410,38 @@ void client::clear_stat(){
     delete [] client_stats;
     client_stats = new client_stat_entry[__file_bulk+1];
 
+	#ifdef SEVERE_DEBUG
+		if (client_stats == 0)
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The pointer client_stats points to 0. This is an error";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
 }
+
+//<aa> Get functions
+double client::get_avg_distance(){
+	return avg_distance;
+}
+double client::get_tot_downloads(){
+	return tot_downloads;
+}
+simtime_t client::get_avg_time(){
+	return avg_time;
+}
+unsigned int client::get_interests_sent(){
+	return interests_sent;
+}
+bool client::is_active(){
+	return active;
+}
+
+#ifdef SEVERE_DEBUG
+bool client::is_waiting_for(name_t name)
+{
+	multimap<name_t, download>::iterator it = current_downloads.find(name);
+	return it != current_downloads.end();
+}
+#endif
+//</aa>

@@ -90,6 +90,17 @@ void  core_layer::initialize(){
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
 	is_it_initialized = true;
+
+	if (gateSize("face$o") > (int) sizeof(interface_t)*8 )
+	{
+		std::stringstream msg;
+		msg<<"Node "<<getIndex()<<" has "<<gateSize("face$o")<<" output ports. But the maximum "
+			<<"number of interfaces manageable by ccnsim is "<<sizeof(interface_t)*8 <<
+			" beacause the type of "
+			<<"interface_t is of size "<<sizeof(interface_t)<<" bytes. You can change the definition of "
+			<<"interface_t (in ccnsim.h) to solve this issue and recompile";
+		severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
 	#endif
 	//</aa>
 
@@ -224,29 +235,24 @@ void core_layer::finish(){
 *     b) Check if you are the source for that data. 
 *     c) Put the interface within the PIT.
 */
-void core_layer::handle_interest(ccn_interest *int_msg){
-    chunk_t chunk = int_msg->getChunk();
-    double int_btw = int_msg->getBtw();
-
-
+void core_layer::handle_interest(ccn_interest *int_msg)
+{
 	//<aa>
-//	#ifdef SEVERE_DEBUG
-//				if (	int_msg->getChunk()==2 && int_msg->getOrigin()==5
-//						//&& int_msg->getSerialNumber()==2854
-//				){
-//					std::stringstream msg; 
-//					msg<<"I am node "<< getIndex()<<". I received an interest for chunk "<<
-//							int_msg->getChunk() <<" issued by client "<<
-//							int_msg->getOrigin()<<" serial no="<<int_msg->getSerialNumber()<<
-//							". The target of the interest is "<<int_msg->getTarget()<<
-//							". ContentStore->lookup(chunk)="<<( ContentStore->lookup(chunk) )<<
-//							". my_bitmask & __repo(int_msg->get_name() )="<<
-//							( my_bitmask & __repo(int_msg->get_name() ) );
-//					debug_message(__FILE__, __LINE__, msg.str().c_str() );
-//				}
-//	#endif
+	#ifdef SEVERE_DEBUG
+		client* cli = __get_attached_client( int_msg->getArrivalGate()->getIndex() );
+		if (cli && !cli->is_active() ) {
+			std::stringstream msg; 
+			msg<<"I am node "<< getIndex()<<" and I received an interest from interface "<<
+				int_msg->getArrivalGate()->getIndex()<<". This is an error since there is "<<
+				"a deactivated client attached there";
+			debug_message(__FILE__, __LINE__, msg.str().c_str() );
+		}
+	#endif
 	//</aa>
 
+ 
+   chunk_t chunk = int_msg->getChunk();
+    double int_btw = int_msg->getBtw();
 
     if (ContentStore->lookup(chunk)){
         //
@@ -263,7 +269,8 @@ void core_layer::handle_interest(ccn_interest *int_msg){
         data_msg->setTSI(int_msg->getHops());
         data_msg->setTSB(1);
 
-        send(data_msg,"face$o", int_msg->getArrivalGate()->getIndex());
+		//<aa> I transformed send in send_data</aa>
+        send_data(data_msg,"face$o", int_msg->getArrivalGate()->getIndex(), __LINE__); 
         
         //<aa>
         #ifdef SEVERE_DEBUG
@@ -299,23 +306,8 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 
         ContentStore->store(data_msg);
 
-		//<aa>
-//		#ifdef SEVERE_DEBUG
-//			if (int_msg->getChunk() == 2 && int_msg->getOrigin()==5)
-//			{
-//				std::stringstream ermsg; 
-//				ermsg<<"I am node "<<getIndex()<<
-//					"; I'm satisfying interest for object ="<<int_msg->getChunk() <<
-//					" issued by client attached to node "<< int_msg->getOrigin()<<
-//					". its target is "<<int_msg->getTarget()<<
-//					". Serial no="<<int_msg->getSerialNumber();
-//				debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-//			}
-//		#endif
-		//</aa>
-
-
-        send(data_msg,"face$o",int_msg->getArrivalGate()->getIndex());
+		//<aa> I transformed send in send_data</aa>
+		send_data(data_msg,"face$o",int_msg->getArrivalGate()->getIndex(),__LINE__);
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
@@ -384,32 +376,28 @@ void core_layer::handle_interest(ccn_interest *int_msg){
 		}
 		#ifdef SEVERE_DEBUG
 		interface_t old_PIT_string = PIT[chunk].interfaces;
-		#endif
+		check_if_correct(__LINE__);
 
+		client*  c = __get_attached_client( int_msg->getArrivalGate()->getIndex() );
+		if (c && !c->is_active() ){
+			std::stringstream ermsg; 
+			ermsg<<"Trying to add to the PIT an interface where a deactivated client is attached";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		cout <<"iface "<<int_msg->getArrivalGate()->getIndex()<<endl;
+		#endif
 		//</aa>
 
-		__sface( ( PIT[chunk].interfaces ) , int_msg->getArrivalGate()->getIndex());
+
+		//<aa> The following line will add the origin interface of the interest 
+		//		msg to the PIT </aa>
+		add_to_pit( chunk, int_msg->getArrivalGate()->getIndex() );
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
-//		if (int_msg->getChunk() == 2)
-//		{
-//			std::stringstream ermsg; 
-//			ermsg<<"I am node "<<getIndex()<<"; I received interest for "<<int_msg->getChunk() <<
-//					" issued by client "<< int_msg->getOrigin()<<". its target is "<<int_msg->getTarget()<<
-//					". Serial no="<<int_msg->getSerialNumber()<<
-//					". old PIT string = "<<old_PIT_string<<
-//					". new PIT string is now "<< (PIT[int_msg->getChunk()].interfaces)<<
-//					". Will I forward interest? "<< i_will_forward_interest;
-//			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-
-//		}
-
 		check_if_correct(__LINE__);
 		#endif
 		//</aa>
-
-
     }
     
     //<aa>
@@ -418,38 +406,6 @@ void core_layer::handle_interest(ccn_interest *int_msg){
     #endif
     //</aa>
 }
-
-
-//<aa>
-#ifdef SEVERE_DEBUG
-vector<int> core_layer::get_interfaces_in_PIT(chunk_t chunk)
-{
-	std::stringstream ermsg; 
-	ermsg<<"get_interfaces_in_PIT(..) does not work properly. Fix it before using it";
-	severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-
-	vector<int> interface_vector;
-    unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
-    interface_t interfaces = 0;
-
-    if ( pitIt != PIT.end() )
-	{
-		interfaces = (pitIt->second).interfaces;//get interface list
-		int i = 0;
-		while (interfaces)
-		{
-			if ( interfaces & 1 ){
-				interface_vector.push_back(i);
-			}
-			i++;
-			interfaces >>= 1;
-		}
-	}
-
-	return interface_vector;
-}
-#endif
-//</aa>
 
 
 /*
@@ -479,9 +435,12 @@ void core_layer::handle_data(ccn_data *data_msg)
 		ContentStore->store(data_msg);
 		interfaces = (pitIt->second).interfaces;//get interface list
 		i = 0;
+		printf("CANCELLLLAAAA: interfaces %lX\n",interfaces);
 		while (interfaces){
 			if ( interfaces & 1 ){
-				send(data_msg->dup(), "face$o", i ); //follow bread crumbs back
+				//<aa> I transformed send in send_data</aa>
+				send_data(data_msg->dup(), "face$o", i,__LINE__ ); //follow bread crumbs back
+
 				//<aa>
 				#ifdef SEVERE_DEBUG
 					copies_sent++;
@@ -504,14 +463,6 @@ void core_layer::handle_data(ccn_data *data_msg)
 	//<aa>
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
-
-//	if (	data_msg->getChunk()==2)
-//	{
-//		std::stringstream msg; 
-//		msg<<"I am node "<< getIndex()<<". I received chunk "<<data_msg->getChunk()<<
-//			" and I sent back "<<copies_sent<<" copies";
-//		debug_message(__FILE__, __LINE__, msg.str().c_str() );
-//	}
 	#endif
 	//</aa>
 }
@@ -549,25 +500,6 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 		){
 			sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
 			interest_has_been_forwarded = true;
-
-			//<aa>
-//			#ifdef SEVERE_DEBUG
-//				int next_hop_node = 
-//					getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
-
-//				if (	interest->getChunk()==2 && interest->getOrigin()==5
-//						//&& interest->getSerialNumber()==2854
-//				){
-//					std::stringstream msg; 
-//					msg<<"I am node "<< getIndex()<<". I sent the interest "<< interest->getSerialNumber()
-//						<<" for chunk "<<interest->getChunk() <<" issued by client "<<interest->getOrigin()
-//						<<" to the node "<<next_hop_node<< " through interface "<<i;;
-//					debug_message(__FILE__, __LINE__, msg.str().c_str() );
-//				}
-//			#endif
-			//</aa>
-
-
 		}
 	}
 	//<aa>
@@ -693,7 +625,24 @@ void core_layer::check_if_correct(int line)
 						". The sum of "<< "decision_yes + decision_no + unsolicited_data must be data";
 					severe_error(__FILE__,line,ermsg.str().c_str() );
 	}
-}
+
+	cout << "REMOOOOVE THIS CHEEEEEEEECK "<<endl;
+	for (boost::unordered_map <chunk_t, pit_entry >::iterator it = PIT.begin(); 
+			it != PIT.end(); ++it)
+	{
+		interface_t interfaces = (it->second).interfaces;
+		if ( interfaces > pow(2,gateSize("face$o")-1) )
+		{
+				printf("ATTTENZIONE interfaces %lX\n", interfaces);
+				std::stringstream ermsg; 
+				ermsg<<"I am node "<<getIndex()<<", interfaces="<<interfaces <<
+					" while the number of ports is "<<
+					gateSize("face$o")<<" and the max number that I should observe is "<<
+					pow(2,gateSize("face$o")-1);
+				severe_error(__FILE__,line,ermsg.str().c_str() );
+		}
+	}
+} //end of check_if_correct(..)
 #endif
 //</aa>
 
@@ -713,8 +662,95 @@ double core_layer::get_repo_price()
 	return repo_price;
 }
 
-//void core_layer::set_repo_price(double price)
-//{
-//	repo_price = price;
-//}
+void core_layer::add_to_pit(chunk_t chunk, int gateindex)
+{
+	#ifdef SEVERE_DEBUG
+	check_if_correct(__LINE__);
+
+	if (gateindex > gateSize("face$o")-1 )
+	{
+		std::stringstream msg;
+		msg<<"You are inserting a pit entry related to interface "<<gateindex<<
+			". But the number of ports is "<<gateSize("face$o");
+		severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
+
+	if (gateindex > (int) sizeof(interface_t)*8-1 )
+	{
+		std::stringstream msg;
+		msg<<"You are inserting a pit entry related to interface "<<gateindex<<
+			". But the maximum interface "
+			<<"number manageable by ccnsim is "<<sizeof(interface_t)*8-1 <<" beacause the type of "
+			<<"interface_t is of size "<<sizeof(interface_t)<<". You can change the definition of "
+			<<"interface_t (in ccnsim.h) to solve this issue and recompile";
+		severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
+	#endif	
+	__sface( PIT[chunk].interfaces , gateindex );
+
+	#ifdef SEVERE_DEBUG
+	unsigned long long bit_op_result = (interface_t)1 << gateindex;
+	if ( bit_op_result > pow(2,gateSize("face$o")-1) )
+	{
+				printf("ATTTENZIONE bit_op_result %llX\n", bit_op_result);
+				std::stringstream ermsg; 
+				ermsg<<"I am node "<<getIndex()<<", bit_op_result="<<bit_op_result <<
+					" while the number of ports is "<<
+					gateSize("face$o")<<" and the max number that I should observe is "<<
+					pow(2,gateSize("face$o")-1);
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+
+	check_if_correct(__LINE__);
+	#endif
+}
+
+int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, int line_of_the_call)
+{
+	if (gateindex > gateSize("face$o")-1 )
+	{
+		std::stringstream msg;
+		msg<<"I am node "<<getIndex() <<". Line "<<line_of_the_call<<
+			" commands you to send a packet to interface "<<gateindex<<
+			". But the number of ports is "<<gateSize("face$o");
+		severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
+
+	#ifdef SEVERE_DEBUG
+	if ( gateindex > (int) sizeof(interface_t)*8-1 )
+	{
+		std::stringstream msg;
+		msg<<"You are trying to send a packet through the interface gateindex. But the maximum interface "
+			<<"number manageable by ccnsim is "<<sizeof(interface_t)*8-1 <<" beacause the type of "
+			<<"interface_t is of size "<<sizeof(interface_t)<<". You can change the definition of "
+			<<"interface_t (in ccnsim.h) to solve this issue and recompile";
+		severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
+
+	client* c = __get_attached_client(gateindex);
+	if (c)
+	{	//There is a client attached to that port
+		if ( !c->is_waiting_for( msg->get_name() ) )
+		{
+			std::stringstream msg; 
+			msg<<"I am node "<< getIndex()<<". I am sending a data to the attached client that is not "<<
+				" waiting for it. This is not necessarily an error, as this data could have been "
+				<<" requested by the client and the client could have retrieved it before and now"
+				<<" it may be fine and not wanting the data anymore. If it is the case, "<<
+				"ignore this message ";
+			debug_message(__FILE__, __LINE__, msg.str().c_str() );
+		}
+
+		if ( !c->is_active() )
+		{
+			std::stringstream msg; 
+			msg<<"I am node "<< getIndex()<<". I am sending a data to the attached client "<<
+				", that is not active, "<<
+				" through port "<<gateindex<<". This was commanded in line "<< line_of_the_call;
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+		}
+	}
+	#endif
+	return send (msg, gatename, gateindex);
+}
 //</aa>

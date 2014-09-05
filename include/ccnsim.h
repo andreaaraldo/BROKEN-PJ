@@ -39,7 +39,7 @@ typedef unsigned short filesize_t; //representation for the size part within the
 //</aa>
 typedef unsigned short repo_t; //representation for the repository part within the catalog entry
 
-typedef unsigned int interface_t; //representation of a PIT entry (containing interface information)
+typedef unsigned long interface_t; //representation of a PIT entry (containing interface information)
 
 //Chunk fields
 typedef unsigned long long  chunk_t; //representation for any chunk flying within the system. It represents a pair [name|number]
@@ -64,13 +64,25 @@ class abstract_node: public cSimpleModule{
 	bool __check_client(int interface){
 	    client *c;
 	    bool check= false;
-	    c = dynamic_cast<client *>(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
+	    c = dynamic_cast<client *>
+			(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
 	    if (c)
-		check=true;
+			check=true;
 	    return check;
 	}
 
-	virtual int getIndex(){
+	//<aa>	If there is a client attached to the specified interface, it will be returned. 
+	//		Otherwise a null pointer will be returned
+	client* __get_attached_client(int interface)
+	{
+	    client *c = dynamic_cast<client *>
+			(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
+	    return c;
+	}
+	//</aa>
+
+	virtual int getIndex()
+	{
 	    return getParentModule()->getIndex();
 	}
 
@@ -138,9 +150,9 @@ inline chunk_t next_chunk (chunk_t c){
 //<aa>	This field is f, a bit string that contains a 1 in the i-th place
 // if the i-th is set </aa>
 //
-#define __sface(f,b)  ( f = f | (1<<b)  ) //Set the b-th bit
-#define __uface(f,b)  ( f = f & ~(1<<b) ) //Unset the b-th bit
-#define __face(f,b)   ( f & (1<<b) ) //Check the b-th bit
+#define __sface(f,b)  ( f = f | ((interface_t)1 << b ) ) //Set the b-th bit
+#define __uface(f,b)  ( f = f & ~((interface_t)1<<b) ) //Unset the b-th bit
+#define __face(f,b)   ( f & ((interface_t)1<<b) ) //Check the b-th bit
 //
 //
 //

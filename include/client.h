@@ -63,7 +63,25 @@ struct client_stat_entry{
 
 
 class client : public cSimpleModule {
-    friend class statistics;
+	//<aa>
+	public:
+		double get_avg_distance();
+		double get_tot_downloads();
+		simtime_t get_avg_time();
+		unsigned int get_interests_sent();
+		bool is_active();
+		void clear_stat(); //<aa> I moved this function to public</aa>
+		int  getNodeIndex(); //<aa> I moved it to public</aa>
+
+		//<aa>
+		#ifdef SEVERE_DEBUG
+		// Returns true iff the content is among the current_downloads
+		bool is_waiting_for (name_t content);
+		#endif
+		//</aa>
+
+	//</aa>
+    //friend class statistics; //<aa> I deactivated this line</aa>
     protected:
 		virtual void initialize();
 		virtual void handleMessage(cMessage *);
@@ -75,9 +93,6 @@ class client : public cSimpleModule {
 
 		void send_interest(name_t, cnumber_t, int);
 		void resend_interest(name_t,cnumber_t,int);
-
-		int  getNodeIndex();
-		void clear_stat();
 
 
     private:

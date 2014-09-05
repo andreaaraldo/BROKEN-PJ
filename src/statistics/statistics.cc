@@ -278,12 +278,12 @@ void statistics::finish(){
     recordScalar(name,global_data * 1./num_nodes);
 
     for (int i = 0;i<num_clients;i++){
-		global_avg_distance += clients[i]->avg_distance;
-		global_tot_downloads += clients[i]->tot_downloads;
-		global_avg_time  += clients[i]->avg_time;
+		global_avg_distance += clients[i]->get_avg_distance();
+		global_tot_downloads += clients[i]->get_tot_downloads();
+		global_avg_time  += clients[i]->get_avg_time();
 		//<aa>
 		#ifdef SEVERE_DEBUG
-		global_interests_sent += clients[i]->interests_sent;
+		global_interests_sent += clients[i]->get_interests_sent();
 		#endif
 		//</aa>
 
@@ -354,7 +354,7 @@ void statistics::finish(){
 void statistics::clear_stat()
 {
     for (int i = 0;i<num_clients;i++)
-	if (clients[i]->active)
+	if (clients[i]->is_active() )
 	    clients[i]->clear_stat();
 
     for (int i = 0;i<num_nodes;i++)

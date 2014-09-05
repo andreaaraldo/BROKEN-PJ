@@ -76,10 +76,8 @@ class core_layer : public abstract_node{
 		//<aa> See ned file
 		bool interest_aggregation;
 		bool transparent_to_hops;
-		//</aa>
-
-		//<aa>
 		double repo_price; //the price of the attached repository.
+		void add_to_pit(chunk_t chunk, int gate);
 		//</aa>
 
 		//Custom functions
@@ -92,6 +90,7 @@ class core_layer : public abstract_node{
 		bool check_ownership(vector<int>);
 		ccn_data *compose_data(uint64_t);	
 		void clear_stat();
+
 
     private:
 		unsigned long max_pit;
@@ -124,7 +123,9 @@ class core_layer : public abstract_node{
 		int unsatisfied_interests;	//number of interests for contents that are neither
 									//in the cache nor in the repository of this node	
 		int interests_satisfied_by_cache;
+
 		#endif
+		int	send_data (ccn_data* msg, const char *gatename, int gateindex, int line_of_the_call);
 		//</aa>
 };
 #endif
