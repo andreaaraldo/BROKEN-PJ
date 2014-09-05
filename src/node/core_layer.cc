@@ -633,12 +633,14 @@ void core_layer::check_if_correct(int line)
 		interface_t interfaces = (it->second).interfaces;
 		if ( interfaces > pow(2,gateSize("face$o")-1) )
 		{
-				printf("ATTTENZIONE interfaces %lX\n", interfaces);
+				printf("ATTTENZIONE interfaces 0x%X\n", interfaces);
+				printf("ATTTENZIONE interfaces %lu\n", interfaces);
 				std::stringstream ermsg; 
 				ermsg<<"I am node "<<getIndex()<<", interfaces="<<interfaces <<
 					" while the number of ports is "<<
 					gateSize("face$o")<<" and the max number that I should observe is "<<
-					pow(2,gateSize("face$o")-1);
+					pow(2,gateSize("face$o")-1)<<
+					". sizeof(interface_t)="<<sizeof(interface_t);
 				severe_error(__FILE__,line,ermsg.str().c_str() );
 		}
 	}
