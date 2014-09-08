@@ -384,7 +384,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 			ermsg<<"Trying to add to the PIT an interface where a deactivated client is attached";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
-		cout <<"iface "<<int_msg->getArrivalGate()->getIndex()<<endl;
 		#endif
 		//</aa>
 
@@ -435,7 +434,6 @@ void core_layer::handle_data(ccn_data *data_msg)
 		ContentStore->store(data_msg);
 		interfaces = (pitIt->second).interfaces;//get interface list
 		i = 0;
-		printf("CANCELLLLAAAA: interfaces %lX\n",interfaces);
 		while (interfaces){
 			if ( interfaces & 1 ){
 				//<aa> I transformed send in send_data</aa>
@@ -625,25 +623,6 @@ void core_layer::check_if_correct(int line)
 						". The sum of "<< "decision_yes + decision_no + unsolicited_data must be data";
 					severe_error(__FILE__,line,ermsg.str().c_str() );
 	}
-
-	cout << "REMOOOOVE THIS CHEEEEEEEECK "<<endl;
-	for (boost::unordered_map <chunk_t, pit_entry >::iterator it = PIT.begin(); 
-			it != PIT.end(); ++it)
-	{
-		interface_t interfaces = (it->second).interfaces;
-		if ( interfaces > pow(2,gateSize("face$o") ) -1 )
-		{
-				printf("ATTTENZIONE interfaces 0x%lX\n", interfaces);
-				printf("ATTTENZIONE interfaces %lu\n", interfaces);
-				std::stringstream ermsg; 
-				ermsg<<"I am node "<<getIndex()<<", interfaces="<<interfaces <<
-					" while the number of ports is "<<
-					gateSize("face$o")<<" and the max number that I should observe is "<<
-					pow(2,gateSize("face$o")-1)<<
-					". sizeof(interface_t)="<<sizeof(interface_t);
-				severe_error(__FILE__,line,ermsg.str().c_str() );
-		}
-	}
 } //end of check_if_correct(..)
 #endif
 //</aa>
@@ -689,17 +668,9 @@ void core_layer::add_to_pit(chunk_t chunk, int gateindex)
 	}
 	#endif	
 
-	printf("\n\n\n\nREMOVE IT: Before __sface 0x%lX\n",PIT[chunk].interfaces);
 	__sface( PIT[chunk].interfaces , gateindex );
-	printf("REMOVE IT: After adding port %d: 0x%lX\n\n\n",gateindex,PIT[chunk].interfaces);
 
 	#ifdef SEVERE_DEBUG
-
-				std::stringstream ermsg;
-				ermsg<< ". ( (interface_t) 1<<33)="<< ( (interface_t) 1<<33);
-				ermsg<< ". ( 1<<33)="<< ( 1<<33);
-				debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-
 
 	unsigned long long bit_op_result = (interface_t)1 << gateindex;
 	if ( bit_op_result > pow(2,gateSize("face$o")-1) )
