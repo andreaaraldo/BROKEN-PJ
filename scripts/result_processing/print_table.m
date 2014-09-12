@@ -45,7 +45,7 @@ function y = print_table (out_filename, matrix, x_variable_column, column_names,
 	if (outfile < 0)
 		out_filename
 		msg
-		error(["Error writing file "]);
+		error(["Error writing file. Check if the containing directory exists "]);
 	endif
 	% }CHECK
 
