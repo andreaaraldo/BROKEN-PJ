@@ -333,11 +333,12 @@ void client::handle_incoming_chunk (ccn_data *data_message)
     // File statistics. Doing statistics for all files would be tremendously
     // slow for huge catalog size, and at the same time quite useless
     // (statistics for the 12345234th file are not so meaningful at all)
+	// <aa> Therefore, we compute statistics only for the most popular files </aa>
     if (name <= __file_bulk){
 
         client_stats[name].avg_distance = 
-				(client_stats[name].tot_chunks*avg_distance+data_message->getHops())/
-				(client_stats[name].tot_chunks+1);
+				( client_stats[name].tot_chunks*client_stats[name].avg_distance+data_message->getHops() )/
+				( client_stats[name].tot_chunks+1 );
         client_stats[name].tot_chunks++;
         client_stats[name].tot_downloads+=1./size;
 
@@ -367,7 +368,7 @@ void client::handle_incoming_chunk (ccn_data *data_message)
             }else{ 
 	        	//if the file is completed delete the entry from the pendent file list
 				simtime_t completion_time = simTime()-it->second.start;
-				avg_time = (tot_chunks*avg_time+completion_time )*1./(tot_chunks+1);
+				avg_time = (tot_chunks * avg_time + completion_time ) * 1./( tot_chunks+1 );
 		    	if (current_downloads.count(name)==1)
 				{
 		    	    current_downloads.erase(name);

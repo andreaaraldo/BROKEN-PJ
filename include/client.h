@@ -49,12 +49,12 @@ struct download {
     download (double m = 0,simtime_t t = 0):chunk(m),start(t),last(t){;}
 };
 
-//Each of these entries contains information about statistics for each single file
+//Each of these entries contains statistics for each single file
 struct client_stat_entry{
     double avg_distance;
     simtime_t avg_time;
     double tot_downloads;//double type due to the chunkization in CCN. See below.
-    unsigned int tot_chunks;
+    unsigned int tot_chunks; //<aa> The number of chunks downloaded so far </aa>
 
     client_stat_entry():avg_distance(0),avg_time(0),tot_downloads(0),tot_chunks(0){;}
 

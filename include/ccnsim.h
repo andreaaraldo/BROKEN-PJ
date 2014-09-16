@@ -138,6 +138,13 @@ inline chunk_t next_chunk (chunk_t c){
 #define __ssize(f,s) ( __info(f) = (__info(f) & ~SIZE_MSK ) | s << SIZE_OFFSET )
 #define __srepo(f,r) ( __info(f) = (__info(f) & ~REPO_MSK ) | r << REPO_OFFSET )
 
+//<aa>
+// File statistics. Doing statistics for all files would be tremendously
+// slow for huge catalog size, and at the same time quite useless
+// (statistics for the 12345234th file are not so meaningful at all)
+// Therefore, we compute statistics only for the first __file_bulk files
+// (see client.cc)
+// </aa>
 #define __file_bulk (content_distribution::perfile_bulk + 1)
 
 

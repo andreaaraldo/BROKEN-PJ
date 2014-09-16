@@ -34,7 +34,10 @@ class zipf_distribution{
 		zipf_distribution(double a, double p, int n):alpha(a),q(p),F(n){;};
 		zipf_distribution(){zipf_distribution(0,0);}
 		void zipf_initialize();
-		unsigned int value (double);
+
+		//<aa> 	Return the index of the content y such that the the sum of the 
+		//		probabilities of contents from 0 to y is p </aa>
+		unsigned int value (double p);
 
 		//<aa>
 		double get_normalization_constant();

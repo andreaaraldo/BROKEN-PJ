@@ -84,18 +84,17 @@ unsigned int zipf_distribution::value(double p){
 
     //binary search to find the nearest value y whose cdf is x
     while (1){
-	atry = floor((lower+upper+1)/2);
+		atry = floor((lower+upper+1)/2);
 
-	if (last_try == atry)
-	    break;
+		if (last_try == atry)
+			break;
 
-	if (cdfZipf[atry] >= p)
-	    upper=atry;
-	else
-	    lower = atry-1;
+		if (cdfZipf[atry] >= p)
+			upper=atry;
+		else
+			lower = atry-1;
 
-	last_try = atry;
-
+		last_try = atry;
     }
 
     return upper;
