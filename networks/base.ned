@@ -22,7 +22,7 @@ network base_network {
 		string node_clients = default("");
 
 		//<aa>
-		string content_distribution_type;
+		string content_distribution_type = default("content_distribution");
 		//</aa>
 
     submodules:

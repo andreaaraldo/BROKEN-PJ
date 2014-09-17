@@ -282,10 +282,10 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
     interest->setChunk(chunk);
     interest->setHops(-1);
     interest->setTarget(toward);
-	interest->setSerialNumber(interests_sent);
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
+	interest->setSerialNumber(interests_sent);
 	interest->setOrigin( getNodeIndex() );
 	interests_sent++;
 	#endif
@@ -431,14 +431,15 @@ double client::get_tot_downloads(){
 simtime_t client::get_avg_time(){
 	return avg_time;
 }
-unsigned int client::get_interests_sent(){
-	return interests_sent;
-}
 bool client::is_active(){
 	return active;
 }
 
 #ifdef SEVERE_DEBUG
+unsigned int client::get_interests_sent(){
+	return interests_sent;
+}
+
 bool client::is_waiting_for(name_t name)
 {
 	multimap<name_t, download>::iterator it = current_downloads.find(name);

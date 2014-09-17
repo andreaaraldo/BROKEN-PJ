@@ -35,8 +35,10 @@ using namespace std;
 
 class WeightedContentDistribution : public content_distribution{
 	public:
+		#ifdef SEVERE_DEBUG
 		WeightedContentDistribution() : initialized(false) {;}
 		// http://stackoverflow.com/a/7863971/2110769
+		#endif
 
 		virtual const vector<double> get_weights();
 		virtual const double get_priceratio();
@@ -55,8 +57,11 @@ class WeightedContentDistribution : public content_distribution{
 		virtual int choose_repos (int object_index);
 		virtual void initialize_repo_popularity();
 		virtual vector<int> binary_strings(int,int);
-		virtual void verify_replica_number();
 		virtual void finalize_total_replica();
+
+		#ifdef SEVERE_DEBUG
+		virtual void verify_replica_number();
+		#endif
 
 
 	private:

@@ -497,7 +497,9 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 			//&& interest->getArrivalGate()->getIndex() != i
 		){
 			sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
+			#ifdef SEVERE_DEBUG
 			interest_has_been_forwarded = true;
+			#endif
 		}
 	}
 	//<aa>

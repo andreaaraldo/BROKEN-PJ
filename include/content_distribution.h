@@ -57,8 +57,11 @@ class content_distribution : public cSimpleModule{
 		virtual int choose_repos(int object_index);
 		virtual void initialize_repo_popularity();
 
-		virtual void verify_replica_number();
 		virtual void finalize_total_replica();
+
+		#ifdef SEVERE_DEBUG
+		virtual void verify_replica_number();
+		#endif
 		//</aa>
 
 		//</aa> I moved the following members from private to protected </aa>

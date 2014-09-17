@@ -6,9 +6,13 @@
 
 
 //<aa>
-// If enabled, overabundant checks will be performed in order to avoid inconsistent
-// state. Enable it when you modify the code.
-#define SEVERE_DEBUG 	
+// If SEVERE_DEBUG is enabled, overabundant checks will be performed in order to avoid inconsistent
+// state. It will slow down the simulation (for example a run of 10 s disabling SEVERE_DEBUG
+// may take 14 s when enabling it), but if you are considerably modifying 
+// ccnSim source code, it is advisable to 
+// enable it for some runs, just to check that there are not erroneous things happening.
+// This does not affect in any way the results.
+#define SEVERE_DEBUG
 
 #define UNDEFINED_VALUE -1
 //</aa>
@@ -92,19 +96,20 @@ class abstract_node: public cSimpleModule{
 //Chunk handling
 //--------------
 //Basically a chunk is a 64-bit integer composed by two parts: the chunk_number, and the chunk id
+//<aa> The first 32 bits indicate the chunk_id, the other 32 bits indicate the chunk_number </aa>
 #define NUMBER_OFFSET   32
 #define ID_OFFSET        0
 
 //Bitmasks
-#define CHUNK_MSK (0xFFFFFFFFUL << NUMBER_OFFSET)
-#define ID_MSK    (0xFFFFFFFFUL << ID_OFFSET )
+#define CHUNK_MSK ( (uint64_t) 0xFFFFFFFFUL << NUMBER_OFFSET)
+#define ID_MSK    ( (uint64_t) 0xFFFFFFFFUL << ID_OFFSET )
 
 //Macros
 #define __chunk(h) ( ( h & CHUNK_MSK )  >> NUMBER_OFFSET )// get chunk number
 #define __id(h)    ( ( h & ID_MSK )     >> ID_OFFSET) //get chunk id
 
-#define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (unsigned long long ) c  << NUMBER_OFFSET)) //set chunk number
-#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (unsigned long long ) id << ID_OFFSET)) //set chunk id
+#define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (uint64_t ) c  << NUMBER_OFFSET)) //set chunk number
+#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (uint64_t ) id << ID_OFFSET)) //set chunk id
 
 inline chunk_t next_chunk (chunk_t c){
 

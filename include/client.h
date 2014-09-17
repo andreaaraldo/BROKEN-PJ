@@ -68,7 +68,6 @@ class client : public cSimpleModule {
 		double get_avg_distance();
 		double get_tot_downloads();
 		simtime_t get_avg_time();
-		unsigned int get_interests_sent();
 		bool is_active();
 		void clear_stat(); //<aa> I moved this function to public</aa>
 		int  getNodeIndex(); //<aa> I moved it to public</aa>
@@ -77,6 +76,7 @@ class client : public cSimpleModule {
 		#ifdef SEVERE_DEBUG
 		// Returns true iff the content is among the current_downloads
 		bool is_waiting_for (name_t content);
+		unsigned int get_interests_sent();
 		#endif
 		//</aa>
 
