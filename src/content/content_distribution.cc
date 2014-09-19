@@ -63,7 +63,7 @@ void content_distribution::initialize(){
     q = par ("q");
     cardF = par("objects"); //Number of files within the system
     F = par("file_size"); //Average chunk size
-    degree = getAncestorPar("replicas");
+    replicas = getAncestorPar("replicas");
 
 	//<aa>
 	// CHECK_INPUT{
@@ -152,12 +152,12 @@ void content_distribution::initialize_repo_popularity()
 //<aa>
 void content_distribution::finalize_total_replica(){
 
-	*total_replicas_p = cardF*degree;
+	*total_replicas_p = cardF*replicas;
 }
 
 #ifdef SEVERE_DEBUG
 void content_distribution::verify_replica_number(){
-	if (*total_replicas_p != cardF*degree)
+	if (*total_replicas_p != cardF*replicas)
 	{
         std::stringstream ermsg; 
 		ermsg<<"Ctlg size="<< cardF <<". total_replica="<<*total_replicas_p;
@@ -225,9 +225,9 @@ int content_distribution::choose_repos (int object_index ){
 												// Number of bits set to 1 (corresponding 
 												// to the number of repositories this object was 
 												// assigned to)
-	if (num_1_bits != degree){
+	if (num_1_bits != replicas){
 		std::stringstream ermsg; 
-		ermsg<<"an object has been assigned to "<< num_1_bits <<" repos while degree="<<degree;
+		ermsg<<"an object has been assigned to "<< num_1_bits <<" repos while replicas="<<replicas;
 	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
 
@@ -248,12 +248,13 @@ void content_distribution::init_content()
 
     //As the repositories are represented as a string of bits, the function
     //binary_string is used for generating binary strings of length num_repos
-    //with exactly degree ones
-	//<aa> where degree is the number of replicas. Each string represents a replica
+    //with exactly replicas ones
+	//<aa> where "replicas" is the number of replicas for each object. Each string 
+	// represents a replica
 	// placement of a certain object among the repositories. Given a single string, 
 	// a 1 in the i-th position means that a replica of that object is placed in the 
 	// i-th repository </aa>
-    repo_strings = binary_strings(degree, num_repos);
+    repo_strings = binary_strings(replicas, num_repos);
 
 	//<aa>cardF indicates how many objects there are into the catalog</aa>
     for (int d = 1; d <= cardF; d++)
@@ -400,7 +401,8 @@ int *content_distribution::init_repos(vector<int> node_repos){
 double *content_distribution::init_repo_prices()
 {
 	double *repo_prices = new double[num_repos];
-	// <aa> Construct repo_prices array. repo_prices[i] will be the price of the i-th 		//		repository </aa>
+	// <aa> Construct repo_prices array. repo_prices[i] will be the price of the i-th 		
+	//		repository </aa>
 	for (int i=0; i<num_repos; i++)
 		repo_prices[i] = 0;
     
@@ -471,27 +473,3 @@ int *content_distribution::init_clients(vector<int> node_clients){
     return clients;
 
 }
-
-/**
-
-	//<aa>
-	//Input check
-	{
-        std::stringstream ermsg; 
-		if ( catalog_weights.size() != len ){
-			ermsg<<"found "<< catalog_weights.size() <<"catalog_weights, "
-				<<"while len is "<len;
-		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-
-		for (unsigned i = 0; i<catalog_weights.size(); i++)
-			if ( catalog_weights[i] < 0 or catalog_weights[i] > 1){
-				ermsg<<"The "<< i <<"-th catalog weight is "<< catalog_weights[i];
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}				
-	}
-	//</aa>
-
-
-
-**/

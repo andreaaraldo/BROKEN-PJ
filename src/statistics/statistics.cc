@@ -236,6 +236,8 @@ void statistics::finish(){
 			//TODO: do not always compute cost. Do it only when you want to evaluate the cost in your
 			// network
 			total_cost += cores[i]->repo_load * cores[i]->get_repo_price();
+			cout << "REMOVE THIS LINE: total_cost="<< total_cost <<
+				"cores[i]->get_repo_price()="<< cores[i]->get_repo_price() << endl;
 
 		if (cores[i]->interests){
 			//Check if the given node got involved within the interest/data process
@@ -363,12 +365,6 @@ void statistics::clear_stat()
 
     for (int i = 0;i<num_nodes;i++)
 	    caches[i]->clear_stat();
-
-	#ifdef SEVERE_DEBUG
-		std::stringstream ermsg; 
-		ermsg<<"Clearing stats of "<<icn_channels.size()<<" icn channels"<<endl;
-		debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-	#endif
 }
 
 void statistics::stability_has_been_reached(){

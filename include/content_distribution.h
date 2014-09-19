@@ -66,7 +66,7 @@ class content_distribution : public cSimpleModule{
 
 		//</aa> I moved the following members from private to protected </aa>
 		virtual vector<int> binary_strings(int,int);
-		int degree; // <aa> The number of replicas for each object</aa>
+		int replicas; // <aa> The number of replicas for each object. If set to -1, the value will be ignored</aa>
 		int num_repos;
 		int cardF;
 

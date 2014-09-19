@@ -31,15 +31,9 @@
 
 #include "fix_policy.h"
 //<aa>
-#include "tailandrank_policy.h"
-#include "costprobprodcorr_policy.h"
-#include "costprobprodplain_policy.h"
-#include "costprobcoincorr_policy.h"
-#include "costprobcoinplain_policy.h"
-#include "costprobtailperf_policy.h"
-#include "costprobtailcons_policy.h"
-#include "costprobtailimperf_policy.h"
-#include "costprobtailsmart_policy.h"
+#include "ideal_blind_policy.h"
+#include "costaware_policy.h"
+#include "ideal_costaware_policy.h"
 #include "error_handling.h"
 //</aa>
 #include "lcd_policy.h"
@@ -63,99 +57,80 @@ void base_cache::initialize(){
 	decisor = NULL;
 
     string decision_policy = par("DS");
+
     //Initialize the storage policy
+	double target_acceptance_ratio;
+	string target_acceptance_ratio_string;
+
     if (decision_policy.compare("lcd")==0){
 		decisor = new LCD();
     } else if (decision_policy.find("fix")==0){
-		string sp = decision_policy.substr(3);
-		double dp = atof(sp.c_str());
-		decisor = new Fix(dp);
+		target_acceptance_ratio_string = decision_policy.substr(3);
+		target_acceptance_ratio = atof( target_acceptance_ratio_string.c_str() );
+		decisor = new Fix(target_acceptance_ratio);
     }
 	//<aa>
-	else if (decision_policy.find("tailandrank")==0){
-		decisor = new Tailandrank(this);
-    }
-	else if (decision_policy.find("costprob")==0)
+	else if (decision_policy.find("ideal_blind")==0){
+		decisor = new Ideal_blind(this);
+    } else if (decision_policy.find("ideal_costaware")==0)
 	{
-		double sens;
-		string sens_string;
-		if (decision_policy.find("costprobcoincorr")==0)
-		{
-			sens_string = decision_policy.substr( strlen("costprobcoincorr") );
-			sens = atof(sens_string.c_str());
-			decisor = new Costprobcoincorr(sens);
-
-		} else if (decision_policy.find("costprobcoinplain")==0)
-		{
-			sens_string = decision_policy.substr( strlen("costprobcoinplain") );
-			sens = atof(sens_string.c_str());
-			decisor = new Costprobcoinplain(sens);
-		} else if (decision_policy.find("costprobprodcorr")==0)
-		{
-			sens_string = decision_policy.substr( strlen("costprobprodcorr") );
-			sens = atof(sens_string.c_str());
-			decisor = new Costprobprodcorr(sens);
-		} else if (decision_policy.find("costprobprodplain")==0)
-		{
-			sens_string = decision_policy.substr( strlen("costprobprodplain") );
-			sens = atof(sens_string.c_str());
-			decisor = new Costprobprodplain(sens);
-		} else if (decision_policy.find("costprobtailsmart")==0)
-		{
-			sens_string = decision_policy.substr( strlen("costprobtailsmart") );
-			sens = atof(sens_string.c_str());
-			decisor = new Costprobtailsmart(sens, this);
-		}else if (decision_policy.find("costprobtailperf")==0)
-		{
-			sens = 0; // I don't need this parameter
-
-					std::stringstream ermsg; 
-					ermsg<<"Are you sure to use costprobtailperf. It has "<<
-						"been proved to be bad. You should prefer costprobtailcons";
-					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-
-			decisor = new Costprobtailperf(sens, this );
-
-		}else if (decision_policy.find("costprobtailcons")==0)
-		{
-			sens = 0; // I don't need this parameter
-			decisor = new Costprobtailcons(sens, this );
-
-		}else if (decision_policy.find("costprobtailimperf")==0)
-		{
-			sens = 0; // I don't need this parameter
-			decisor = new Costprobtailimperf(sens, this );
-		}
-		// CHECK{
-				if (sens <0){
-					std::stringstream ermsg; 
-					ermsg<<"sens "<<sens<<" is not valid. sens_string="<<sens_string<<
-								"; decision_policy="<<decision_policy;
-					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-				}
-		// }CHECK
-
-    }
+		target_acceptance_ratio = 0; // I don't need this parameter
+		decisor = new Ideal_costaware(target_acceptance_ratio, this );
+	} else if (decision_policy.find("costaware")==0)
+	{
+		target_acceptance_ratio_string = decision_policy.substr( strlen("costaware") );
+		target_acceptance_ratio = atof(target_acceptance_ratio_string.c_str());
+		decisor = new Costaware(target_acceptance_ratio);
+	}
 	//</aa>
-	 else if (decision_policy.find("btw")==0){
+	else if (decision_policy.find("btw")==0)
+	{
 		double db = getAncestorPar("betweenness");
 		if (fabs(db - 1)<=0.001)
 			error ("Node %i betwenness not defined.",getIndex());
 		decisor = new Betweenness(db);
-    }else if (decision_policy.find("prob_cache")==0){
+    }else if (decision_policy.find("prob_cache")==0)
+	{
 		decisor = new prob_cache(cache_size);
     } else if (decision_policy.find("never")==0)
+	{
 		decisor = new Never();
+	}
 	//<aa>
     else if (decision_policy.compare("lce")==0 )
+	{
 		decisor = new Always();
+	}
 
 	if (decisor==NULL){
         std::stringstream ermsg; 
 		ermsg<<"Decision policy \""<<decision_policy<<"\" incorrect";
 	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
+
+	// INPUT_CHECK{
+		if ( decision_policy.find("fix")==0 || 
+			( decision_policy.find("costaware")==0 && !decision_policy.find("ideal_costaware")== 0 )
+		){	
+			if ( strlen( target_acceptance_ratio_string.c_str() ) == 0 ){
+				std::stringstream ermsg; 
+				ermsg<<"You forgot to insert a valid value of acceptance rate when "<<
+					"specifying the decision policy. Right examples are fix0.01, costaware0.1";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+
+			if (target_acceptance_ratio <0){
+				std::stringstream ermsg; 
+				ermsg<<"target_acceptance_ratio "<<target_acceptance_ratio<<" is not valid. "<< 				
+						"target_acceptance_ratio_string="<<target_acceptance_ratio_string<<
+						"; decision_policy="<<decision_policy;
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+		}
+	// }INPUT_CHECK
 	//</aa>
+
+
 
 
     //Cache statistics

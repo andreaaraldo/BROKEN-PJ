@@ -6,7 +6,7 @@ simple WeightedContentDistribution extends content_distribution{
     parameters:
 		@class(WeightedContentDistribution);
 		string weights; //weights of the different repositories
-		bool replication_admitted;
+		bool replication_admitted = default(false);
 		double priceratio;
 		double xi;
 }

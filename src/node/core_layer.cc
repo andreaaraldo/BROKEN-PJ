@@ -67,8 +67,9 @@ void  core_layer::initialize(){
 			//<aa>
 			#ifdef SEVERE_DEBUG
 				it_has_a_repo_attached = true;
-				repo_price = content_distribution::repo_prices[i];
 			#endif
+
+			repo_price = content_distribution::repo_prices[i]; 
 			//</aa>
 			break;
 		} else

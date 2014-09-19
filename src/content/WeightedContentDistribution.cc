@@ -66,9 +66,12 @@ void WeightedContentDistribution::initialize()
 
 
 	{// Other checks
-		if ( degree != -1 ){
-			ermsg<<"degree is "<<degree <<". But with this content distribution model "<<
-				"this value is ignored. Please, set degree = -1";
+		if (!replication_admitted && replicas != 1 ){
+			ermsg<<"When you set replication_admitted=false you MUST set replicas=1.";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		} else if (replication_admitted && replicas != -1){
+			ermsg<<"When you set replication_admitted=true The of the parameter \"replicas\" is meaningless. "<<
+				" You must set it to -1";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 
@@ -113,14 +116,12 @@ void WeightedContentDistribution::initialize_repo_popularity()
 // Overwrite content_distribution::init_repo_prices()
 double *WeightedContentDistribution::init_repo_prices()
 {
-	#ifdef SEVERE_DEBUG
-		if (num_repos != 3)
-		{
-		    std::stringstream ermsg; 
-			ermsg<<"num_repos="<<num_repos<<"; while it MUST be 3 ";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-	#endif
+	if (num_repos != 3)
+	{
+	    std::stringstream ermsg; 
+		ermsg<<"num_repos="<<num_repos<<"; while, for the time being, this class works only with 3 repos";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
 
 	double price_permutations[6][3] = { 
 		{0,1,priceratio},
