@@ -236,8 +236,6 @@ void statistics::finish(){
 			//TODO: do not always compute cost. Do it only when you want to evaluate the cost in your
 			// network
 			total_cost += cores[i]->repo_load * cores[i]->get_repo_price();
-			cout << "REMOVE THIS LINE: total_cost="<< total_cost <<
-				"cores[i]->get_repo_price()="<< cores[i]->get_repo_price() << endl;
 
 		if (cores[i]->interests){
 			//Check if the given node got involved within the interest/data process
