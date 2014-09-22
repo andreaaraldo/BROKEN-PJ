@@ -10,7 +10,10 @@ This is ccnSim v0.3
 
 You can freely download ccnSim from the project site: http://www.enst.fr/~drossi/ccnSim .
 
-To install ccnSim, follow the instructions on the manual, Section 1.4 .
+To install ccnSim, follow the instructions on the manual, Section "Downloading and installing ccnSim" .
 
 To run your first simulation
 	./ccnSim -u Cmdenv
+
+
+For more details, please refer to the manual
