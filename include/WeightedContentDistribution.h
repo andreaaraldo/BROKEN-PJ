@@ -42,7 +42,7 @@ class WeightedContentDistribution : public content_distribution{
 
 		virtual const vector<double> get_weights();
 		virtual const double get_priceratio();
-		virtual const double get_xi();
+		virtual const double get_kappa();
 		virtual const double get_alpha();
 		virtual double *init_repo_prices(); //This method ovveride father's one
 
@@ -70,7 +70,7 @@ class WeightedContentDistribution : public content_distribution{
 		double* probabilities; //Probability that an object is assigne to a repo
 		bool replication_admitted;
 		double priceratio;
-		double xi;
+		double kappa;
 		double alpha;
 
 		#ifdef SEVERE_DEBUG

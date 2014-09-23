@@ -33,7 +33,6 @@
 #include "WeightedContentDistribution.h"
 #include "ideal_costaware_parent_policy.h"
 
-// I verified that xi=1 is the best setting
 
 class Ideal_costaware: public Ideal_costaware_parent{
 	public:

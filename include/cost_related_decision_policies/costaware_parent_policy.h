@@ -45,7 +45,7 @@ class Costaware_parent: public Costaware_ancestor{
 			double cost = data_msg->getCost();
 
 
-			if (x < ( (double)  (pow(cost, xi) )* correction_factor) )
+			if (x < ( (double)  (pow(cost, kappa) )* correction_factor) )
 					return true;
 
 			return false;

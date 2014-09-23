@@ -49,9 +49,9 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			Costaware_ancestor(average_decision_ratio_)
 		{
 
-			if (xi>1 || xi<0){
+			if (kappa>1 || kappa<0){
 				std::stringstream ermsg; 
-				ermsg<<"xi="<<xi<<" is not valid";
+				ermsg<<"kappa="<<kappa<<" is not valid";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
 			alpha = content_distribution_module->get_alpha();
@@ -98,9 +98,9 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 					// Inserting this content in the cache would make it better
 					decision = true;
 
-				// a small xi means that we tend to renew the cache often
+				// a small kappa means that we tend to renew the cache often
 
-				else if ( dblrand() < xi )
+				else if ( dblrand() < kappa )
 					decision = false;
 				else
 					decision = true;

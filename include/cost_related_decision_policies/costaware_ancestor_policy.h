@@ -38,9 +38,9 @@ class Costaware_ancestor: public DecisionPolicy{
     protected:
 		double average_decision_ratio;
 		double correction_factor; // An object will be cached with prob correction_factor * cost
-		double xi;
-		double priceratio;
-		vector<double> weights;
+		double kappa; //cost-aware exponent. See [icn14]
+		double priceratio; //See [icn14]
+		vector<double> weights; //It corresponds to the split ratio vector (see [icn14])
 		double last_accepted_content_cost;
 		WeightedContentDistribution* content_distribution_module;
 
@@ -80,7 +80,7 @@ class Costaware_ancestor: public DecisionPolicy{
 			weights = content_distribution_module->get_weights();
 			unsigned num_repos = weights.size();
 			priceratio = content_distribution_module->get_priceratio();
-			xi = content_distribution_module->get_xi();
+			kappa = content_distribution_module->get_kappa();
 			
 			{ //check
 				if (num_repos != 3){
@@ -99,8 +99,8 @@ class Costaware_ancestor: public DecisionPolicy{
 			sprintf ( name, "correction_factor[%d]", nodeIndex);
 			cache_p->recordScalar (name, correction_factor);
 
-			sprintf ( name, "xi[%d]", nodeIndex);
-			cache_p->recordScalar (name, xi);
+			sprintf ( name, "kappa[%d]", nodeIndex);
+			cache_p->recordScalar (name, kappa);
 		};
 
 		virtual double get_last_accepted_content_cost(){
@@ -124,3 +124,5 @@ class Costaware_ancestor: public DecisionPolicy{
 //<//aa>
 #endif
 
+// References
+// [icn14] A. Araldo, D. Rossi, F. Martignon, “Design and Evaluation of Cost-aware Information Centric Routers”, to appear in ACM Conference on Information-Centric Networking (ICN), Paris, 2014 

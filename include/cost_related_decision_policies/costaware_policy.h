@@ -41,7 +41,7 @@ class Costaware: public Costaware_parent{
 		}
 
 		virtual double compute_correction_factor(){
-			return average_decision_ratio / (weights[1] +  weights[2] * pow(priceratio,xi) ) ;
+			return average_decision_ratio / (weights[1] +  weights[2] * pow(priceratio,kappa) ) ;
 		}
 
 };

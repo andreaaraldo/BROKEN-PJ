@@ -38,7 +38,7 @@ void WeightedContentDistribution::initialize()
 	weights = cStringTokenizer(str,"_").asDoubleVector();
 	replication_admitted = par("replication_admitted");
 	priceratio = par("priceratio");
-	xi = par("xi");
+	kappa = par("kappa");
 	alpha = par("alpha");
 
 	unsigned repo_num = weights.size();
@@ -184,7 +184,7 @@ const double WeightedContentDistribution::get_priceratio(){
 	return priceratio;
 }
 
-const double WeightedContentDistribution::get_xi(){
+const double WeightedContentDistribution::get_kappa(){
 	#ifdef SEVERE_DEBUG
 	if (!isInitialized() ){
         std::stringstream ermsg; 
@@ -192,7 +192,7 @@ const double WeightedContentDistribution::get_xi(){
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
 	#endif
-	return xi;
+	return kappa;
 }
 
 const double WeightedContentDistribution::get_alpha(){
