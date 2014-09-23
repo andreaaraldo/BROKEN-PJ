@@ -101,8 +101,8 @@ class abstract_node: public cSimpleModule{
 #define ID_OFFSET        0
 
 //Bitmasks
-#define CHUNK_MSK ( (uint64_t) 0xFFFFFFFFUL << NUMBER_OFFSET)
-#define ID_MSK    ( (uint64_t) 0xFFFFFFFFUL << ID_OFFSET )
+#define CHUNK_MSK ( (uint64_t) 0xFFFFFFFF << NUMBER_OFFSET)
+#define ID_MSK    ( (uint64_t) 0xFFFFFFFF << ID_OFFSET )
 
 //Macros
 #define __chunk(h) ( ( h & CHUNK_MSK )  >> NUMBER_OFFSET )// get chunk number
