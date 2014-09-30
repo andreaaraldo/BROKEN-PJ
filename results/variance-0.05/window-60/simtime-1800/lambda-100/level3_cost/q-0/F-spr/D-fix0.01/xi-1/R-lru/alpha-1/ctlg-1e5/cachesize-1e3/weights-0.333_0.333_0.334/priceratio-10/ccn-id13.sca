@@ -1,5 +1,5 @@
 version 2
-run General-35-20140908-17:37:33-8456
+run General-2-20140930-17:18:16-28924
 attr D fix0.01
 attr F spr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20140908-17:37:33
+attr datetime 20140930-17:18:16
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=level3_cost, $rep=13, $priceratiovalue=10, $weights=0.333_0.333_0.334, $lambda=100, $a=1, $ctlg=1e5, $F=spr, $ttl=10, $D=fix0.01, $xi=1, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
@@ -19,12 +19,12 @@ attr net level3_cost
 attr network networks.${net=level3_cost,tiger_cost,dtelecom_cost}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 8456
+attr processid 28924
 attr rep 13
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 35
+attr runnumber 2
 attr seedset 13
 attr ttl 10
 attr variance 0.05
@@ -69,7 +69,6 @@ scalar level3_cost_network.statistics 	downloads 	539424
 scalar level3_cost_network.statistics 	total_cost 	1181470
 scalar level3_cost_network.statistics 	total_replicas 	100000
 scalar level3_cost_network.statistics 	inner_hit 	0.35264096517767
-scalar level3_cost_network.statistics 	interests_sent 	540268
 scalar level3_cost_network.node[0].core_layer 	interests[0] 	0
 scalar level3_cost_network.node[0].core_layer 	data[0] 	0
 scalar level3_cost_network.node[0].core_layer 	repo_int[0] 	349201
@@ -445,12 +444,9 @@ scalar level3_cost_network.node[45].content_store 	decision_ratio[45] 	0
 scalar level3_cost_network.client[1] 	hdistance[1] 	2.4336145475563
 scalar level3_cost_network.client[1] 	downloads[1] 	179934
 scalar level3_cost_network.client[1] 	avg_time[1] 	0.0512111717
-scalar level3_cost_network.client[1] 	interests_sent[1] 	180318
 scalar level3_cost_network.client[7] 	hdistance[7] 	1.3960583453959
 scalar level3_cost_network.client[7] 	downloads[7] 	179620
 scalar level3_cost_network.client[7] 	avg_time[7] 	0.009306814612
-scalar level3_cost_network.client[7] 	interests_sent[7] 	179778
 scalar level3_cost_network.client[12] 	hdistance[12] 	1.8190137321399
 scalar level3_cost_network.client[12] 	downloads[12] 	179870
 scalar level3_cost_network.client[12] 	avg_time[12] 	0.024066699479
-scalar level3_cost_network.client[12] 	interests_sent[12] 	180172
