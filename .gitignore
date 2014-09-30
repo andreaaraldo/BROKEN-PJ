@@ -8,5 +8,4 @@ ccnSim
 .temp
 packets/*.cc
 packets/*.h
-results/*
 networks/cost_scenario.ned
