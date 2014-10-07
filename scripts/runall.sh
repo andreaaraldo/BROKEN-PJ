@@ -1,6 +1,6 @@
 #!/bin/sh
 main=./ccnSim
-NUM_OF_PROCESSORS=7;
+NUM_OF_PROCESSORS=2;
 
 runs=`$main -x General $1 | awk '/runs/{print $4}'`
 cp ./omnetpp.ini /tmp/ccnsim_output-`date "+%Y-%m-%d_%Hh%M.%S"`.ini
