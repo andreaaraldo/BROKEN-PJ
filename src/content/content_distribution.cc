@@ -94,16 +94,17 @@ void content_distribution::initialize(){
     stabilization_bulk = zipf.value(0.9);
     perfile_bulk = zipf.value(0.5);
 
-
     char name[15];
     //
     //Repositories initialization
     //
     cStringTokenizer tokenizer(getAncestorPar("node_repos"),",");
     repositories = init_repos(tokenizer.asIntVector());
+
 	//<aa>
     repo_prices = init_repo_prices();
 	//</aa>
+
 
     //Useful for statitics: write out the name of each repository within the network
     for (int i = 0; i < num_repos; i++){
@@ -339,14 +340,18 @@ void content_distribution::init_content()
 *					 in node[d]
 * </aa>
 */
-int *content_distribution::init_repos(vector<int> node_repos){
+int *content_distribution::init_repos(vector<int> node_repos)
+{
 
 	//INPUT CHECK{
+		if (num_repos > nodes)
+			error("content_distribution::init_repos(..): You are trying to distribute more repositories than the number of nodes. This is impossible since there can only be one repository for each node");
+
 		if (node_repos.size() > (unsigned) num_repos)
-			error("You are trying to distribute too many repositories.");
+			error("content_distribution::init_repos(..): You are trying to distribute too many repositories.");
 
 		//<aa>
-			for (int i=0; i < node_repos.size(); i++ )
+			for (unsigned i=0; i < node_repos.size(); i++ )
 			{
 				int r = node_repos[i];
 				int max_node_index = nodes - 1;
@@ -362,23 +367,24 @@ int *content_distribution::init_repos(vector<int> node_repos){
 	//}INPUT CHECK
 
 
-	int i = 0;
+	int repo_id = 0;
 	int *repositories = new int[num_repos];
-	// <aa> Construct repositories array. repositories[i] will be the id of the
-	// node which i-th repository is connected to. //</aa>
+	// <aa> Construct repositories array. repositories[repo_id] will be the id of the
+	// node which repo_id-th repository is connected to. //</aa>
 	while (node_repos.size() ){
-			int r = node_repos[i];
+			int r = node_repos[repo_id];
 			node_repos.pop_back();
-			repositories[i++] = r;
+			repositories[repo_id++] = r;
 	}
 
    	//<aa> We already assigned i repositories. Now we randomly assign the rest</aa>
     int new_rep;
-    while ( i < num_repos  )
+    while ( repo_id < num_repos  )
     {
 		new_rep = intrand(nodes);
-		if (find (repositories,repositories + i , new_rep) == repositories + i ){
-			repositories[i++] = new_rep;
+		if (find (repositories,repositories + repo_id , new_rep) == repositories + repo_id )
+		{
+			repositories[repo_id++] = new_rep;
 		}
     }
     
@@ -386,7 +392,7 @@ int *content_distribution::init_repos(vector<int> node_repos){
     #ifdef SEVERE_DEBUG
 		std::stringstream ss;
 		ss<<"The repositories are in the following nodes";
-		for (int j=0; j<i; j++)
+		for (int j=0; j < repo_id; j++)
 			ss<<" "<<repositories[j];
 		ss<<endl;
 		debug_message(__FILE__,__LINE__, ss.str().c_str() );
@@ -434,7 +440,7 @@ int *content_distribution::init_clients(vector<int> node_clients){
 		error("You try to distribute too much clients.");
 
 	//<aa>
-		for (int i=0; i < node_clients.size(); i++ )
+		for (unsigned int i=0; i < node_clients.size(); i++ )
 		{
 			int r = node_clients[i];
 			int max_node_index = nodes - 1;

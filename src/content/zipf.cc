@@ -59,7 +59,7 @@ void zipf_distribution::zipf_initialize(){
     for (vector<double>::iterator it = cdfZipf.begin() + 1; it!=cdfZipf.end();it++)
 	(*it) *= c;
 
-    cout<<"Initialization ends..."<<endl;
+    cout<<"Zipf initialization completed"<<endl;
 
 
 
