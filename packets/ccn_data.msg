@@ -11,9 +11,7 @@ packet ccn_data{
 	chunk_t chunk;
 
 //<aa> The price of the external link this data msg passes through
-	double cost = 0;
-	double costPowered = 0; // This is not the real cost. This value is only
-							// used by the costprob decision policy to take its decision
+	double price = 0;
 //</aa>
 
 

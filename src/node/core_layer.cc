@@ -288,7 +288,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
         ccn_data* data_msg = compose_data(chunk);
 	
 		//<aa>
-		data_msg->setCost(repo_price); 	// I fix in the data msg the cost of the object
+		data_msg->setPrice(repo_price); 	// I fix in the data msg the cost of the object
 										// that is the price of the repository
 		//</aa>
 

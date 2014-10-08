@@ -41,13 +41,13 @@ class Costaware_ancestor: public DecisionPolicy{
 		double kappa; //cost-aware exponent. See [icn14]
 		double priceratio; //See [icn14]
 		vector<double> weights; //It corresponds to the split ratio vector (see [icn14])
-		double last_accepted_content_cost;
+		double last_accepted_content_price;
 		WeightedContentDistribution* content_distribution_module;
 
     public:
 		Costaware_ancestor(double average_decision_ratio_)
 		{
-			last_accepted_content_cost = UNSET_COST;
+			last_accepted_content_price = UNSET_COST;
 			average_decision_ratio = average_decision_ratio_;
 
 		    vector<string> ctype;
@@ -103,20 +103,20 @@ class Costaware_ancestor: public DecisionPolicy{
 			cache_p->recordScalar (name, kappa);
 		};
 
-		virtual double get_last_accepted_content_cost(){
+		virtual double get_last_accepted_content_price(){
 			#ifdef SEVERE_DEBUG
-			if (last_accepted_content_cost == UNSET_COST){
+			if (last_accepted_content_price == UNSET_COST){
 					std::stringstream msg; 
-					msg<<"last_accepted_content_cost has nevere been set";
+					msg<<"last_accepted_content_price has nevere been set";
 					severe_error(__FILE__, __LINE__, msg.str().c_str() );
 			}
 			#endif
 
-			return last_accepted_content_cost;
+			return last_accepted_content_price;
 		};
 
-		virtual void set_last_accepted_content_cost(ccn_data * data_msg){
-			last_accepted_content_cost = data_msg->getCost();
+		virtual void set_last_accepted_content_price(ccn_data * data_msg){
+			last_accepted_content_price = data_msg->getPrice();
 		}
 
 		virtual double compute_correction_factor()=0; // This is an abstract class

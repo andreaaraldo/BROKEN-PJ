@@ -42,10 +42,21 @@ class Costaware_parent: public Costaware_ancestor{
 		{
  	
 			double x = dblrand();
-			double cost = data_msg->getCost();
+			double price = data_msg->getPrice();
+			double acceptance_probability = (double)  (pow(price, kappa) )* correction_factor;
+
+			#ifdef SEVERE_DEBUG
+			if ( acceptance_probability >= 1 ){
+				std::stringstream msg; 
+				msg<<"The probability to accept the object whose price is "<< price <<" is "<<
+					acceptance_probability << ". It is too high. It may be an error. If you are sure "<<
+					"that it is not, disable this error message";
+				severe_error(__FILE__, __LINE__, msg.str().c_str() );
+			}
+			#endif
 
 
-			if (x < ( (double)  (pow(cost, kappa) )* correction_factor) )
+			if (x < acceptance_probability )
 					return true;
 
 			return false;

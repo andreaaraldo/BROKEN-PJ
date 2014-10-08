@@ -80,7 +80,7 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			#endif
 
 			chunk_t content_index = data_msg->getChunk();
-			double cost = data_msg->getCost();
+			double cost = data_msg->getPrice();
 
 			if (! mycache->full() )
 				decision = decide_with_cache_not_full(content_index, cost);
@@ -107,7 +107,7 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			}
 
 			if (decision == true)
-				set_last_accepted_content_cost(data_msg );
+				set_last_accepted_content_price(data_msg );
 
 			return decision;
 		};
@@ -120,9 +120,9 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 		{
 			DecisionPolicy::after_insertion_action();
 			#ifdef SEVERE_DEBUG
-			if ( get_last_accepted_content_cost() == UNSET_COST ){
+			if ( get_last_accepted_content_price() == UNSET_COST ){
 				std::stringstream ermsg; 
-				ermsg<<"cost_of_the_last_accepted_element="<<get_last_accepted_content_cost() <<
+				ermsg<<"cost_of_the_last_accepted_element="<<get_last_accepted_content_price() <<
 					", while it MUST NOT be a negative number. Something goes wrong with the "<<
 					"initialization of this attribute";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
@@ -131,12 +131,12 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			#endif
 
 			// Annotate the cost of the last inserted element
-			mycache->get_mru()->cost = get_last_accepted_content_cost();
+			mycache->get_mru()->cost = get_last_accepted_content_price();
 
 			#ifdef SEVERE_DEBUG
 			// Unset this field to check if it is set again at the appropriate time
 			// without erroneously use an old value
-			last_accepted_content_cost = UNSET_COST;
+			last_accepted_content_price = UNSET_COST;
 			#endif
 			
 		}
