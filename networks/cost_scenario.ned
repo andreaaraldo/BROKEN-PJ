@@ -26,7 +26,7 @@ network cost_scenario_network extends base_network
 		content_distribution_type = "WeightedContentDistribution";
 		content_distribution.priceratio = priceratio;
 		content_distribution.kappa = 1;  // Costaware exponent (see costaware_policy.h)
-		content_distribution.weights = "0.333_0.333_0.334"; 	// The probability that an object is 
+		// content_distribution.weights = "0.333_0.333_0.334"; 	// The probability that an object is 
 															// contained in the free, cheap or expensive
 															// repository, respectively
 		double cheap_price = 1;
