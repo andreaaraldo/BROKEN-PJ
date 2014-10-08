@@ -1,5 +1,5 @@
 version 2
-run General-0-20141008-10:44:28-9749
+run General-3-20141008-10:44:28-9752
 attr D costaware0.01
 attr F nrr
 attr R lru
@@ -10,27 +10,27 @@ attr ctlg 1e5
 attr datetime 20141008-10:44:28
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=cost_scenario, $rep=1, $priceratiovalue=10, $weights=0.5_0.25_0.25, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $xi=0.01, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
-attr iterationvars2 "$net=cost_scenario, $rep=1, $priceratiovalue=10, $weights=0.5_0.25_0.25, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $xi=0.01, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
+attr iterationvars "$net=cost_scenario, $rep=1, $priceratiovalue=10, $weights=0.5_0.25_0.25, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $xi=0.075, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr iterationvars2 "$net=cost_scenario, $rep=1, $priceratiovalue=10, $weights=0.5_0.25_0.25, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $xi=0.075, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
 attr lambda 100
-attr measurement "$net=cost_scenario, $rep=1, $priceratiovalue=10, $weights=0.5_0.25_0.25, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $xi=0.01, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
+attr measurement "$net=cost_scenario, $rep=1, $priceratiovalue=10, $weights=0.5_0.25_0.25, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $xi=0.075, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
 attr mytime 1800
 attr net cost_scenario
 attr network networks.${net=cost_scenario}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 9749
+attr processid 9752
 attr rep 1
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 0
+attr runnumber 3
 attr seedset 1
 attr ttl 10
 attr variance 0.05
 attr weights 0.5_0.25_0.25
 attr window 60
-attr xi 0.01
+attr xi 0.075
 
 scalar . 	a 	1
 scalar . 	csize 	1e3
@@ -43,7 +43,7 @@ scalar . 	rep 	1
 scalar . 	ttl 	10
 scalar . 	variance 	0.05
 scalar . 	window 	60
-scalar . 	xi 	0.01
+scalar . 	xi 	0.075
 scalar cost_scenario_network.content_distribution 	repo-0 	1
 scalar cost_scenario_network.content_distribution 	repo-1 	2
 scalar cost_scenario_network.content_distribution 	repo-2 	3
