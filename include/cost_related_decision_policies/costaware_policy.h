@@ -39,6 +39,13 @@ class Costaware: public Costaware_parent{
 			Costaware_parent(average_decision_ratio_)
 		{
 			correction_factor = compute_correction_factor();
+
+			#ifdef SEVERE_DEBUG
+				std::stringstream msg; 
+				msg<<"correction_factor="<< correction_factor;
+				debug_message(__FILE__, __LINE__, msg.str().c_str() );
+			#endif
+
 		}
 
 		virtual double compute_correction_factor(){

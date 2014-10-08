@@ -89,6 +89,17 @@ class Costaware_ancestor: public DecisionPolicy{
 					severe_error(__FILE__, __LINE__, msg.str().c_str() );
 				}
 			}
+
+
+			#ifdef SEVERE_DEBUG
+				std::stringstream msg; 
+				msg<<"Decision policy initialized. kappa="<< kappa <<", weights: ";
+				for (unsigned j=0; j<num_repos; j++) {
+					msg << weights[j] <<",";
+				}
+				debug_message(__FILE__, __LINE__, msg.str().c_str() );
+			#endif
+
 		}
 
 
