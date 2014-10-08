@@ -12,12 +12,10 @@ network abilene_cost_network extends base_network{
 		int priceratio;
 		double kappa;
 		int cachesize;
-		string decision_policy;
 
 
 		int single_cachesize = ceil(cachesize / n );
 		node[0..10].content_store.C = single_cachesize;
-		node[0..10].content_store.DS = decision_policy;
 
 connections allowunconnected:
 	node[1].face++ <--> { delay = 5.48ms; } <--> node[0].face++;

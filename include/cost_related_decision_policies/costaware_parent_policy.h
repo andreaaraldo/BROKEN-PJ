@@ -27,6 +27,7 @@
 #define COSTAWARE_PARENT_POLICY_H_
 
 //<aa>
+#include "ccnsim.h"
 #include "decision_policy.h"
 #include "error_handling.h"
 #include "costaware_ancestor_policy.h"

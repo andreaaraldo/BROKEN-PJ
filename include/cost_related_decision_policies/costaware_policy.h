@@ -27,6 +27,7 @@
 #define COSTAWARE_POLICY_H_
 
 //<aa>
+#include "ccnsim.h"
 #include "decision_policy.h"
 #include "error_handling.h"
 #include "WeightedContentDistribution.h"
