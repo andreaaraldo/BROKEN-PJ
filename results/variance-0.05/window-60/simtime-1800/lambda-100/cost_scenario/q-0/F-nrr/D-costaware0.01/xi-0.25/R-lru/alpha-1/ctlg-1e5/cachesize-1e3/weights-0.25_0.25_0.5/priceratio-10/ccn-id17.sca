@@ -1,5 +1,5 @@
 version 2
-run General-3-20141008-11:14:42-30154
+run General-3-20141008-11:52:16-10198
 attr D costaware0.01
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20141008-11:14:42
+attr datetime 20141008-11:52:16
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=cost_scenario, $rep=17, $priceratiovalue=10, $weights=0.25_0.25_0.5, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $xi=0.25, $R=lru, $csize=1e3, $pricebits=0, $window=60, $variance=0.05, $mytime=1800"
@@ -19,7 +19,7 @@ attr net cost_scenario
 attr network networks.${net=cost_scenario}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 30154
+attr processid 10198
 attr rep 17
 attr repetition 0
 attr replication #0
@@ -67,6 +67,7 @@ scalar cost_scenario_network.statistics 	downloads 	180413
 scalar cost_scenario_network.statistics 	total_cost 	423352
 scalar cost_scenario_network.statistics 	total_replicas 	100000
 scalar cost_scenario_network.statistics 	inner_hit 	0.29129829890307
+scalar cost_scenario_network.statistics 	interests_sent 	180413
 scalar cost_scenario_network.node[0].core_layer 	interests[0] 	180413
 scalar cost_scenario_network.node[0].core_layer 	data[0] 	127859
 scalar cost_scenario_network.node[0].core_layer 	repo_int[0] 	127859
@@ -106,3 +107,4 @@ scalar cost_scenario_network.node[3].content_store 	decision_ratio[3] 	0
 scalar cost_scenario_network.client[0] 	hdistance[0] 	1.4174034021939
 scalar cost_scenario_network.client[0] 	downloads[0] 	180413
 scalar cost_scenario_network.client[0] 	avg_time[0] 	0
+scalar cost_scenario_network.client[0] 	interests_sent[0] 	180413
