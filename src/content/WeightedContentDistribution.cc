@@ -34,14 +34,14 @@ Register_Class(WeightedContentDistribution);
 
 void WeightedContentDistribution::initialize()
 {
-	const char *str = par("weights").stringValue();
-	weights = cStringTokenizer(str,"_").asDoubleVector();
+	const char *str = par("catalog_split").stringValue();
+	catalog_split = cStringTokenizer(str,"_").asDoubleVector();
 	replication_admitted = par("replication_admitted");
 	priceratio = par("priceratio");
 	kappa = par("kappa");
 	alpha = par("alpha");
 
-	unsigned repo_num = weights.size();
+	unsigned repo_num = catalog_split.size();
 
 	std::stringstream ermsg; 
 
@@ -49,18 +49,18 @@ void WeightedContentDistribution::initialize()
 	for (unsigned i=0; i < repo_num; i++)
 	{
 		{// Input consistency check
-			if ( weights[i] > 1 ||  weights[i] < 0){
-				ermsg<<"Weight : "<<weights[i]<<" is invalid";
+			if ( catalog_split[i] > 1 ||  catalog_split[i] < 0){
+				ermsg<<"Weight : "<<catalog_split[i]<<" is invalid";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
 		}
 		
-		sum += weights[i];
+		sum += catalog_split[i];
 	}
 
     probabilities = (double* ) malloc(repo_num * sizeof(double) );
 	for (unsigned repo_idx = 0; repo_idx < repo_num; repo_idx++)
-		probabilities[repo_idx] = weights[repo_idx] / sum;
+		probabilities[repo_idx] = catalog_split[repo_idx] / sum;
 
 	content_distribution::initialize();
 
@@ -108,7 +108,7 @@ void WeightedContentDistribution::initialize()
 
 void WeightedContentDistribution::initialize_repo_popularity()
 {
-	unsigned repo_num = weights.size();
+	unsigned repo_num = catalog_split.size();
 	repo_popularity_p = new vector<double>(repo_num); //http://stackoverflow.com/a/970555
 }
 
@@ -161,7 +161,7 @@ bool WeightedContentDistribution::isInitialized(){
 }
 #endif
 
-const vector<double> WeightedContentDistribution::get_weights(){
+const vector<double> WeightedContentDistribution::get_catalog_split(){
 	#ifdef SEVERE_DEBUG
 	if (!isInitialized() ){
         std::stringstream ermsg; 
@@ -169,7 +169,7 @@ const vector<double> WeightedContentDistribution::get_weights(){
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
 	#endif
-	return weights;
+	return catalog_split;
 }
 
 
@@ -222,7 +222,7 @@ vector<int> WeightedContentDistribution::binary_strings(int num_ones,int len){
 
 // The repository with bigger weight will have the more contents
 //		PAY ATTENTION: 
-//			- Verify the correctness of catalog_weights before calling
+//			- Verify the correctness of catalog_split before calling
 //				this method. Their sum must be 1 and 
 int WeightedContentDistribution::choose_repos (int object_index )
 {
@@ -232,7 +232,7 @@ int WeightedContentDistribution::choose_repos (int object_index )
 	{
 		for (int repo_idx = 0; repo_idx < num_repos; repo_idx++)
 		{
-			if (dblrand() < weights[repo_idx] ){
+			if (dblrand() < catalog_split[repo_idx] ){
 				(*total_replicas_p) = (*total_replicas_p) +1;
 				if ( assigned_repo==-1 )
 					// The object has not been assigned yet. Assign it to repo_idx

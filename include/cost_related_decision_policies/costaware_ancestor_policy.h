@@ -40,7 +40,7 @@ class Costaware_ancestor: public DecisionPolicy{
 		double correction_factor; // An object will be cached with prob correction_factor * cost
 		double kappa; //cost-aware exponent. See [icn14]
 		double priceratio; //See [icn14]
-		vector<double> weights; //It corresponds to the split ratio vector (see [icn14])
+		vector<double> catalog_split; //It corresponds to the split ratio vector (see [icn14])
 		double last_accepted_content_price;
 		WeightedContentDistribution* content_distribution_module;
 
@@ -77,8 +77,8 @@ class Costaware_ancestor: public DecisionPolicy{
 			}
 			#endif
 
-			weights = content_distribution_module->get_weights();
-			unsigned num_repos = weights.size();
+			catalog_split = content_distribution_module->get_catalog_split();
+			unsigned num_repos = catalog_split.size();
 			priceratio = content_distribution_module->get_priceratio();
 			kappa = content_distribution_module->get_kappa();
 			
@@ -93,9 +93,9 @@ class Costaware_ancestor: public DecisionPolicy{
 
 			#ifdef SEVERE_DEBUG
 				std::stringstream msg; 
-				msg<<"Decision policy initialized. kappa="<< kappa <<", weights: ";
+				msg<<"Decision policy initialized. kappa="<< kappa <<", catalog_split: ";
 				for (unsigned j=0; j<num_repos; j++) {
-					msg << weights[j] <<",";
+					msg << catalog_split[j] <<",";
 				}
 				debug_message(__FILE__, __LINE__, msg.str().c_str() );
 			#endif

@@ -40,7 +40,7 @@ class WeightedContentDistribution : public content_distribution{
 		// http://stackoverflow.com/a/7863971/2110769
 		#endif
 
-		virtual const vector<double> get_weights();
+		virtual const vector<double> get_catalog_split();
 		virtual const double get_priceratio();
 		virtual const double get_kappa();
 		virtual const double get_alpha();
@@ -65,7 +65,7 @@ class WeightedContentDistribution : public content_distribution{
 
 
 	private:
-		std::vector<double> weights;
+		std::vector<double> catalog_split;
 
 		double* probabilities; //Probability that an object is assigne to a repo
 		bool replication_admitted;
