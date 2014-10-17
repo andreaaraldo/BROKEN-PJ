@@ -47,14 +47,14 @@ class cPar;
  *
  * A cTopology object stores an abstract representation of the network
  * in graph form:
- * <UL>
- *   <LI> each cTopology node corresponds to a getModule(simple or compound), and
- *   <LI> each cTopology edge corresponds to a link or series of connecting links.
- * </UL>
+ * <ul>
+ *   <li> each cTopology node corresponds to a getModule(simple or compound), and
+ *   <li> each cTopology edge corresponds to a link or series of connecting links.
+ * </ul>
  *
  * You can specify which modules (either simple or compound) you want to
  * include in the graph. The graph will include all connections among the
- * selected modules. In the graph, all nodes are at the same level, there's
+ * selected modules. In the graph, all nodes are at the same level, there is
  * no submodule nesting. Connections which span across compound module
  * boundaries are also represented as one graph edge. Graph edges are directed,
  * just as module gates are.
@@ -258,7 +258,7 @@ class SIM_API cTopology : public cOwnedObject
         /**
          * Returns the node at the remote end of this connection.
          *
-         * Note: There's no corresponding localNode() method: the local node of
+         * Note: There is no corresponding localNode() method: the local node of
          * this connection is the Node object whose method returned
          * this LinkIn object.
          */
@@ -300,7 +300,7 @@ class SIM_API cTopology : public cOwnedObject
         /**
          * Returns the node at the remote end of this connection.
          *
-         * Note: There's no corresponding localNode() method: the local node of
+         * Note: There is no corresponding localNode() method: the local node of
          * this connection is the Node object whose method returned
          * this LinkIn object.
          */
@@ -364,7 +364,7 @@ class SIM_API cTopology : public cOwnedObject
     virtual ~cTopology();
 
     /**
-     * Assignment operator. The name member doesn't get copied; see cNamedObject's operator=() for more details.
+     * Assignment operator. The name member is not copied; see cNamedObject's operator=() for more details.
      */
     cTopology& operator=(const cTopology& topo);
     //@}
@@ -452,12 +452,12 @@ class SIM_API cTopology : public cOwnedObject
      * "false" (i.e. the first value of the default key may not be "false").
      *
      * For example, <tt>topo.extractByProperty("node");</tt> would extract
-     * all modules that contain the <tt>@node</tt> property, like the following
+     * all modules that contain the <tt>\@node</tt> property, like the following
      * one:
      *
      * <pre>
      * module X {
-     *     @node;
+     *     \@node;
      * }
      * </pre>
      *
@@ -537,3 +537,4 @@ NAMESPACE_END
 
 
 #endif
+
