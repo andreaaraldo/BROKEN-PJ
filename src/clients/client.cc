@@ -234,13 +234,6 @@ void client::request_file()
 				<<"shoud not as it is not active";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
-
-		if (getNodeIndex() == 18){
-			std::stringstream ermsg; 
-			ermsg<<"I am node "<< getNodeIndex() <<" and I am requesting a file";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-		
 	#endif
 	//</aa>
 
