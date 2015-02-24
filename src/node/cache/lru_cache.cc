@@ -182,7 +182,7 @@ double lru_cache::get_cache_value()
     while (it){
 		chunk_t object_index = it->k;
 		double alpha = content_distribution_module->get_alpha();
-		double price = it->price;
+		double price = it->get_price();
 		double weight = Costaware_ancestor::compute_content_weight(object_index,price,alpha);
 		value += weight;
 		
