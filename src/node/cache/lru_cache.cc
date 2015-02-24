@@ -48,31 +48,32 @@ void lru_cache::data_store(chunk_t elem){
     p->hit_time = simTime();
     p->newer = 0;
     p->older = 0;
+	p->set_price(-1);
 
     //The cache is empty. Add just one element. The mru and lru element are the
     //same
     if (actual_size == 0){
         actual_size++;
-        set_lru(p);
-		set_mru(p);
+        lru_ = p;
+		mru_ = p;
         cache[elem] = p;
         return;
     } 
 
     //The cache is not empty. The new element is the newest. Add in the front
     //of the list
-    p->older = get_mru(); // mru swaps in second position (in terms of utilization rank)
-    get_mru()->newer = p; // update the newer element for the secon newest element
-    set_mru(p); //update the mru (which becomes that just inserted)
+    p->older = mru_; // mru swaps in second position (in terms of utilization rank)
+    mru_->newer = p; // update the newer element for the secon newest element
+    mru_ = p; //update the mru (which becomes that just inserted)
 
     if (actual_size==get_size()){
         //if the cache is full, delete the last element
         //
-        chunk_t k = get_lru()->k;
-        lru_pos *tmp = get_lru();
-        set_lru(tmp->newer);//the new lru is the element before the least recently used
+        chunk_t k = lru_->k;
+        lru_pos *tmp = lru_;
+        lru_ = tmp->newer;//the new lru is the element before the least recently used
 
-        get_lru()->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
+        lru_->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
         tmp->older = 0;
         tmp->newer = 0;
 
@@ -87,7 +88,7 @@ void lru_cache::data_store(chunk_t elem){
 
 void lru_cache::set_price_to_last_inserted_element(double price)
 {
-	get_mru()->set_price(price);
+	mru_->set_price(price);
 }
 
 //<aa>
