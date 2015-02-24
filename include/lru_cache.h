@@ -45,7 +45,9 @@ struct lru_pos{
     chunk_t k;
     simtime_t hit_time;
 	//<aa>
-	double cost; //meaningful only with cost aware caching
+	// double cost;	// now called price
+	double price;   //meaningful only with cost aware caching. In previous versions 
+					//of ccnsim it was called cost
 	//</aa>
 };
 
