@@ -88,7 +88,7 @@ void lru_cache::data_store(chunk_t elem){
 void lru_cache::set_price_to_last_inserted_element(double price)
 {
 	#ifdef SEVERE_DEBUG	
-	if ( statistics::record_cache_value )
+	if ( !statistics::record_cache_value )
 	{
 			std::stringstream ermsg; 
 			ermsg<<"set_price_to_last_inserted_element(..) is useful when you want to record "<<
