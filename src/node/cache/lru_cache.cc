@@ -186,7 +186,7 @@ double lru_cache::get_cache_value()
 		double weight = Costaware_ancestor::compute_content_weight(object_index,price,alpha);
 		value += weight;
 		
-		cout<< p <<" ]"<< object_index <<": "<< weight <<endl;
+		cout<< p <<" ]"<< object_index <<": "<< price << ": "<< weight << endl;
 		p++;
 		it = it->older;
     }
