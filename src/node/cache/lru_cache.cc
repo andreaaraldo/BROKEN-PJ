@@ -183,7 +183,7 @@ double lru_cache::cache_value()
 		double alpha = content_distribution_module->get_alpha();
 		double price = it->price;
 		double weight = Costaware_ancestor::compute_content_weight(object_index,price,alpha);
-		cost += weight;
+		value += weight;
 		
 		cout<< p <<" ]"<< object_index <<": "<< weight <<endl;
 		p++;
