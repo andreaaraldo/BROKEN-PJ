@@ -47,8 +47,6 @@ class Ideal_costaware_parent: public Ideal_costaware_grandparent{
 		virtual double compute_content_weight(chunk_t id, double price)
 		{
 			return Costaware_ancestor::compute_content_weight(id, price,alpha);
-//			double popularity_estimation = 1./pow(id, alpha);
-//			return price * popularity_estimation;
 		}
 
 		virtual bool decide_with_cache_not_full(chunk_t id, double price) = 0; // This is an abstract class
