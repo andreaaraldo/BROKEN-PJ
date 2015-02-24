@@ -29,6 +29,7 @@
 #include "base_cache.h"
 #include "ccnsim.h"
 #include "error_handling.h"
+#include "statistics.h"
 
 
 
