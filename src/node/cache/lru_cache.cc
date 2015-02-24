@@ -180,7 +180,7 @@ bool lru_cache::data_lookup(chunk_t elem){
     //Place the elements as in front of the position list (it's the newest one)
     pos_elem->older = get_mru();
     pos_elem->newer = 0;
-    mru->newer = pos_elem;
+    get_mru()->newer = pos_elem;
 
     //update the mru
     mru = pos_elem;
