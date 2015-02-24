@@ -173,7 +173,6 @@ void lru_cache::dump(){
 //<aa>
 double lru_cache::get_cache_value()
 {
-	cout<< "Ciao Ciao bammmmmbina, un bacio ancoooora"<<endl;
 	WeightedContentDistribution* content_distribution_module = 
 		Costaware_ancestor::get_weighted_content_distribution_module();
 	double value = 0;
