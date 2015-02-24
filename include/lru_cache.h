@@ -85,7 +85,7 @@ struct lru_pos{
 class lru_cache:public base_cache{
     friend class statistics;
     public:
-		lru_cache():base_cache(),actual_size(0),lru(0),mru(0){;}
+		lru_cache():base_cache(),actual_size(0),lru_(0),mru_(0){;}
 		//<aa>
 		lru_pos* get_mru();
 		lru_pos* get_lru();
@@ -100,6 +100,10 @@ class lru_cache:public base_cache{
 		void data_store(chunk_t);
 		bool data_lookup(chunk_t);
 		bool fake_lookup(chunk_t);
+		//<aa>
+		void set_mru(lru_pos* new_mru);
+		void set_lru(lru_pos* new_lru);
+		//</aa>
 
 		void dump();
 

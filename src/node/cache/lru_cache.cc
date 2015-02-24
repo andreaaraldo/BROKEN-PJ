@@ -117,6 +117,17 @@ lru_pos* lru_cache::get_lru(){
 	return lru;
 }
 
+void lru_cache::set_lru(lru_pos* new_lru)
+{
+	lru_ = new_lru;
+}
+
+void lru_cache::set_mru(lru_pos* new_mru)
+{
+	mru_ = new_mru;
+}
+
+
 const lru_pos* lru_cache::get_eviction_candidate(){
 	if ( full() ) 
 		return get_lru();
