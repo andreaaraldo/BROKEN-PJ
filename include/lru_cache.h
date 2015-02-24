@@ -55,7 +55,7 @@ struct lru_pos{
 
 	double get_price(){
 		#ifdef SEVERE_DEBUG
-		if ( price_ != 1 )
+		if ( price_ != 0 && price_ != 1 && price_ != 10 )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"price is "<< price_ <<", i.e. it is not initialized.";
@@ -66,7 +66,18 @@ struct lru_pos{
 		return price_; 
 	}
 
-	void set_price(double new_price) {price_ = new_price;}
+	void set_price(double new_price) 
+	{
+		price_ = new_price;
+		#ifdef SEVERE_DEBUG
+		if ( price_ != 0 && price_ != 1 && price_ != 10 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"price is "<< price_ <<", i.e. it is not initialized.";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+	}
 	//</aa>
 };
 
