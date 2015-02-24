@@ -116,7 +116,7 @@ class lru_cache:public base_cache{
 
 		unordered_map<chunk_t, lru_pos*> cache; //cache of values
 
-		virtual set_price_to_last_inserted_element(double price);
+		virtual void set_price_to_last_inserted_element(double price);
 
 };
 #endif
