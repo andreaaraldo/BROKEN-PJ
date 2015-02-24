@@ -53,16 +53,17 @@ void lru_cache::data_store(chunk_t elem){
     //same
     if (actual_size == 0){
         actual_size++;
-        lru = mru = p;
+        set_lru(p);
+		set_mru(p);
         cache[elem] = p;
         return;
     } 
 
     //The cache is not empty. The new element is the newest. Add in the front
     //of the list
-    p->older = mru; // mru swaps in second position (in terms of utilization rank)
-    mru->newer = p; // update the newer element for the secon newest element
-    mru = p; //update the mru (which becomes that just inserted)
+    p->older = get_mru(); // mru swaps in second position (in terms of utilization rank)
+    get_mru()->newer = p; // update the newer element for the secon newest element
+    set_mru(p); //update the mru (which becomes that just inserted)
 
     if (actual_size==get_size()){
         //if the cache is full, delete the last element
