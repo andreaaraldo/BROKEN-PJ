@@ -29,6 +29,7 @@
 //<aa>
 #include "error_handling.h"
 #include "costaware_ancestor_policy.h"
+#include "statistics.h"
 //</aa>
 
 Register_Class(lru_cache);
@@ -88,9 +89,8 @@ void lru_cache::data_store(chunk_t elem){
 //<aa>
 lru_pos* lru_cache::get_mru(){
 	#ifdef SEVERE_DEBUG
-	#ifdef
-	mru->get_price();
-	#endif
+	if (statistics::record_cache_value )
+		mru->get_price(); // to verify whether the price is correctly set up
 	#endif	
 
 	return mru;
