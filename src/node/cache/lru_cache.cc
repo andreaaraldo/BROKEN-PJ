@@ -169,20 +169,22 @@ void lru_cache::dump(){
     }
 }
 
-/*
 void lru_cache::cache_value()
 {
     lru_pos *it = mru;
     int p = 1;
     while (it){
-		uint32_t object_index = __chunk(it->k);
-		double alpha = content_distribution_module->get_alpha();		
+		chunk_t object_index = it->k;
+		double alpha = content_distribution_module->get_alpha();
+		double price = it->price;
+		double weight = Costaware_ancestor::compute_content_weight(object_index,price,alpha);
 		
-		cout<<p++<<" ]"<< __id(it->k)<<"/"<<__chunk(it->k)<<endl;
+		cout<< p <<" ]"<< object_index <<": "<< weight <<endl;
+		p++;
 		it = it->older;
     }
 }
-*/
+
 
 bool lru_cache::full(){
     return (actual_size==get_size());
