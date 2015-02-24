@@ -55,7 +55,7 @@ struct lru_pos{
 
 	double get_price(){
 		#ifdef SEVERE_DEBUG
-		if ( price_ != 0 && price_ != 1 && price_ != 10 )
+		if ( price_ <0 )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"price is "<< price_ <<", i.e. it is not correctly initialized.";

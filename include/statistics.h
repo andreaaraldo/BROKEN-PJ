@@ -54,7 +54,8 @@ class statistics : public cSimpleModule{
 		virtual void registerIcnChannel(cChannel* icn_channel);
 
 		// Enable it if you want to record, at the end of the simulation, an indication of 
-		// the value (in terms of monetary cost) of the content stored in each cache.
+		// the value (in terms of monetary cost) of the content stored in each cache, in the
+		// resulting sca file.
 		// This may be useful in the context of cost-aware experiments, but may slow down 
 		// the simulation. Disable it if you do not need it.
 		// For more information about cost-aware experiments, see
