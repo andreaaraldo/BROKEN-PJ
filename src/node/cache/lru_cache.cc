@@ -89,8 +89,11 @@ void lru_cache::data_store(chunk_t elem){
 //<aa>
 lru_pos* lru_cache::get_mru(){
 	#ifdef SEVERE_DEBUG
-	if (statistics::record_cache_value )
+	if (statistics::record_cache_value ){
+		cout << "ciao, sono mru, adesso muoro "<< endl;
+		exit(0);
 		mru->get_price(); // to verify whether the price is correctly set up
+	}
 	#endif	
 
 	return mru;
@@ -103,8 +106,11 @@ lru_pos* lru_cache::get_lru(){
 		chunk_t test = lru->k;
 	} //else the cache is empty
 
-	if (statistics::record_cache_value )
+	if (statistics::record_cache_value ){
+		cout << "ciao, sono lru, adesso muoro "<< endl;
+		exit(0);
 		lru->get_price(); // to verify whether the price is correctly set up
+	}
 	#endif
 
 	return lru;
