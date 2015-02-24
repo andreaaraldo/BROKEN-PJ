@@ -169,8 +169,11 @@ void lru_cache::dump(){
     }
 }
 
-void lru_cache::cache_value()
+//<aa>
+bool lru_cache::cache_value()
 {
+	double value = 0;
+
     lru_pos *it = mru;
     int p = 1;
     while (it){
@@ -178,12 +181,14 @@ void lru_cache::cache_value()
 		double alpha = content_distribution_module->get_alpha();
 		double price = it->price;
 		double weight = Costaware_ancestor::compute_content_weight(object_index,price,alpha);
+		cost += weight;
 		
 		cout<< p <<" ]"<< object_index <<": "<< weight <<endl;
 		p++;
 		it = it->older;
     }
 }
+//</aa>
 
 
 bool lru_cache::full(){
