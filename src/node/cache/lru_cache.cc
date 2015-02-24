@@ -98,6 +98,7 @@ lru_pos* lru_cache::get_mru(){
 
 	return mru;
 }
+
 lru_pos* lru_cache::get_lru(){
 	#ifdef SEVERE_DEBUG
 	if (lru != NULL){
