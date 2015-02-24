@@ -131,7 +131,7 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			#endif
 
 			// Annotate the price of the last inserted element
-			mycache->get_mru()->price = get_last_accepted_content_price();
+			mycache->get_mru()->set_price( get_last_accepted_content_price() );
 
 			#ifdef SEVERE_DEBUG
 			// Unset this field to check if it is set again at the appropriate time
