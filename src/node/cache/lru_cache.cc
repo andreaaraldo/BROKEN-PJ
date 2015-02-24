@@ -105,7 +105,7 @@ lru_pos* lru_cache::get_lru(){
 	if (lru_ != NULL){
 		// To see if a seg fault arises due to the access to a forbidden area
 		// To use with valgrind software
-		chunk_t test = lru->k;
+		chunk_t test = lru_->k;
 	} //else the cache is empty
 
 	if (statistics::record_cache_value ){
@@ -178,7 +178,7 @@ bool lru_cache::data_lookup(chunk_t elem){
 
 
     //Place the elements as in front of the position list (it's the newest one)
-    pos_elem->older = mru;
+    pos_elem->older = get_mru();
     pos_elem->newer = 0;
     mru->newer = pos_elem;
 
