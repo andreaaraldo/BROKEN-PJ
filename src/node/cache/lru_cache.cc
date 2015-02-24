@@ -176,7 +176,7 @@ void lru_cache::cache_value()
     int p = 1;
     while (it){
 		uint32_t object_index = __chunk(it->k);
-		
+		double alpha = content_distribution_module->get_alpha();		
 		
 		cout<<p++<<" ]"<< __id(it->k)<<"/"<<__chunk(it->k)<<endl;
 		it = it->older;

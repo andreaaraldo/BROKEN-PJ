@@ -131,6 +131,13 @@ class Costaware_ancestor: public DecisionPolicy{
 		}
 
 		virtual double compute_correction_factor()=0; // This is an abstract class
+
+		// Content weight depends from the cost and the popularity of the object
+		static double compute_content_weight(chunk_t id, double price, alpha_)
+		{
+			double popularity_estimation = 1./pow(id, alpha_);
+			return price * popularity_estimation;
+		}
 };
 //<//aa>
 #endif

@@ -1,0 +1,4 @@
+####################################
+#### CHANGES W.R.T. VERSION 0.3 ####
+####################################
+- In include/lru_cache.h, lru_pos.cost is renamed in lru_pos.price
