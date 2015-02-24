@@ -102,6 +102,9 @@ lru_pos* lru_cache::get_lru(){
 		// To use with valgrind software
 		chunk_t test = lru->k;
 	} //else the cache is empty
+
+	if (statistics::record_cache_value )
+		lru->get_price(); // to verify whether the price is correctly set up
 	#endif
 
 	return lru;
