@@ -28,6 +28,8 @@
 #include <boost/unordered_map.hpp>
 #include "base_cache.h"
 #include "ccnsim.h"
+#include "error_handling.h"
+
 
 
 using namespace std;
@@ -51,7 +53,19 @@ struct lru_pos{
 	double price_;   //meaningful only with cost aware caching. In previous versions 
 					//of ccnsim it was called cost
 
-	double get_price(){ return price_; }
+	double get_price(){
+		#ifdef SEVERE_DEBUG
+		if ( price_ < 0 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"price is "<< price_ <<", i.e. it is not initialized.";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+
+		return price_; 
+	}
+
 	void set_price(double new_price) {price_ = new_price;}
 	//</aa>
 };
