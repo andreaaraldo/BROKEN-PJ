@@ -211,7 +211,9 @@ void base_cache::store(cMessage *in){
 		//<aa>
 		decision_yes++;
 		//</aa>
-		data_store( ( (ccn_data* ) in )->getChunk() ); //store is an interface funtion: each caching node should reimplement that function
+		data_store( ( (ccn_data* ) in )->getChunk() ); 	// data_ store is an interface funtion:
+														// each caching node should reimplement
+														// that function
 
 		//<aa>
 		decisor->after_insertion_action();
