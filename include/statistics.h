@@ -39,6 +39,12 @@ class base_cache;
 using namespace std;
 using namespace boost;
 
+//<aa> Enable it if you want to record, at the end of the simulation, an indication of 
+// the value (in terms of monetary cost) of the content stored in each cache.
+// This may be useful in the context of cost-aware experiments, but may slow down the simulation
+// Disable it if you do not need it
+#define RECORD_CACHE_VALUE
+//</aa>
 
 /*
  * This class defines the central class for collecting statistics. Its first

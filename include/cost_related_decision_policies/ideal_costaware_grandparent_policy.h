@@ -136,19 +136,6 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			// Unset this field to check if it is set again at the appropriate time
 			// without erroneously use an old value
 			last_accepted_content_price = UNSET_COST;
-
-			cout<<"Remove this check: mycache->get_mru()->get_price() = "<< 
-					mycache->get_mru()->get_price() << endl;
-
-
-			if (mycache->get_mru()->get_price() != 0 && mycache->get_mru()->get_price() != 1 &&
-					mycache->get_mru()->get_price() != 10)
-			{
-				std::stringstream ermsg; 
-				ermsg<<"Remove this check: After inserting the last element mycache->get_mru()->get_price() = "<< 
-					mycache->get_mru()->get_price();
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
 			#endif
 			
 		}

@@ -1,6 +1,8 @@
 package modules.statistics;
 simple statistics{
     parameters:
+		// Look also at the RECORD_CACHE_VALUE constant in statistics.h
+
 		double ts = default(0.1);
 		double window = default (60);
 		double steady = default(1000);

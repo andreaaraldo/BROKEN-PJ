@@ -87,6 +87,12 @@ void lru_cache::data_store(chunk_t elem){
 
 //<aa>
 lru_pos* lru_cache::get_mru(){
+	#ifdef SEVERE_DEBUG
+	#ifdef
+	mru->get_price();
+	#endif
+	#endif	
+
 	return mru;
 }
 lru_pos* lru_cache::get_lru(){
