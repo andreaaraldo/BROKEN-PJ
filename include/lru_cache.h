@@ -55,7 +55,7 @@ struct lru_pos{
 
 	double get_price(){
 		#ifdef SEVERE_DEBUG
-		if ( price_ <0 )
+		if ( statistics::record_cache_value && price_ <0 )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"price is "<< price_ <<", i.e. it is not correctly initialized.";
@@ -70,7 +70,7 @@ struct lru_pos{
 	{
 		price_ = new_price;
 		#ifdef SEVERE_DEBUG
-		if ( price_ != 0 && price_ != 1 && price_ != 10 )
+		if ( statistics::record_cache_value && price_ < 0 )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"price=="<< price_ <<", new_price=="<<new_price<<", i.e. it is not initialized.";
