@@ -141,7 +141,7 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 					mycache->get_mru()->get_price() != 10)
 			{
 				std::stringstream ermsg; 
-				ermsg<<"Remove this check: mycache->get_mru()->get_price() = "<< 
+				ermsg<<"Remove this check: After inserting the last element mycache->get_mru()->get_price() = "<< 
 					mycache->get_mru()->get_price();
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
