@@ -83,7 +83,7 @@ class base_cache : public abstract_node{
 		virtual void set_decision_no(uint32_t n);
 		virtual const DecisionPolicy* get_decisor();
 
-		double get_cache_value(){cout<<"Method cache_value() not implemented"<<endl;}
+		double get_cache_value(){cout<<"Method cache_value() not implemented"<<endl;return -1;}
 
 		#ifdef SEVERE_DEBUG
 		virtual bool is_initialized();
