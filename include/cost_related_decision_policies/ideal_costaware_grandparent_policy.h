@@ -91,7 +91,7 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 
 				lru_pos* lru_element_descriptor = mycache->get_lru();
 				content_index = lru_element_descriptor->k;
-				price = lru_element_descriptor->price;
+				price = lru_element_descriptor->get_price();
 				double lru_weight = compute_content_weight(content_index,price);
 
 				if (new_content_weight > lru_weight)
