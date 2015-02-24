@@ -126,7 +126,6 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 					", while it MUST NOT be a negative number. Something goes wrong with the "<<
 					"initialization of this attribute";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-
 			}
 			#endif
 
@@ -137,6 +136,15 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			// Unset this field to check if it is set again at the appropriate time
 			// without erroneously use an old value
 			last_accepted_content_price = UNSET_COST;
+
+			if (mycache->get_mru()->get_price() != 0 && mycache->get_mru()->get_price() != 1 &&
+					mycache->get_mru()->get_price() != 10)
+			{
+				std::stringstream ermsg; 
+				ermsg<<"Remove this check: mycache->get_mru()->get_price() = "<< 
+					mycache->get_mru()->get_price();
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
 			#endif
 			
 		}
