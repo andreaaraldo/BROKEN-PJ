@@ -50,32 +50,8 @@ class Costaware_ancestor: public DecisionPolicy{
 			last_accepted_content_price = UNSET_COST;
 			average_decision_ratio = average_decision_ratio_;
 
-		    vector<string> ctype;
-			ctype.push_back("modules.content.WeightedContentDistribution");
-			cTopology topo;
-	   		topo.extractByNedTypeName(ctype);
-			int num_content_distribution_modules = topo.getNumNodes();
-
-
-			#ifdef SEVERE_DEBUG
-				if (num_content_distribution_modules != 1){
-					std::stringstream msg; 
-					msg<<"Found "<< num_content_distribution_modules << ". It MUST be 1";
-					severe_error(__FILE__, __LINE__, msg.str().c_str() );
-				}
-			#endif
-
-			cTopology::Node *content_distribution_node = topo.getNode(0);
-			content_distribution_module = 
-					(WeightedContentDistribution*) content_distribution_node->getModule();
-
-			#ifdef SEVERE_DEBUG
-			if ( !content_distribution_module->isInitialized() ){
-					std::stringstream msg; 
-					msg<<"content_distribution_module is not initialized";
-					severe_error(__FILE__, __LINE__, msg.str().c_str() );
-			}
-			#endif
+			content_distribution_module =
+				Costaware_ancestor::get_weighted_content_distribution_module();
 
 			catalog_split = content_distribution_module->get_catalog_split();
 			unsigned num_repos = catalog_split.size();
