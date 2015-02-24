@@ -68,11 +68,11 @@ void lru_cache::data_store(chunk_t elem){
     if (actual_size==get_size()){
         //if the cache is full, delete the last element
         //
-        chunk_t k = lru->k;
-        lru_pos *tmp = lru;
-        lru = tmp->newer;//the new lru is the element before the least recently used
+        chunk_t k = get_lru()->k;
+        lru_pos *tmp = get_lru();
+        set_lru(tmp->newer);//the new lru is the element before the least recently used
 
-        lru->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
+        get_lru()->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
         tmp->older = 0;
         tmp->newer = 0;
 
@@ -93,16 +93,16 @@ lru_pos* lru_cache::get_mru(){
 	if (statistics::record_cache_value ){
 		cout << "ciao, sono mru, adesso muoro "<< endl;
 		exit(0);
-		mru->get_price(); // to verify whether the price is correctly set up
+		mru_->get_price(); // to verify whether the price is correctly set up
 	}
 	#endif	
 
-	return mru;
+	return mru_;
 }
 
 lru_pos* lru_cache::get_lru(){
 	#ifdef SEVERE_DEBUG
-	if (lru != NULL){
+	if (lru_ != NULL){
 		// To see if a seg fault arises due to the access to a forbidden area
 		// To use with valgrind software
 		chunk_t test = lru->k;
@@ -111,11 +111,11 @@ lru_pos* lru_cache::get_lru(){
 	if (statistics::record_cache_value ){
 		cout << "ciao, sono lru, adesso muoro "<< endl;
 		exit(0);
-		lru->get_price(); // to verify whether the price is correctly set up
+		lru_->get_price(); // to verify whether the price is correctly set up
 	}
 	#endif
 
-	return lru;
+	return lru_;
 }
 
 void lru_cache::set_lru(lru_pos* new_lru)
@@ -172,8 +172,8 @@ bool lru_cache::data_lookup(chunk_t elem){
         return true; //do nothing, return true
     } else{
         //if the element is the lru, remove the element from the bottom of the list
-        lru = pos_elem->newer;
-        lru->older = 0;
+        set_lru(pos_elem->newer);
+        get_lru()->older = 0;
     }
 
 
@@ -190,7 +190,7 @@ bool lru_cache::data_lookup(chunk_t elem){
 
 
 void lru_cache::dump(){
-    lru_pos *it = mru;
+    lru_pos *it = get_mru();
     int p = 1;
     while (it){
 	cout<<p++<<" ]"<< __id(it->k)<<"/"<<__chunk(it->k)<<endl;
@@ -205,7 +205,7 @@ double lru_cache::get_cache_value()
 		Costaware_ancestor::get_weighted_content_distribution_module();
 	double value = 0;
 
-    lru_pos *it = mru;
+    lru_pos *it = get_mru();
     int p = 1;
     while (it){
 		chunk_t object_index = it->k;
