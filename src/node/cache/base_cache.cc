@@ -229,6 +229,7 @@ void base_cache::store(cMessage *in){
 	//</aa>
 
 	#ifdef SEVERE_DEBUG
+	cout << "La cache e' di " << actual_size << " e sto lanciando una botta di cache_value"<<endl;
 	get_cache_value();
 	#endif
 }
