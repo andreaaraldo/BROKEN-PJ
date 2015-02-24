@@ -73,7 +73,7 @@ struct lru_pos{
 		if ( price_ != 0 && price_ != 1 && price_ != 10 )
 		{
 			std::stringstream ermsg; 
-			ermsg<<"price is "<< price_ <<", i.e. it is not initialized.";
+			ermsg<<"price=="<< price_ <<", new_price=="<<new_price<<", i.e. it is not initialized.";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 		#endif

@@ -227,12 +227,6 @@ void base_cache::store(cMessage *in){
 	//<aa>
 	else {decision_no++; }
 	//</aa>
-
-	#ifdef SEVERE_DEBUG
-	cout << "Sto lanciando una botta di cache_value: ";
-	get_cache_value();
-	cout << "ok"<<endl;
-	#endif
 }
 
 
