@@ -48,7 +48,6 @@ void lru_cache::data_store(chunk_t elem){
     p->hit_time = simTime();
     p->newer = 0;
     p->older = 0;
-	p->set_price(-1);
 
     //The cache is empty. Add just one element. The mru and lru element are the
     //same
