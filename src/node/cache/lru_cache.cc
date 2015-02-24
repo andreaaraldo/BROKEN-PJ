@@ -41,8 +41,10 @@ void lru_cache::data_store(chunk_t elem){
     if (data_lookup(elem))
 	return;
 
-    lru_pos *p = (lru_pos *)malloc (sizeof(lru_pos)); //position for the new element
-										//<aa> i.e. datastructure for the new element </aa>
+//    lru_pos *p = (lru_pos *)malloc (sizeof(lru_pos)); //position for the new element
+//										//<aa> i.e. datastructure for the new element </aa>
+
+	lru_pos *p = new lru_pos();
     //lru_pos *p = new lru_pos();
     p->k = elem;
     p->hit_time = simTime();
