@@ -173,7 +173,8 @@ void lru_cache::dump(){
 //<aa>
 double lru_cache::cache_value()
 {
-	WeightedContentDistribution* content_distribution_module;
+	WeightedContentDistribution* content_distribution_module = 
+		Costaware_ancestor::get_weighted_content_distribution_module();
 	double value = 0;
 
     lru_pos *it = mru;
@@ -190,8 +191,6 @@ double lru_cache::cache_value()
 		it = it->older;
     }
 
-	cout<<"Ciao"<<endl;
-	exit(-1);
 	return value;
 }
 //</aa>
