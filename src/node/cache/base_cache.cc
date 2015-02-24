@@ -216,7 +216,7 @@ void base_cache::store(cMessage *in){
 														// that function
 
 		//<aa>
-		decisor->after_insertion_action();
+		decisor->after_insertion_action( (ccn_data*)in );
 		//</aa>
 	}
 	//<aa>
