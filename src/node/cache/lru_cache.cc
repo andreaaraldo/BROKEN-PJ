@@ -93,7 +93,7 @@ void lru_cache::set_price_to_last_inserted_element(double price)
 //<aa>
 lru_pos* lru_cache::get_mru(){
 	#ifdef SEVERE_DEBUG
-	if (statistics::record_cache_value ){
+	if (statistics::record_cache_value && actual_size > 0){		
 		mru_->get_price(); // to verify whether the price is correctly set up
 	}
 	#endif	
