@@ -43,13 +43,13 @@ class Ideal_costaware_parent: public Ideal_costaware_grandparent{
 			// Do nothing
 		};
 
-		virtual double compute_content_weight(chunk_t id, double cost)
+		virtual double compute_content_weight(chunk_t id, double price)
 		{
 			double popularity_estimation = 1./pow(id, alpha);
-			return cost * popularity_estimation;
+			return price * popularity_estimation;
 		}
 
-		virtual bool decide_with_cache_not_full(chunk_t id, double cost) = 0; // This is an abstract class
+		virtual bool decide_with_cache_not_full(chunk_t id, double price) = 0; // This is an abstract class
 };
 //<//aa>
 #endif

@@ -169,6 +169,21 @@ void lru_cache::dump(){
     }
 }
 
+/*
+void lru_cache::cache_value()
+{
+    lru_pos *it = mru;
+    int p = 1;
+    while (it){
+		uint32_t object_index = __chunk(it->k);
+		
+		
+		cout<<p++<<" ]"<< __id(it->k)<<"/"<<__chunk(it->k)<<endl;
+		it = it->older;
+    }
+}
+*/
+
 bool lru_cache::full(){
     return (actual_size==get_size());
 }

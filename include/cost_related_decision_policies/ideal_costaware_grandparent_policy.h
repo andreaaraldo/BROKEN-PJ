@@ -80,19 +80,19 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			#endif
 
 			chunk_t content_index = data_msg->getChunk();
-			double cost = data_msg->getPrice();
+			double price = data_msg->getPrice();
 
 			if (! mycache->full() )
-				decision = decide_with_cache_not_full(content_index, cost);
+				decision = decide_with_cache_not_full(content_index, price);
 			else{
 
-				double new_content_weight = compute_content_weight(content_index,cost);
+				double new_content_weight = compute_content_weight(content_index,price);
 
 
 				lru_pos* lru_element_descriptor = mycache->get_lru();
 				content_index = lru_element_descriptor->k;
-				cost = lru_element_descriptor->cost;
-				double lru_weight = compute_content_weight(content_index,cost);
+				price = lru_element_descriptor->price;
+				double lru_weight = compute_content_weight(content_index,price);
 
 				if (new_content_weight > lru_weight)
 					// Inserting this content in the cache would make it better
@@ -122,7 +122,7 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			#ifdef SEVERE_DEBUG
 			if ( get_last_accepted_content_price() == UNSET_COST ){
 				std::stringstream ermsg; 
-				ermsg<<"cost_of_the_last_accepted_element="<<get_last_accepted_content_price() <<
+				ermsg<<"price_of_the_last_accepted_element="<<get_last_accepted_content_price() <<
 					", while it MUST NOT be a negative number. Something goes wrong with the "<<
 					"initialization of this attribute";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
@@ -130,8 +130,8 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			}
 			#endif
 
-			// Annotate the cost of the last inserted element
-			mycache->get_mru()->cost = get_last_accepted_content_price();
+			// Annotate the price of the last inserted element
+			mycache->get_mru()->price = get_last_accepted_content_price();
 
 			#ifdef SEVERE_DEBUG
 			// Unset this field to check if it is set again at the appropriate time
@@ -141,8 +141,8 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			
 		}
 
-		virtual double compute_content_weight(chunk_t id, double cost)=0; // This is an abstract class
-		virtual bool decide_with_cache_not_full(chunk_t id, double cost)=0;
+		virtual double compute_content_weight(chunk_t id, double price)=0; // This is an abstract class
+		virtual bool decide_with_cache_not_full(chunk_t id, double price)=0;
 };
 //<//aa>
 #endif

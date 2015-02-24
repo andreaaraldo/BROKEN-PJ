@@ -37,7 +37,7 @@
 class Costaware_ancestor: public DecisionPolicy{
     protected:
 		double average_decision_ratio;
-		double correction_factor; // An object will be cached with prob correction_factor * cost
+		double correction_factor; // An object will be cached with prob correction_factor * price
 		double kappa; //cost-aware exponent. See [icn14]
 		double priceratio; //See [icn14]
 		vector<double> catalog_split; //It corresponds to the split ratio vector (see [icn14])

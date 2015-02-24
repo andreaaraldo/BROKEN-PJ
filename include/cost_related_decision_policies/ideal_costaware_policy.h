@@ -42,9 +42,9 @@ class Ideal_costaware: public Ideal_costaware_parent{
 			// Do nothing
 		};
 
-		virtual bool decide_with_cache_not_full(chunk_t id, double cost)
+		virtual bool decide_with_cache_not_full(chunk_t id, double price)
 		{
-			if (cost > 0) 	return true;
+			if (price > 0) 	return true;
 			else			return false;
 		}
 };
