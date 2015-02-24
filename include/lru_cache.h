@@ -38,7 +38,7 @@ using namespace boost;
 //element it just suffices removing the element from the current position and
 //inserting it within the head of the list
 struct lru_pos{
-	lru_pos() : price(-1) {}; // Initialize the price as undefined
+	lru_pos() : price_(-1) {}; // Initialize the price as undefined
 
     //older and newer track the lru_position within the 
     //lru cache
