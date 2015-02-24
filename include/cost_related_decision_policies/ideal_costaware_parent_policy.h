@@ -32,6 +32,7 @@
 #include "lru_cache.h"
 #include "WeightedContentDistribution.h"
 #include "ideal_costaware_grandparent_policy.h"
+#include "costaware_ancestor_policy.h"
 
 
 // This is an abstract class
@@ -45,8 +46,9 @@ class Ideal_costaware_parent: public Ideal_costaware_grandparent{
 
 		virtual double compute_content_weight(chunk_t id, double price)
 		{
-			double popularity_estimation = 1./pow(id, alpha);
-			return price * popularity_estimation;
+			Costaware_ancestor::compute_content_weight(chunk_t id, double price,alpha);
+//			double popularity_estimation = 1./pow(id, alpha);
+//			return price * popularity_estimation;
 		}
 
 		virtual bool decide_with_cache_not_full(chunk_t id, double price) = 0; // This is an abstract class
