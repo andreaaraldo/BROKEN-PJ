@@ -170,7 +170,7 @@ void lru_cache::dump(){
 }
 
 //<aa>
-bool lru_cache::cache_value()
+double lru_cache::cache_value()
 {
 	double value = 0;
 
@@ -187,6 +187,7 @@ bool lru_cache::cache_value()
 		p++;
 		it = it->older;
     }
+	return value;
 }
 //</aa>
 
