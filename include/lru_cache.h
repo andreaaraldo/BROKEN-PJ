@@ -58,7 +58,7 @@ struct lru_pos{
 		if ( price_ != 0 && price_ != 1 && price_ != 10 )
 		{
 			std::stringstream ermsg; 
-			ermsg<<"price is "<< price_ <<", i.e. it is not initialized.";
+			ermsg<<"price is "<< price_ <<", i.e. it is not correctly initialized.";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 		#endif
@@ -115,6 +115,8 @@ class lru_cache:public base_cache{
 		lru_pos* mru_; //most recently used item
 
 		unordered_map<chunk_t, lru_pos*> cache; //cache of values
+
+		virtual set_price_to_last_inserted_element(double price);
 
 };
 #endif

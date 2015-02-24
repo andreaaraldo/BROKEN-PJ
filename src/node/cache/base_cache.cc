@@ -207,15 +207,20 @@ void base_cache::store(cMessage *in){
 		return;
 	}
 
-    if (decisor->data_to_cache((ccn_data*)in ) ){
+	ccn_data* data_msg = (ccn_data*)in;
+
+    if (decisor->data_to_cache(data_msg ) ){
 		//<aa>
 		decision_yes++;
 		//</aa>
-		data_store( ( (ccn_data* ) in )->getChunk() ); 	// data_ store is an interface funtion:
-														// each caching node should reimplement
-														// that function
+		data_store( data_msg->getChunk() ); 	// data_ store is an interface funtion:
+												// each caching node should reimplement
+												// that function
 
 		//<aa>
+		if (statistics::record_cache_value)
+			set_price_to_last_inserted_element(data_msg->getPrice() );
+
 		decisor->after_insertion_action( );
 		//</aa>
 	}

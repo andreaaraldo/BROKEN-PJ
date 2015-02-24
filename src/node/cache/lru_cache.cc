@@ -83,8 +83,11 @@ void lru_cache::data_store(chunk_t elem){
         actual_size++;
 
     cache[elem] = p; //store the new element together with its position
+}
 
-
+void lru_cache::set_price_to_last_inserted_element(double price)
+{
+	get_mru()->set_price(price);
 }
 
 //<aa>
