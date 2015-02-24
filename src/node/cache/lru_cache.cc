@@ -91,6 +91,7 @@ void lru_cache::set_price_to_last_inserted_element(double price)
 	if ( !statistics::record_cache_value )
 	{
 			std::stringstream ermsg; 
+			ermsg<<"statistics::record_cache_value="<<statistics::record_cache_value<<": ";
 			ermsg<<"set_price_to_last_inserted_element(..) is useful when you want to record "<<
 				" the cache_value; when statistics::record_cache_value is disabled this method "<<
 				" may be useless. Make sure you really need this method. If yes, disable this"<<
