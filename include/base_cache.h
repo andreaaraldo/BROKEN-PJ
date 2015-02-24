@@ -54,7 +54,7 @@ class base_cache : public abstract_node{
 		//Inteface function (depending by internal data structures of each cache)
 		virtual void data_store (chunk_t) = 0; 
 		virtual bool data_lookup(chunk_t) = 0;
-		virtual void dump(){cout<<"Not implemented"<<endl;}
+		virtual void dump(){cout<<"Method dump() not implemented"<<endl;}
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
@@ -82,6 +82,8 @@ class base_cache : public abstract_node{
 		virtual void set_decision_yes(uint32_t n);
 		virtual void set_decision_no(uint32_t n);
 		virtual const DecisionPolicy* get_decisor();
+
+		double get_cache_value(){cout<<"Method cache_value() not implemented"<<endl;}
 
 		#ifdef SEVERE_DEBUG
 		virtual bool is_initialized();

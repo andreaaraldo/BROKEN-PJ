@@ -171,7 +171,7 @@ void lru_cache::dump(){
 }
 
 //<aa>
-double lru_cache::cache_value()
+double lru_cache::get_cache_value()
 {
 	WeightedContentDistribution* content_distribution_module = 
 		Costaware_ancestor::get_weighted_content_distribution_module();

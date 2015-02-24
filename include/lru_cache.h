@@ -63,8 +63,8 @@ class lru_cache:public base_cache{
 		//</aa>
 	
 		bool full(); //<aa> moved from protected to public </aa>
-		double cache_value(); 	//<aa> It gives an indication of the cost of objects stored in 
-								// the cache. </aa>
+		double get_cache_value();	//<aa> It gives an indication of the cost of objects stored in 
+									// the cache. </aa>
 
     protected:
 		void data_store(chunk_t);
@@ -72,6 +72,7 @@ class lru_cache:public base_cache{
 		bool fake_lookup(chunk_t);
 
 		void dump();
+
 
 
     private:
