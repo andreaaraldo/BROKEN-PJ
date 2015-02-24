@@ -138,6 +138,36 @@ class Costaware_ancestor: public DecisionPolicy{
 			double popularity_estimation = 1./pow(id, alpha_);
 			return price * popularity_estimation;
 		}
+
+		static WeightedContentDistribution* get_weighted_content_distribution_module()
+		{
+		    vector<string> ctype;
+			ctype.push_back("modules.content.WeightedContentDistribution");
+			cTopology topo;
+	   		topo.extractByNedTypeName(ctype);
+			int num_content_distribution_modules = topo.getNumNodes();
+
+
+			#ifdef SEVERE_DEBUG
+				if (num_content_distribution_modules != 1){
+					std::stringstream msg; 
+					msg<<"Found "<< num_content_distribution_modules << ". It MUST be 1";
+					severe_error(__FILE__, __LINE__, msg.str().c_str() );
+				}
+			#endif
+
+			cTopology::Node *content_distribution_node = topo.getNode(0);
+			content_distribution_module = 
+					(WeightedContentDistribution*) content_distribution_node->getModule();
+
+			#ifdef SEVERE_DEBUG
+			if ( !content_distribution_module->isInitialized() ){
+					std::stringstream msg; 
+					msg<<"content_distribution_module is not initialized";
+					severe_error(__FILE__, __LINE__, msg.str().c_str() );
+			}
+			#endif
+		}
 };
 //<//aa>
 #endif
