@@ -84,10 +84,12 @@ class base_cache : public abstract_node{
 		virtual const DecisionPolicy* get_decisor();
 
 		virtual double get_cache_value(){
-			cout<<"Method get_cache_value() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;return -1;
+			cout<<"Method get_cache_value() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
+			exit(-1);
 		}
 		virtual void lru_cache::set_price_to_last_inserted_element(double price){
-			cout<<"Method set_price_to_last_inserted_element not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;return -1;
+			cout<<"Method set_price_to_last_inserted_element not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
+			exit(-1);
 		}
 
 		#ifdef SEVERE_DEBUG
