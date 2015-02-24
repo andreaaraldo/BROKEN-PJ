@@ -179,10 +179,12 @@ void base_cache::finish(){
 			0 : (double)decision_yes / (decision_yes + decision_no) ; 
     recordScalar (name, decision_ratio);
 
-    sprintf ( name, "cache_value[%d]", getIndex());
-	double cache_value = get_cache_value();
-    recordScalar (name, cache_value);
-
+	if (statistics::record_cache_value)
+	{
+		sprintf ( name, "cache_value[%d]", getIndex());
+		double cache_value = get_cache_value();
+		recordScalar (name, cache_value);
+	}
 
 	decisor->finish(getIndex(), this);
 	//</aa>

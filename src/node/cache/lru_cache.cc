@@ -211,6 +211,19 @@ void lru_cache::dump(){
 //<aa>
 double lru_cache::get_cache_value()
 {
+	#ifdef SEVERE_DEBUG	
+	if ( !statistics::record_cache_value )
+	{
+			std::stringstream ermsg; 
+			ermsg<<"get_cache_value(..) is useful when you want to record "<<
+				" the cache_value; when statistics::record_cache_value is disabled this method "<<
+				" may be useless. Make sure you really need this method. If yes, disable this"<<
+				" error.If not, try to rethink your code";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
+
+
 	WeightedContentDistribution* content_distribution_module = 
 		Costaware_ancestor::get_weighted_content_distribution_module();
 	double value = 0;
