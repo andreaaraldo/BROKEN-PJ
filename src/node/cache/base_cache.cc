@@ -228,6 +228,9 @@ void base_cache::store(cMessage *in){
 	else {decision_no++; }
 	//</aa>
 
+	#ifdef SEVERE_DEBUG
+	get_cache_value();
+	#endif
 }
 
 
