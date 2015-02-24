@@ -38,6 +38,8 @@ using namespace boost;
 //element it just suffices removing the element from the current position and
 //inserting it within the head of the list
 struct lru_pos{
+	lru_pos() : price(-1) {}; // Initialize the price as indefined
+
     //older and newer track the lru_position within the 
     //lru cache
     lru_pos* older;
@@ -46,7 +48,7 @@ struct lru_pos{
     simtime_t hit_time;
 	//<aa>
 	// double cost;	// now called price
-	//double price;   //meaningful only with cost aware caching. In previous versions 
+	double price;   //meaningful only with cost aware caching. In previous versions 
 					//of ccnsim it was called cost
 	//</aa>
 };
