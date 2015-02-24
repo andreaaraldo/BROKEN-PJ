@@ -141,6 +141,7 @@ class Costaware_ancestor: public DecisionPolicy{
 
 		static WeightedContentDistribution* get_weighted_content_distribution_module()
 		{
+			WeightedContentDistribution* content_distribution_module_;
 		    vector<string> ctype;
 			ctype.push_back("modules.content.WeightedContentDistribution");
 			cTopology topo;
@@ -157,16 +158,17 @@ class Costaware_ancestor: public DecisionPolicy{
 			#endif
 
 			cTopology::Node *content_distribution_node = topo.getNode(0);
-			content_distribution_module = 
+			content_distribution_module_ = 
 					(WeightedContentDistribution*) content_distribution_node->getModule();
 
 			#ifdef SEVERE_DEBUG
-			if ( !content_distribution_module->isInitialized() ){
+			if ( !content_distribution_module_->isInitialized() ){
 					std::stringstream msg; 
 					msg<<"content_distribution_module is not initialized";
 					severe_error(__FILE__, __LINE__, msg.str().c_str() );
 			}
 			#endif
+			return content_distribution_module_;
 		}
 };
 //<//aa>
