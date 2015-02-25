@@ -1,5 +1,5 @@
 version 2
-run General-27-20150225-12:21:51-16787
+run General-0-20150225-13:28:23-17147
 attr D fix0.01
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20150225-12:21:51
+attr datetime 20150225-13:28:23
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$rep=14, $net=geant_cost, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=fix0.01, $R=lru, $csize=1e3, $window=60, $variance=0.05, $mytime=1800, $kappa=1, $priceratiovalue=10, $pricebits=0"
@@ -20,12 +20,12 @@ attr net geant_cost
 attr network networks.${net=geant_cost}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 16787
+attr processid 17147
 attr rep 14
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 27
+attr runnumber 0
 attr seedset 14
 attr ttl 10
 attr variance 0.05
