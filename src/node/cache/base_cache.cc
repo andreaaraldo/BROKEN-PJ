@@ -184,6 +184,10 @@ void base_cache::finish(){
 		sprintf ( name, "cache_value[%d]", getIndex());
 		double cache_value = get_cache_value();
 		recordScalar (name, cache_value);
+
+		sprintf ( name, "average_price_of_cache[%d]", getIndex());
+		double average_price = get_average_price();
+		recordScalar (name, average_price);
 	}
 
 	decisor->finish(getIndex(), this);

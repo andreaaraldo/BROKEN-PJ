@@ -227,7 +227,7 @@ double lru_cache::get_cache_value()
 
 	WeightedContentDistribution* content_distribution_module = 
 		Costaware_ancestor::get_weighted_content_distribution_module();
-	double value = 0;
+	double value, sum_of_prices = 0;
 
     lru_pos *it = get_mru();
     int p = 1;
@@ -244,6 +244,36 @@ double lru_cache::get_cache_value()
     }
 
 	return value;
+}
+
+double lru_cache::get_average_price()
+{
+	#ifdef SEVERE_DEBUG	
+	if ( !statistics::record_cache_value )
+	{
+			std::stringstream ermsg; 
+			ermsg<<"get_average_price(..) is useful when you want to record "<<
+				" the cache_value; when statistics::record_cache_value is disabled this method "<<
+				" may be useless. Make sure you really need this method. If yes, disable this"<<
+				" error.If not, try to rethink your code";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
+
+	double sum_of_prices = 0;
+
+    lru_pos *it = get_mru();
+    int counter = 0;
+    while (it){
+		chunk_t object_index = it->k;
+		double price = it->get_price();
+		sum_of_prices += price;
+		it = it->older;
+		counter++;
+    }
+
+	double average_price = sum_of_prices / counter;
+	return average_price;
 }
 //</aa>
 

@@ -87,6 +87,12 @@ class base_cache : public abstract_node{
 			cout<<"Method get_cache_value() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
 			exit(-1);
 		}
+		virtual double get_average_price(){
+			cout<<"Method get_average_price() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
+			exit(-1);
+		}
+
+
 
 		virtual void set_price_to_last_inserted_element(double price){
 			cout<<"Method set_price_to_last_inserted_element not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
