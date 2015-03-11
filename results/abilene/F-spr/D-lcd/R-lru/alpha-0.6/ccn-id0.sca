@@ -1,0 +1,174 @@
+version 2
+run General-5-20150311-18:59:35-28958
+attr D lcd
+attr F spr
+attr R lru
+attr a 0.6
+attr configname General
+attr datetime 20150311-18:59:35
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=abilene, $rep=0, $a=0.6, $F=spr, $ttl=1000, $D=lcd, $R=lru"
+attr iterationvars2 "$net=abilene, $rep=0, $a=0.6, $F=spr, $ttl=1000, $D=lcd, $R=lru, $repetition=0"
+attr measurement "$net=abilene, $rep=0, $a=0.6, $F=spr, $ttl=1000, $D=lcd, $R=lru"
+attr net abilene
+attr network networks.${net=abilene}_network
+attr processid 28958
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 5
+attr seedset 0
+attr ttl 1000
+
+scalar . 	a 	0.6
+scalar . 	rep 	0
+scalar . 	ttl 	1000
+scalar abilene_network.content_distribution 	repo-0 	5
+scalar abilene_network.content_distribution 	client-0 	8
+scalar abilene_network.content_distribution 	client-1 	9
+scalar abilene_network.content_distribution 	client-2 	5
+scalar abilene_network.content_distribution 	client-3 	0
+scalar abilene_network.content_distribution 	client-4 	1
+scalar abilene_network.content_distribution 	client-5 	7
+scalar abilene_network.content_distribution 	client-6 	6
+scalar abilene_network.content_distribution 	client-7 	2
+scalar abilene_network.content_distribution 	client-8 	4
+scalar abilene_network.content_distribution 	client-9 	10
+scalar abilene_network.content_distribution 	client-10 	3
+scalar abilene_network.content_distribution 	repo-0_card 	10000
+scalar abilene_network.content_distribution 	repo-0_price 	0
+scalar abilene_network.statistics 	stabilization_time 	6256.4
+scalar abilene_network.statistics 	p_hit 	0.041799100449775
+scalar abilene_network.statistics 	interests 	6063.6363636364
+scalar abilene_network.statistics 	data 	4254.2727272727
+scalar abilene_network.statistics 	hdistance 	3.2129353396557
+scalar abilene_network.statistics 	avg_time 	0.013271525748
+scalar abilene_network.statistics 	downloads 	19902
+scalar abilene_network.statistics 	total_cost 	0
+scalar abilene_network.statistics 	total_replicas 	10000
+scalar abilene_network.statistics 	inner_hit 	0.14008642347503
+scalar abilene_network.node[0].core_layer 	interests[0] 	1808
+scalar abilene_network.node[0].core_layer 	data[0] 	1569
+scalar abilene_network.node[0].core_layer 	repo_int[0] 	17114
+scalar abilene_network.node[0].content_store 	p_hit[0] 	0.13219026548673
+scalar abilene_network.node[0].content_store 	hits[0] 	239
+scalar abilene_network.node[0].content_store 	misses[0] 	1569
+scalar abilene_network.node[0].content_store 	decision_yes[0] 	31
+scalar abilene_network.node[0].content_store 	decision_no[0] 	1538
+scalar abilene_network.node[0].content_store 	decision_ratio[0] 	0.019757807520714
+scalar abilene_network.node[1].core_layer 	interests[1] 	4962
+scalar abilene_network.node[1].core_layer 	data[1] 	4668
+scalar abilene_network.node[1].content_store 	p_hit[1] 	0.059048770656993
+scalar abilene_network.node[1].content_store 	hits[1] 	293
+scalar abilene_network.node[1].content_store 	misses[1] 	4669
+scalar abilene_network.node[1].content_store 	decision_yes[1] 	69
+scalar abilene_network.node[1].content_store 	decision_no[1] 	4599
+scalar abilene_network.node[1].content_store 	decision_ratio[1] 	0.014781491002571
+scalar abilene_network.node[2].core_layer 	interests[2] 	6464
+scalar abilene_network.node[2].core_layer 	data[2] 	6210
+scalar abilene_network.node[2].content_store 	p_hit[2] 	0.039294554455446
+scalar abilene_network.node[2].content_store 	hits[2] 	254
+scalar abilene_network.node[2].content_store 	misses[2] 	6210
+scalar abilene_network.node[2].content_store 	decision_yes[2] 	71
+scalar abilene_network.node[2].content_store 	decision_no[2] 	6139
+scalar abilene_network.node[2].content_store 	decision_ratio[2] 	0.011433172302738
+scalar abilene_network.node[3].core_layer 	interests[3] 	8004
+scalar abilene_network.node[3].core_layer 	data[3] 	7745
+scalar abilene_network.node[3].content_store 	p_hit[3] 	0.032358820589705
+scalar abilene_network.node[3].content_store 	hits[3] 	259
+scalar abilene_network.node[3].content_store 	misses[3] 	7745
+scalar abilene_network.node[3].content_store 	decision_yes[3] 	88
+scalar abilene_network.node[3].content_store 	decision_no[3] 	7657
+scalar abilene_network.node[3].content_store 	decision_ratio[3] 	0.011362169141382
+scalar abilene_network.node[4].core_layer 	interests[4] 	9634
+scalar abilene_network.node[4].core_layer 	data[4] 	9366
+scalar abilene_network.node[4].content_store 	p_hit[4] 	0.027818144073075
+scalar abilene_network.node[4].content_store 	hits[4] 	268
+scalar abilene_network.node[4].content_store 	misses[4] 	9366
+scalar abilene_network.node[4].content_store 	decision_yes[4] 	146
+scalar abilene_network.node[4].content_store 	decision_no[4] 	9220
+scalar abilene_network.node[4].content_store 	decision_ratio[4] 	0.015588298099509
+scalar abilene_network.node[5].core_layer 	interests[5] 	17402
+scalar abilene_network.node[5].core_layer 	repo_load[5] 	17114
+scalar abilene_network.node[5].core_layer 	data[5] 	0
+scalar abilene_network.node[5].content_store 	p_hit[5] 	0.016549821859556
+scalar abilene_network.node[5].content_store 	hits[5] 	288
+scalar abilene_network.node[5].content_store 	misses[5] 	17114
+scalar abilene_network.node[5].content_store 	decision_yes[5] 	17114
+scalar abilene_network.node[5].content_store 	decision_no[5] 	0
+scalar abilene_network.node[5].content_store 	decision_ratio[5] 	1
+scalar abilene_network.node[6].core_layer 	interests[6] 	6454
+scalar abilene_network.node[6].core_layer 	data[6] 	6242
+scalar abilene_network.node[6].content_store 	p_hit[6] 	0.03284784629687
+scalar abilene_network.node[6].content_store 	hits[6] 	212
+scalar abilene_network.node[6].content_store 	misses[6] 	6242
+scalar abilene_network.node[6].content_store 	decision_yes[6] 	109
+scalar abilene_network.node[6].content_store 	decision_no[6] 	6133
+scalar abilene_network.node[6].content_store 	decision_ratio[6] 	0.017462351810317
+scalar abilene_network.node[7].core_layer 	interests[7] 	4932
+scalar abilene_network.node[7].core_layer 	data[7] 	4680
+scalar abilene_network.node[7].content_store 	p_hit[7] 	0.051094890510949
+scalar abilene_network.node[7].content_store 	hits[7] 	252
+scalar abilene_network.node[7].content_store 	misses[7] 	4680
+scalar abilene_network.node[7].content_store 	decision_yes[7] 	63
+scalar abilene_network.node[7].content_store 	decision_no[7] 	4617
+scalar abilene_network.node[7].content_store 	decision_ratio[7] 	0.013461538461538
+scalar abilene_network.node[8].core_layer 	interests[8] 	3451
+scalar abilene_network.node[8].core_layer 	data[8] 	3172
+scalar abilene_network.node[8].content_store 	p_hit[8] 	0.080846131556071
+scalar abilene_network.node[8].content_store 	hits[8] 	279
+scalar abilene_network.node[8].content_store 	misses[8] 	3172
+scalar abilene_network.node[8].content_store 	decision_yes[8] 	49
+scalar abilene_network.node[8].content_store 	decision_no[8] 	3123
+scalar abilene_network.node[8].content_store 	decision_ratio[8] 	0.015447667087011
+scalar abilene_network.node[9].core_layer 	interests[9] 	1779
+scalar abilene_network.node[9].core_layer 	data[9] 	1536
+scalar abilene_network.node[9].content_store 	p_hit[9] 	0.13659359190556
+scalar abilene_network.node[9].content_store 	hits[9] 	243
+scalar abilene_network.node[9].content_store 	misses[9] 	1536
+scalar abilene_network.node[9].content_store 	decision_yes[9] 	28
+scalar abilene_network.node[9].content_store 	decision_no[9] 	1508
+scalar abilene_network.node[9].content_store 	decision_ratio[9] 	0.018229166666667
+scalar abilene_network.node[10].core_layer 	interests[10] 	1810
+scalar abilene_network.node[10].core_layer 	data[10] 	1609
+scalar abilene_network.node[10].content_store 	p_hit[10] 	0.11104972375691
+scalar abilene_network.node[10].content_store 	hits[10] 	201
+scalar abilene_network.node[10].content_store 	misses[10] 	1609
+scalar abilene_network.node[10].content_store 	decision_yes[10] 	48
+scalar abilene_network.node[10].content_store 	decision_no[10] 	1561
+scalar abilene_network.node[10].content_store 	decision_ratio[10] 	0.02983219390926
+scalar abilene_network.client[0] 	hdistance[0] 	5.024889380531
+scalar abilene_network.client[0] 	downloads[0] 	1808
+scalar abilene_network.client[0] 	avg_time[0] 	0.026426260606
+scalar abilene_network.client[1] 	hdistance[1] 	4.2692091979809
+scalar abilene_network.client[1] 	downloads[1] 	1783
+scalar abilene_network.client[1] 	avg_time[1] 	0.017392031485
+scalar abilene_network.client[2] 	hdistance[2] 	3.5044543429844
+scalar abilene_network.client[2] 	downloads[2] 	1796
+scalar abilene_network.client[2] 	avg_time[2] 	0.012555244548
+scalar abilene_network.client[3] 	hdistance[3] 	2.6499442586399
+scalar abilene_network.client[3] 	downloads[3] 	1794
+scalar abilene_network.client[3] 	avg_time[3] 	0.008325506791
+scalar abilene_network.client[4] 	hdistance[4] 	1.7930121757544
+scalar abilene_network.client[4] 	downloads[4] 	1889
+scalar abilene_network.client[4] 	avg_time[4] 	0.006911995299
+scalar abilene_network.client[5] 	hdistance[5] 	0.98160535117057
+scalar abilene_network.client[5] 	downloads[5] 	1794
+scalar abilene_network.client[5] 	avg_time[5] 	0
+scalar abilene_network.client[6] 	hdistance[6] 	1.8139797068771
+scalar abilene_network.client[6] 	downloads[6] 	1774
+scalar abilene_network.client[6] 	avg_time[6] 	0.002015219398
+scalar abilene_network.client[7] 	hdistance[7] 	2.6085227272727
+scalar abilene_network.client[7] 	downloads[7] 	1760
+scalar abilene_network.client[7] 	avg_time[7] 	0.00706121547
+scalar abilene_network.client[8] 	hdistance[8] 	3.4052219321149
+scalar abilene_network.client[8] 	downloads[8] 	1915
+scalar abilene_network.client[8] 	avg_time[8] 	0.013394015179
+scalar abilene_network.client[9] 	hdistance[9] 	4.1781899943789
+scalar abilene_network.client[9] 	downloads[9] 	1779
+scalar abilene_network.client[9] 	avg_time[9] 	0.025769825304
+scalar abilene_network.client[10] 	hdistance[10] 	5.1132596685083
+scalar abilene_network.client[10] 	downloads[10] 	1810
+scalar abilene_network.client[10] 	avg_time[10] 	0.026135469157

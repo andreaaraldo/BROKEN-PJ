@@ -1,0 +1,69 @@
+file 222889 1426096782                                          
+version 2
+run General-15-20150311-18:59:41-28970
+attr D fix0.1
+attr F spr
+attr R lru
+attr a 0.8
+attr configname General
+attr datetime 20150311-18:59:41
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=abilene, $rep=0, $a=0.8, $F=spr, $ttl=1000, $D=fix0.1, $R=lru"
+attr iterationvars2 "$net=abilene, $rep=0, $a=0.8, $F=spr, $ttl=1000, $D=fix0.1, $R=lru, $repetition=0"
+attr measurement "$net=abilene, $rep=0, $a=0.8, $F=spr, $ttl=1000, $D=fix0.1, $R=lru"
+attr net abilene
+attr network networks.${net=abilene}_network
+attr processid 28970
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 15
+attr seedset 0
+attr ttl 1000
+
+vector 0  abilene_network.node[0].content_store  hit_node[0]  ETV
+0	748 9969 599523 599523 1 604 604 0 1 -nan -nan
+vector 1  abilene_network.node[1].content_store  hit_node[1]  ETV
+1	10783 9831 599523 599523 1 604 604 0 1 -nan -nan
+vector 2  abilene_network.node[2].content_store  hit_node[2]  ETV
+2	20680 9871 599523 599523 1 604 604 0 1 -nan -nan
+vector 3  abilene_network.node[3].content_store  hit_node[3]  ETV
+3	30617 9994 599523 599523 1 604 604 0 1 -nan -nan
+vector 4  abilene_network.node[4].content_store  hit_node[4]  ETV
+4	40677 10063 599523 599523 1 604 604 0 1 -nan -nan
+vector 5  abilene_network.node[5].content_store  hit_node[5]  ETV
+5	50806 11009 599523 599523 1 604 604 0 0.9 -nan -nan
+vector 6  abilene_network.node[6].content_store  hit_node[6]  ETV
+6	61881 9970 599523 599523 1 604 604 0 1 -nan -nan
+vector 7  abilene_network.node[7].content_store  hit_node[7]  ETV
+7	71917 9936 599523 599523 1 604 604 0 1 -nan -nan
+vector 8  abilene_network.node[8].content_store  hit_node[8]  ETV
+8	81919 9802 599523 599523 1 604 604 0 1 -nan -nan
+vector 9  abilene_network.node[9].content_store  hit_node[9]  ETV
+9	91787 9928 599523 599523 1 604 604 0 1 -nan -nan
+vector 10  abilene_network.node[10].content_store  hit_node[10]  ETV
+10	101784 10555 599523 599523 1 604 604 0 1 -nan -nan
+vector 11  abilene_network.client[0]  hdistance[0]  ETV
+11	112395 9926 599523 599523 1 604 604 0 6 1552.6637362637 8409.2531589884
+vector 12  abilene_network.client[1]  hdistance[1]  ETV
+12	122377 9964 599523 599523 1 604 604 0 5 1331.9041125541 6056.5590256929
+vector 13  abilene_network.client[2]  hdistance[2]  ETV
+13	132397 10106 599523 599523 1 604 604 0 4 1033.9532023532 3781.4695023143
+vector 14  abilene_network.client[3]  hdistance[3]  ETV
+14	142559 9935 599523 599523 1 604 604 0 3 874.99686147186 2444.6399438846
+vector 15  abilene_network.client[4]  hdistance[4]  ETV
+15	152550 10076 599523 599523 1 604 604 0 2 590.11504306504 1118.3297736535
+vector 16  abilene_network.client[5]  hdistance[5]  ETV
+16	162682 9971 599523 599523 1 604 604 0 1 322.61588189821 312.66769621729
+vector 17  abilene_network.client[6]  hdistance[6]  ETV
+17	172709 10073 599523 599523 1 604 604 0 2 628.57913059163 1199.4095876686
+vector 18  abilene_network.client[7]  hdistance[7]  ETV
+18	182838 9939 599523 599523 1 604 604 0 3 791.50952380952 2193.318058705
+vector 19  abilene_network.client[8]  hdistance[8]  ETV
+19	192833 9947 599523 599523 1 604 604 0 4 1125.7045204795 4142.3606727982
+vector 20  abilene_network.client[9]  hdistance[9]  ETV
+20	202836 10029 599523 599523 1 604 604 0 5 1378.975786056 6429.9639898727
+vector 21  abilene_network.client[10]  hdistance[10]  ETV
+21	212923 9966 599523 599523 1 604 604 0 6 1587.031959707 8738.939065989
