@@ -1,0 +1,50 @@
+version 2
+run General-0-20150312-16:18:18-9348
+attr D costaware0.01
+attr F nrr
+attr R lru
+attr a 1
+attr configname General
+attr csize 1e3
+attr ctlg 1e5
+attr datetime 20150312-16:18:18
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$rep=1, $net=simple, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $R=lru, $csize=1e3, $window=60, $variance=0.05, $mytime=1800, $kappa=1, $priceratiovalue=10, $splits=0.333_0.333_0.334, $pricebits=0"
+attr iterationvars2 "$rep=1, $net=simple, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $R=lru, $csize=1e3, $window=60, $variance=0.05, $mytime=1800, $kappa=1, $priceratiovalue=10, $splits=0.333_0.333_0.334, $pricebits=0, $repetition=0"
+attr kappa 1
+attr lambda 100
+attr measurement "$rep=1, $net=simple, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $R=lru, $csize=1e3, $window=60, $variance=0.05, $mytime=1800, $kappa=1, $priceratiovalue=10, $splits=0.333_0.333_0.334, $pricebits=0"
+attr mytime 1800
+attr net simple
+attr network networks.${net=simple}_network
+attr pricebits 0
+attr priceratiovalue 10
+attr processid 9348
+attr rep 1
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 1
+attr splits 0.333_0.333_0.334
+attr ttl 10
+attr variance 0.05
+attr window 60
+
+scalar . 	a 	1
+scalar . 	csize 	1e3
+scalar . 	ctlg 	1e5
+scalar . 	kappa 	1
+scalar . 	lambda 	100
+scalar . 	mytime 	1800
+scalar . 	pricebits 	0
+scalar . 	priceratiovalue 	10
+scalar . 	rep 	1
+scalar . 	ttl 	10
+scalar . 	variance 	0.05
+scalar . 	window 	60
+scalar simple_network.content_distribution 	repo-0 	1
+scalar simple_network.content_distribution 	client-0 	0
+scalar simple_network.content_distribution 	repo-0_card 	100000
+scalar simple_network.content_distribution 	repo-0_price 	0

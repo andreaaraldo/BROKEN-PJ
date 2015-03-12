@@ -130,10 +130,9 @@ double *WeightedContentDistribution::init_repo_prices()
 		{1,priceratio,0},
 		{priceratio,0,1},
 		{priceratio,1,0}
-	}; // -1 stands for priceratio
+	};
 
-//	double* selected_price_permutation = price_permutations[intrand(6)];
-	double* selected_price_permutation = price_permutations[0];
+	double* selected_price_permutation = price_permutations[intrand(6)];
 
 	double *repo_prices = new double[num_repos];
 	for (int repo_idx=0; repo_idx < num_repos; repo_idx++)
