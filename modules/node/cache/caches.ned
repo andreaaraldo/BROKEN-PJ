@@ -14,7 +14,7 @@ simple base_cache like cache
     	@display("i=block/buffer2;is=l");
 
 	string DS = default("lce");
-	int C = default (100);
+	int C;
     gates:
 	inout cache_port;
 }

@@ -31,7 +31,7 @@ network cost_scenario_network extends base_network
 		double cheap_price = 1;
 		double expensive_price = priceratio;
 
-		node[1].content_store.C =  cachesize;
+		node[0].content_store.C =  cachesize;
 
 
 		// The following nodes are not working as caching nodes, they are here only to have
