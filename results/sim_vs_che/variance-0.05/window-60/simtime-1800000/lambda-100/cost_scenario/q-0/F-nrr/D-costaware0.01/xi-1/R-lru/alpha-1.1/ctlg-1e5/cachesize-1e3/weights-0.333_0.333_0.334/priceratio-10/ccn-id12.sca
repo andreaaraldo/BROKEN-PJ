@@ -1,5 +1,5 @@
 version 2
-run General-3-20150401-18:41:07-10879
+run General-3-20150401-18:42:04-10942
 attr D costaware0.01
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1.1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20150401-18:41:07
+attr datetime 20150401-18:42:04
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$rep=12, $net=cost_scenario, $lambda=100, $a=1.1, $ctlg=1e5, $F=nrr, $ttl=10, $D=costaware0.01, $R=lru, $csize=1e3, $window=60, $variance=0.05, $mytime=1800000, $kappa=1, $priceratiovalue=10, $splits=0.333_0.333_0.334, $pricebits=0"
@@ -20,7 +20,7 @@ attr net cost_scenario
 attr network networks.${net=cost_scenario}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 10879
+attr processid 10942
 attr rep 12
 attr repetition 0
 attr replication #0
