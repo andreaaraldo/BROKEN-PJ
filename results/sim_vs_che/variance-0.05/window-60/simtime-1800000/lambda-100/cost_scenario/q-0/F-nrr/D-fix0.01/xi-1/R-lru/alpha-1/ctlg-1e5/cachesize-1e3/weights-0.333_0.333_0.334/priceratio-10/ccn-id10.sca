@@ -1,5 +1,5 @@
 version 2
-run General-193-20150318-05:44:43-25849
+run General-65-20150404-07:47:55-27823
 attr D fix0.01
 attr F nrr
 attr R lru
@@ -7,7 +7,7 @@ attr a 1
 attr configname General
 attr csize 1e3
 attr ctlg 1e5
-attr datetime 20150318-05:44:43
+attr datetime 20150404-07:47:55
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$rep=10, $net=cost_scenario, $lambda=100, $a=1, $ctlg=1e5, $F=nrr, $ttl=10, $D=fix0.01, $R=lru, $csize=1e3, $window=60, $variance=0.05, $mytime=1800000, $kappa=1, $priceratiovalue=10, $splits=0.333_0.333_0.334, $pricebits=0"
@@ -20,12 +20,12 @@ attr net cost_scenario
 attr network networks.${net=cost_scenario}_network
 attr pricebits 0
 attr priceratiovalue 10
-attr processid 25849
+attr processid 27823
 attr rep 10
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 193
+attr runnumber 65
 attr seedset 10
 attr splits 0.333_0.333_0.334
 attr ttl 10
@@ -88,7 +88,7 @@ scalar cost_scenario_network.node[1].content_store 	misses[1] 	23551073
 scalar cost_scenario_network.node[1].content_store 	decision_yes[1] 	0
 scalar cost_scenario_network.node[1].content_store 	decision_no[1] 	23551073
 scalar cost_scenario_network.node[1].content_store 	decision_ratio[1] 	0
-scalar cost_scenario_network.node[1].content_store 	cache_value[1] 	1.170869968726e-316
+scalar cost_scenario_network.node[1].content_store 	cache_value[1] 	1.6181068868968e-316
 scalar cost_scenario_network.node[1].content_store 	average_price_of_cache[1] 	-nan
 scalar cost_scenario_network.node[2].core_layer 	interests[2] 	24493542
 scalar cost_scenario_network.node[2].core_layer 	repo_load[2] 	24493542
@@ -99,7 +99,7 @@ scalar cost_scenario_network.node[2].content_store 	misses[2] 	24493542
 scalar cost_scenario_network.node[2].content_store 	decision_yes[2] 	0
 scalar cost_scenario_network.node[2].content_store 	decision_no[2] 	24493542
 scalar cost_scenario_network.node[2].content_store 	decision_ratio[2] 	0
-scalar cost_scenario_network.node[2].content_store 	cache_value[2] 	1.1710288602377e-316
+scalar cost_scenario_network.node[2].content_store 	cache_value[2] 	1.6182657784086e-316
 scalar cost_scenario_network.node[2].content_store 	average_price_of_cache[2] 	-nan
 scalar cost_scenario_network.node[3].core_layer 	interests[3] 	24130107
 scalar cost_scenario_network.node[3].core_layer 	repo_load[3] 	24130107
@@ -110,7 +110,7 @@ scalar cost_scenario_network.node[3].content_store 	misses[3] 	24130107
 scalar cost_scenario_network.node[3].content_store 	decision_yes[3] 	0
 scalar cost_scenario_network.node[3].content_store 	decision_no[3] 	24130107
 scalar cost_scenario_network.node[3].content_store 	decision_ratio[3] 	0
-scalar cost_scenario_network.node[3].content_store 	cache_value[3] 	1.1711877517494e-316
+scalar cost_scenario_network.node[3].content_store 	cache_value[3] 	1.6184246699203e-316
 scalar cost_scenario_network.node[3].content_store 	average_price_of_cache[3] 	-nan
 scalar cost_scenario_network.client[0] 	hdistance[0] 	0.80191018352464
 scalar cost_scenario_network.client[0] 	downloads[0] 	180006997
