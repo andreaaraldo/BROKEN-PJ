@@ -36,6 +36,7 @@
 #include "ideal_costaware_policy.h"
 #include "error_handling.h"
 //</aa>
+#include "two_lru_policy.h"
 #include "lcd_policy.h"
 #include "never_policy.h"
 #include "always_policy.h"
@@ -82,8 +83,13 @@ void base_cache::initialize(){
 		target_acceptance_ratio = atof(target_acceptance_ratio_string.c_str());
 		decisor = new Costaware(target_acceptance_ratio);
 	}
+	else if (decision_policy.compare("two_lru")==0)			// 2-LRU
+	{
+		name_cache_size = par("NC");
+		decisor = new Two_Lru(name_cache_size);
+	}
 	//</aa>
-	else if (decision_policy.find("btw")==0)
+	else if (decision_policy.find("btw")==0)				// Betweenness centrality
 	{
 		double db = getAncestorPar("betweenness");
 		if (fabs(db - 1)<=0.001)
@@ -235,35 +241,78 @@ void base_cache::store(cMessage *in){
 	//</aa>
 }
 
+/*
+ *    Storage handling of the received content ID inside the name cache (only with 2-LRU meta-caching).
+ *
+ *    Parameters:
+ *    	 - elem: content ID to be stored.
+ */
+void base_cache::store_name(chunk_t elem)
+{
+    if (cache_size ==0)
+    {
+		std::stringstream ermsg;
+		ermsg<<" ALLERT! The size of the name cache is set to 0! Please check.";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
 
+   data_store(elem);  // Store the content ID inside the Name Cache.
+}
 
-//Base class function: lookup for a given data
-//it wraps statistics on misses and hits
-bool base_cache::lookup(chunk_t chunk ){
+/*
+ * 		Lookup function. The ID of the received Interest is looked up inside the local cache.
+ * 		Hit/Miss statistics are gathered.
+ *
+ * 		Parameters:
+ * 			- chunk: content ID of the received Interest.
+ */
+bool base_cache::lookup(chunk_t chunk )
+{
     bool found = false;
     name_t name = __id(chunk);
 
-    if (data_lookup(chunk)){
+    if (data_lookup(chunk))		// The requested content is cached locally.
+   {
 	//Average cache statistics(hit)
-	hit++;
-	found = true;
+    	hit++;
+    	found = true;
 
 	//Per file cache statistics(hit)
 	if (name <= __file_bulk)
 	    cache_stats[name].hit++;
 
-    }else{
-        found = false;
-
+    }
+   else		// The local cache does not contain the requested content.
+   {
+	       found = false;
 		//Average cache statistics(miss)
 		miss++;
+
 		//Per file cache statistics(miss)
 		if ( name <= __file_bulk )
 			cache_stats[name].miss++;
-    }
+
+   }
+    return found;
+}
+
+/*
+ * 	Lookup function without hit/miss statistics (used only with 2-LRU meta-caching to lookup the content ID inside the name cache).
+ *
+ * 	Parameters:
+ * 		- chunk: content ID to be looked up.
+ */
+bool base_cache::lookup_name(chunk_t chunk )
+{
+    bool found = false;
+    name_t name = __id(chunk);
+
+    if (data_lookup(chunk))			// The content ID is present inside the name cache.
+    	found = true;
+    else
+    	found = false;
 
     return found;
-
 }
 
 bool base_cache::fake_lookup(chunk_t chunk){
@@ -284,10 +333,22 @@ void base_cache::clear_stat()
     cache_stats = new cache_stat_entry[__file_bulk+1];
 }
 
+/*
+ *	Set the size of the local cache in terms of number of objects.
+ *
+ *	Parameters:
+ *		- cSize: size of the cache.
+ */
+void base_cache::set_size(uint32_t cSize)
+{
+	cache_size = cSize;
+}
 //<aa>
-uint32_t base_cache::get_decision_yes(){
+uint32_t base_cache::get_decision_yes()
+{
 	return decision_yes;	
 }
+
 
 uint32_t base_cache::get_decision_no(){
 	return decision_no;

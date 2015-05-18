@@ -31,7 +31,7 @@
 #include "ccn_interest.h"
 #include "ccn_data.h"
 #include "base_cache.h"
-
+#include "two_lru_policy.h"
 //<aa>
 #include "error_handling.h"
 //</aa>
@@ -253,12 +253,24 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
  
    chunk_t chunk = int_msg->getChunk();
-    double int_btw = int_msg->getBtw();
+   double int_btw = int_msg->getBtw();
+   bool cacheable = true;  // This value indicates whether the retrieved content will be cached.
+    
+    
+    
 
-    if (ContentStore->lookup(chunk)){
-        //
-        //a) Check in your Content Store
-        //
+
+
+
+
+
+
+
+  if (ContentStore->lookup(chunk))
+  {
+       //
+       //a) Check in your Content Store
+       //
         ccn_data* data_msg = compose_data(chunk);
 
         data_msg->setHops(0);
@@ -358,6 +370,10 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 				PIT.erase(chunk);
 			//<aa>Last time this entry has been updated is now</aa>
 	    	PIT[chunk].time = simTime(); 
+	    	if(!cacheable)						// Set the cacheable flag inside the PIT entry.
+	    		PIT[chunk].cacheable.reset();
+	    	else
+	    		PIT[chunk].cacheable.set();
 		}
 
 		//<aa>

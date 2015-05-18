@@ -4,6 +4,10 @@ moduleinterface cache
 {
     parameters:
 	int C;
+	//<mt>
+	int NC; 
+	//</mt>
+
     gates:
 	inout cache_port;
 }
@@ -15,6 +19,7 @@ simple base_cache like cache
 
 	string DS = default("lce");
 	int C;
+	int NC = default(C); //name cache dimension (in case of two_lru)
     gates:
 	inout cache_port;
 }
@@ -28,7 +33,6 @@ simple random_cache extends base_cache{
 simple lru_cache extends base_cache{
     @class(lru_cache);
 }
-
 
 simple two_cache extends base_cache{
     @class(two_cache);

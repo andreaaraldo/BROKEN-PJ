@@ -69,10 +69,14 @@ class base_cache : public abstract_node{
 
 		//Outside function behaviour
 		uint32_t get_size() { return cache_size; }
+		void set_size(uint32_t);
 
 		virtual bool fake_lookup(chunk_t);
 		bool lookup(chunk_t);
+		// Lookup without hit/miss statistics (used with the 2-LRU meta-caching strategy to lookup the name cache)
+		bool lookup_name(chunk_t);
 		void store (cMessage *);
+		void store_name(chunk_t);    // Store the content ID inside the name cache (only with 2-LRU meta-caching).
 
 		void clear_stat();
 
@@ -107,8 +111,9 @@ class base_cache : public abstract_node{
 		virtual bool full() = 0; //<aa> moved from protected to public</aa>
 
     private:
-		int  cache_size;
-		int  nodes;
+		int cache_size;
+		int name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
+		int nodes;
 		int level;
 
 		DecisionPolicy *decisor;

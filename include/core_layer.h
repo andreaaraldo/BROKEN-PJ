@@ -47,6 +47,7 @@ struct pit_entry {
     interface_t interfaces;
     unordered_set<int> nonces;
     simtime_t time; //<aa> last time this entry has been updated</aa>
+    std::bitset<1> cacheable;		// Bit indicating if the retrieved Data packet should be cached or not.
 };
 
 
