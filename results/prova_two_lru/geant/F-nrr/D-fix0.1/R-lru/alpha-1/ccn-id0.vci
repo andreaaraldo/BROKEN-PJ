@@ -1,0 +1,71 @@
+file 32092 1432033827                                           
+version 2
+run General-2-20150519-13:10:25-30102
+attr D fix0.1
+attr F nrr
+attr R lru
+attr a 1
+attr configname General
+attr datetime 20150519-13:10:25
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=fix0.1, $R=lru"
+attr iterationvars2 "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=fix0.1, $R=lru, $repetition=0"
+attr measurement "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=fix0.1, $R=lru"
+attr net geant
+attr network networks.${net=geant}_network
+attr processid 30102
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 2
+attr seedset 0
+attr ttl 1000
+
+vector 0  geant_network.node[0].content_store  hit_node[0]  ETV
+0	726 1283 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 1  geant_network.node[1].content_store  hit_node[1]  ETV
+1	2073 1283 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 2  geant_network.node[2].content_store  hit_node[2]  ETV
+2	3420 1283 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 3  geant_network.node[3].content_store  hit_node[3]  ETV
+3	4767 1191 970884 970884 1 76 76 0 1 -nan -nan
+vector 4  geant_network.node[4].content_store  hit_node[4]  ETV
+4	6022 1283 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 5  geant_network.node[5].content_store  hit_node[5]  ETV
+5	7369 1211 970884 970884 1 76 76 0 1 -nan -nan
+vector 6  geant_network.node[6].content_store  hit_node[6]  ETV
+6	8644 1283 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 7  geant_network.node[7].content_store  hit_node[7]  ETV
+7	9991 1283 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 8  geant_network.node[8].content_store  hit_node[8]  ETV
+8	11338 1283 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 9  geant_network.node[9].content_store  hit_node[9]  ETV
+9	12685 1283 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 10  geant_network.node[10].content_store  hit_node[10]  ETV
+10	14035 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 11  geant_network.node[11].content_store  hit_node[11]  ETV
+11	15461 1185 970884 970884 1 76 76 0 1 44.380952380952 41.619648526077
+vector 12  geant_network.node[12].content_store  hit_node[12]  ETV
+12	16713 1295 970884 970884 1 76 76 0 1 -nan -nan
+vector 13  geant_network.node[13].content_store  hit_node[13]  ETV
+13	18075 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 14  geant_network.node[14].content_store  hit_node[14]  ETV
+14	19501 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 15  geant_network.node[15].content_store  hit_node[15]  ETV
+15	20927 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 16  geant_network.node[16].content_store  hit_node[16]  ETV
+16	22353 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 17  geant_network.node[17].content_store  hit_node[17]  ETV
+17	23779 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 18  geant_network.node[18].content_store  hit_node[18]  ETV
+18	25205 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 19  geant_network.node[19].content_store  hit_node[19]  ETV
+19	26631 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 20  geant_network.node[20].content_store  hit_node[20]  ETV
+20	28057 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 21  geant_network.node[21].content_store  hit_node[21]  ETV
+21	29483 1359 970884 970884 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 22  geant_network.client[11]  hdistance[11]  ETV
+22	30898 1194 970884 970884 1 76 76 0 4 92.571428571429 281.88041950113
