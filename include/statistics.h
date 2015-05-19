@@ -62,7 +62,7 @@ class statistics : public cSimpleModule{
 		// A. Araldo, D. Rossi, F. Martignon, 
 		// “Design and Evaluation of Cost-aware Information Centric Routers”, 
 		// in ACM SIGCOMM ICN 2014 
-		static const bool record_cache_value = true;
+		static const bool record_cache_value = false;
 	//</aa>
 
     protected:

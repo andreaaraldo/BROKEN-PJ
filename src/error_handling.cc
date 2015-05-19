@@ -44,7 +44,8 @@ void severe_error(const char* source_file_name, int code_line,
 				const char* error_message)
 {
 	generic_message(source_file_name, code_line, "ERROR", error_message);
-	exit(3);
+	throw 1;
+	//exit(3);
 }
 
 void debug_message(const char* source_file_name, int code_line, 
@@ -57,7 +58,8 @@ void severe_error(const char* source_file_name, int code_line,
 				std::stringstream error_message)
 {
 	severe_error(source_file_name, code_line, error_message.str().c_str() );
-	exit(3);
+	throw 1;
+	//exit(3);
 }
 
 void debug_message(const char* source_file_name, int code_line, 

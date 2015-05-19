@@ -128,7 +128,10 @@ class Costaware_ancestor: public DecisionPolicy{
 			#ifdef SEVERE_DEBUG
 				if (num_content_distribution_modules != 1){
 					std::stringstream msg; 
-					msg<<"Found "<< num_content_distribution_modules << ". It MUST be 1";
+					msg<<"Found "<< num_content_distribution_modules << 
+					" WeightedContentDistribution modules. They must be 1. If you are not using"<<
+					" cost related functions, check that statistics::record_cache_value is "<<
+					" disabled. It may be the source of error.";
 					severe_error(__FILE__, __LINE__, msg.str().c_str() );
 				}
 			#endif
