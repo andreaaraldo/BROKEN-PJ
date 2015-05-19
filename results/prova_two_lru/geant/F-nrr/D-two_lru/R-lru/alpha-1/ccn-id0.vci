@@ -1,0 +1,91 @@
+file 56897 1432028304                                           
+version 2
+run General-1-20150519-11:38:05-23084
+attr D two_lru
+attr F nrr
+attr R lru
+attr a 1
+attr configname General
+attr datetime 20150519-11:38:05
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, $R=lru"
+attr iterationvars2 "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, $R=lru, $repetition=0"
+attr measurement "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, $R=lru"
+attr net geant
+attr network networks.${net=geant}_network
+attr processid 23084
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 1
+attr seedset 0
+attr ttl 1000
+
+vector 0  geant_network.node[0].content_store  hit_node[0]  ETV
+0	730 1655 6949854 6949854 1 76 76 0 1 -nan -nan
+vector 1  geant_network.node[1].content_store  hit_node[1]  ETV
+1	2449 1378 6949854 6949854 1 76 76 0 1 -nan -nan
+vector 2  geant_network.node[2].content_store  hit_node[2]  ETV
+2	3891 1359 6949854 6949854 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 3  geant_network.node[3].content_store  hit_node[3]  ETV
+3	5314 1436 6949854 6949854 1 76 76 0 1 -nan -nan
+vector 4  geant_network.node[4].content_store  hit_node[4]  ETV
+4	6814 1726 6949854 6949854 1 76 76 0 1 28.312839461736 14.537365200833
+vector 5  geant_network.node[5].content_store  hit_node[5]  ETV
+5	8604 1738 6949854 6949854 1 76 76 0 1 25.390985038553 13.036233100146
+vector 6  geant_network.node[6].content_store  hit_node[6]  ETV
+6	10406 1698 6949854 6949854 1 76 76 0 1 -nan -nan
+vector 7  geant_network.node[7].content_store  hit_node[7]  ETV
+7	12168 1383 6949854 6949854 1 76 76 0 0.625 -nan -nan
+vector 8  geant_network.node[8].content_store  hit_node[8]  ETV
+8	13615 1460 6949854 6949854 1 76 76 0 0.71428571428571 -nan -nan
+vector 9  geant_network.node[9].content_store  hit_node[9]  ETV
+9	15139 1719 6949854 6949854 1 76 76 0 1 20.614114459605 10.011372957974
+vector 10  geant_network.node[10].content_store  hit_node[10]  ETV
+10	16925 1832 6949854 6949854 1 76 76 0 1 37.619599203504 25.333635663922
+vector 11  geant_network.node[11].content_store  hit_node[11]  ETV
+11	18824 1699 6949854 6949854 1 76 76 0 1 -nan -nan
+vector 12  geant_network.node[12].content_store  hit_node[12]  ETV
+12	20590 1429 6949854 6949854 1 76 76 0 0.5 -nan -nan
+vector 13  geant_network.node[13].content_store  hit_node[13]  ETV
+13	22086 1469 6949854 6949854 1 76 76 0 0.83333333333333 -nan -nan
+vector 14  geant_network.node[14].content_store  hit_node[14]  ETV
+14	23622 1926 6949854 6949854 1 76 76 0 0.99418604651163 31.214352554482 16.376209333786
+vector 15  geant_network.node[15].content_store  hit_node[15]  ETV
+15	25615 1637 6949854 6949854 1 76 76 0 1 -nan -nan
+vector 16  geant_network.node[16].content_store  hit_node[16]  ETV
+16	27319 1500 6949854 6949854 1 76 76 0 0.88235294117647 -nan -nan
+vector 17  geant_network.node[17].content_store  hit_node[17]  ETV
+17	28886 1883 6949854 6949854 1 76 76 0 1 -nan -nan
+vector 18  geant_network.node[18].content_store  hit_node[18]  ETV
+18	30836 1877 6949854 6949854 1 76 76 0 1 38.277267055317 23.874290573241
+vector 19  geant_network.node[19].content_store  hit_node[19]  ETV
+19	32780 1435 6949854 6949854 1 76 76 1.7976931348623e+308 -1.7976931348623e+308 -nan -nan
+vector 20  geant_network.node[20].content_store  hit_node[20]  ETV
+20	34282 1713 6949854 6949854 1 76 76 0 1 38.165952844455 25.410106639708
+vector 21  geant_network.node[21].content_store  hit_node[21]  ETV
+21	36062 1706 6949854 6949854 1 76 76 0 1 -nan -nan
+vector 22  geant_network.client[0]  hdistance[0]  ETV
+22	37822 1666 6949854 6949854 1 76 76 0 5 102.42991604027 205.63122375348
+vector 23  geant_network.client[4]  hdistance[4]  ETV
+23	39542 1781 6949854 6949854 1 76 76 0 4 82.019611941116 132.41288801883
+vector 24  geant_network.client[5]  hdistance[5]  ETV
+24	41377 1631 6949854 6949854 1 76 76 0 2.6 88.407338140393 133.03617644744
+vector 25  geant_network.client[6]  hdistance[6]  ETV
+25	43062 1676 6949854 6949854 1 76 76 0 5 117.75080573995 260.99275763074
+vector 26  geant_network.client[9]  hdistance[9]  ETV
+26	44792 1745 6949854 6949854 1 76 76 0 3.6666666666667 104.81103525081 207.02309047233
+vector 27  geant_network.client[10]  hdistance[10]  ETV
+27	46593 1717 6949854 6949854 1 76 76 0 6 131.51946564476 381.36494333278
+vector 28  geant_network.client[11]  hdistance[11]  ETV
+28	48366 1558 6949854 6949854 1 76 76 0 4 113.9107645417 249.8499059726
+vector 29  geant_network.client[14]  hdistance[14]  ETV
+29	49980 1716 6949854 6949854 1 76 76 0.0058139534883721 2.6666666666667 69.576116806169 84.488483722538
+vector 30  geant_network.client[17]  hdistance[17]  ETV
+30	51752 1631 6949854 6949854 1 76 76 0 2.5 81.746855910077 122.64058466606
+vector 31  geant_network.client[18]  hdistance[18]  ETV
+31	53439 1742 6949854 6949854 1 76 76 0 3.25 67.560214123534 97.404610846603
+vector 32  geant_network.client[20]  hdistance[20]  ETV
+32	55237 1660 6949854 6949854 1 76 76 0 4 93.762164211757 182.70277991186
