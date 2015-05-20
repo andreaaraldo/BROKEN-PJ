@@ -256,8 +256,17 @@ void core_layer::handle_interest(ccn_interest *int_msg)
    double int_btw = int_msg->getBtw();
    bool cacheable = true;  // This value indicates whether the retrieved content will be cached.
     
-    
-    
+    // Check if the meta-caching is 2-LRU. In this case, we need to lookup for the content ID inside the Name Cache.
+    string decision_policy = par("DS");
+
+    if (decision_policy.compare("two_lru")==0)
+    {
+    	Two_Lru* tLruPointer = (Two_Lru *) (ContentStore->get_decisor());
+    	if (!(tLruPointer->name_to_cache(chunk)))	// The ID is not present inside the Name Cache, so the
+    												// cacheable flag inside the PIT will be set to '0'.
+    			cacheable = false;
+    }
+
 
 
 
