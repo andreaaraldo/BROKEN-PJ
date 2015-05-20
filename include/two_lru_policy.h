@@ -52,7 +52,6 @@ class Two_Lru: public DecisionPolicy
 	 */
 	virtual bool data_to_cache(ccn_data *)
 	{
-		cout << "ciao sono in two_lru.h\n"<<endl;
 		return true;
 	}
 
