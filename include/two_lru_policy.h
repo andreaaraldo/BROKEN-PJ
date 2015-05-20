@@ -50,7 +50,11 @@ class Two_Lru: public DecisionPolicy
 	 * Cache decision of the 2-LRU. Since the flag that indicates the decision (cache or not) is present inside
 	 * the PIT entry, and it has already been set by the core_layer, this function returns always true.
 	 */
-	virtual bool data_to_cache(ccn_data *){return true;}
+	virtual bool data_to_cache(ccn_data *)
+	{
+		cout << "ciao sono in two_lru.h\n"<<endl;
+		return true;
+	}
 
 	/*
 	 *  Check the presence of the content ID inside the Name Cache, and eventually stores it.
