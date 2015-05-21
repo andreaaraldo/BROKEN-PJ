@@ -63,7 +63,8 @@ void  core_layer::initialize(){
     my_bitmask = 0;
     for (i = 0; i < num_repos; i++)
 	{
-		if (content_distribution::repositories[i] == getIndex() ){
+		if (content_distribution::repositories[i] == getIndex() )
+		{
 			//<aa>
 			#ifdef SEVERE_DEBUG
 				it_has_a_repo_attached = true;
@@ -75,7 +76,7 @@ void  core_layer::initialize(){
 		} else
 				repo_price = 0;
 	}
-    my_bitmask = (1<<i);//recall that the width of the repository bitset is only num_repos
+    my_bitmask = (1<<i);	// Recall that the width of the repository bitset is only num_repos
 
     //Getting the content store
     ContentStore = (base_cache *) gate("cache_port$o")->getNextGate()->getOwner();
@@ -115,7 +116,8 @@ void  core_layer::initialize(){
  * counters are increased). The two auxiliar functions handle_interest() and
  * handle_data() have the task of dealing with interest and data processing.
  */
-void core_layer::handleMessage(cMessage *in){
+void core_layer::handleMessage(cMessage *in)
+{
 	//<aa>
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
@@ -180,8 +182,9 @@ void core_layer::handleMessage(cMessage *in){
 	//</aa>
 }
 
-//Per node statistics printing
-void core_layer::finish(){
+//	Print node statistics
+void core_layer::finish()
+{
 	//<aa>
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
@@ -208,7 +211,8 @@ void core_layer::finish(){
     sprintf ( name, "interests[%d]", getIndex());
     recordScalar (name, interests);
 
-    if (repo_load != 0){
+    if (repo_load != 0)
+	{
 		sprintf ( name, "repo_load[%d]", getIndex());
 		recordScalar(name,repo_load);
     }
@@ -455,8 +459,10 @@ void core_layer::handle_data(ccn_data *data_msg)
     //If someone had previously requested the data 
     if ( pitIt != PIT.end() )
 	{
-		ContentStore->store(data_msg);
-		interfaces = (pitIt->second).interfaces;//get interface list
+    	if (pitIt->second.cacheable.test(0))  // Cache the content only if the cacheable bit is set.
+    		ContentStore->store(data_msg);
+
+    	interfaces = (pitIt->second).interfaces;	// Get incoming interfaces.
 		i = 0;
 		while (interfaces){
 			if ( interfaces & 1 ){
@@ -565,7 +571,7 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 	#endif
 }
 
-
+// Check if the local node is the owner of the requested content.
 bool core_layer::check_ownership(vector<int> repositories){
     bool check = false;
     if (find (repositories.begin(),repositories.end(),getIndex()) != repositories.end())
@@ -576,7 +582,7 @@ bool core_layer::check_ownership(vector<int> repositories){
 
 
 /*
- * Compose a data response packet
+ * 	Create a Data packet in response to the received Interest.
  */
 ccn_data* core_layer::compose_data(uint64_t response_data){
     ccn_data* data = new ccn_data("data",CCN_D);
