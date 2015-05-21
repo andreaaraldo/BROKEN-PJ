@@ -1,6 +1,6 @@
 version 2
-run General-0-20150521-11:49:12-10459
-attr D lce
+run General-1-20150521-11:49:12-10460
+attr D two_lru
 attr F nrr
 attr R lru
 attr a 1
@@ -8,17 +8,17 @@ attr configname General
 attr datetime 20150521-11:49:12
 attr experiment General
 attr inifile omnetpp.ini
-attr iterationvars "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=lce, $R=lru"
-attr iterationvars2 "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=lce, $R=lru, $repetition=0"
-attr measurement "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=lce, $R=lru"
+attr iterationvars "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, $R=lru"
+attr iterationvars2 "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, $R=lru, $repetition=0"
+attr measurement "$net=geant, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, $R=lru"
 attr net geant
 attr network networks.${net=geant}_network
-attr processid 10459
+attr processid 10460
 attr rep 0
 attr repetition 0
 attr replication #0
 attr resultdir results
-attr runnumber 0
+attr runnumber 1
 attr seedset 0
 attr ttl 1000
 
