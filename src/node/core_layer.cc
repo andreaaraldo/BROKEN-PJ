@@ -265,12 +265,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     	if (!(tLruPointer->name_to_cache(chunk)))	// The ID is not present inside the Name Cache, so the
     												// cacheable flag inside the PIT will be set to '0'.
     			cacheable = false;
-			cout << "ciao, sono dentro two_lru cosa"<<endl;
-		
     }
-	exit(3);
-
-
 
 
 
