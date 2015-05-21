@@ -258,8 +258,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     
     // Check if the meta-caching is 2-LRU. In this case, we need to lookup for the content ID inside the Name Cache.
     string decision_policy = ContentStore->par("DS");
-	cout << "ciao, decision_policy = "<<decision_policy<<endl;
-	exit(3);
 
     if (decision_policy.compare("two_lru")==0)
     {
@@ -267,7 +265,10 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     	if (!(tLruPointer->name_to_cache(chunk)))	// The ID is not present inside the Name Cache, so the
     												// cacheable flag inside the PIT will be set to '0'.
     			cacheable = false;
+			cout << "ciao, sono dentro two_lru cosa"<<endl;
+		
     }
+	exit(3);
 
 
 
