@@ -1,11 +1,11 @@
 version 2
-run General-0-20150521-11:59:57-10994
+run General-0-20150521-12:00:30-11071
 attr D two_lru
 attr F nrr
 attr R lru
 attr a 1
 attr configname General
-attr datetime 20150521-11:59:57
+attr datetime 20150521-12:00:30
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, $R=lru"
@@ -13,7 +13,7 @@ attr iterationvars2 "$net=abilene, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, 
 attr measurement "$net=abilene, $rep=0, $a=1, $F=nrr, $ttl=1000, $D=two_lru, $R=lru"
 attr net abilene
 attr network networks.${net=abilene}_network
-attr processid 10994
+attr processid 11071
 attr rep 0
 attr repetition 0
 attr replication #0
