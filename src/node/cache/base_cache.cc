@@ -214,7 +214,7 @@ void base_cache::finish(){
 void base_cache::store(cMessage *in){
     if (cache_size ==0){
 		//<aa>
-		decision_no++;
+		after_discarding_data();
 		//</aa>
 		return;
 	}
@@ -237,9 +237,17 @@ void base_cache::store(cMessage *in){
 		//</aa>
 	}
 	//<aa>
-	else {decision_no++; }
+	else after_discarding_data();
 	//</aa>
 }
+
+//<aa>
+// Call it when you decide not to store an incoming data pkt
+void base_cache::after_discarding_data()
+{
+	decision_no++;
+}
+//</aa>
 
 /*
  *    Storage handling of the received content ID inside the name cache (only with 2-LRU meta-caching).

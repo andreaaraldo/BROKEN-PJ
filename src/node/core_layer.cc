@@ -461,6 +461,8 @@ void core_layer::handle_data(ccn_data *data_msg)
 	{
     	if (pitIt->second.cacheable.test(0))  // Cache the content only if the cacheable bit is set.
     		ContentStore->store(data_msg);
+		else
+			ContentStore->after_discarding_data();
 
     	interfaces = (pitIt->second).interfaces;	// Get incoming interfaces.
 		i = 0;
