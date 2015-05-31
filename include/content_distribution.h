@@ -54,7 +54,7 @@ class content_distribution : public cSimpleModule{
 
 		//<aa>
 		//<aa>This method had no input parameters before</aa>
-		virtual int choose_repos(int object_id);
+		virtual int choose_repos(int object_index);
 		virtual void initialize_repo_popularity();
 
 		virtual void finalize_total_replica();

@@ -46,13 +46,9 @@ typedef unsigned short repo_t; //representation for the repository part within t
 typedef unsigned long interface_t; //representation of a PIT entry (containing interface information)
 
 //Chunk fields
-//representation for any chunk flying within the system. It represents a triple [name|number|representation]
-//name is 32 bits, number 16 bits and representation 16 bits 
-typedef uint64_t chunk_t; 
-typedef uint32_t name_t; //represents the name part of the chunk
-typedef uint16_t cnumber_t; //represents the number part of the chunk
-typedef uint16_t representation_t; //represents the number part of the chunk
-
+typedef unsigned long long  chunk_t; //representation for any chunk flying within the system. It represents a pair [name|number]
+typedef unsigned int cnumber_t; //represents the number part of the chunk
+typedef unsigned int name_t; //represents the name part of the chunk
 
 //Useful data structure. Use that instead of cSimpleModule, when you deal with caches, strategy_layers, and core_layers
 #include "client.h"
@@ -99,28 +95,21 @@ class abstract_node: public cSimpleModule{
 //--------------
 //Chunk handling
 //--------------
-//Basically a chunk is a 64-bit integer composed by three parts: chunk id (or chunk name), 
-//chunk_number and representation level
-//<aa> The first 32 bits indicate the chunk_id, the other 16 bits the chunk_number and the last 
-// 16 bits the representation level </aa>
-#define ID_OFFSET        	0
-#define NUMBER_OFFSET   	32
-#define REPRESENTATION_OFFSET 	48
+//Basically a chunk is a 64-bit integer composed by two parts: the chunk_number, and the chunk id
+//<aa> The first 32 bits indicate the chunk_id, the other 32 bits indicate the chunk_number </aa>
+#define NUMBER_OFFSET   32
+#define ID_OFFSET        0
 
 //Bitmasks
-#define ID_MSK    			( (uint64_t) 0xFFFFFFFF << ID_OFFSET )
-#define CHUNK_MSK 			( (uint64_t) 0xFFFF << NUMBER_OFFSET)
-#define REPRESENTATION_MSK 	( (uint64_t) 0xFFFF << REPRESENTATION_OFFSET)
+#define CHUNK_MSK ( (uint64_t) 0xFFFFFFFF << NUMBER_OFFSET)
+#define ID_MSK    ( (uint64_t) 0xFFFFFFFF << ID_OFFSET )
 
 //Macros
-#define __id(h)    			( ( h & ID_MSK )     		>> ID_OFFSET) //get chunk id
-#define __chunk(h) 			( ( h & CHUNK_MSK )  		>> NUMBER_OFFSET )// get chunk number
-#define __representation(h) ( ( h & REPRESENTATION_MSK )>> REPRESENTATION_OFFSET )// get repr. level
+#define __chunk(h) ( ( h & CHUNK_MSK )  >> NUMBER_OFFSET )// get chunk number
+#define __id(h)    ( ( h & ID_MSK )     >> ID_OFFSET) //get chunk id
 
 #define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (uint64_t ) c  << NUMBER_OFFSET)) //set chunk number
-//set chunk id <aa> (i.e. the name of the object this chunk is part of)
-#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (uint64_t ) id << ID_OFFSET)) 
-#define __srepresentation(h,id)   h = ( (h & ~ REPRESENTATION_MSK)   | ( (uint64_t ) id << REPRESENTATION_OFFSET)) 
+#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (uint64_t ) id << ID_OFFSET)) //set chunk id
 
 inline chunk_t next_chunk (chunk_t c){
 
@@ -136,11 +125,11 @@ inline chunk_t next_chunk (chunk_t c){
 //--------------
 //The catalog is a huge array of file entries. Within each entry is an 
 //information field 32-bits long. These 32 bits are composed by:
-//[file_size|repositories] of 16 bits each
-//file_size is the number of chunks composing that object
+//[file_size|repositories]
 //
-#define REPO_OFFSET 	0
+//
 #define SIZE_OFFSET  	16
+#define REPO_OFFSET 	0
 
 //Bitmasks
 #define REPO_MSK (0xFFFF << REPO_OFFSET)
@@ -155,7 +144,7 @@ inline chunk_t next_chunk (chunk_t c){
 #define __srepo(f,r) ( __info(f) = (__info(f) & ~REPO_MSK ) | r << REPO_OFFSET )
 
 //<aa>
-// File statistics. Collecting statistics for all files would be tremendously
+// File statistics. Doing statistics for all files would be tremendously
 // slow for huge catalog size, and at the same time quite useless
 // (statistics for the 12345234th file are not so meaningful at all)
 // Therefore, we compute statistics only for the first __file_bulk files

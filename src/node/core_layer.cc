@@ -725,52 +725,49 @@ void core_layer::add_to_pit(chunk_t chunk, int gateindex)
 
 int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, int line_of_the_call)
 {
-	//{CHECKS
-	  #ifdef SEVERE_DEBUG
-	  if (gateindex > gateSize("face$o")-1 )
-	  {
-		  std::stringstream msg;
-		  msg<<"I am node "<<getIndex() <<". Line "<<line_of_the_call<<
-			  " commands you to send a packet to interface "<<gateindex<<
-			  ". But the number of ports is "<<gateSize("face$o");
-		  severe_error(__FILE__, __LINE__, msg.str().c_str() );
-	  }
+	if (gateindex > gateSize("face$o")-1 )
+	{
+		std::stringstream msg;
+		msg<<"I am node "<<getIndex() <<". Line "<<line_of_the_call<<
+			" commands you to send a packet to interface "<<gateindex<<
+			". But the number of ports is "<<gateSize("face$o");
+		severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
 
-	  if ( gateindex > (int) sizeof(interface_t)*8-1 )
-	  {
-		  std::stringstream msg;
-		  msg<<"You are trying to send a packet through the interface gateindex. But the maximum interface "
-			  <<"number manageable by ccnsim is "<<sizeof(interface_t)*8-1 <<" beacause the type of "
-			  <<"interface_t is of size "<<sizeof(interface_t)<<". You can change the definition of "
-			  <<"interface_t (in ccnsim.h) to solve this issue and recompile";
-		  severe_error(__FILE__, __LINE__, msg.str().c_str() );
-	  }
-	 
+	#ifdef SEVERE_DEBUG
+	if ( gateindex > (int) sizeof(interface_t)*8-1 )
+	{
+		std::stringstream msg;
+		msg<<"You are trying to send a packet through the interface gateindex. But the maximum interface "
+			<<"number manageable by ccnsim is "<<sizeof(interface_t)*8-1 <<" beacause the type of "
+			<<"interface_t is of size "<<sizeof(interface_t)<<". You can change the definition of "
+			<<"interface_t (in ccnsim.h) to solve this issue and recompile";
+		severe_error(__FILE__, __LINE__, msg.str().c_str() );
+	}
 
-	  client* c = __get_attached_client(gateindex);
-	  if (c)
-	  {	//There is a client attached to that port
-		  if ( !c->is_waiting_for( msg->get_name() ) )
-		  {
-			  std::stringstream msg; 
-			  msg<<"I am node "<< getIndex()<<". I am sending a data to the attached client that is not "<<
-				  " waiting for it. This is not necessarily an error, as this data could have been "
-				  <<" requested by the client and the client could have retrieved it before and now"
-				  <<" it may be fine and not wanting the data anymore. If it is the case, "<<
-				  "ignore this message ";
-			  debug_message(__FILE__, __LINE__, msg.str().c_str() );
-		  }
+	client* c = __get_attached_client(gateindex);
+	if (c)
+	{	//There is a client attached to that port
+		if ( !c->is_waiting_for( msg->get_name() ) )
+		{
+			std::stringstream msg; 
+			msg<<"I am node "<< getIndex()<<". I am sending a data to the attached client that is not "<<
+				" waiting for it. This is not necessarily an error, as this data could have been "
+				<<" requested by the client and the client could have retrieved it before and now"
+				<<" it may be fine and not wanting the data anymore. If it is the case, "<<
+				"ignore this message ";
+			debug_message(__FILE__, __LINE__, msg.str().c_str() );
+		}
 
-		  if ( !c->is_active() )
-		  {
-			  std::stringstream msg; 
-			  msg<<"I am node "<< getIndex()<<". I am sending a data to the attached client "<<
-				  ", that is not active, "<<
-				  " through port "<<gateindex<<". This was commanded in line "<< line_of_the_call;
-			  severe_error(__FILE__, __LINE__, msg.str().c_str() );
-		  }
-	  }
-	//}CHECKS
+		if ( !c->is_active() )
+		{
+			std::stringstream msg; 
+			msg<<"I am node "<< getIndex()<<". I am sending a data to the attached client "<<
+				", that is not active, "<<
+				" through port "<<gateindex<<". This was commanded in line "<< line_of_the_call;
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+		}
+	}
 	#endif
 	return send (msg, gatename, gateindex);
 }

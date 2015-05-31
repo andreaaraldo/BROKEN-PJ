@@ -75,7 +75,7 @@ class base_cache : public abstract_node{
 		bool lookup(chunk_t);
 		// Lookup without hit/miss statistics (used with the 2-LRU meta-caching strategy to lookup the name cache)
 		bool lookup_name(chunk_t);
-		void after_data_reception (cMessage *);
+		void store (cMessage *);
 		void store_name(chunk_t);    // Store the content ID inside the name cache (only with 2-LRU meta-caching).
 
 		void clear_stat();
