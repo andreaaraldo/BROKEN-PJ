@@ -1,0 +1,31 @@
+version 2
+run General-19-20150531-20:18:50-19108
+attr D fix0.1
+attr F spr
+attr R lru
+attr a 0.9
+attr configname General
+attr datetime 20150531-20:18:50
+attr experiment General
+attr inifile omnetpp.ini.video
+attr iterationvars "$net=video_simple_scenario, $rep=0, $a=0.9, $F=spr, $ttl=1000, $D=fix0.1, $R=lru"
+attr iterationvars2 "$net=video_simple_scenario, $rep=0, $a=0.9, $F=spr, $ttl=1000, $D=fix0.1, $R=lru, $repetition=0"
+attr measurement "$net=video_simple_scenario, $rep=0, $a=0.9, $F=spr, $ttl=1000, $D=fix0.1, $R=lru"
+attr net video_simple_scenario
+attr network networks.${net=video_simple_scenario}_network
+attr processid 19108
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 19
+attr seedset 0
+attr ttl 1000
+
+scalar . 	a 	0.9
+scalar . 	rep 	0
+scalar . 	ttl 	1000
+scalar video_simple_scenario_network.content_distribution 	repo-0 	1
+scalar video_simple_scenario_network.content_distribution 	client-0 	0
+scalar video_simple_scenario_network.content_distribution 	repo-0_card 	10000
+scalar video_simple_scenario_network.content_distribution 	repo-0_price 	0
