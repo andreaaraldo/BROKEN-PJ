@@ -211,7 +211,7 @@ void base_cache::finish(){
 
 
 //Base class function: a data has been received:
-void base_cache::store(cMessage *in){
+void base_cache::after_data_reception(cMessage *in){
     if (cache_size ==0){
 		//<aa>
 		after_discarding_data();
