@@ -725,6 +725,7 @@ void core_layer::add_to_pit(chunk_t chunk, int gateindex)
 
 int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, int line_of_the_call)
 {
+	#ifdef SEVERE_DEBUG
 	if (gateindex > gateSize("face$o")-1 )
 	{
 		std::stringstream msg;
@@ -734,7 +735,6 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 		severe_error(__FILE__, __LINE__, msg.str().c_str() );
 	}
 
-	#ifdef SEVERE_DEBUG
 	if ( gateindex > (int) sizeof(interface_t)*8-1 )
 	{
 		std::stringstream msg;
@@ -769,6 +769,7 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 		}
 	}
 	#endif
+	msg->setByteLength(msg->getMegabyteLength() * 1000000);
 	return send (msg, gatename, gateindex);
 }
 //</aa>

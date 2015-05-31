@@ -32,4 +32,6 @@ packet ccn_data{
 
 
 	bool found = false; 
+	
+	int megabyteLength = 131;
 }
