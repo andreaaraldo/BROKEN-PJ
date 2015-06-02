@@ -1,3 +1,4 @@
+import modules.channels.MonitoredChannel;
 package networks;
 
 network video_simple_scenario_network extends base_network{
@@ -18,6 +19,7 @@ network video_simple_scenario_network extends base_network{
 	node[0..1].content_store.C = 0;
 
 connections:
-    node[0].face++ <--> {delay = 1ms; datarate = 490Mbps;} <--> node[1].face++;
+    node[0].face++ <--> MonitoredChannel <--> node[1].face++;
+
     
 }

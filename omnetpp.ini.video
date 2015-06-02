@@ -47,9 +47,9 @@ seed-set = ${rep = 0}
 ##Average size of a content (in chunks)
 **.file_size = 1
 ##Shaping factor of the Zipf distribution
-**.alpha = ${a = 0.5..1 step 0.1}
+**.alpha = ${a = 1}
 ##Cardinality of the catalog
-**.objects = 10^4
+**.objects = 2
 
 #####################################################################
 ########################## Forwarding ##############################
@@ -70,7 +70,7 @@ seed-set = ${rep = 0}
 ########################## Caching ################################
 #####################################################################
 ##Caching meta-algorithms: never, fixP, lce , lcd, btw, prob_cache, costawareP, ideal_blind, ideal_costaware
-**.DS = "${ D = lce,lcd,prob_cache,fix0.1 }"
+**.DS = "${ D = lce }"
 ##Caching algorithms: {lru,lfu,fifo,two,random}_cache
 **.RS = "${ R = lru }_cache"
 ##Cache size (in chunks)
