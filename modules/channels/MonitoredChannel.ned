@@ -18,5 +18,4 @@ package modules.channels;
 
 channel MonitoredChannel extends ned.IdealChannel
 {
-
 }

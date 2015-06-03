@@ -32,6 +32,19 @@ class MonitoredChannel : public cIdealChannel
 {
 	public:
 		virtual void processMessage(cMessage *msg, simtime_t t, result_t& result);
+
+
+    //@{
+    /**
+     * Constructor. This is only for internal purposes, and should not
+     * be used when creating channels dynamically; use the create()
+     * factory method instead.
+     */
+    explicit MonitoredChannel(const char *name=NULL) : cIdealChannel(name) 
+	{
+		std::cout << "ciao, MonitoredChannel constructor" << endl;
+		throw 1;
+	}
 };
 
 #endif
