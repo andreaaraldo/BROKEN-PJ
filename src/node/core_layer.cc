@@ -87,6 +87,8 @@ void  core_layer::initialize(){
     //data = 0; //<aa> Disabled this. The reset is inside clear_stat() </aa>
 
 	//<aa>
+	initialize_iface_stats();
+
 	clear_stat();
 
 	#ifdef SEVERE_DEBUG
@@ -108,7 +110,12 @@ void  core_layer::initialize(){
 
 }
 
-
+//<aa>
+void core_layer::initialize_iface_stats()
+{
+	iface_stats = (iface_stats_t*) calloc(gateSize("face$o"), sizeof(iface_stats_t) );
+}
+//</aa>
 
 /*
  * Core layer core function. Here the incoming packet is classified,
@@ -220,6 +227,7 @@ void core_layer::finish()
     //Total data
     sprintf ( name, "data[%d]", getIndex());
     recordScalar (name, data);
+	//<aa>
 
 	//<aa> Interests sent to the repository attached to this node</aa>
     if (repo_interest != 0){
@@ -227,6 +235,18 @@ void core_layer::finish()
 	recordScalar(name, repo_interest);
 	repo_interest = 0;
     }
+
+	//<aa>
+	char* gatename = "face$o";
+	for (int j=0; j<gateSize(gatename); j++)
+	{
+		const char* this_gate = gate(gatename, j)->getFullName();
+		cGate* border_gate_of_this_node = gate(gatename, j)->getNextGate();
+		const char* other_node = border_gate_of_this_node->getNextGate()->getOwnerModule()->getFullName();
+		sprintf ( name, "megabytes_sent[%s->%s]", this_gate, other_node);
+		recordScalar(name, iface_stats[j].megabytes_sent );
+	}
+	//</aa>
 
 
 }
@@ -607,6 +627,10 @@ void core_layer::clear_stat(){
     repo_load = 0;
 	ContentStore->set_decision_yes(0);
 	ContentStore->set_decision_no(0);
+	
+	//Reset the per-interface statistics
+	memset(iface_stats, 0, sizeof(iface_stats_t)*gateSize("face$o") );
+	
 
     
    	#ifdef SEVERE_DEBUG
@@ -725,6 +749,7 @@ void core_layer::add_to_pit(chunk_t chunk, int gateindex)
 
 int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, int line_of_the_call)
 {
+	//{CHECKS
 	#ifdef SEVERE_DEBUG
 	if (gateindex > gateSize("face$o")-1 )
 	{
@@ -769,7 +794,9 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 		}
 	}
 	#endif
-	msg->setByteLength(msg->getMegabyteLength() * 1000000);
+	//}CHECKS
+
+	iface_stats[gateindex].megabytes_sent += msg->getMegabyteLength();
 	return send (msg, gatename, gateindex);
 }
 //</aa>

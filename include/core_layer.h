@@ -51,6 +51,12 @@ struct pit_entry {
 };
 
 
+//<aa>
+typedef struct iface_stats{
+	double megabytes_sent; //Bytes sent on the interface
+} iface_stats_t;
+//</aa>
+
 class core_layer : public abstract_node{
     friend class statistics;
     
@@ -79,6 +85,8 @@ class core_layer : public abstract_node{
 		bool transparent_to_hops;
 		double repo_price; //the price of the attached repository.
 		void add_to_pit(chunk_t chunk, int gate);
+		iface_stats_t* iface_stats; //An array of per-interface statistics
+		virtual void initialize_iface_stats();
 		//</aa>
 
 		//Custom functions
