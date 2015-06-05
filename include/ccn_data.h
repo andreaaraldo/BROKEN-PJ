@@ -44,7 +44,9 @@ public:
 		path = other.path;
 		return *this;
 	}
-	virtual ccn_data *dup() {return new ccn_data(*this);}
+
+	//<aa> const keyword is needed when using graphical interface (Cesar Berdardini suggestion) </aa>
+	virtual ccn_data *dup() const {return new ccn_data(*this);} 
 
 	//Utility functions which return 
 	//different header fields of the packet

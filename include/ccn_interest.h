@@ -48,7 +48,10 @@ public:
 		path = other.path;
 		return *this;
 	}
-	virtual ccn_interest *dup() {return new ccn_interest(*this);}
+
+	//<aa> const keyword is needed when using graphical interface (Cesar Berdardini suggestion) </aa>
+	virtual ccn_interest *dup() const {return new ccn_interest(*this);}
+
 	virtual	void setPathArraySize(unsigned int size){;}
 	virtual unsigned int getPathArraySize() const{return path.size();}
 	virtual int getPath(unsigned int k) const{return path[k];}
