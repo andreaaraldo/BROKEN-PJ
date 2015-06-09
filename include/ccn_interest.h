@@ -66,8 +66,15 @@ public:
 	    return front;
 	}
 
-	virtual name_t get_name(){return __id(chunk_var);}
+	virtual name_t get_name()
+	{
+			std::stringstream ermsg;
+			ermsg<<"In this new version of ccnSim, the method ccn_interest::get_name() has been replaced by ccn_interest::get_object_id(). Please, use this new one ";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	virtual name_t get_object_id(){return __id(chunk_var);}
 	virtual name_t get_chunk_number(){return __chunk(chunk_var);}
+	virtual name_t get_representation(){return __representation(chunk_var);}
 
 
 	virtual vector<int> get_repos()

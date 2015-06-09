@@ -258,19 +258,18 @@ void content_distribution::init_content()
     repo_strings = binary_strings(replicas, num_repos);
 
 	//<aa>cardF indicates how many objects there are into the catalog</aa>
-    for (int d = 1; d <= cardF; d++)
+    for (int object_id = 1; object_id <= cardF; object_id++)
     {
-    	//<aa>d is a content </aa>
-		//Reset the information field of a given content
-		__info(d) = 0;
+		//Reset the information field of a given object
+		__info(object_id) = 0;
 
 		//<aa> F is the size of a file</aa>
 		if (F > 1){
 			//Set the file size (distributed like a geometric)
 			filesize_t s = geometric( 1.0 / F ) + 1;
-			__ssize ( d, s );
+			__ssize ( object_id, s );
 		}else 
-			__ssize( d , 1);
+			__ssize( object_id , 1);
 
 		// <aa>
 		vector<int> chosen_repos; 
@@ -278,18 +277,18 @@ void content_distribution::init_content()
 
 		//Set the repositories
 		if (num_repos==1){
-			__srepo ( d , 1 );
+			__srepo ( object_id , 1 );
 			// <aa> Compute the chosen_repo
 			chosen_repos.push_back(0);
 			// </aa>
 		} else {
 			// <aa> Choose a replica placement among all the possibile ones. 
 			// 		repos is a replica placement </aa>				
-			repo_t repos = choose_repos(d); //<aa>This method had no input parameters before</aa>
-			__srepo (d ,repos);
+			repo_t repos = choose_repos(object_id); //<aa>This method had no input parameters before</aa>
+			__srepo (object_id ,repos);
 
 			// <aa> Compute the chosen_repos
-			repo_t repo_extracted = __repo(d);
+			repo_t repo_extracted = __repo(object_id);
 			unsigned k = 0;
 			while (repo_extracted)
 			{	if (repo_extracted & 1) 
@@ -300,7 +299,7 @@ void content_distribution::init_content()
 
 //			#ifdef SEVERE_DEBUG
 //				int object_to_test = 47785;
-//				if (d == object_to_test){
+//				if (object_id == object_to_test){
 //					cout<<"object "<<object_to_test<<" is assigned to repo ";
 //					for (unsigned repo_idx=0; repo_idx < chosen_repos.size(); repo_idx++ )
 //						cout<<chosen_repos[repo_idx]<<", "<<endl;

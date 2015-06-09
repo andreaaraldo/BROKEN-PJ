@@ -32,23 +32,37 @@
 #define END 4000
 
 //Typedefs
-//Catalogs fields
-typedef unsigned int info_t; //representation for a catalog  entry [size|repos]
-typedef unsigned short filesize_t; //representation for the size part within the catalog entry
+// {CATALOG FIELDS
+	//There is an entry of this kind for each object. size indicates how many chunks compose that object
+	//repos is a mask with a 1 in the i-th position if the object is present in the i-th repository
+	typedef unsigned int info_t; //Catalog  entry [size|repos]
 
-//<aa>	Each repo_t variable is used to indicate the set of repositories where
-//		a certain content is stored. A repo_t variable must be interpreted as a
-//		binary string. For a certain content, the i-th bit is 1 if and only if the
-//		content is stored in the i-th repository.
-//</aa>
-typedef unsigned short repo_t; //representation for the repository part within the catalog entry
+	//Size part within the catalog entry. It indicates how many chunks compose that object
+	typedef unsigned short filesize_t;
+
+	//<aa>	Each repo_t variable is used to indicate the set of repositories where
+	//		a certain content is stored. A repo_t variable must be interpreted as a
+	//		binary string. For a certain content, the i-th bit is 1 if and only if the
+	//		content is stored in the i-th repository.
+	//</aa>
+	typedef unsigned short repo_t; //representation for the repository part within the catalog entry
+// }CATALOG_FIELDS
+
+
 
 typedef unsigned long interface_t; //representation of a PIT entry (containing interface information)
 
 //Chunk fields
-typedef unsigned long long  chunk_t; //representation for any chunk flying within the system. It represents a pair [name|number]
-typedef unsigned int cnumber_t; //represents the number part of the chunk
-typedef unsigned int name_t; //represents the name part of the chunk
+//representation for any chunk flying within the system. It represents a triple [name|number|representation]
+//name is 32 bits, number 16 bits and representation 16 bits.
+//Remember that each chunk can have different representations. For example, the same chunk of a video can be encoded
+//at different bitrates and resolutions. In ccnSim you can have 16 different representations of the same chunk.
+//However, for most simulation scenarios, a single representation per-chunk is enough.
+typedef uint64_t chunk_t; 
+typedef uint32_t name_t; //represents the name part of the chunk
+typedef uint16_t cnumber_t; //represents the number part of the chunk
+typedef uint16_t representation_t; //represents the number part of the chunk
+
 
 //Useful data structure. Use that instead of cSimpleModule, when you deal with caches, strategy_layers, and core_layers
 #include "client.h"
@@ -95,21 +109,32 @@ class abstract_node: public cSimpleModule{
 //--------------
 //Chunk handling
 //--------------
-//Basically a chunk is a 64-bit integer composed by two parts: the chunk_number, and the chunk id
-//<aa> The first 32 bits indicate the chunk_id, the other 32 bits indicate the chunk_number </aa>
-#define NUMBER_OFFSET   32
-#define ID_OFFSET        0
+//Basically a chunk is a 64-bit integer composed by three parts: object id, 
+//chunk_number and representation level
+//<aa> The first 32 bits indicate the chunk_id, the other 16 bits the chunk_number and the last 
+// 16 bits the representation level </aa>
+#define ID_OFFSET               0
+#define NUMBER_OFFSET           32
+#define REPRESENTATION_OFFSET   48
 
 //Bitmasks
-#define CHUNK_MSK ( (uint64_t) 0xFFFFFFFF << NUMBER_OFFSET)
-#define ID_MSK    ( (uint64_t) 0xFFFFFFFF << ID_OFFSET )
+#define ID_MSK                          ( (uint64_t) 0xFFFFFFFF << ID_OFFSET )
+#define CHUNK_MSK                       ( (uint64_t) 0xFFFF << NUMBER_OFFSET)
+#define REPRESENTATION_MSK      ( (uint64_t) 0xFFFF << REPRESENTATION_OFFSET)
 
-//Macros
-#define __chunk(h) ( ( h & CHUNK_MSK )  >> NUMBER_OFFSET )// get chunk number
-#define __id(h)    ( ( h & ID_MSK )     >> ID_OFFSET) //get chunk id
+//{ MACROS
+	#define __id(h)                         ( ( h & ID_MSK )                >> ID_OFFSET) //get object id
+	#define __chunk(h)                      ( ( h & CHUNK_MSK )             >> NUMBER_OFFSET )// get chunk number
+	#define __representation(h) ( ( h & REPRESENTATION_MSK )>> REPRESENTATION_OFFSET )// get representation
 
-#define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (uint64_t ) c  << NUMBER_OFFSET)) //set chunk number
-#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (uint64_t ) id << ID_OFFSET)) //set chunk id
+	//set object id <aa> (i.e. the id of the object this chunk is part of)
+	#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (uint64_t ) id << ID_OFFSET)) 
+
+	#define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (uint64_t ) c  << NUMBER_OFFSET)) //set chunk number
+
+	//set the representation
+	#define __srepresentation(h,r)   h = ( (h & ~ REPRESENTATION_MSK)   | ( (uint64_t ) r << REPRESENTATION_OFFSET)) 
+//} MACROS
 
 inline chunk_t next_chunk (chunk_t c){
 
@@ -125,26 +150,26 @@ inline chunk_t next_chunk (chunk_t c){
 //--------------
 //The catalog is a huge array of file entries. Within each entry is an 
 //information field 32-bits long. These 32 bits are composed by:
-//[file_size|repositories]
+//[file_size|repositories] of 16 bits each
+//file_size is the number of chunks composing that object
 //
-//
-#define SIZE_OFFSET  	16
-#define REPO_OFFSET 	0
+#define REPO_OFFSET     0
+#define SIZE_OFFSET     16
 
 //Bitmasks
 #define REPO_MSK (0xFFFF << REPO_OFFSET)
 #define SIZE_MSK (0xFFFF << SIZE_OFFSET)
 
-#define __info(f) ( content_distribution::catalog[f].info) //retrieve info about the given content 
+#define __info(object_id) ( content_distribution::catalog[object_id].info) //retrieve info about the given content 
 
-#define __size(f)  ( (__info(f) & SIZE_MSK) >> SIZE_OFFSET ) //set the size of a given file
-#define __repo(f)  ( (__info(f) & REPO_MSK) >> REPO_OFFSET )
+#define __size(object_id)  ( (__info(object_id) & SIZE_MSK) >> SIZE_OFFSET ) //set the size of a given file
+#define __repo(object_id)  ( (__info(object_id) & REPO_MSK) >> REPO_OFFSET )
 
-#define __ssize(f,s) ( __info(f) = (__info(f) & ~SIZE_MSK ) | s << SIZE_OFFSET )
-#define __srepo(f,r) ( __info(f) = (__info(f) & ~REPO_MSK ) | r << REPO_OFFSET )
+#define __ssize(object_id,s) ( __info(object_id) = (__info(object_id) & ~SIZE_MSK ) | s << SIZE_OFFSET )
+#define __srepo(object_id,r) ( __info(object_id) = (__info(object_id) & ~REPO_MSK ) | r << REPO_OFFSET )
 
 //<aa>
-// File statistics. Doing statistics for all files would be tremendously
+// File statistics. Collecting statistics for all files would be tremendously
 // slow for huge catalog size, and at the same time quite useless
 // (statistics for the 12345234th file are not so meaningful at all)
 // Therefore, we compute statistics only for the first __file_bulk files
@@ -159,7 +184,7 @@ inline chunk_t next_chunk (chunk_t c){
 //-----------
 //Each entry within a PIT contains a field that indicates through
 //which interface the back-coming interest should be sent
-//<aa>	This field is f, a bit string that contains a 1 in the i-th place
+//<aa>  This field is f, a bit string that contains a 1 in the i-th place
 // if the i-th is set </aa>
 //
 #define __sface(f,b)  ( f = f | ((interface_t)1 << b ) ) //Set the b-th bit
@@ -177,7 +202,7 @@ template <class T>
 double average(std::vector<T> v){
     T s =(T) 0;
     for (typename std::vector<T>::iterator i = v.begin(); i != v.end(); i++)
-	s += *i;
+        s += *i;
     return (double) s * 1./v.size();
 }
 
@@ -190,10 +215,11 @@ double variance(std::vector<T> v){
     unsigned int N = v.size();
 
     for (typename std::vector<T>::iterator i = v.begin(); i != v.end(); i++){
-		s += *i;
-		ss += (*i)*(*i);
+                s += *i;
+                ss += (*i)*(*i);
     }
     return (double)(1./N)* (sqrt(N*ss- s*s));
 
 }
 #endif
+

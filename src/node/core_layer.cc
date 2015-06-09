@@ -323,7 +323,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
         #endif
         //</aa>
 
-    } else if ( my_bitmask & __repo(int_msg->get_name() ) ){
+    } else if ( my_bitmask & __repo(int_msg->get_object_id() ) ){
 	//
 	//b) Look locally (only if you own a repository)
 	// we are mimicking a message sent to the repository
