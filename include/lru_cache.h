@@ -25,6 +25,7 @@
 
 #ifndef LRU_CACHE_H_
 #define LRU_CACHE_H_
+
 #include <boost/unordered_map.hpp>
 #include "base_cache.h"
 #include "ccnsim.h"

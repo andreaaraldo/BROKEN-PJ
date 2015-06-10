@@ -10,9 +10,6 @@ packet ccn_data{
 //Chunk identifier (Name+Chunk Number = 64 bit)
 	chunk_t chunk;
 
-//<aa> The price of the external link this data msg passes through
-	double price = 0;
-//</aa>
 
 
 //Target of the interest file
@@ -33,5 +30,13 @@ packet ccn_data{
 
 	bool found = false; 
 	
-	int megabyteLength = 131;
+	//<aa>
+
+	//The price of the external link this data msg passes through
+	double price = 0;
+
+	int megabyteLength;
+
+	uint16_t representationMask;
+	//</aa>
 }

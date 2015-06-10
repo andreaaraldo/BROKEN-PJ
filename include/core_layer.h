@@ -32,6 +32,10 @@
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
+//<aa>
+#include "repository/Repository.h"
+//</aa>
+
 using namespace std;
 using namespace boost;
 
@@ -70,8 +74,7 @@ class core_layer : public abstract_node{
 		bool is_it_initialized;
 		#endif
 
-		double get_repo_price();
-		//void set_repo_price(double price);
+		const Repository* get_attached_repository();
 		//</aa>
 
     protected:
@@ -83,10 +86,12 @@ class core_layer : public abstract_node{
 		//<aa> See ned file
 		bool interest_aggregation;
 		bool transparent_to_hops;
-		double repo_price; //the price of the attached repository.
+
 		void add_to_pit(chunk_t chunk, int gate);
 		iface_stats_t* iface_stats; //An array of per-interface statistics
 		virtual void initialize_iface_stats();
+		Repository* repository;
+		virtual Repository* create_repository();
 		//</aa>
 
 		//Custom functions
@@ -97,21 +102,15 @@ class core_layer : public abstract_node{
 
 
 		bool check_ownership(vector<int>);
-		ccn_data *compose_data(uint64_t);	
+		ccn_data *compose_data(uint64_t response_data, unsigned short representation);
 		void clear_stat();
 
 
     private:
 		unsigned long max_pit;
 		unsigned short nodes;
-		unsigned int my_bitmask;
 		double my_btw;
 		double RTT;
-		static int repo_interest; 	// <aa> total number of interests set to one of the
-									// repositories of the network </aa>
-
-		//<aa> number of chunks satisfied by the repository attached to this node</aa>
-		int repo_load; 
 	
 
 		//Architecture data structures

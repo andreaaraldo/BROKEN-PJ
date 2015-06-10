@@ -313,7 +313,6 @@ bool base_cache::lookup(chunk_t chunk )
 bool base_cache::lookup_name(chunk_t chunk )
 {
     bool found = false;
-    name_t name = __id(chunk);
 
     if (data_lookup(chunk))			// The content ID is present inside the name cache.
     	found = true;

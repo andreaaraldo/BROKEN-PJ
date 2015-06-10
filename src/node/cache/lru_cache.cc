@@ -115,12 +115,6 @@ lru_pos* lru_cache::get_mru(){
 
 lru_pos* lru_cache::get_lru(){
 	#ifdef SEVERE_DEBUG
-	if (lru_ != NULL){
-		// To see if a seg fault arises due to the access to a forbidden area
-		// To use with valgrind software
-		chunk_t test = lru_->k;
-	} //else the cache is empty
-
 	if (statistics::record_cache_value ){
 		lru_->get_price(); // to verify whether the price is correctly set up
 	}
@@ -224,10 +218,10 @@ double lru_cache::get_cache_value()
 	}
 	#endif
 
+	double value = 0;
 
 	WeightedContentDistribution* content_distribution_module = 
 		Costaware_ancestor::get_weighted_content_distribution_module();
-	double value, sum_of_prices = 0;
 
     lru_pos *it = get_mru();
     int p = 1;
@@ -265,7 +259,6 @@ double lru_cache::get_average_price()
     lru_pos *it = get_mru();
     int counter = 0;
     while (it){
-		chunk_t object_index = it->k;
 		double price = it->get_price();
 		sum_of_prices += price;
 		it = it->older;

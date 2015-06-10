@@ -34,10 +34,10 @@
 #include "two_lru_policy.h"
 //<aa>
 #include "error_handling.h"
+#include "repository/Repository.h"
 //</aa>
 
 Register_Class(core_layer);
-int core_layer::repo_interest = 0;
 
 
 void  core_layer::initialize(){
@@ -47,10 +47,8 @@ void  core_layer::initialize(){
 	transparent_to_hops = par("transparent_to_hops");
 	// Notice that repo_price has been initialized by WeightedContentDistribution
 	//</aa>
-    repo_load = 0;
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
-    int num_repos = getAncestorPar("num_repos");
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
@@ -59,24 +57,6 @@ void  core_layer::initialize(){
 	#endif
 	//</aa>
 
-    int i = 0;
-    my_bitmask = 0;
-    for (i = 0; i < num_repos; i++)
-	{
-		if (content_distribution::repositories[i] == getIndex() )
-		{
-			//<aa>
-			#ifdef SEVERE_DEBUG
-				it_has_a_repo_attached = true;
-			#endif
-
-			repo_price = content_distribution::repo_prices[i]; 
-			//</aa>
-			break;
-		} else
-				repo_price = 0;
-	}
-    my_bitmask = (1<<i);	// Recall that the width of the repository bitset is only num_repos
 
     //Getting the content store
     ContentStore = (base_cache *) gate("cache_port$o")->getNextGate()->getOwner();
@@ -88,6 +68,12 @@ void  core_layer::initialize(){
 
 	//<aa>
 	initialize_iface_stats();
+	repository = create_repository();
+
+	#ifdef SEVERE_DEBUG
+		it_has_a_repo_attached = true;
+	#endif
+
 
 	clear_stat();
 
@@ -115,6 +101,24 @@ void core_layer::initialize_iface_stats()
 {
 	iface_stats = (iface_stats_t*) calloc(gateSize("face$o"), sizeof(iface_stats_t) );
 }
+
+
+Repository* core_layer::create_repository()
+{
+    int num_repos = getAncestorPar("num_repos");
+	Repository* repository_ = NULL;
+    int repo_index = 0;
+    for (repo_index = 0; repo_index < num_repos; repo_index++)
+	{
+		if (content_distribution::repositories[repo_index] == getIndex() )
+		{
+			double price = content_distribution::repo_prices[repo_index]; 
+			repository_ = new Repository(getIndex(), repo_index, price);
+			break;
+		} 
+	}
+	return repository_;
+}
 //</aa>
 
 /*
@@ -128,7 +132,6 @@ void core_layer::handleMessage(cMessage *in)
 	//<aa>
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
-	char* last_received;
 	#endif
 	//</aa>
 
@@ -195,19 +198,6 @@ void core_layer::finish()
 	//<aa>
 	#ifdef SEVERE_DEBUG
 	check_if_correct(__LINE__);
-//		if (	data+repo_load != \
-//				(int) (ContentStore->get_decision_yes() + 
-//						ContentStore->get_decision_no() ) 
-//		){
-//			std::stringstream msg; 
-//			msg<<"node["<<getIndex()<<"]: "<<
-//				"decision_yes=="<<ContentStore->get_decision_yes()<<
-//				"; decision_no=="<<ContentStore->get_decision_no()<<
-//				"; repo_load=="<<repo_load<<
-//				"; data="<<data<<
-//				". The sum of decision_yes+decision_no MUST be equal to data+repo_load";
-//			severe_error(__FILE__, __LINE__, msg.str().c_str() );
-//		}
 	#endif
 	//</aa>
 
@@ -218,26 +208,14 @@ void core_layer::finish()
     sprintf ( name, "interests[%d]", getIndex());
     recordScalar (name, interests);
 
-    if (repo_load != 0)
-	{
-		sprintf ( name, "repo_load[%d]", getIndex());
-		recordScalar(name,repo_load);
-    }
+	get_attached_repository()->finish(this);
 
     //Total data
     sprintf ( name, "data[%d]", getIndex());
     recordScalar (name, data);
-	//<aa>
-
-	//<aa> Interests sent to the repository attached to this node</aa>
-    if (repo_interest != 0){
-	sprintf ( name, "repo_int[%d]", getIndex());
-	recordScalar(name, repo_interest);
-	repo_interest = 0;
-    }
 
 	//<aa>
-	char* gatename = "face$o";
+	const char* gatename = "face$o";
 	for (int j=0; j<gateSize(gatename); j++)
 	{
 		const char* this_gate = gate(gatename, j)->getFullName();
@@ -247,8 +225,6 @@ void core_layer::finish()
 		recordScalar(name, iface_stats[j].megabytes_sent );
 	}
 	//</aa>
-
-
 }
 
 
@@ -292,17 +268,16 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     }
 
 
+	
 
 
-
-
-
+    unsigned short selected_data_representation = 0;
   if (ContentStore->lookup(chunk))
   {
        //
        //a) Check in your Content Store
        //
-        ccn_data* data_msg = compose_data(chunk);
+        ccn_data* data_msg = compose_data(chunk,1);
 
         data_msg->setHops(0);
         data_msg->setBtw(int_btw); //Copy the highest betweenness
@@ -323,41 +298,38 @@ void core_layer::handle_interest(ccn_interest *int_msg)
         #endif
         //</aa>
 
-    } else if ( my_bitmask & __repo(int_msg->get_object_id() ) ){
-	//
-	//b) Look locally (only if you own a repository)
-	// we are mimicking a message sent to the repository
-	//
-        ccn_data* data_msg = compose_data(chunk);
+    } else if ( repository!=NULL && (selected_data_representation = repository->handle_interest(int_msg ) ) )
+	{		
+			//
+			//b) Look locally (only if you own a repository)
+			// we are mimicking a message sent to the repository
+			//
+		    ccn_data* data_msg = compose_data(chunk, selected_data_representation );
 	
-		//<aa>
-		data_msg->setPrice(repo_price); 	// I fix in the data msg the cost of the object
-										// that is the price of the repository
-		//</aa>
+			//<aa>
+			data_msg->setPrice(repository->get_price() ); 	// I fix in the data msg the cost of the object
+											// that is the price of the repository
+			//</aa>
 
+		    data_msg->setHops(1);
+		    data_msg->setTarget(getIndex());
+			data_msg->setBtw(std::max(my_btw,int_btw));
 
-		repo_interest++;
-		repo_load++;
+			data_msg->setCapacity(int_msg->getCapacity());
+			data_msg->setTSI(int_msg->getHops() + 1);
+			data_msg->setTSB(1);
+			data_msg->setFound(true);
 
-        data_msg->setHops(1);
-        data_msg->setTarget(getIndex());
-		data_msg->setBtw(std::max(my_btw,int_btw));
+		    ContentStore->store(data_msg);
 
-		data_msg->setCapacity(int_msg->getCapacity());
-		data_msg->setTSI(int_msg->getHops() + 1);
-		data_msg->setTSB(1);
-		data_msg->setFound(true);
+			//<aa> I transformed send in send_data</aa>
+			send_data(data_msg,"face$o",int_msg->getArrivalGate()->getIndex(),__LINE__);
 
-        ContentStore->store(data_msg);
-
-		//<aa> I transformed send in send_data</aa>
-		send_data(data_msg,"face$o",int_msg->getArrivalGate()->getIndex(),__LINE__);
-
-		//<aa>
-		#ifdef SEVERE_DEBUG
-		check_if_correct(__LINE__);
-		#endif
-		//</aa>
+			//<aa>
+			#ifdef SEVERE_DEBUG
+			check_if_correct(__LINE__);
+			#endif
+			//</aa>
    } else {
         //
         //c) Put the interface within the PIT (and follow your FIB)
@@ -423,7 +395,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 	    	delete [] decision;//free memory for the decision array
 		}
 		#ifdef SEVERE_DEBUG
-		interface_t old_PIT_string = PIT[chunk].interfaces;
 		check_if_correct(__LINE__);
 
 		client*  c = __get_attached_client( int_msg->getArrivalGate()->getIndex() );
@@ -606,11 +577,15 @@ bool core_layer::check_ownership(vector<int> repositories){
 /*
  * 	Create a Data packet in response to the received Interest.
  */
-ccn_data* core_layer::compose_data(uint64_t response_data){
+ccn_data* core_layer::compose_data(uint64_t response_data, unsigned short representation)
+{
     ccn_data* data = new ccn_data("data",CCN_D);
     data -> setChunk (response_data);
     data -> setHops(0);
     data->setTimestamp(simTime());
+
+	representation_mask_t representation_mask = 1 << representation;
+	data->setRepresentationMask(representation_mask);
     return data;
 }
 
@@ -618,14 +593,12 @@ ccn_data* core_layer::compose_data(uint64_t response_data){
  * Clear local statistics
  */
 void core_layer::clear_stat(){
-    repo_interest = 0;
     interests = 0;
     data = 0;
     
     //<aa>
-    repo_interest = 0;
-    repo_load = 0;
-	ContentStore->set_decision_yes(0);
+	repository->clear_stat();
+    ContentStore->set_decision_yes(0);
 	ContentStore->set_decision_no(0);
 	
 	//Reset the per-interface statistics
@@ -647,46 +620,36 @@ void core_layer::clear_stat(){
 #ifdef SEVERE_DEBUG
 void core_layer::check_if_correct(int line)
 {
-	if (repo_load != interests - discarded_interests - unsatisfied_interests
+	if (get_attached_repository()->get_repo_load() != interests - discarded_interests - unsatisfied_interests
 		-interests_satisfied_by_cache)
 	{
 			std::stringstream msg; 
 			msg<<"node["<<getIndex()<<"]: "<<
-				"repo_load="<<repo_load<<"; interests="<<interests<<
+				"repo_load="<<get_attached_repository()->get_repo_load() <<"; interests="<<interests<<
 				"; discarded_interests="<<discarded_interests<<
 				"; unsatisfied_interests="<<unsatisfied_interests<<
 				"; interests_satisfied_by_cache="<<interests_satisfied_by_cache;
 		    severe_error(__FILE__, line, msg.str().c_str() );
 	}
 
-	if (!it_has_a_repo_attached && repo_load>0 )
-	{
-			std::stringstream msg; 
-			msg<<"node["<<getIndex()<<"] has no repo attached. "<<
-				"repo_load=="<<repo_load<<
-				"; repo_interest=="<<repo_interest;
-			severe_error(__FILE__, line, msg.str().c_str() );
-	}
 
 	if (	ContentStore->get_decision_yes() + ContentStore->get_decision_no() +  
 						(unsigned) unsolicited_data
-						!=  (unsigned) data + repo_load
+						!=  (unsigned) data + get_attached_repository()->get_repo_load()
 	){
 					std::stringstream ermsg; 
 					ermsg<<"caches["<<getIndex()<<"]->decision_yes="<<ContentStore->get_decision_yes()<<
 						"; caches[i]->decision_no="<< ContentStore->get_decision_no()<<
 						"; cores[i]->data="<< data<<
-						"; cores[i]->repo_load="<< repo_load<<
+						"; cores[i]->repo_load="<< get_attached_repository()->get_repo_load()<<
 						"; cores[i]->unsolicited_data="<< unsolicited_data<<
 						". The sum of "<< "decision_yes + decision_no + unsolicited_data must be data";
 					severe_error(__FILE__,line,ermsg.str().c_str() );
 	}
 } //end of check_if_correct(..)
 #endif
-//</aa>
 
-//<aa>
-double core_layer::get_repo_price()
+const Repository* core_layer::get_attached_repository()
 {
 	#ifdef SEVERE_DEBUG
 	if (!is_it_initialized)
@@ -697,53 +660,38 @@ double core_layer::get_repo_price()
 			severe_error(__FILE__, __LINE__, msg.str().c_str() );
 	}
 	#endif
-
-	return repo_price;
+	return repository;
 }
 
 void core_layer::add_to_pit(chunk_t chunk, int gateindex)
 {
 	#ifdef SEVERE_DEBUG
-	check_if_correct(__LINE__);
+		check_if_correct(__LINE__);
 
-	if (gateindex > gateSize("face$o")-1 )
-	{
-		std::stringstream msg;
-		msg<<"You are inserting a pit entry related to interface "<<gateindex<<
-			". But the number of ports is "<<gateSize("face$o");
-		severe_error(__FILE__, __LINE__, msg.str().c_str() );
-	}
+		if (gateindex > gateSize("face$o")-1 )
+		{
+			std::stringstream msg;
+			msg<<"You are inserting a pit entry related to interface "<<gateindex<<
+				". But the number of ports is "<<gateSize("face$o");
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+		}
 
-	if (gateindex > (int) sizeof(interface_t)*8-1 )
-	{
-		std::stringstream msg;
-		msg<<"You are inserting a pit entry related to interface "<<gateindex<<
-			". But the maximum interface "
-			<<"number manageable by ccnsim is "<<sizeof(interface_t)*8-1 <<" beacause the type of "
-			<<"interface_t is of size "<<sizeof(interface_t)<<". You can change the definition of "
-			<<"interface_t (in ccnsim.h) to solve this issue and recompile";
-		severe_error(__FILE__, __LINE__, msg.str().c_str() );
-	}
+		if (gateindex > (int) sizeof(interface_t)*8-1 )
+		{
+			std::stringstream msg;
+			msg<<"You are inserting a pit entry related to interface "<<gateindex<<
+				". But the maximum interface "
+				<<"number manageable by ccnsim is "<<sizeof(interface_t)*8-1 <<" beacause the type of "
+				<<"interface_t is of size "<<sizeof(interface_t)<<". You can change the definition of "
+				<<"interface_t (in ccnsim.h) to solve this issue and recompile";
+			severe_error(__FILE__, __LINE__, msg.str().c_str() );
+		}
 	#endif	
 
 	__sface( PIT[chunk].interfaces , gateindex );
 
 	#ifdef SEVERE_DEBUG
-
-	unsigned long long bit_op_result = (interface_t)1 << gateindex;
-	if ( bit_op_result > pow(2,gateSize("face$o")-1) )
-	{
-				printf("ATTTENZIONE bit_op_result %llX\n", bit_op_result);
-				std::stringstream ermsg; 
-				ermsg<<"I am node "<<getIndex()<<", bit_op_result="<<bit_op_result <<
-					" while the number of ports is "<<
-					gateSize("face$o")<<" and the max number that I should observe is "<<
-					pow(2,gateSize("face$o") )-1;
-				ermsg<<". (1<<34)="<< (1<<34);
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
-
-	check_if_correct(__LINE__);
+		check_if_correct(__LINE__);
 	#endif
 }
 

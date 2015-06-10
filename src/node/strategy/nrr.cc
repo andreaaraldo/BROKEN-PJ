@@ -334,7 +334,6 @@ int nrr::nearest(vector<int>& repositories){
 		ermsg<<"There are 0 repositories. It's not admitted";
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
-	int test = targets[0]; // Just to see if targets is properly allocated
 	#endif
 	//</aa>
 

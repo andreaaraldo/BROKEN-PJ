@@ -31,6 +31,7 @@
 
 //<aa>
 #include "error_handling.h"
+#include "repository/Repository.h"
 //</aa>
 
 
@@ -235,27 +236,31 @@ void statistics::finish(){
 	{
 			//TODO: do not always compute cost. Do it only when you want to evaluate the cost in your
 			// network
-			total_cost += cores[i]->repo_load * cores[i]->get_repo_price();
+			const Repository*  repository = cores[i]->get_attached_repository();
+			int repo_load = repository==NULL ? 0 : repository->get_repo_load();
+			if(repository!=NULL)
+				total_cost += repo_load * repository->get_price();
 
-		if (cores[i]->interests){
+		if (cores[i]->interests)
+		{
 			//Check if the given node got involved within the interest/data process
 			global_hit  += caches[i]->hit;
 			global_miss += caches[i]->miss;
 			global_data += cores[i]->data;
 			global_interests += cores[i]->interests;
-			global_repo_load += cores[i]->repo_load;
+			global_repo_load += repo_load;
 
 			//<aa>
 			#ifdef SEVERE_DEBUG
 				if (	caches[i]->decision_yes + caches[i]->decision_no +  
 						(unsigned) cores[i]->unsolicited_data
-						!=  (unsigned) cores[i]->data + cores[i]->repo_load
+						!=  (unsigned) cores[i]->data + repo_load
 				){
 					std::stringstream ermsg; 
 					ermsg<<"caches["<<i<<"]->decision_yes="<<caches[i]->decision_yes<<
 						"; caches[i]->decision_no="<<caches[i]->decision_no<<
 						"; cores[i]->data="<<cores[i]->data<<
-						"; cores[i]->repo_load="<<cores[i]->repo_load<<
+						"; cores[i]->repo_load="<<repo_load<<
 						"; cores[i]->unsolicited_data="<<cores[i]->unsolicited_data<<
 						". The sum of "<< "decision_yes and decision_no must be data";
 					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );

@@ -61,7 +61,7 @@ typedef unsigned long interface_t; //representation of a PIT entry (containing i
 typedef uint64_t chunk_t; 
 typedef uint32_t name_t; //represents the name part of the chunk
 typedef uint16_t cnumber_t; //represents the number part of the chunk
-typedef uint16_t representation_t; //represents the number part of the chunk
+typedef uint16_t representation_mask_t;
 
 
 //Useful data structure. Use that instead of cSimpleModule, when you deal with caches, strategy_layers, and core_layers
