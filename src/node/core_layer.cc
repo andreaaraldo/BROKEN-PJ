@@ -41,6 +41,10 @@ Register_Class(core_layer);
 
 
 void  core_layer::initialize(){
+	#ifdef SEVERE_DEBUG
+	i_am_initializing = true;
+	#endif
+
     RTT = par("RTT");
 	//<aa>
 	interest_aggregation = par("interest_aggregation");
@@ -91,6 +95,8 @@ void  core_layer::initialize(){
 			<<"interface_t (in ccnsim.h) to solve this issue and recompile";
 		severe_error(__FILE__, __LINE__, msg.str().c_str() );
 	}
+
+	i_am_initializing = false;
 	#endif
 	//</aa>
 
@@ -208,7 +214,8 @@ void core_layer::finish()
     sprintf ( name, "interests[%d]", getIndex());
     recordScalar (name, interests);
 
-	get_attached_repository()->finish(this);
+	if (repository != NULL)	
+		repository->finish(this);
 
     //Total data
     sprintf ( name, "data[%d]", getIndex());
@@ -597,7 +604,8 @@ void core_layer::clear_stat(){
     data = 0;
     
     //<aa>
-	repository->clear_stat();
+	if (repository !=NULL)
+		repository->clear_stat();
     ContentStore->set_decision_yes(0);
 	ContentStore->set_decision_no(0);
 	
@@ -620,7 +628,9 @@ void core_layer::clear_stat(){
 #ifdef SEVERE_DEBUG
 void core_layer::check_if_correct(int line)
 {
-	if (get_attached_repository()->get_repo_load() != interests - discarded_interests - unsatisfied_interests
+	int repo_load = get_attached_repository()==NULL? 0 : get_attached_repository()->get_repo_load();
+
+	if ( repo_load != interests - discarded_interests - unsatisfied_interests
 		-interests_satisfied_by_cache)
 	{
 			std::stringstream msg; 
@@ -635,7 +645,7 @@ void core_layer::check_if_correct(int line)
 
 	if (	ContentStore->get_decision_yes() + ContentStore->get_decision_no() +  
 						(unsigned) unsolicited_data
-						!=  (unsigned) data + get_attached_repository()->get_repo_load()
+						!=  (unsigned) data + repo_load
 	){
 					std::stringstream ermsg; 
 					ermsg<<"caches["<<getIndex()<<"]->decision_yes="<<ContentStore->get_decision_yes()<<
@@ -652,7 +662,7 @@ void core_layer::check_if_correct(int line)
 const Repository* core_layer::get_attached_repository()
 {
 	#ifdef SEVERE_DEBUG
-	if (!is_it_initialized)
+	if (!is_it_initialized and ! i_am_initializing)
 	{
 			std::stringstream msg; 
 			msg<<"I am node "<< getIndex()<<". Someone called this method before I was"

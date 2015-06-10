@@ -3,7 +3,7 @@ Register_Class (MonitoredChannel);
 
 void MonitoredChannel::processMessage(cMessage *msg, simtime_t t, result_t& result)
 {
-	std::cout<<"ciao"<<endl;
+	std::cout<<"ciao, sono in MonitoredChannel"<<endl;
 	exit(1);
 	cIdealChannel::processMessage(msg, t, result);
 }
