@@ -125,7 +125,7 @@ class abstract_node: public cSimpleModule{
 //{ MACROS
 	#define __id(h)                         ( ( h & ID_MSK )                >> ID_OFFSET) //get object id
 	#define __chunk(h)                      ( ( h & CHUNK_MSK )             >> NUMBER_OFFSET )// get chunk number
-	#define __representation(h) ( ( h & REPRESENTATION_MSK )>> REPRESENTATION_OFFSET )// get representation
+	#define __representation_mask(h) ( ( h & REPRESENTATION_MSK )>> REPRESENTATION_OFFSET )// get representation
 
 	//set object id <aa> (i.e. the id of the object this chunk is part of)
 	#define __sid(h,id)   h = ( (h & ~ ID_MSK)   | ( (uint64_t ) id << ID_OFFSET)) 
@@ -133,7 +133,7 @@ class abstract_node: public cSimpleModule{
 	#define __schunk(h,c) h = ( (h & ~CHUNK_MSK) | ( (uint64_t ) c  << NUMBER_OFFSET)) //set chunk number
 
 	//set the representation
-	#define __srepresentation(h,r)   h = ( (h & ~ REPRESENTATION_MSK)   | ( (uint64_t ) r << REPRESENTATION_OFFSET)) 
+	#define __srepresentation_mask(h,r)   h = ( (h & ~ REPRESENTATION_MSK)   | ( (uint64_t ) r << REPRESENTATION_OFFSET)) 
 //} MACROS
 
 inline chunk_t next_chunk (chunk_t c){

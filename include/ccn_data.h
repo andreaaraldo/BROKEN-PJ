@@ -30,6 +30,10 @@
 #include <deque>
 #include <algorithm>
 
+//<aa>
+#include "error_handling.h"
+//</aa>
+
 class ccn_data: public ccn_data_Base{
 protected:
 
@@ -50,11 +54,68 @@ public:
 
 	//Utility functions which return 
 	//different header fields of the packet
-	uint32_t get_name(){ return __id(chunk_var);}
+	uint32_t get_name()
+	{
+	        std::stringstream ermsg; 
+			ermsg<<"In this version of ccnSim, get_name() has been replaced by get_object_id()."
+				<<" Please, use the new function";
+		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			return 1;
+	};
+
+	uint32_t get_object_id(){ return __id(chunk_var);}
 	uint32_t get_chunk_num(){ return __chunk(chunk_var);}
+	uint32_t get_representation_mask()
+	{ 
+		#ifdef SEVERE_DEBUG
+			check_representation_mask(chunk_var);
+		#endif
+		return __representation_mask(chunk_var);
+	};
 	uint64_t get_next_chunk(){ return next_chunk(chunk_var); }
 
 	uint32_t get_size(){return __size(__id(chunk_var)); }
+
+	#ifdef SEVERE_DEBUG
+	static void check_representation_mask(chunk_t chunk_id)
+	{
+		representation_mask_t representation_mask = __representation_mask(chunk_id);
+		unsigned short representation = 0;
+		unsigned short i=1;
+		while (representation == 0 && i<=content_distribution::representation_bitrates_p->size() )
+		{
+			if( (representation_mask >> i ) == 0 )
+				representation = i;
+			i++;
+		}
+
+		if (representation == 0 )
+		{
+	        std::stringstream ermsg; 
+			ermsg<<"Invalid bitmask: no representation is recognizable. object_id:chunk_number:representation_mask="
+				<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id);
+		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}		
+
+		unsigned short representation2 = 0;
+		unsigned short j=1;
+		while (representation2 == 0 && j<=sizeof(representation_mask_t)*8 )
+		{
+			if( (representation_mask << j ) == 0 )
+				representation2 = sizeof(representation_mask_t)*8+1-j;
+			j++;
+		}
+		if (representation2 != representation)
+		{
+	        std::stringstream ermsg; 
+			ermsg<<"Invalid bitmask: there is more than one 1. object_id:chunk_number:representation_mask="
+				<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id)<<
+				" representation="<<representation <<"; representation2="<<representation2<<"; j="<<(j-1);
+		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}		
+
+	};
+	#endif
 	
 };
 Register_Class(ccn_data);

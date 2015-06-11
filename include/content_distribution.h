@@ -56,6 +56,7 @@ class content_distribution : public cSimpleModule{
 		//<aa>This method had no input parameters before</aa>
 		virtual int choose_repos(int object_index);
 		virtual void initialize_repo_popularity();
+		virtual void initialize_representation_info();
 
 		virtual void finalize_total_replica();
 
@@ -99,6 +100,14 @@ class content_distribution : public cSimpleModule{
 														  // repository representing the sum
 														  // of the popularity of the 
 														  // contained objects
+
+		static vector<double>* representation_bitrates_p;
+		static vector<double>* representation_storage_space_p; // Associate to each representation the required
+															// storage space, as a multiple of the space of
+															// the highest representation
+
+		static double get_storage_space(chunk_t chunk_id);	// Check what is the representation of the chunk
+																	// and returns the required storage space
 		//</aa>
 
 

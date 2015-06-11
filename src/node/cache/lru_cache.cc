@@ -34,8 +34,31 @@
 
 Register_Class(lru_cache);
 
+//<aa>
+bool lru_cache::is_it_empty() const
+{
+	//{ CHECK
+		#ifdef SEVERE_DEBUG
+		if ( (lru_==NULL && mru_!=NULL ) || (lru_!=NULL && mru_==NULL ) )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"Error in pointer updarte";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+	// }CHECK
 
-void lru_cache::data_store(chunk_t elem){
+	if (lru_==NULL)
+		return true;
+	else return false;
+}
+//</aa>
+
+void lru_cache::data_store(chunk_t elem)
+{
+	double storage_space = content_distribution::get_storage_space(elem);
+	exit (1);
+
     //When the element is already stored within the cache, simply update the 
     //position of the element within the list and exit
     if (data_lookup(elem))
@@ -51,7 +74,7 @@ void lru_cache::data_store(chunk_t elem){
 
     //The cache is empty. Add just one element. The mru and lru element are the
     //same
-    if (actual_size == 0){
+    if ( is_it_empty() ){
         actual_size++;
         lru_ = p;
 		mru_ = p;
@@ -204,73 +227,75 @@ void lru_cache::dump(){
 }
 
 //<aa>
-double lru_cache::get_cache_value()
-{
-	#ifdef SEVERE_DEBUG	
-	if ( !statistics::record_cache_value )
+// {STATISTICS
+	double lru_cache::get_cache_value()
 	{
-			std::stringstream ermsg; 
-			ermsg<<"get_cache_value(..) is useful when you want to record "<<
-				" the cache_value; when statistics::record_cache_value is disabled this method "<<
-				" may be useless. Make sure you really need this method. If yes, disable this"<<
-				" error.If not, try to rethink your code";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
-	#endif
+		#ifdef SEVERE_DEBUG	
+		if ( !statistics::record_cache_value )
+		{
+				std::stringstream ermsg; 
+				ermsg<<"get_cache_value(..) is useful when you want to record "<<
+					" the cache_value; when statistics::record_cache_value is disabled this method "<<
+					" may be useless. Make sure you really need this method. If yes, disable this"<<
+					" error.If not, try to rethink your code";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
 
-	double value = 0;
+		double value = 0;
 
-	WeightedContentDistribution* content_distribution_module = 
-		Costaware_ancestor::get_weighted_content_distribution_module();
+		WeightedContentDistribution* content_distribution_module = 
+			Costaware_ancestor::get_weighted_content_distribution_module();
 
-    lru_pos *it = get_mru();
-    int p = 1;
-    while (it){
-		chunk_t object_index = it->k;
-		double alpha = content_distribution_module->get_alpha();
-		double price = it->get_price();
-		double weight = Costaware_ancestor::compute_content_weight(object_index,price,alpha);
-		value += weight;
+		lru_pos *it = get_mru();
+		int p = 1;
+		while (it){
+			chunk_t object_index = it->k;
+			double alpha = content_distribution_module->get_alpha();
+			double price = it->get_price();
+			double weight = Costaware_ancestor::compute_content_weight(object_index,price,alpha);
+			value += weight;
 		
-//		cout<< p <<" ] "<< object_index <<" : "<< price << " : "<< weight << endl;
-		p++;
-		it = it->older;
-    }
+	//		cout<< p <<" ] "<< object_index <<" : "<< price << " : "<< weight << endl;
+			p++;
+			it = it->older;
+		}
 
-	return value;
-}
-
-double lru_cache::get_average_price()
-{
-	#ifdef SEVERE_DEBUG	
-	if ( !statistics::record_cache_value )
-	{
-			std::stringstream ermsg; 
-			ermsg<<"get_average_price(..) is useful when you want to record "<<
-				" the cache_value; when statistics::record_cache_value is disabled this method "<<
-				" may be useless. Make sure you really need this method. If yes, disable this"<<
-				" error.If not, try to rethink your code";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		return value;
 	}
-	#endif
 
-	double sum_of_prices = 0;
+	double lru_cache::get_average_price()
+	{
+		#ifdef SEVERE_DEBUG	
+		if ( !statistics::record_cache_value )
+		{
+				std::stringstream ermsg; 
+				ermsg<<"get_average_price(..) is useful when you want to record "<<
+					" the cache_value; when statistics::record_cache_value is disabled this method "<<
+					" may be useless. Make sure you really need this method. If yes, disable this"<<
+					" error.If not, try to rethink your code";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
 
-    lru_pos *it = get_mru();
-    int counter = 0;
-    while (it){
-		double price = it->get_price();
-		sum_of_prices += price;
-		it = it->older;
-		counter++;
-    }
+		double sum_of_prices = 0;
 
-	double average_price = sum_of_prices / counter;
-	return average_price;
-}
-//</aa>
+		lru_pos *it = get_mru();
+		int counter = 0;
+		while (it){
+			double price = it->get_price();
+			sum_of_prices += price;
+			it = it->older;
+			counter++;
+		}
+
+		double average_price = sum_of_prices / counter;
+		return average_price;
+	}
+	//</aa>
 
 
-bool lru_cache::full(){
-    return (actual_size==get_size());
-}
+	bool lru_cache::full(){
+		return (actual_size==get_size());
+	}
+// }STATISTICS

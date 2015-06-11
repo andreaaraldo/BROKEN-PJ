@@ -49,7 +49,7 @@ seed-set = ${rep = 0}
 ##Shaping factor of the Zipf distribution
 **.alpha = ${a = 1}
 ##Cardinality of the catalog
-**.objects = 2
+**.objects = 1
 
 #####################################################################
 ########################## Forwarding ##############################
@@ -74,7 +74,7 @@ seed-set = ${rep = 0}
 ##Caching algorithms: {lru,lfu,fifo,two,random}_cache
 **.RS = "${ R = lru }_cache"
 ##Cache size (in chunks)
-**.C = 10^2
+**.C = 1
 
 
 

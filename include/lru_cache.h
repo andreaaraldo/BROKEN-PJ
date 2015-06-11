@@ -48,7 +48,7 @@ struct lru_pos{
     //lru cache
     lru_pos* older;
     lru_pos* newer;
-    chunk_t k;
+    chunk_t k; //identifier of the chunk, i.e. [object_id, chunk_number, representation_mask]
     simtime_t hit_time;
 	//<aa>
 	// double cost;	// now called price
@@ -87,17 +87,20 @@ struct lru_pos{
 class lru_cache:public base_cache{
     friend class statistics;
     public:
-		lru_cache():base_cache(),actual_size(0),lru_(0),mru_(0){;}
+		lru_cache():base_cache(),actual_size(0),lru_(NULL),mru_(NULL){;}
 		//<aa>
 		lru_pos* get_mru();
 		lru_pos* get_lru();
 		const lru_pos* get_eviction_candidate();
+		bool is_it_empty() const;
 		//</aa>
 	
 		bool full(); //<aa> moved from protected to public </aa>
 		double get_cache_value();	//<aa> It gives an indication of the cost of objects stored 
 									// in the cache. </aa>
 		double get_average_price();
+
+		
 
     protected:
 		void data_store(chunk_t);

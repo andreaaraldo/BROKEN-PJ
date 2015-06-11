@@ -16,7 +16,8 @@ network video_simple_scenario_network extends base_network{
 	num_clients = 1;
 	node_clients = "0";
 	
-	node[0..1].content_store.C = 0;
+	node[1].content_store.C = 0;
+	node[0].content_store.C = 0;
 
 connections:
     node[0].face++ <--> {delay=0ms; datarate=1000Mbps;} <--> node[1].face++;

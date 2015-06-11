@@ -68,7 +68,7 @@ class base_cache : public abstract_node{
 		#endif
 
 		//Outside function behaviour
-		uint32_t get_size() { return cache_size; }
+		double get_size() { return cache_size; }
 		void set_size(uint32_t);
 
 		virtual bool fake_lookup(chunk_t);
@@ -112,8 +112,8 @@ class base_cache : public abstract_node{
 		virtual bool full() = 0; //<aa> moved from protected to public</aa>
 
     private:
-		int cache_size;
-		int name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
+		double cache_size;
+		double name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
 		int nodes;
 		int level;
 

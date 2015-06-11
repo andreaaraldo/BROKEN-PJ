@@ -75,7 +75,7 @@ public:
 	}
 	virtual name_t get_object_id(){return __id(chunk_var);}
 	virtual name_t get_chunk_number(){return __chunk(chunk_var);}
-	virtual name_t get_representation(){return __representation(chunk_var);}
+	virtual name_t get_representation_mask(){return __representation_mask(chunk_var);}
 
 
 	virtual vector<int> get_repos()

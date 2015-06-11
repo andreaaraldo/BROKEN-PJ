@@ -29,6 +29,7 @@
 
 //<aa>
 #include <error_handling.h>
+#include <ccn_data.h>
 //</aa>
 
 Register_Class(content_distribution);
@@ -47,6 +48,8 @@ double  *content_distribution::repo_prices = 0;
 int  *content_distribution::clients = 0;
 int  *content_distribution::total_replicas_p;
 vector<double>  *content_distribution::repo_popularity_p;
+vector<double>* content_distribution::representation_bitrates_p;
+vector<double>* content_distribution::representation_storage_space_p;
 
 
 
@@ -112,6 +115,8 @@ void content_distribution::initialize(){
 		recordScalar(name,repositories[i]);
     }
 
+	initialize_representation_info();
+
     //
     //Clients initialization
     //
@@ -147,6 +152,20 @@ void content_distribution::initialize_repo_popularity()
 {
 	// By default, the repo popularity is not computed
 	repo_popularity_p = NULL;
+}
+
+void content_distribution::initialize_representation_info()
+{
+
+	const char *str = par("representation_bitrates").stringValue();
+	cStringTokenizer(str,"_").asDoubleVector();
+	representation_bitrates_p = new vector<double> (cStringTokenizer(str,"_").asDoubleVector() );
+	representation_storage_space_p = new vector<double>(representation_bitrates_p->size() );
+	for (int i=representation_bitrates_p->size()-1 ; i>=0; i--)
+	{
+		(*representation_storage_space_p) [i] = 
+				(*representation_bitrates_p)[i] / (*representation_bitrates_p)[representation_bitrates_p->size() - 1];
+	}
 }
 //</aa>
 
@@ -477,4 +496,23 @@ int *content_distribution::init_clients(vector<int> node_clients){
     }
     return clients;
 
+}
+
+
+double content_distribution::get_storage_space(chunk_t chunk_id) 
+{
+	representation_mask_t representation_mask = __representation_mask(chunk_id);
+	unsigned short representation = 0;
+	unsigned short i=1; while (representation == 0 && i<=representation_bitrates_p->size() )
+	{
+		if( (representation_mask >> i ) == 0 )
+			representation = i;
+		i++;
+	}
+
+	#ifdef SEVERE_DEBUG
+	ccn_data::check_representation_mask(chunk_id);
+	#endif
+	cout << "space for representation "<< representation <<":"<< (*representation_storage_space_p)[representation]<<endl;
+	return (*representation_storage_space_p)[representation];
 }

@@ -246,6 +246,9 @@ void client::resend_interest(name_t name,cnumber_t number, int toward){
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
     __sid(chunk, name);
     __schunk(chunk, number);
+	__srepresentation_mask(chunk, 0xFFFF); 	// We fill the mask with all 1s, meaning that,
+										// when the client requests some object, it accepts
+										// all the possible representations
 
     interest->setChunk(chunk);
     interest->setHops(-1);
@@ -271,10 +274,14 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
 
     __sid(chunk, name);
     __schunk(chunk, number);
+	__srepresentation_mask(chunk, 0xFFFF); 	// We fill the mask with all 1s, meaning that,
+										// when the client requests some object, it accepts
+										// all the possible representations
 
     interest->setChunk(chunk);
     interest->setHops(-1);
     interest->setTarget(toward);
+	
 
 	//<aa>
 	#ifdef SEVERE_DEBUG

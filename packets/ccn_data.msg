@@ -7,7 +7,7 @@ class noncobject chunk_t;
 packet ccn_data{
 	@customize(true);
 
-//Chunk identifier (Name+Chunk Number = 64 bit)
+//Chunk identifier
 	chunk_t chunk;
 
 
@@ -36,7 +36,5 @@ packet ccn_data{
 	double price = 0;
 
 	int megabyteLength;
-
-	uint16_t representationMask;
 	//</aa>
 }
