@@ -1,0 +1,33 @@
+version 2
+run General-0-20150611-18:15:44-9694
+attr D lce
+attr F spr
+attr R lru
+attr a 1
+attr configname General
+attr datetime 20150611-18:15:44
+attr experiment General
+attr inifile omnetpp.ini.video
+attr iterationvars "$net=video_simple_scenario, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=lru"
+attr iterationvars2 "$net=video_simple_scenario, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=lru, $repetition=0"
+attr measurement "$net=video_simple_scenario, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=lru"
+attr net video_simple_scenario
+attr network networks.${net=video_simple_scenario}_network
+attr processid 9694
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+attr ttl 1000
+
+vector 0  video_simple_scenario_network.node[0].content_store  hit_node[0]  ETV
+0	28272	1	0
+0	28272	2	-nan
+vector 1  video_simple_scenario_network.node[1].content_store  hit_node[1]  ETV
+1	28272	1	0
+1	28272	2	-nan
+vector 2  video_simple_scenario_network.client[0]  hdistance[0]  ETV
+2	28272	1	2
+2	28272	2	0

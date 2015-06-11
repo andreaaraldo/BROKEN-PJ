@@ -260,6 +260,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
  
    chunk_t chunk = int_msg->getChunk();
+
    double int_btw = int_msg->getBtw();
    bool cacheable = true;  // This value indicates whether the retrieved content will be cached.
     
@@ -347,8 +348,11 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 		unsatisfied_interests++;
 		check_if_correct(__LINE__);
 		#endif
-		//</aa>
 
+		// PIT operations must ignore the representation mask, because forwarding must be based only on 
+		// object_id and chunk_num
+		__srepresentation_mask(chunk, 0x0000);
+		//</aa>
 
         unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
@@ -356,7 +360,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 		bool i_will_forward_interest = false;
 		//</aa>
 
-		//<aa> Insert a new PIT entry for this object, if not present. If present and invalid, reset the
+		//<aa> Insert a new PIT entry for this chunk, if not present. If present and invalid, reset the
 		// old entry. If present and valid, do nothing </aa>
         if (	
 			//<aa> there is no such an entry in the PIT thus I have to forward the interest</aa>
@@ -445,7 +449,8 @@ void core_layer::handle_data(ccn_data *data_msg)
     interface_t interfaces = 0;
     chunk_t chunk = data_msg -> getChunk(); //Get information about the file
 
-    unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
+	chunk_t chunk_with_no_representation_mask = chunk; __srepresentation_mask(chunk_with_no_representation_mask, 0x0000);
+    unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk_with_no_representation_mask);
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
@@ -486,7 +491,7 @@ void core_layer::handle_data(ccn_data *data_msg)
 	#endif
 
 
-    PIT.erase(chunk); //erase pending interests for that data file
+    PIT.erase(chunk_with_no_representation_mask); //erase pending interests for that data file
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
@@ -731,7 +736,7 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 		client* c = __get_attached_client(gateindex);
 		if (c)
 		{	//There is a client attached to that port
-			if ( !c->is_waiting_for( msg->get_name() ) )
+			if ( !c->is_waiting_for( msg->get_object_id() ) )
 			{
 				std::stringstream msg; 
 				msg<<"I am node "<< getIndex()<<". I am sending a data to the attached client that is not "<<
@@ -755,6 +760,10 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 		ccn_data::check_representation_mask(msg->getChunk() );
 		#endif
 	//}CHECKS
+
+	FILE* fp = fopen("/tmp/out.log", "a+");
+	fprintf(fp,"ciao, sending data\n");
+	fclose(fp);
 
 	iface_stats[gateindex].megabytes_sent += msg->getMegabyteLength();
 	return send (msg, gatename, gateindex);

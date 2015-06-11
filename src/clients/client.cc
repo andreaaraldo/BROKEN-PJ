@@ -83,10 +83,19 @@ void client::initialize(){
 
 void client::handleMessage(cMessage *in)
 {
+
+
     if (in->isSelfMessage()){
 		handle_timers(in);
+			FILE* fp = fopen("/tmp/out.log", "a+");
+			fprintf(fp,"ciao, self message\n");
+			fclose(fp);
 		return;
     }
+
+			FILE* fp = fopen("/tmp/out.log", "a+");
+			fprintf(fp,"ciao, not self message\n");
+			fclose(fp);
 
     switch (in->getKind() )
 	{
@@ -102,6 +111,7 @@ void client::handleMessage(cMessage *in)
 			}
 			#endif
 			//</aa>
+
 
 			ccn_data *data_message = (ccn_data *) in;
 			handle_incoming_chunk (data_message);
@@ -182,37 +192,48 @@ void client::finish(){
 
 
 void client::handle_timers(cMessage *timer){
-    switch(timer->getKind()){
-	case ARRIVAL:
-	    request_file();
-	    scheduleAt( simTime() + exponential(1/lambda), arrival );
-	    break;
-	case TIMER:
-	    for (multimap<name_t, download >::iterator i = current_downloads.begin();i != current_downloads.end();i++){
-		if ( simTime() - i->second.last > RTT ){
-			//<aa>
-			#ifdef SEVERE_DEBUG
-			    chunk_t chunk = 0; 	// Allocate chunk data structure. 
-									// This value wiil be overwritten soon
-				name_t object_name = i->first;
-				chunk_t object_id = __sid(chunk, object_name);
-				std::stringstream ermsg; 
-				ermsg<<"Client attached to node "<< getNodeIndex() <<" was not able to retrieve object "
-					<<object_id<< " before the timeout expired. Serial number of the interest="<< 
-					i->second.serial_number <<". This is not necessarily a bug. If you expect "<<
-					"such an event and you think it is not a bug, disable this error message";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			#endif
-			//</aa>
+    switch(timer->getKind())
+	{
+		case ARRIVAL:
+			request_file();
+			scheduleAt( simTime() + exponential(1/lambda), arrival );
+			break;
+		case TIMER:
+			for (multimap<name_t, download >::iterator i = current_downloads.begin();i != current_downloads.end();i++)
+			{
+				if ( simTime() - i->second.last > RTT )
+				{
+					//<aa>
+					#ifdef SEVERE_DEBUG
+						chunk_t chunk = 0; 	// Allocate chunk data structure. 
+											// This value wiil be overwritten soon
+						name_t object_name = i->first;
+						chunk_t object_id = __sid(chunk, object_name);
+						std::stringstream ermsg; 
+						ermsg<<"Client attached to node "<< getNodeIndex() <<" was not able to retrieve object "
+							<<object_id<< " before the timeout expired. Serial number of the interest="<< 
+							i->second.serial_number <<". This is not necessarily a bug. If you expect "<<
+							"such an event and you think it is not a bug, disable this error message";
+						severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+					#endif
+					//</aa>
 			
-		    //resend the request for the given chunk
-		    cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
-		    cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< __size(i->first) <<" chunks at "<<simTime()<<")"<<endl;
-		    resend_interest(i->first,i->second.chunk,-1);
-		}
-	    }
-	    scheduleAt( simTime() + check_time, timer );
-	    break;
+					//resend the request for the given chunk
+					cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
+					cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< __size(i->first) 
+						<<" chunks at "<<simTime()<<")"<<endl;
+					resend_interest(i->first,i->second.chunk,-1);
+				}
+			}
+			scheduleAt( simTime() + check_time, timer );
+			break;
+
+		#ifdef SEVERE_DEBUG
+		default:
+				std::stringstream ermsg; 
+				ermsg<<"Client attached to node "<< getNodeIndex() <<" received an unrecognized message ";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		#endif
     }
 }
 
@@ -300,16 +321,16 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 {
 
     cnumber_t chunk_num = data_message -> get_chunk_num();
-    name_t name      = data_message -> get_name();
+    name_t object_id      = data_message -> get_object_id();
     filesize_t size      = data_message -> get_size();
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
-		if ( !is_waiting_for(name) )
+		if ( !is_waiting_for(object_id) )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"Client attached to node "<< getNodeIndex() <<" is receiving object "
-				<<name<<" but it is not waiting for it" <<endl;
+				<<object_id<<" but it is not waiting for it" <<endl;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 		
@@ -334,13 +355,13 @@ void client::handle_incoming_chunk (ccn_data *data_message)
     // slow for huge catalog size, and at the same time quite useless
     // (statistics for the 12345234th file are not so meaningful at all)
 	// <aa> Therefore, we compute statistics only for the most popular files </aa>
-    if (name <= __file_bulk){
+    if (object_id <= __file_bulk){
 
-        client_stats[name].avg_distance = 
-				( client_stats[name].tot_chunks*client_stats[name].avg_distance+data_message->getHops() )/
-				( client_stats[name].tot_chunks+1 );
-        client_stats[name].tot_chunks++;
-        client_stats[name].tot_downloads+=1./size;
+        client_stats[object_id].avg_distance = 
+				( client_stats[object_id].tot_chunks*client_stats[object_id].avg_distance+data_message->getHops() )/
+				( client_stats[object_id].tot_chunks+1 );
+        client_stats[object_id].tot_chunks++;
+        client_stats[object_id].tot_downloads+=1./size;
 
     }
 
@@ -352,7 +373,7 @@ void client::handle_incoming_chunk (ccn_data *data_message)
     pair< multimap<name_t, download>::iterator, multimap<name_t, download>::iterator > ii;
     multimap<name_t, download>::iterator it; 
 
-    ii = current_downloads.equal_range(name);
+    ii = current_downloads.equal_range(object_id);
     it = ii.first;
 
     while (it != ii.second)
@@ -360,18 +381,18 @@ void client::handle_incoming_chunk (ccn_data *data_message)
         if ( it->second.chunk == chunk_num )
 		{
             it->second.chunk++;
-            if (it->second.chunk< __size(name) )
+            if (it->second.chunk< __size(object_id) )
 			{ 
 		    	it->second.last = simTime();
 		    	//if the file is not yet completed send the next interest
-		    	send_interest(name, it->second.chunk, data_message->getTarget());
+		    	send_interest(object_id, it->second.chunk, data_message->getTarget());
             }else{ 
 	        	//if the file is completed delete the entry from the pendent file list
 				simtime_t completion_time = simTime()-it->second.start;
 				avg_time = (tot_chunks * avg_time + completion_time ) * 1./( tot_chunks+1 );
-		    	if (current_downloads.count(name)==1)
+		    	if (current_downloads.count(object_id)==1)
 				{
-		    	    current_downloads.erase(name);
+		    	    current_downloads.erase(object_id);
 		    	    break;
 		    	}else{
 		    	    current_downloads.erase(it++);

@@ -98,19 +98,25 @@ public:
 		}		
 
 		unsigned short representation2 = 0;
-		unsigned short j=1;
-		while (representation2 == 0 && j<=sizeof(representation_mask_t)*8 )
-		{
-			if( (representation_mask << j ) == 0 )
-				representation2 = sizeof(representation_mask_t)*8+1-j;
+		unsigned short j=0;
+		bool found = false;
+
+		while (representation2 == 0 )
+		{			
 			j++;
+			if( ( (representation_mask << j ) & 0x000000000000FFFF) == 0 )
+			{
+				representation2 = sizeof(representation_mask)*8-j+1;
+				found = true;
+			}
 		}
 		if (representation2 != representation)
 		{
 	        std::stringstream ermsg; 
 			ermsg<<"Invalid bitmask: there is more than one 1. object_id:chunk_number:representation_mask="
 				<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id)<<
-				" representation="<<representation <<"; representation2="<<representation2<<"; j="<<(j-1);
+				" representation="<<representation <<"; representation2="<<representation2<<"; j="<<j<<
+				"; sizeof(representation_mask="<<sizeof(representation_mask)<<"; found="<<found;
 		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}		
 
