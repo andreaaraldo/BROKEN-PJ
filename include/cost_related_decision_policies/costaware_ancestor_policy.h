@@ -122,10 +122,10 @@ class Costaware_ancestor: public DecisionPolicy{
 			ctype.push_back("modules.content.WeightedContentDistribution");
 			cTopology topo;
 	   		topo.extractByNedTypeName(ctype);
-			int num_content_distribution_modules = topo.getNumNodes();
 
-
+			// {CHECK
 			#ifdef SEVERE_DEBUG
+				int num_content_distribution_modules = topo.getNumNodes();
 				if (num_content_distribution_modules != 1){
 					std::stringstream msg; 
 					msg<<"Found "<< num_content_distribution_modules << 
@@ -135,6 +135,7 @@ class Costaware_ancestor: public DecisionPolicy{
 					severe_error(__FILE__, __LINE__, msg.str().c_str() );
 				}
 			#endif
+			// }CHECK
 
 			cTopology::Node *content_distribution_node = topo.getNode(0);
 			content_distribution_module_ = 

@@ -597,7 +597,10 @@ ccn_data* core_layer::compose_data(chunk_t chunk_id, unsigned short representati
     data -> setChunk (chunk_id);
     data -> setHops(0);
     data->setTimestamp(simTime());
-	ccn_data::check_representation_mask(chunk_id);
+
+	#ifdef SEVERE_DEBUG
+		ccn_data::check_representation_mask(chunk_id);
+	#endif
     return data;
 }
 
