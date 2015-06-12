@@ -95,7 +95,7 @@ void lru_cache::data_store(chunk_t chunk_id)
     mru_->newer = p; // update the newer element for the secon newest element
     mru_ = p; //update the mru (which becomes that just inserted)
 
-	actual_size = actual_size + storage_space > get_size();
+	actual_size = actual_size + storage_space;
 	//<aa> I transformed an if in a loop </aa>
     while (actual_size  > get_size() )
 	{
