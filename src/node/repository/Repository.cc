@@ -76,8 +76,6 @@ unsigned short Repository::handle_interest(ccn_interest* int_msg)
 		// By default representation 1 is selected. Extend this class to change this
 		representation = 1;
 	}
-	cout << "ciao, handling interest for "<<int_msg->get_object_id()<<":"<< int_msg->get_chunk_number()<<":"<<
-				int_msg->get_representation_mask()<<". representation found: "<< representation << endl;
 	return representation;
 }
 
