@@ -73,11 +73,16 @@ class base_cache : public abstract_node{
 		//Outside function behaviour
 		int get_size() 
 		{
-	        std::stringstream ermsg; 
-			ermsg<<"In this version of ccnsim, get_size() has been replaced by get_slots()";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-
-			return 1; 
+			#ifdef SEVERE_DEBUG
+			if( content_distribution::get_number_of_representations() != 1 )
+			{
+				std::stringstream ermsg; 
+				ermsg<<"This function cannot be used if more than one representation per content is considered"<<
+					". Use get_slots() directly in all the other cases.";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+			#endif
+			return get_slots(); 
 		}
 
 		//<aa>
