@@ -23,6 +23,8 @@
  *
  */
 #include "random_cache.h"
+
+#include "error_handling.h"
 Register_Class (random_cache);
 
 
@@ -31,9 +33,20 @@ void random_cache::initialize(){
     base_cache::initialize();
 }
 
-void random_cache::data_store(chunk_t chunk){
+void random_cache::data_store(chunk_t chunk)
+{
+	#ifdef SEVERE_DEBUG
+	if( content_distribution::get_number_of_representation() != 1 )
+	{
+		std::stringstream ermsg; 
+		ermsg<<"This cache policy is intended to work only with one representation for each chunk."<<
+			" Slight modifications may be required in order to handle more than one representation.";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
+
     cache[chunk] = true;
-    if (deq.size() == get_size() ){
+    if (deq.size() == (unsigned)get_size() ){
         //Replacing a random element
         unsigned int pos = intrand(  deq.size() );
         chunk_t toErase = deq.at(pos);
@@ -54,7 +67,7 @@ bool random_cache::data_lookup(chunk_t chunk){
 }
 
 bool random_cache::full(){
-    return (deq.size()==get_size());
+    return (deq.size()==(unsigned)get_size());
 }
 
 /*Deprecated: used in order to fill up caches with random chunks*/
