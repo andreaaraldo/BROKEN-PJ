@@ -103,7 +103,7 @@ void base_cache::initialize(){
 		decisor = new Betweenness(db);
     }else if (decision_policy.find("prob_cache")==0)
 	{
-		decisor = new prob_cache(cache_size);
+		decisor = new prob_cache(cache_slots);
     } else if (decision_policy.find("never")==0)
 	{
 		decisor = new Never();
