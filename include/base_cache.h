@@ -81,7 +81,7 @@ class base_cache : public abstract_node{
 		}
 
 		//<aa>
-		int get_slots() { return cache_slots; }
+		unsigned  get_slots() { return cache_slots; }
 		void set_slots(unsigned);
 		//</aa>
 
