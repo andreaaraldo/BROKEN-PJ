@@ -513,7 +513,6 @@ const double content_distribution::get_storage_space(chunk_t chunk_id)
 	#ifdef SEVERE_DEBUG
 	ccn_data::check_representation_mask(chunk_id);
 	#endif
-	cout << "space for representation "<< representation <<":"<< get_storage_space(representation)<<endl;
 	return get_storage_space(representation);
 }
 

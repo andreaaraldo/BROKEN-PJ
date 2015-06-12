@@ -54,19 +54,28 @@ bool lru_cache::is_it_empty() const
 }
 //</aa>
 
-void lru_cache::data_store(chunk_t elem)
+void lru_cache::data_store(chunk_t chunk_id)
 {
-	double storage_space = content_distribution::get_storage_space(elem);
+	double storage_space = content_distribution::get_storage_space(chunk_id);
+	throw 1;
 
+	// All chunks must be indexed only based on object_id, chunk_number
+	chunk_t chunk_id_without_representation_mask = chunk_id;
+	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
+
+	
     //When the element is already stored within the cache, simply update the 
     //position of the element within the list and exit
-    if (data_lookup(elem))
-	return;
+    if (data_lookup(chunk_id_without_representation_mask) )
+		return;
 
 
 	lru_pos *p = new lru_pos();//position for the new element
 							//<aa> i.e. datastructure for the new element </aa>
-    p->k = elem;
+    p->k = chunk_id;// <aa> We store the complete chunk_id because we need to check the 
+					// 		representation_mask later, when a request arrives
+					// </aa>
+
     p->hit_time = simTime();
     p->newer = 0;
     p->older = 0;
@@ -77,7 +86,7 @@ void lru_cache::data_store(chunk_t elem)
         actual_size++;
         lru_ = p;
 		mru_ = p;
-        cache[elem] = p;
+        cache[chunk_id_without_representation_mask] = p;
         return;
     } 
 
@@ -87,10 +96,20 @@ void lru_cache::data_store(chunk_t elem)
     mru_->newer = p; // update the newer element for the secon newest element
     mru_ = p; //update the mru (which becomes that just inserted)
 
-    if (actual_size==get_size()){
+	actual_size = actual_size + storage_space > get_size();
+	//<aa> I transformed an if in a loop </aa>
+    while (actual_size  > get_size() )
+	{
         //if the cache is full, delete the last element
         //
-        chunk_t k = lru_->k;
+        chunk_t evicted_chunk_id = lru_->k;
+
+		//<aa>
+		// All chunks must be indexed only based on object_id, chunk_number
+		chunk_t evicted_chunk_id_without_representation_mask = evicted_chunk_id;
+		__srepresentation_mask(evicted_chunk_id_without_representation_mask, 0x0000);
+		//</aa>
+
         lru_pos *tmp = lru_;
         lru_ = tmp->newer;//the new lru is the element before the least recently used
 
@@ -99,12 +118,11 @@ void lru_cache::data_store(chunk_t elem)
         tmp->newer = 0;
 
         free(tmp);
-        cache.erase(k); //erase from the cache the most unused element
-    }else
-        //otherwise do nothing, just update the actual_size of the cache
-        actual_size++;
+        cache.erase(evicted_chunk_id_without_representation_mask); //erase from the cache the most unused element
+		actual_size = actual_size - content_distribution::get_storage_space(evicted_chunk_id);
+    }
 
-    cache[elem] = p; //store the new element together with its position
+    cache[chunk_id_without_representation_mask] = p; //store the new element together with its position
 }
 
 void lru_cache::set_price_to_last_inserted_element(double price)
@@ -164,30 +182,41 @@ const lru_pos* lru_cache::get_eviction_candidate(){
 
 //</aa>
 
-bool lru_cache::fake_lookup(chunk_t elem){
-//    if (getIndex()==12)
-//	return true;
-    unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(elem);
+bool lru_cache::fake_lookup(chunk_t chunk_id)
+{
+	// Each chunk is indexed only based on its object_id and chunk_number.
+	chunk_t chunk_id_without_representation_mask = chunk_id;
+	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
+
+    unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(chunk_id_without_representation_mask);
     //look for the elements
     if (it==cache.end()){
-	//if not found return false and do nothing
-	return false;
-
+		//if not found return false and do nothing
+		return false;
     }else 
-	return true;
+		return true;
 }
 
-bool lru_cache::data_lookup(chunk_t elem){
+bool lru_cache::data_lookup(chunk_t chunk_id)
+{
+	// Each chunk must be indexed only based on its object_id and chunk_number.
+	chunk_t chunk_id_without_representation_mask = chunk_id;
+	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
+
     //updating an element is just a matter of manipulating the list
-    unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(elem);
+    unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(chunk_id_without_representation_mask);
 
     //
     //look for the elements
-    if (it==cache.end()){
-	//if not found return false and do nothing
-	return false;
-
+    if (it==cache.end())
+	{
+		//if not found return false and do nothing
+		return false;
     }
+
+	if (__representation_mask(pos_elem->k) & __representation_mask(chunk_id) != 0 )
+		// The stored representation does not match with the requested ones
+		return false;
 
     lru_pos* pos_elem = it->second;
     if (pos_elem->older && pos_elem->newer){
