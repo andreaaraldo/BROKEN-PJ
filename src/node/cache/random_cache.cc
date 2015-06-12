@@ -37,7 +37,7 @@ void random_cache::initialize(){
 void random_cache::data_store(chunk_t chunk)
 {
 	#ifdef SEVERE_DEBUG
-	if( content_distribution::get_number_of_representation() != 1 )
+	if( content_distribution::get_number_of_representations() != 1 )
 	{
 		std::stringstream ermsg; 
 		ermsg<<"This cache policy is intended to work only with one representation for each chunk."<<
