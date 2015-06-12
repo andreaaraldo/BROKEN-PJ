@@ -326,6 +326,6 @@ void lru_cache::dump(){
 
 	bool lru_cache::full()
 	{
-		return ( actual_size == (unsigned) get_size());
+		return ( actual_size == (unsigned) get_slots());
 	}
 // }STATISTICS
