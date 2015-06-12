@@ -519,7 +519,7 @@ const double content_distribution::get_storage_space(chunk_t chunk_id)
 
 const double content_distribution::get_bitrate(unsigned short representation)
 {
-	return (*representation_bitrate_p)[representation-1];
+	return (*representation_bitrates_p)[representation-1]; 
 }
 
 const double content_distribution::get_storage_space(unsigned short representation)
