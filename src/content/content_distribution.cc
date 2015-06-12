@@ -237,7 +237,8 @@ vector<int> content_distribution::binary_strings(int num_ones,int len){
 
 //<aa> Return a string of bit representing an object placement. 
 // There is a 1 in the i-th position iff the object is served by the i-th repo
-int content_distribution::choose_repos (int object_index ){
+int content_distribution::choose_repos (int object_index )
+{
 	int repo_string = repo_strings[intrand(repo_strings.size())];
 
 	#ifdef SEVERE_DEBUG
@@ -336,7 +337,9 @@ void content_distribution::init_content()
     }
 
 	// <aa> Record the repository cardinality and price
-	for (int repo_idx = 0; repo_idx < num_repos; repo_idx++){
+	// {STATISTICS
+	for (int repo_idx = 0; repo_idx < num_repos; repo_idx++)
+	{
 	    char name[15];
 		sprintf(name,"repo-%d_card",repo_idx);
 		recordScalar(name, repo_card[repo_idx] );
@@ -345,6 +348,7 @@ void content_distribution::init_content()
 		recordScalar(name, repo_prices[repo_idx] ); 
 
 	}
+	// }STATISTICS
     // </aa>
 }
 /*
