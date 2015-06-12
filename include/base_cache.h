@@ -132,6 +132,9 @@ class base_cache : public abstract_node{
 		unsigned cache_slots;// <aa> A cache slot is the elementary unit of cache space. A chunk can occupy
 						// one or more cache slots, depending on its representation level </aa>
 
+		int name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
+
+
 		int nodes;
 		int level;
 
