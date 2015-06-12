@@ -95,7 +95,7 @@ class content_distribution : public cSimpleModule{
 		static int *total_replicas_p; // The number of replicas that are 
 								// distributed among all the repos
 
-		static const vector<double>* repo_popularity_p; // A value is associated to each
+		static vector<double>* repo_popularity_p; // A value is associated to each
 														  // repository representing the sum
 														  // of the popularity of the 
 														  // contained objects
