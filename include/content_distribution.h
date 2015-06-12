@@ -53,7 +53,6 @@ class content_distribution : public cSimpleModule{
 		void handleMessage(cMessage *){;}
 
 		//<aa>
-		//<aa>This method had no input parameters before</aa>
 		virtual int choose_repos(int object_index);
 		virtual void initialize_repo_popularity();
 		virtual void initialize_representation_info();
@@ -63,7 +62,10 @@ class content_distribution : public cSimpleModule{
 		#ifdef SEVERE_DEBUG
 		virtual void verify_replica_number();
 		#endif
-		//</aa>
+
+		static unsigned short get_number_of_representations() const;
+		static double get_bitrate(unsigned short representation) const;
+		static double get_storage_space(unsigned short representation) const;
 
 		//</aa> I moved the following members from private to protected </aa>
 		virtual vector<int> binary_strings(int,int);

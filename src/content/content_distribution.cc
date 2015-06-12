@@ -498,7 +498,7 @@ int *content_distribution::init_clients(vector<int> node_clients){
 
 }
 
-
+//<aa>
 double content_distribution::get_storage_space(chunk_t chunk_id) 
 {
 	representation_mask_t representation_mask = __representation_mask(chunk_id);
@@ -513,6 +513,22 @@ double content_distribution::get_storage_space(chunk_t chunk_id)
 	#ifdef SEVERE_DEBUG
 	ccn_data::check_representation_mask(chunk_id);
 	#endif
-	cout << "space for representation "<< representation <<":"<< (*representation_storage_space_p)[representation]<<endl;
-	return (*representation_storage_space_p)[representation];
+	cout << "space for representation "<< representation <<":"<< get_storage_space(representation)<<endl;
+	return get_storage_space(representation);
 }
+
+double content_distribution::get_bitrate(unsigned short representation) const
+{
+	return (*representation_bitrate_p)[representation-1];
+}
+
+double content_distribution::get_storage_space(unsigned short representation) const
+{
+	return (*representation_storage_space_p)[representation-1];
+}
+
+unsigned short content_distribution::get_number_of_representations() const
+{
+	return representation_storage_space_p->size();
+}
+//</aa>

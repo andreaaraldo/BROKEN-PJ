@@ -82,7 +82,7 @@ public:
 		representation_mask_t representation_mask = __representation_mask(chunk_id);
 		unsigned short representation = 0;
 		unsigned short i=1;
-		while (representation == 0 && i<=content_distribution::representation_bitrates_p->size() )
+		while (representation == 0 && i<=content_distribution::get_number_of_representations() )
 		{
 			if( (representation_mask >> i ) == 0 )
 				representation = i;
