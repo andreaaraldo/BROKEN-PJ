@@ -169,7 +169,7 @@ void core_layer::handleMessage(cMessage *in)
 	    	//</aa>
 	    	break;
 		}
-		int_msg->setCapacity (int_msg->getCapacity() + ContentStore->get_size());
+		int_msg->setCapacity (int_msg->getCapacity() + ContentStore->get_slots());
 		handle_interest (int_msg);
 		break;
 
