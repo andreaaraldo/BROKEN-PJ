@@ -3,9 +3,10 @@ package modules.node.cache;
 moduleinterface cache
 {
     parameters:
-	double C;
+	int C; 	//<aa> How many objects can be stored in the cache, supposing to store them at the
+			//highest representation </aa>
 	//<mt>
-	double NC; 
+	int NC; 
 	//</mt>
 
     gates:

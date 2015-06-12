@@ -68,7 +68,19 @@ class base_cache : public abstract_node{
 		#endif
 
 		//Outside function behaviour
-		double get_size() { return cache_size; }
+		int get_size() 
+		{
+	        std::stringstream ermsg; 
+			ermsg<<"In this version of ccnsim, get_size() has been replaced by get_slots()";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
+			return 1; 
+		}
+
+		//<aa>
+		int get_slots() { return cache_slots; }
+		//</aa>
+
 		void set_size(uint32_t);
 
 		virtual bool fake_lookup(chunk_t);
@@ -112,8 +124,10 @@ class base_cache : public abstract_node{
 		virtual bool full() = 0; //<aa> moved from protected to public</aa>
 
     private:
-		double cache_size;
-		double name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
+		//<aa> I replaced cache_size with cache_slots </aa>
+		unsigned cache_slots;// <aa> A cache slot is the elementary unit of cache space. A chunk can occupy
+						// one or more cache slots, depending on its representation level </aa>
+
 		int nodes;
 		int level;
 

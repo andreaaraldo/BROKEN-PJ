@@ -56,7 +56,7 @@ bool lru_cache::is_it_empty() const
 
 void lru_cache::data_store(chunk_t chunk_id)
 {
-	double storage_space = content_distribution::get_storage_space(chunk_id);
+	unsigned storage_space = content_distribution::get_storage_space(chunk_id);
 
 	// All chunks must be indexed only based on object_id, chunk_number
 	chunk_t chunk_id_without_representation_mask = chunk_id;
@@ -79,10 +79,11 @@ void lru_cache::data_store(chunk_t chunk_id)
     p->newer = 0;
     p->older = 0;
 
-    //The cache is empty. Add just one element. The mru and lru element are the
-    //same
-    if ( is_it_empty() ){
-        actual_size++;
+    // The cache is empty. Add just one element if it fits into the cache space. 
+	// The mru and lru element are the same
+    if ( is_it_empty() && (actual_size + storage_space) <= get_slots() )
+	{
+        actual_size += storage_space;
         lru_ = p;
 		mru_ = p;
         cache[chunk_id_without_representation_mask] = p;
@@ -95,9 +96,9 @@ void lru_cache::data_store(chunk_t chunk_id)
     mru_->newer = p; // update the newer element for the secon newest element
     mru_ = p; //update the mru (which becomes that just inserted)
 
-	actual_size = actual_size + storage_space;
+	actual_size += storage_space;
 	//<aa> I transformed an if in a loop </aa>
-    while (actual_size  > get_size() )
+    while (actual_size  > get_slots() )
 	{
         //if the cache is full, delete the last element
         //

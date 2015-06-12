@@ -160,11 +160,11 @@ void content_distribution::initialize_representation_info()
 	const char *str = par("representation_bitrates").stringValue();
 	cStringTokenizer(str,"_").asDoubleVector();
 	representation_bitrates_p = new vector<double> (cStringTokenizer(str,"_").asDoubleVector() );
-	representation_storage_space_p = new vector<double>(representation_bitrates_p->size() );
-	for (int i=representation_bitrates_p->size()-1 ; i>=0; i--)
+	representation_storage_space_p = new vector<unsigned>(representation_bitrates_p->size() );
+	for (int i=0 ; i < representation_bitrates_p->size() ; i++)
 	{
 		(*representation_storage_space_p) [i] = 
-				(*representation_bitrates_p)[i] / (*representation_bitrates_p)[representation_bitrates_p->size() - 1];
+				(int) (*representation_bitrates_p)[i] / (*representation_bitrates_p)[0];
 	}
 }
 //</aa>
@@ -499,7 +499,7 @@ int *content_distribution::init_clients(vector<int> node_clients){
 }
 
 //<aa>
-const double content_distribution::get_storage_space(chunk_t chunk_id) 
+const unsigned content_distribution::get_storage_space(chunk_t chunk_id) 
 {
 	representation_mask_t representation_mask = __representation_mask(chunk_id);
 	unsigned short representation = 0;
@@ -521,12 +521,12 @@ const double content_distribution::get_bitrate(unsigned short representation)
 	return (*representation_bitrates_p)[representation-1]; 
 }
 
-const double content_distribution::get_storage_space(unsigned short representation)
+const unsigned content_distribution::get_storage_space(unsigned short representation)
 {
 	return (*representation_storage_space_p)[representation-1];
 }
 
-const unsigned short content_distribution::get_number_of_representations()
+const unsigned short content_distribution::get_number_of_representations() 
 {
 	return representation_storage_space_p->size();
 }

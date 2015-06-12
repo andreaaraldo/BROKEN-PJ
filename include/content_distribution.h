@@ -102,9 +102,9 @@ class content_distribution : public cSimpleModule{
 
 		static const unsigned short get_number_of_representations();
 		static const double get_bitrate(unsigned short representation);
-		static const double get_storage_space(unsigned short representation);
+		static const unsigned get_storage_space(unsigned short representation);
 
-		static const double get_storage_space(chunk_t chunk_id);	// Check what is the representation of the chunk
+		static const unsigned get_storage_space(chunk_t chunk_id);	// Check what is the representation of the chunk
 																	// and returns the required storage space
 
 
@@ -125,9 +125,9 @@ class content_distribution : public cSimpleModule{
 		double q;
 
 		static vector<double>* representation_bitrates_p;
-		static vector<double>* representation_storage_space_p; // Associate to each representation the required
+		static vector<unsigned>* representation_storage_space_p; // Associate to each representation the required
 															// storage space, as a multiple of the space of
-															// the highest representation
+															// the lowest representation
 
 
 };

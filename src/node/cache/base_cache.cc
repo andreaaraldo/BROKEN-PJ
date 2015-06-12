@@ -53,7 +53,13 @@ void base_cache::initialize(){
 
     nodes      = getAncestorPar("n");
     level = getAncestorPar("level");
-    cache_size = par("C");  //cache size
+
+	// {COMPUTE CACHE SLOTS
+    int chunks_at_highest_representation = par("C");
+	int highest_representation_space = content_distribution::get_storage_space(
+		content_distribution::get_number_of_representations() );
+	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
+	// }COMPUTE CACHE SLOTS
 
 	decisor = NULL;
 
