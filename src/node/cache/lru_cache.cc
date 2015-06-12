@@ -214,7 +214,7 @@ bool lru_cache::data_lookup(chunk_t chunk_id)
     }
 
     lru_pos* pos_elem = it->second;
-	if (__representation_mask(pos_elem->k) & __representation_mask(chunk_id) != 0 )
+	if ( (__representation_mask(pos_elem->k) & __representation_mask(chunk_id) ) != 0 )
 		// The stored representation does not match with the requested ones
 		return false;
 
