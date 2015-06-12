@@ -354,8 +354,18 @@ void base_cache::clear_stat()
  */
 void base_cache::set_size(uint32_t cSize)
 {
-	cache_size = cSize;
+    std::stringstream ermsg; 
+	ermsg<<"In this version of ccnsim, set_size(..) has been replaced by set_slots(..)";
+	severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+
 }
+
+void base_cache::set_slots(unsigned slots_)
+{
+	cache_slots = slots_;
+}
+
+
 //<aa>
 uint32_t base_cache::get_decision_yes()
 {
