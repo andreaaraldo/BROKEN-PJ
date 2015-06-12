@@ -517,17 +517,17 @@ double content_distribution::get_storage_space(chunk_t chunk_id)
 	return get_storage_space(representation);
 }
 
-double content_distribution::get_bitrate(unsigned short representation) const
+const double content_distribution::get_bitrate(unsigned short representation)
 {
 	return (*representation_bitrate_p)[representation-1];
 }
 
-double content_distribution::get_storage_space(unsigned short representation) const
+const double content_distribution::get_storage_space(unsigned short representation)
 {
 	return (*representation_storage_space_p)[representation-1];
 }
 
-unsigned short content_distribution::get_number_of_representations() const
+const unsigned short content_distribution::get_number_of_representations()
 {
 	return representation_storage_space_p->size();
 }
