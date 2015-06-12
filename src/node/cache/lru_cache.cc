@@ -57,7 +57,6 @@ bool lru_cache::is_it_empty() const
 void lru_cache::data_store(chunk_t elem)
 {
 	double storage_space = content_distribution::get_storage_space(elem);
-	exit (1);
 
     //When the element is already stored within the cache, simply update the 
     //position of the element within the list and exit
