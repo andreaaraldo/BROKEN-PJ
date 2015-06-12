@@ -49,7 +49,7 @@ int  *content_distribution::clients = 0;
 int  *content_distribution::total_replicas_p;
 vector<double>  *content_distribution::repo_popularity_p;
 vector<double>* content_distribution::representation_bitrates_p;
-vector<double>* content_distribution::representation_storage_space_p;
+vector<unsigned>* content_distribution::representation_storage_space_p;
 
 
 
@@ -161,7 +161,7 @@ void content_distribution::initialize_representation_info()
 	cStringTokenizer(str,"_").asDoubleVector();
 	representation_bitrates_p = new vector<double> (cStringTokenizer(str,"_").asDoubleVector() );
 	representation_storage_space_p = new vector<unsigned>(representation_bitrates_p->size() );
-	for (int i=0 ; i < representation_bitrates_p->size() ; i++)
+	for (unsigned i=0 ; i < representation_bitrates_p->size() ; i++)
 	{
 		(*representation_storage_space_p) [i] = 
 				(int) (*representation_bitrates_p)[i] / (*representation_bitrates_p)[0];

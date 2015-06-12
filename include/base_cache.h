@@ -27,6 +27,9 @@
 
 
 #include "ccnsim.h"
+//<aa>
+#include "error_handling.h"
+//</aa>
 class DecisionPolicy;
 
 
@@ -79,6 +82,7 @@ class base_cache : public abstract_node{
 
 		//<aa>
 		int get_slots() { return cache_slots; }
+		void set_slots(unsigned);
 		//</aa>
 
 		void set_size(uint32_t);

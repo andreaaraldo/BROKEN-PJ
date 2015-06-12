@@ -218,7 +218,7 @@ void base_cache::finish(){
 
 //Base class function: a data has been received:
 void base_cache::store(cMessage *in){
-    if (cache_size ==0){
+    if (cache_slots ==0){
 		//<aa>
 		after_discarding_data();
 		//</aa>
@@ -263,7 +263,7 @@ void base_cache::after_discarding_data()
  */
 void base_cache::store_name(chunk_t elem)
 {
-    if (cache_size ==0)
+    if (cache_slots ==0)
     {
 		std::stringstream ermsg;
 		ermsg<<" ALLERT! The size of the name cache is set to 0! Please check.";
