@@ -81,7 +81,7 @@ void lru_cache::data_store(chunk_t chunk_id)
 
     // The cache is empty. Add just one element if it fits into the cache space. 
 	// The mru and lru element are the same
-    if ( is_it_empty() && (actual_size + storage_space) <= get_slots() )
+    if ( is_it_empty() && ( actual_size + storage_space) <= (unsigned)get_slots() )
 	{
         actual_size += storage_space;
         lru_ = p;
@@ -326,6 +326,6 @@ void lru_cache::dump(){
 
 	bool lru_cache::full()
 	{
-		return (actual_size==get_size());
+		return ( actual_size == (unsigned) get_size());
 	}
 // }STATISTICS
