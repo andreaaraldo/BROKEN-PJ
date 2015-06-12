@@ -324,7 +324,8 @@ void lru_cache::dump(){
 	//</aa>
 
 
-	bool lru_cache::full(){
+	bool lru_cache::full()
+	{
 		return (actual_size==get_size());
 	}
 // }STATISTICS
