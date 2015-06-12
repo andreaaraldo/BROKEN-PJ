@@ -23,15 +23,28 @@
  *
  */
 #include "fifo_cache.h"
+#include "error_handling.h"
+#include "content_distribution.h"
 
 Register_Class(fifo_cache);
 
-void fifo_cache::data_store(chunk_t chunk){
+void fifo_cache::data_store(chunk_t chunk)
+{
+	#ifdef SEVERE_DEBUG
+	if( content_distribution::get_number_of_representation() != 1 )
+	{
+		std::stringstream ermsg; 
+		ermsg<<"This cache policy is intended to work only with one representation for each chunk."<<
+			" Slight modifications may be required in order to handle more than one representation.";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
+
 
    cache[chunk] = true;
    deq.push_back(chunk);
 
-   if ( deq.size() > get_size() ) {
+   if ( deq.size() > (unsigned)get_size() ) {
    //Eviction of the last element
        chunk_t toErase = deq.front();
        deq.pop_front();
@@ -46,6 +59,7 @@ bool fifo_cache::data_lookup(chunk_t chunk){
 }
 
 
-bool fifo_cache::full(){
-    return (cache.size() == get_size());
+bool fifo_cache::full()
+{
+    return (cache.size() == (unsigned)get_size());
 }

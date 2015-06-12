@@ -23,6 +23,7 @@
  *
  */
 #include "random_cache.h"
+#include "content_distribution.h"
 
 #include "error_handling.h"
 Register_Class (random_cache);
