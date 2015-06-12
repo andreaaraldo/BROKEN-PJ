@@ -29,6 +29,7 @@
 #include "ccnsim.h"
 //<aa>
 #include "error_handling.h"
+#include "content_distribution.h"
 //</aa>
 class DecisionPolicy;
 
