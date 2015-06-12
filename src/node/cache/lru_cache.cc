@@ -214,14 +214,12 @@ bool lru_cache::data_lookup(chunk_t chunk_id)
 		return false;
     }
 
-
+    lru_pos* pos_elem = it->second;
 	if (__representation_mask(pos_elem->k) & __representation_mask(chunk_id) != 0 )
 		// The stored representation does not match with the requested ones
 		return false;
 
-    // Otherwise update its position.
-    lru_pos* pos_elem = it->second;
-
+    // If content matched, update the position
     if (pos_elem->older && pos_elem->newer){
         //if the element is in the middle remove the element from the list
         pos_elem->newer->older = pos_elem->older;
