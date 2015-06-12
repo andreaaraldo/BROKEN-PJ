@@ -19,8 +19,8 @@ simple base_cache like cache
     	@display("i=block/buffer2;is=l");
 
 	string DS = default("lce");
-	double C;
-	double NC = default(C); //name cache dimension (in case of two_lru)
+	int C;
+	int NC = default(C); //name cache dimension (in case of two_lru)
     gates:
 	inout cache_port;
 }
