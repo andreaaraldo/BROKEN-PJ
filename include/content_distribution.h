@@ -63,9 +63,9 @@ class content_distribution : public cSimpleModule{
 		virtual void verify_replica_number();
 		#endif
 
-		static unsigned short get_number_of_representations();
-		static double get_bitrate(unsigned short representation);
-		static double get_storage_space(unsigned short representation);
+		static const unsigned short get_number_of_representations();
+		static const double get_bitrate(unsigned short representation);
+		static const double get_storage_space(unsigned short representation);
 
 		//</aa> I moved the following members from private to protected </aa>
 		virtual vector<int> binary_strings(int,int);
