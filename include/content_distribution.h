@@ -62,10 +62,7 @@ class content_distribution : public cSimpleModule{
 		#ifdef SEVERE_DEBUG
 		virtual void verify_replica_number();
 		#endif
-
-		static const unsigned short get_number_of_representations();
-		static const double get_bitrate(unsigned short representation);
-		static const double get_storage_space(unsigned short representation);
+		//</aa>
 
 		//</aa> I moved the following members from private to protected </aa>
 		virtual vector<int> binary_strings(int,int);
@@ -98,14 +95,19 @@ class content_distribution : public cSimpleModule{
 		static int *total_replicas_p; // The number of replicas that are 
 								// distributed among all the repos
 
-		static vector<double>* repo_popularity_p; // A value is associated to each
+		static const vector<double>* repo_popularity_p; // A value is associated to each
 														  // repository representing the sum
 														  // of the popularity of the 
 														  // contained objects
 
+		static const unsigned short get_number_of_representations();
+		static const double get_bitrate(unsigned short representation);
+		static const double get_storage_space(unsigned short representation);
 
-		static double get_storage_space(chunk_t chunk_id);	// Check what is the representation of the chunk
+		static const double get_storage_space(chunk_t chunk_id);	// Check what is the representation of the chunk
 																	// and returns the required storage space
+
+
 		//</aa>
 
 
