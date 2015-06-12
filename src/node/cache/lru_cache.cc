@@ -57,7 +57,6 @@ bool lru_cache::is_it_empty() const
 void lru_cache::data_store(chunk_t chunk_id)
 {
 	double storage_space = content_distribution::get_storage_space(chunk_id);
-	throw 1;
 
 	// All chunks must be indexed only based on object_id, chunk_number
 	chunk_t chunk_id_without_representation_mask = chunk_id;
