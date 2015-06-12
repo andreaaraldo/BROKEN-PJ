@@ -499,7 +499,7 @@ int *content_distribution::init_clients(vector<int> node_clients){
 }
 
 //<aa>
-double content_distribution::get_storage_space(chunk_t chunk_id) 
+const double content_distribution::get_storage_space(chunk_t chunk_id) 
 {
 	representation_mask_t representation_mask = __representation_mask(chunk_id);
 	unsigned short representation = 0;
