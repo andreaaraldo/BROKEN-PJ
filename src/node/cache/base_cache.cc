@@ -56,11 +56,11 @@ void base_cache::initialize(){
 
 	// {COMPUTE CACHE SLOTS
     int chunks_at_highest_representation = par("C");
-	unsigned highest_representation_space = content_distribution::get_storage_space(
+	unsigned highest_representation_space = content_distribution::get_storage_space_of_representation(
 		content_distribution::get_number_of_representations() );
 	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
 	cout << "ciao: cache_slots=" << cache_slots << "; highest_representation_space=" << highest_representation_space
-		<< "get_number_of_representations()=" << content_distribution::get_number_of_representations() << endl;
+		<< "; get_number_of_representations()=" << content_distribution::get_number_of_representations() << endl;
 	// }COMPUTE CACHE SLOTS
 
 	decisor = NULL;

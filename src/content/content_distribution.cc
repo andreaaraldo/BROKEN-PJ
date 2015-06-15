@@ -503,7 +503,7 @@ int *content_distribution::init_clients(vector<int> node_clients){
 }
 
 //<aa>
-const unsigned content_distribution::get_storage_space(chunk_t chunk_id) 
+const unsigned content_distribution::get_storage_space_of_chunk(chunk_t chunk_id) 
 {
 	representation_mask_t representation_mask = __representation_mask(chunk_id);
 	unsigned short representation = 0;
@@ -517,7 +517,7 @@ const unsigned content_distribution::get_storage_space(chunk_t chunk_id)
 	#ifdef SEVERE_DEBUG
 	ccn_data::check_representation_mask(chunk_id);
 	#endif
-	return get_storage_space(representation);
+	return get_storage_space_of_representation(representation);
 }
 
 const double content_distribution::get_bitrate(unsigned short representation)
@@ -525,7 +525,7 @@ const double content_distribution::get_bitrate(unsigned short representation)
 	return (*representation_bitrates_p)[representation-1]; 
 }
 
-const unsigned content_distribution::get_storage_space(unsigned short representation)
+const unsigned content_distribution::get_storage_space_of_representation(unsigned short representation)
 {
 	return (*representation_storage_space_p)[representation-1];
 }

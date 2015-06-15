@@ -56,7 +56,7 @@ bool lru_cache::is_it_empty() const
 
 void lru_cache::data_store(chunk_t chunk_id)
 {
-	unsigned storage_space = content_distribution::get_storage_space(chunk_id);
+	unsigned storage_space = content_distribution::get_storage_space_of_chunk(chunk_id);
 
 	// All chunks must be indexed only based on object_id, chunk_number
 	chunk_t chunk_id_without_representation_mask = chunk_id;
@@ -119,7 +119,7 @@ void lru_cache::data_store(chunk_t chunk_id)
 
         free(tmp);
         cache.erase(evicted_chunk_id_without_representation_mask); //erase from the cache the most unused element
-		actual_size = actual_size - content_distribution::get_storage_space(evicted_chunk_id);
+		actual_size = actual_size - content_distribution::get_storage_space_of_chunk(evicted_chunk_id);
     }
 
     cache[chunk_id_without_representation_mask] = p; //store the new element together with its position
