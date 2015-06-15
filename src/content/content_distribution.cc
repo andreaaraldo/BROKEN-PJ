@@ -527,7 +527,26 @@ const double content_distribution::get_bitrate(unsigned short representation)
 
 const unsigned content_distribution::get_storage_space_of_representation(unsigned short representation)
 {
-	return (*representation_storage_space_p)[representation-1];
+	#ifdef SEVERE_DEBUG
+	if (representation == 0)
+	{
+			std::stringstream ermsg; 
+			ermsg<<"Representation 0 does not exist";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}	
+	#endif
+
+	unsigned space = (*representation_storage_space_p)[representation-1];
+
+	#ifdef SEVERE_DEBUG
+	if (space == 0)
+	{
+			std::stringstream ermsg; 
+			ermsg<<"Representation cannot require 0 space";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}	
+	#endif
+	return space;
 }
 
 const unsigned short content_distribution::get_number_of_representations() 
