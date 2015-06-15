@@ -122,7 +122,7 @@ void base_cache::initialize(){
 	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
 
-	// INPUT_CHECK{
+	// CHECKS{
 		if ( decision_policy.find("fix")==0 || 
 			( decision_policy.find("costaware")==0 && !decision_policy.find("ideal_costaware")== 0 )
 		){	
@@ -141,7 +141,7 @@ void base_cache::initialize(){
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
 		}
-	// }INPUT_CHECK
+	// }CHECKS
 	//</aa>
 
 
