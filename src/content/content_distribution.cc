@@ -115,7 +115,9 @@ void content_distribution::initialize(){
 		recordScalar(name,repositories[i]);
     }
 
+	//<aa>
 	initialize_representation_info();
+	//</aa>
 
     //
     //Clients initialization
@@ -165,6 +167,15 @@ void content_distribution::initialize_representation_info()
 	{
 		(*representation_storage_space_p) [i] = 
 				(int) (*representation_bitrates_p)[i] / (*representation_bitrates_p)[0];
+
+		#ifdef SEVERE_DEBUG
+			if ( (*representation_storage_space_p) [i] == 0 )
+			{
+				std::stringstream ermsg; 
+				ermsg<<"Rapresentation "<< i+1 <<" has storage space 0";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+		#endif
 	}
 }
 //</aa>
