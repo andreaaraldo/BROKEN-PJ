@@ -59,6 +59,7 @@ void base_cache::initialize(){
 	unsigned highest_representation_space = content_distribution::get_storage_space(
 		content_distribution::get_number_of_representations() );
 	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
+	cout << "ciao: cache_slots=" << cache_slots << endl;
 	// }COMPUTE CACHE SLOTS
 
 	decisor = NULL;
