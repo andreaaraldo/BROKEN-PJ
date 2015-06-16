@@ -38,50 +38,16 @@ using namespace std;
 using namespace boost;
 
 
-//Indicate the position within the lru cache. In order to look-up for an
-//element it just suffices removing the element from the current position and
-//inserting it within the head of the list
-struct lru_pos{
-	lru_pos() : price_(-1) {}; // Initialize the price as undefined
-
-    //older and newer track the lru_position within the 
-    //lru cache
-    lru_pos* older;
-    lru_pos* newer;
-    chunk_t k; //identifier of the chunk, i.e. [object_id, chunk_number, representation_mask]
-    simtime_t hit_time;
-	//<aa>
-	// double cost;	// now called price
-	double price_;   //meaningful only with cost aware caching. In previous versions 
-					//of ccnsim it was called cost
-
-	double get_price(){
-		#ifdef SEVERE_DEBUG
-		if ( statistics::record_cache_value && price_ <0 )
+//{ RETROCOMPATIBILITY
+	struct lru_pos{
+		lru_pos() 
 		{
 			std::stringstream ermsg; 
-			ermsg<<"price is "<< price_ <<", i.e. it is not correctly initialized.";
+			ermsg<<"In this version of ccnSim, lru_pos has been replaced by base_cache::cache_item_descriptor. ";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-		#endif
-
-		return price_; 
-	}
-
-	void set_price(double new_price) 
-	{
-		price_ = new_price;
-		#ifdef SEVERE_DEBUG
-		if ( statistics::record_cache_value && price_ < 0 )
-		{
-			std::stringstream ermsg; 
-			ermsg<<"price=="<< price_ <<", new_price=="<<new_price<<", i.e. it is not initialized.";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-		#endif
-	}
-	//</aa>
-};
+		};
+	};
+//} RETROCOMPATIBILITY
 
 //Defines a simple lru cache composed by a map and a list of position within the map.
 class lru_cache:public base_cache{
@@ -89,9 +55,9 @@ class lru_cache:public base_cache{
     public:
 		lru_cache():base_cache(),actual_size(0),lru_(NULL),mru_(NULL){;}
 		//<aa>
-		lru_pos* get_mru();
-		lru_pos* get_lru();
-		const lru_pos* get_eviction_candidate();
+		cache_item_descriptor* get_mru();
+		cache_item_descriptor* get_lru();
+		const cache_item_descriptor* get_eviction_candidate();
 		bool is_it_empty() const;
 		//</aa>
 	
@@ -107,8 +73,8 @@ class lru_cache:public base_cache{
 		bool data_lookup(chunk_t);
 		bool fake_lookup(chunk_t);
 		//<aa>
-		void set_mru(lru_pos* new_mru);
-		void set_lru(lru_pos* new_lru);
+		void set_mru(cache_item_descriptor* new_mru);
+		void set_lru(cache_item_descriptor* new_lru);
 		//</aa>
 
 		void dump();
@@ -117,10 +83,9 @@ class lru_cache:public base_cache{
 
     private:
 		uint32_t actual_size; //actual size of the cache
-		lru_pos* lru_; //least recently used item
-		lru_pos* mru_; //most recently used item
+		cache_item_descriptor* lru_; //least recently used item
+		cache_item_descriptor* mru_; //most recently used item
 
-		unordered_map<chunk_t, lru_pos*> cache; //cache of values
 
 		virtual void set_price_to_last_inserted_element(double price);
 

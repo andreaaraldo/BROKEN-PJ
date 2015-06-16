@@ -30,8 +30,58 @@
 //<aa>
 #include "error_handling.h"
 #include "content_distribution.h"
+#include "statistics.h"
 //</aa>
 class DecisionPolicy;
+
+// Indicate the position within the cache. It is useful with policies like lru. You can ignore it when you
+// you use policies that do not require any ordering.
+// In order to look-up for an
+// element it just suffices removing the element from the current position and
+// inserting it within the head of the list
+struct cache_item_descriptor
+{
+	cache_item_descriptor() : price_(-1) {}; // Initialize the price as undefined
+
+    //older and newer track the lru_position within the 
+    //lru cache
+    cache_item_descriptor* older;
+    cache_item_descriptor* newer;
+    chunk_t k; //identifier of the chunk, i.e. [object_id, chunk_number, representation_mask]
+    simtime_t hit_time;
+	//<aa>
+	// double cost;	// now called price
+	double price_;   //meaningful only with cost aware caching. In previous versions 
+					//of ccnsim it was called cost
+
+	double get_price(){
+		#ifdef SEVERE_DEBUG
+		if ( statistics::record_cache_value && price_ <0 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"price is "<< price_ <<", i.e. it is not correctly initialized.";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+
+		return price_; 
+	}
+
+	void set_price(double new_price) 
+	{
+		price_ = new_price;
+		#ifdef SEVERE_DEBUG
+		if ( statistics::record_cache_value && price_ < 0 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"price=="<< price_ <<", new_price=="<<new_price<<", i.e. it is not initialized.";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+	}
+	//</aa>
+};
+
 
 
 
@@ -47,9 +97,11 @@ struct cache_stat_entry{
     double rate(){ return hit *1./(hit+miss);} //return the miss rate of the class
 };
 
-class base_cache : public abstract_node{
+class base_cache : public abstract_node
+{
     friend class statistics;
     protected:
+		unordered_map<chunk_t, cache_item_descriptor*> cache;
 
 		void initialize();
 		void handleMessage (cMessage *){;}
@@ -139,7 +191,6 @@ class base_cache : public abstract_node{
 						// one or more cache slots, depending on its representation level </aa>
 
 		int name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
-
 
 		int nodes;
 		int level;

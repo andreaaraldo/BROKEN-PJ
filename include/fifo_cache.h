@@ -44,7 +44,6 @@ class fifo_cache: public base_cache{
 	virtual bool full();
     private:
 	deque<chunk_t> deq;//Deque for the order 
-	unordered_map<chunk_t,bool> cache;//Map for a look up
 
 
 };

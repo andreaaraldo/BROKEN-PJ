@@ -46,6 +46,5 @@ class two_cache: public base_cache{
 
     private:
 	deque<uint64_t> deq;
-	unordered_map<uint64_t,bool> cache;
 };
 #endif

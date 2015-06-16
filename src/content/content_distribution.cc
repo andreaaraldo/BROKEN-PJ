@@ -30,6 +30,7 @@
 //<aa>
 #include <error_handling.h>
 #include <ccn_data.h>
+#include <math.h>       /* round, floor, ceil, trunc */
 //</aa>
 
 Register_Class(content_distribution);
@@ -166,7 +167,7 @@ void content_distribution::initialize_representation_info()
 	for (unsigned i=0 ; i < representation_bitrates_p->size() ; i++)
 	{
 		(*representation_storage_space_p) [i] = 
-				std::round( (*representation_bitrates_p)[i] / (*representation_bitrates_p)[0] );
+				round( (*representation_bitrates_p)[i] / (*representation_bitrates_p)[0] );
 
 		#ifdef SEVERE_DEBUG
 			if ( (*representation_storage_space_p) [i] == 0 )

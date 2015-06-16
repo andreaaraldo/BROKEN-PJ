@@ -51,7 +51,6 @@ class random_cache: public base_cache{
 
     private:
 	deque<chunk_t> deq;
-	unordered_map<chunk_t, bool> cache;
 
 };
 #endif

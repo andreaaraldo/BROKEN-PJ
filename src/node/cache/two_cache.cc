@@ -40,7 +40,7 @@ void two_cache::data_store(chunk_t chunk)
 	}
 	#endif
 
-   cache[chunk] = true;
+   cache[chunk] = NULL;
 
    if (deq.size() == (unsigned)get_size()){
 

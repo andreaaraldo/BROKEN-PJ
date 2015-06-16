@@ -41,7 +41,7 @@ void fifo_cache::data_store(chunk_t chunk)
 	#endif
 
 
-   cache[chunk] = true;
+   cache[chunk] = NULL;
    deq.push_back(chunk);
 
    if ( deq.size() > (unsigned)get_size() ) {

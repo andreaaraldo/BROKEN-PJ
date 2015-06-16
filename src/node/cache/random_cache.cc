@@ -46,7 +46,7 @@ void random_cache::data_store(chunk_t chunk)
 	}
 	#endif
 
-    cache[chunk] = true;
+    cache[chunk] = NULL;
     if (deq.size() == (unsigned)get_size() ){
         //Replacing a random element
         unsigned int pos = intrand(  deq.size() );
@@ -80,7 +80,7 @@ bool random_cache::warmup(){
     cout<<"Starting warmup..."<<endl;
     for (int i = k*C+1; i<=(k+1)*C; i++){
 	__sid(chunk,i);
-	cache[chunk] = true;
+	cache[chunk] = NULL;
 	//cout<<"cache index "<<k<<" storing "<<i<<endl;
 	//deq.push_back(chunk);
     }

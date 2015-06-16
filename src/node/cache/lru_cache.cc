@@ -69,7 +69,7 @@ void lru_cache::data_store(chunk_t chunk_id)
 		return;
 
 
-	lru_pos *p = new lru_pos();//position for the new element
+	cache_item_descriptor *p = new cache_item_descriptor();//position for the new element
 							//<aa> i.e. datastructure for the new element </aa>
     p->k = chunk_id;// <aa> We store the complete chunk_id because we need to check the 
 					// 		representation_mask later, when a request arrives
@@ -110,7 +110,7 @@ void lru_cache::data_store(chunk_t chunk_id)
 		__srepresentation_mask(evicted_chunk_id_without_representation_mask, 0x0000);
 		//</aa>
 
-        lru_pos *tmp = lru_;
+        cache_item_descriptor *tmp = lru_;
         lru_ = tmp->newer;//the new lru is the element before the least recently used
 
         lru_->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
@@ -143,7 +143,7 @@ void lru_cache::set_price_to_last_inserted_element(double price)
 }
 
 //<aa>
-lru_pos* lru_cache::get_mru(){
+cache_item_descriptor* lru_cache::get_mru(){
 	#ifdef SEVERE_DEBUG
 	if (statistics::record_cache_value && actual_size > 0){		
 		mru_->get_price(); // to verify whether the price is correctly set up
@@ -153,7 +153,7 @@ lru_pos* lru_cache::get_mru(){
 	return mru_;
 }
 
-lru_pos* lru_cache::get_lru(){
+cache_item_descriptor* lru_cache::get_lru(){
 	#ifdef SEVERE_DEBUG
 	if (statistics::record_cache_value ){
 		lru_->get_price(); // to verify whether the price is correctly set up
@@ -163,18 +163,18 @@ lru_pos* lru_cache::get_lru(){
 	return lru_;
 }
 
-void lru_cache::set_lru(lru_pos* new_lru)
+void lru_cache::set_lru(cache_item_descriptor* new_lru)
 {
 	lru_ = new_lru;
 }
 
-void lru_cache::set_mru(lru_pos* new_mru)
+void lru_cache::set_mru(cache_item_descriptor* new_mru)
 {
 	mru_ = new_mru;
 }
 
 
-const lru_pos* lru_cache::get_eviction_candidate(){
+const cache_item_descriptor* lru_cache::get_eviction_candidate(){
 	if ( full() ) 
 		return get_lru();
 	else return NULL;
@@ -188,7 +188,7 @@ bool lru_cache::fake_lookup(chunk_t chunk_id)
 	chunk_t chunk_id_without_representation_mask = chunk_id;
 	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
 
-    unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(chunk_id_without_representation_mask);
+    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = cache.find(chunk_id_without_representation_mask);
     //look for the elements
     if (it==cache.end()){
 		//if not found return false and do nothing
@@ -204,7 +204,7 @@ bool lru_cache::data_lookup(chunk_t chunk_id)
 	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
 
     //updating an element is just a matter of manipulating the list
-    unordered_map<chunk_t,lru_pos *>::iterator it = cache.find(chunk_id_without_representation_mask);
+    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = cache.find(chunk_id_without_representation_mask);
 
     //
     //look for the elements
@@ -214,7 +214,7 @@ bool lru_cache::data_lookup(chunk_t chunk_id)
 		return false;
     }
 
-    lru_pos* pos_elem = it->second;
+    cache_item_descriptor* pos_elem = it->second;
 	if ( (__representation_mask(pos_elem->k) & __representation_mask(chunk_id) ) == 0 )
 		// The stored representation does not match with the requested ones
 		return false;
@@ -247,7 +247,7 @@ bool lru_cache::data_lookup(chunk_t chunk_id)
 
 
 void lru_cache::dump(){
-    lru_pos *it = get_mru();
+    cache_item_descriptor *it = get_mru();
     int p = 1;
     while (it){
 	cout<<p++<<" ]"<< __id(it->k)<<"/"<<__chunk(it->k)<<endl;
@@ -276,7 +276,7 @@ void lru_cache::dump(){
 		WeightedContentDistribution* content_distribution_module = 
 			Costaware_ancestor::get_weighted_content_distribution_module();
 
-		lru_pos *it = get_mru();
+		cache_item_descriptor *it = get_mru();
 		int p = 1;
 		while (it){
 			chunk_t object_index = it->k;
@@ -309,7 +309,7 @@ void lru_cache::dump(){
 
 		double sum_of_prices = 0;
 
-		lru_pos *it = get_mru();
+		cache_item_descriptor *it = get_mru();
 		int counter = 0;
 		while (it){
 			double price = it->get_price();

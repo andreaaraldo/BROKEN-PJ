@@ -68,7 +68,7 @@ class Ideal_blind: public DecisionPolicy{
 			else{
 
 				chunk_t new_content_index = data_msg->getChunk();
-				lru_pos* lru_element_descriptor = mycache->get_lru();
+				cache_item_descriptor* lru_element_descriptor = mycache->get_lru();
 				chunk_t lru_index = lru_element_descriptor->k;
 
 				if (new_content_index <= lru_index)
