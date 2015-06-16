@@ -170,6 +170,7 @@ class base_cache : public abstract_node
 		virtual void set_decision_no(uint32_t n);
 		virtual const DecisionPolicy* get_decisor();
 		virtual void after_discarding_data(); // Call it when you decide not to store an incoming data pkt
+		virtual bool full() const;
 
 		virtual double get_cache_value(){
 			cout<<"Method get_cache_value() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
