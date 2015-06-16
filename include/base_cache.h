@@ -169,7 +169,7 @@ class base_cache : public abstract_node
 		virtual void set_decision_no(uint32_t n);
 		virtual const DecisionPolicy* get_decisor();
 		virtual void after_discarding_data(); // Call it when you decide not to store an incoming data pkt
-		virtual bool full() const;
+		virtual bool full();
 		virtual uint32_t get_occupied_slots();
 
 
