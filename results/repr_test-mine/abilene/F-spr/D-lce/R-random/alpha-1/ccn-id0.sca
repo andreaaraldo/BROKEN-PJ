@@ -1,11 +1,11 @@
 version 2
-run General-4-20150615-16:45:19-10998
+run General-4-20150615-18:08:58-11231
 attr D lce
 attr F spr
 attr R random
 attr a 1
 attr configname General
-attr datetime 20150615-16:45:19
+attr datetime 20150615-18:08:58
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=random, $window=60, $variance=0.05, $mytime=1800"
@@ -14,7 +14,7 @@ attr measurement "$net=abilene, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=rand
 attr mytime 1800
 attr net abilene
 attr network networks.${net=abilene}_network
-attr processid 10998
+attr processid 11231
 attr rep 0
 attr repetition 0
 attr replication #0
