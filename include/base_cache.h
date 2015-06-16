@@ -120,7 +120,7 @@ class base_cache : public abstract_node
 					cache_item_descriptor* descr, unsigned storage_space);
 		virtual void remove_from_cache(chunk_t chunk_id_without_representation_mask,
 					unsigned storage_space);
-		virtual const void update_occupied_slots(int difference);
+		virtual void update_occupied_slots(int difference);
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache(
 					chunk_t chunk_id);
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator end_of_cache();
