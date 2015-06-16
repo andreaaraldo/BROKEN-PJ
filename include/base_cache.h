@@ -120,7 +120,6 @@ class base_cache : public abstract_node
 					cache_item_descriptor* descr, unsigned storage_space);
 		virtual void remove_from_cache(chunk_t chunk_id_without_representation_mask,
 					unsigned storage_space);
-		virtual const uint32_t get_occupied_slots();
 		virtual const void update_occupied_slots(int difference);
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache(
 					chunk_t chunk_id);
@@ -171,6 +170,8 @@ class base_cache : public abstract_node
 		virtual const DecisionPolicy* get_decisor();
 		virtual void after_discarding_data(); // Call it when you decide not to store an incoming data pkt
 		virtual bool full() const;
+		virtual const uint32_t get_occupied_slots();
+
 
 		virtual double get_cache_value(){
 			cout<<"Method get_cache_value() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
