@@ -44,7 +44,6 @@ class random_cache: public base_cache{
 	//Polymorphic functions
 	bool data_lookup(chunk_t);
 	void data_store(chunk_t);
-	bool full();
 
 	//Deprecated
 	bool warmup();

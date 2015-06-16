@@ -192,8 +192,6 @@ class base_cache : public abstract_node
 		#endif
 		//</aa>
 
-		virtual bool full() = 0; //<aa> moved from protected to public</aa>
-
     private:
 		//<aa> I replaced cache_size with cache_slots </aa>
 		unsigned cache_slots;// <aa> A cache slot is the elementary unit of cache space. A chunk can occupy

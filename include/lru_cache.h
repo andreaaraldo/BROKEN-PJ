@@ -61,7 +61,6 @@ class lru_cache:public base_cache{
 		bool is_it_empty() const;
 		//</aa>
 	
-		bool full(); //<aa> moved from protected to public </aa>
 		double get_cache_value();	//<aa> It gives an indication of the cost of objects stored 
 									// in the cache. </aa>
 		double get_average_price();
