@@ -40,22 +40,22 @@ void fifo_cache::data_store(chunk_t chunk)
 	}
 	#endif
 
-
-   insert_into_cache(chunk, NULL);
+   unsigned storage_space = 1;
+   insert_into_cache(chunk, NULL, storage_space);
    deq.push_back(chunk);
 
    if ( get_occupied_slots() > (unsigned)get_size() ) {
    //Eviction of the last element
        chunk_t toErase = deq.front();
        deq.pop_front();
-       erase_from_cache(toErase);
+       remove_from_cache(toErase, storage_space);
    }
 
 }
 
 
 bool fifo_cache::data_lookup(chunk_t chunk){
-    return (cache.find(chunk)!=cache.end());
+    return ( find_in_cache(chunk)!=end_of_cache());
 }
 
 

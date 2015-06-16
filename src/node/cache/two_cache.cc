@@ -40,7 +40,8 @@ void two_cache::data_store(chunk_t chunk)
 	}
 	#endif
 
-   cache[chunk] = NULL;
+   unsigned storage = 1; //How many slots a chunk requires
+   insert_into_cache(chunk, NULL, storage);
 
    if (deq.size() == (unsigned)get_size()){
 
@@ -78,7 +79,7 @@ void two_cache::data_store(chunk_t chunk)
 
        //Erase the more popular elements among the two
        deq.at(pos)=chunk;
-       cache.erase(toErase);
+       remove_from_cache(toErase, storage);
    }else
        deq.push_back(chunk);
 
@@ -87,9 +88,6 @@ void two_cache::data_store(chunk_t chunk)
 
 
 bool two_cache::data_lookup(chunk_t chunk){
-    return (cache.find(chunk)!=cache.end());
+    return (find_in_cache(chunk)!=end_of_cache());
 }
 
-bool two_cache::full(){
-    return (deq.size()==(unsigned)get_size());
-}

@@ -116,7 +116,7 @@ void lru_cache::data_store(chunk_t chunk_id)
         tmp->newer = 0;
 
         free(tmp);
-        erase_from_cache(evicted_chunk_id_without_representation_mask,
+        remove_from_cache(evicted_chunk_id_without_representation_mask,
 			content_distribution::get_storage_space_of_chunk(evicted_chunk_id) );
     }
 
@@ -143,12 +143,6 @@ void lru_cache::set_price_to_last_inserted_element(double price)
 
 //<aa>
 cache_item_descriptor* lru_cache::get_mru(){
-	#ifdef SEVERE_DEBUG
-	if (statistics::record_cache_value && actual_size > 0){		
-		mru_->get_price(); // to verify whether the price is correctly set up
-	}
-	#endif	
-
 	return mru_;
 }
 
@@ -187,9 +181,9 @@ bool lru_cache::fake_lookup(chunk_t chunk_id)
 	chunk_t chunk_id_without_representation_mask = chunk_id;
 	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
 
-    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = cache.find(chunk_id_without_representation_mask);
+    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id_without_representation_mask);
     //look for the elements
-    if (it==cache.end()){
+    if (it==end_of_cache()){
 		//if not found return false and do nothing
 		return false;
     }else 

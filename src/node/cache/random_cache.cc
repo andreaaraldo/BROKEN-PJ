@@ -46,14 +46,16 @@ void random_cache::data_store(chunk_t chunk)
 	}
 	#endif
 
-    cache[chunk] = NULL;
-    if (deq.size() == (unsigned)get_size() ){
+	unsigned storage = 1; //how many slots each chunk occupies
+
+    insert_into_cache(chunk, NULL, storage);
+    if ( get_occupied_slots() == get_slots() ){
         //Replacing a random element
         unsigned int pos = intrand(  deq.size() );
         chunk_t toErase = deq.at(pos);
 
         deq.at(pos) = chunk;
-        cache.erase(toErase);
+        remove_from_cache(toErase, storage);
 
     } else
         deq.push_back(chunk);
@@ -62,14 +64,11 @@ void random_cache::data_store(chunk_t chunk)
 
 
 bool random_cache::data_lookup(chunk_t chunk){
-    bool ret = (cache.find(chunk) != cache.end());
+    bool ret = (find_in_cache(chunk) != end_of_cache());
     return ret;
 
 }
 
-bool random_cache::full(){
-    return (deq.size()==(unsigned)get_size());
-}
 
 /*Deprecated: used in order to fill up caches with random chunks*/
 bool random_cache::warmup(){
@@ -77,12 +76,14 @@ bool random_cache::warmup(){
     int k = getIndex();
     uint64_t chunk=0;
 
+	unsigned storage = 1; //How many slots a chunk requires
     cout<<"Starting warmup..."<<endl;
-    for (int i = k*C+1; i<=(k+1)*C; i++){
-	__sid(chunk,i);
-	cache[chunk] = NULL;
-	//cout<<"cache index "<<k<<" storing "<<i<<endl;
-	//deq.push_back(chunk);
+    for (int i = k*C+1; i<=(k+1)*C; i++)
+	{
+		__sid(chunk,i);
+		insert_into_cache(chunk, NULL, storage);
+		//cout<<"cache index "<<k<<" storing "<<i<<endl;
+		//deq.push_back(chunk);
     }
 
     //vector<file> &catalog = content_distribution::catalog;

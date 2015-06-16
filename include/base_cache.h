@@ -116,17 +116,20 @@ class base_cache : public abstract_node
 		bool initialized;
 		#endif
 
-		virtual void insert_into_cache(chunk_t chunk_id_without_representation_mask, cache_item_descriptor* descr);
-		virtual void remove_from_cache(chunk_t chunk_id_without_representation_mask);
+		virtual void insert_into_cache(chunk_t chunk_id_without_representation_mask, 
+					cache_item_descriptor* descr, unsigned storage_space);
+		virtual void remove_from_cache(chunk_t chunk_id_without_representation_mask,
+					unsigned storage_space);
 		virtual const uint32_t get_occupied_slots();
 		virtual const void update_occupied_slots(int difference);
-		virtual const unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache() const;
-		virtual const unordered_map<chunk_t,cache_item_descriptor *>::iterator end_of_cache() const;
+		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache(
+					chunk_t chunk_id);
+		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator end_of_cache();
 		//</aa>
 	
     public:
 		#ifdef SEVERE_DEBUG
-		base_cache():abstract_node(){initialized=false; };
+		base_cache():abstract_node(){initialized=false; occupied_slots=0;};
 		#endif
 
 		//Outside function behaviour

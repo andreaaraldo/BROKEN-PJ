@@ -165,7 +165,8 @@ void base_cache::initialize()
 }
 
 //<aa>
-void base_cache::insert_into_cache(chunk_t chunk_id_without_representation_mask, cache_item_descriptor* descr)
+void base_cache::insert_into_cache(chunk_t chunk_id_without_representation_mask, 
+			cache_item_descriptor* descr, unsigned storage_space)
 {
 	#ifdef SEVERE_DEBUG
 		if (__representation_mask(chunk_id_without_representation_mask) != 0x0000 )
@@ -180,10 +181,10 @@ void base_cache::insert_into_cache(chunk_t chunk_id_without_representation_mask,
     cache[chunk_id_without_representation_mask] = descr;
 }
 
-void base_cache::remove_from_cache(chunk_t chunk_id_without_representation_mask, storage_space)
+void base_cache::remove_from_cache(chunk_t chunk_id, unsigned storage_space)
 {
 	#ifdef SEVERE_DEBUG
-		if (__representation_mask(chunk_id_without_representation_mask) != 0x0000 )
+		if (__representation_mask(chunk_id) != 0x0000 )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"The identifier of the object you want to erase must be representation-agnostic, "<<
@@ -191,18 +192,20 @@ void base_cache::remove_from_cache(chunk_t chunk_id_without_representation_mask,
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 	#endif
- 	cache.erase(chunk_id_without_representation_mask);
+ 	cache.erase(chunk_id);
 	update_occupied_slots(-1*storage_space);
 }
 
-const unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cache(
-			chunk_t chunk_id_without_representation_mask) const
+
+
+unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cache(
+			chunk_t chunk_id_without_representation_mask)
 {
-	return cache.find(chunk_id_without_representation_mask);
+	return (unordered_map<chunk_t,cache_item_descriptor *>::iterator)
+			cache.find(chunk_id_without_representation_mask);
 }
 
-const unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::end_of_cache(
-			chunk_t chunk_id_without_representation_mask) const
+unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::end_of_cache()
 {
 	return cache.end();
 }

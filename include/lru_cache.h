@@ -53,7 +53,7 @@ using namespace boost;
 class lru_cache:public base_cache{
     friend class statistics;
     public:
-		lru_cache():base_cache(),actual_size(0),lru_(NULL),mru_(NULL){;}
+		lru_cache():base_cache(),lru_(NULL),mru_(NULL){;}
 		//<aa>
 		cache_item_descriptor* get_mru();
 		cache_item_descriptor* get_lru();
