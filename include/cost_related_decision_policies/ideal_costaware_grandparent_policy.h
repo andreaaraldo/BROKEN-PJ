@@ -82,7 +82,7 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 			chunk_t content_index = data_msg->getChunk();
 			double price = data_msg->getPrice();
 
-			if (! mycache->full() )
+			if (mycache->get_occupied_slots() < my_cache->get_slots() )
 				decision = decide_with_cache_not_full(content_index, price);
 			else{
 
