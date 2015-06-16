@@ -219,6 +219,11 @@ void base_cache::update_occupied_slots(int increment)
 {
 	occupied_slots += increment;
 }
+
+unsigned base_cache::get_occupied_slots()
+{
+	return occupied_slots;
+}
 //</aa>
 
 void base_cache::finish(){
