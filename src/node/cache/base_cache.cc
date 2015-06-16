@@ -48,9 +48,8 @@
 
 
 //Initialization function
-void base_cache::initialize(){
-
-
+void base_cache::initialize()
+{
     nodes      = getAncestorPar("n");
     level = getAncestorPar("level");
 
@@ -164,6 +163,51 @@ void base_cache::initialize(){
 	//</aa>
 
 }
+
+//<aa>
+void base_cache::insert_into_cache(chunk_t chunk_id_without_representation_mask, cache_item_descriptor* descr)
+{
+	#ifdef SEVERE_DEBUG
+		if (__representation_mask(chunk_id_without_representation_mask) != 0x0000 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The identifier of the inserted object must be representation-agnostic, "<<
+				"i.e. representation_mask should be zero";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+	update_occupied_slots(storage_space);
+    cache[chunk_id_without_representation_mask] = descr;
+}
+
+void base_cache::remove_from_cache(chunk_t chunk_id_without_representation_mask, storage_space)
+{
+	#ifdef SEVERE_DEBUG
+		if (__representation_mask(chunk_id_without_representation_mask) != 0x0000 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The identifier of the object you want to erase must be representation-agnostic, "<<
+				"i.e. representation_mask should be zero";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+ 	cache.erase(chunk_id_without_representation_mask);
+	update_occupied_slots(-1*storage_space);
+}
+
+const unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cache(
+			chunk_t chunk_id_without_representation_mask) const
+{
+	return cache.find(chunk_id_without_representation_mask);
+}
+
+const unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::end_of_cache(
+			chunk_t chunk_id_without_representation_mask) const
+{
+	return cache.end();
+}
+
+//</aa>
 
 void base_cache::finish(){
     char name [30];

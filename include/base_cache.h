@@ -100,9 +100,8 @@ struct cache_stat_entry{
 class base_cache : public abstract_node
 {
     friend class statistics;
-    protected:
-		unordered_map<chunk_t, cache_item_descriptor*> cache;
 
+    protected:
 		void initialize();
 		void handleMessage (cMessage *){;}
 		void finish();
@@ -116,6 +115,13 @@ class base_cache : public abstract_node
 		#ifdef SEVERE_DEBUG
 		bool initialized;
 		#endif
+
+		virtual void insert_into_cache(chunk_t chunk_id_without_representation_mask, cache_item_descriptor* descr);
+		virtual void remove_from_cache(chunk_t chunk_id_without_representation_mask);
+		virtual const uint32_t get_occupied_slots();
+		virtual const void update_occupied_slots(int difference);
+		virtual const unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache() const;
+		virtual const unordered_map<chunk_t,cache_item_descriptor *>::iterator end_of_cache() const;
 		//</aa>
 	
     public:
@@ -209,6 +215,9 @@ class base_cache : public abstract_node
 
 		//Per file statistics
 		cache_stat_entry *cache_stats;
+
+		uint32_t occupied_slots; //actual size of the cache
+		unordered_map<chunk_t, cache_item_descriptor*> cache;
 };
 
 #endif

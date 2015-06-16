@@ -56,7 +56,7 @@ bool lru_cache::is_it_empty() const
 
 void lru_cache::data_store(chunk_t chunk_id)
 {
-	unsigned storage_space = content_distribution::get_storage_space_of_chunk(chunk_id);
+	unsigned storage_space_required_by_new_chunk = content_distribution::get_storage_space_of_chunk(chunk_id);
 
 	// All chunks must be indexed only based on object_id, chunk_number
 	chunk_t chunk_id_without_representation_mask = chunk_id;
@@ -81,12 +81,11 @@ void lru_cache::data_store(chunk_t chunk_id)
 
     // The cache is empty. Add just one element if it fits into the cache space. 
 	// The mru and lru element are the same
-    if ( is_it_empty() && ( actual_size + storage_space) <= (unsigned)get_slots() )
+    if ( is_it_empty() && ( get_occupied_slots() + storage_space_required_by_new_chunk) <= (unsigned)get_slots() )
 	{
-        actual_size += storage_space;
         lru_ = p;
 		mru_ = p;
-        cache[chunk_id_without_representation_mask] = p;
+        insert_into_cache(chunk_id_without_representation_mask, p, storage_space_required_by_new_chunk);
         return;
     } 
 
@@ -96,9 +95,8 @@ void lru_cache::data_store(chunk_t chunk_id)
     mru_->newer = p; // update the newer element for the secon newest element
     mru_ = p; //update the mru (which becomes that just inserted)
 
-	actual_size += storage_space;
 	//<aa> I transformed an if in a loop </aa>
-    while (actual_size  > get_slots() )
+    while (get_occupied_slots() + storage_space_required_by_new_chunk  > get_slots() )
 	{
         //if the cache is full, delete the last element
         //
@@ -118,11 +116,12 @@ void lru_cache::data_store(chunk_t chunk_id)
         tmp->newer = 0;
 
         free(tmp);
-        cache.erase(evicted_chunk_id_without_representation_mask); //erase from the cache the most unused element
-		actual_size = actual_size - content_distribution::get_storage_space_of_chunk(evicted_chunk_id);
+        erase_from_cache(evicted_chunk_id_without_representation_mask,
+			content_distribution::get_storage_space_of_chunk(evicted_chunk_id) );
     }
 
-    cache[chunk_id_without_representation_mask] = p; //store the new element together with its position
+	//store the new element together with its position
+    insert_into_cache(chunk_id_without_representation_mask, p, storage_space_required_by_new_chunk); 
 }
 
 void lru_cache::set_price_to_last_inserted_element(double price)
@@ -204,11 +203,11 @@ bool lru_cache::data_lookup(chunk_t chunk_id)
 	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
 
     //updating an element is just a matter of manipulating the list
-    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = cache.find(chunk_id_without_representation_mask);
+    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id_without_representation_mask);
 
     //
     //look for the elements
-    if (it==cache.end())
+    if (it==end_of_cache())
 	{
 		//if not found return false and do nothing
 		return false;
@@ -324,8 +323,4 @@ void lru_cache::dump(){
 	//</aa>
 
 
-	bool lru_cache::full()
-	{
-		return ( actual_size == (unsigned) get_slots());
-	}
 // }STATISTICS

@@ -82,7 +82,6 @@ class lru_cache:public base_cache{
 
 
     private:
-		uint32_t actual_size; //actual size of the cache
 		cache_item_descriptor* lru_; //least recently used item
 		cache_item_descriptor* mru_; //most recently used item
 
