@@ -214,6 +214,11 @@ bool base_cache::full()
 {
 	return (get_occupied_slots() == get_slots());
 }
+
+void base_cache::update_occupied_slots(int increment)
+{
+	occupied_slots += increment;
+}
 //</aa>
 
 void base_cache::finish(){
