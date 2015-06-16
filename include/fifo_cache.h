@@ -41,7 +41,6 @@ class fifo_cache: public base_cache{
 	//Polymorphic methods
 	virtual void data_store (chunk_t);
 	virtual bool data_lookup (chunk_t);
-	virtual bool full();
     private:
 	deque<chunk_t> deq;//Deque for the order 
 
