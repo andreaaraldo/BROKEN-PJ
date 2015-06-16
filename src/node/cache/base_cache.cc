@@ -210,7 +210,7 @@ unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::end_of_cach
 	return cache.end();
 }
 
-bool base_cache::full() const
+bool base_cache::full()
 {
 	return (get_occupied_slots() == get_slots());
 }
