@@ -1,4 +1,5 @@
 //<aa>
+Register_Class(lru_repr_cache);
 #include "lru_repr_cache.h"
 
 void lru_repr_cache::if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old)
