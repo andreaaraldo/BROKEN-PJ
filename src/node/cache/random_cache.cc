@@ -63,12 +63,6 @@ void random_cache::data_store(chunk_t chunk)
 }
 
 
-cache_item_descriptor* random_cache::data_lookup(chunk_t chunk){
-    bool ret = (find_in_cache(chunk) != end_of_cache());
-    return ret;
-
-}
-
 
 /*Deprecated: used in order to fill up caches with random chunks*/
 bool random_cache::warmup(){

@@ -428,6 +428,14 @@ void base_cache::set_slots(unsigned slots_)
 
 
 //<aa>
+cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
+{
+	unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk);
+    if ( it != end_of_cache() )
+		return it->second;
+	else return NULL;
+}
+
 uint32_t base_cache::get_decision_yes()
 {
 	return decision_yes;	

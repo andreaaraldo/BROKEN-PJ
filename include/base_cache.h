@@ -149,6 +149,7 @@ class base_cache : public abstract_node
 		//<aa>
 		unsigned  get_slots() { return cache_slots; }
 		void set_slots(unsigned);
+		virtual cache_item_descriptor* data_lookup (chunk_t);
 		//</aa>
 
 		void set_size(uint32_t);

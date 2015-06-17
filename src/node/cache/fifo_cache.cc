@@ -54,8 +54,4 @@ void fifo_cache::data_store(chunk_t chunk)
 }
 
 
-cache_item_descriptor* fifo_cache::data_lookup(chunk_t chunk){
-    return ( find_in_cache(chunk)!=end_of_cache());
-}
-
 
