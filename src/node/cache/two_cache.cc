@@ -87,7 +87,7 @@ void two_cache::data_store(chunk_t chunk)
 }
 
 
-bool two_cache::data_lookup(chunk_t chunk){
+cache_item_descriptor* two_cache::data_lookup(chunk_t chunk){
     return (find_in_cache(chunk)!=end_of_cache());
 }
 
