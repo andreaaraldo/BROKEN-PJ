@@ -43,4 +43,8 @@ simple fifo_cache extends base_cache{
     @class(fifo_cache);
 }
 
-
+//<aa>
+simple lru_repr_cache extends lru_cache{
+    @class(lru_repr_cache);
+//</aa>
+}

@@ -75,6 +75,8 @@ class lru_cache:public base_cache{
 		//<aa>
 		void set_mru(cache_item_descriptor* new_mru);
 		void set_lru(cache_item_descriptor* new_lru);
+		virtual void shrink();
+		virtual void if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old);
 		//</aa>
 
 		void dump();

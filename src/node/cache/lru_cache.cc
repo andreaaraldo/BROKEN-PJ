@@ -132,7 +132,7 @@ void lru_cache::data_store(chunk_t chunk_id)
 	shrink();
 }
 
-void lru_cache::if_chunk_is_present()
+void lru_cache::if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old)
 {
 	//Do nothing
 }
@@ -200,7 +200,7 @@ bool lru_cache::fake_lookup(chunk_t chunk_id)
 		}
 	#endif
 
-    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id_without_representation_mask);
+    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id);
     //look for the elements
     if (it==end_of_cache()){
 		//if not found return false and do nothing
