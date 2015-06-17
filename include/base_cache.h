@@ -107,8 +107,6 @@ class base_cache : public abstract_node
 
 		//Inteface function (depending by internal data structures of each cache)
 		virtual void data_store (chunk_t) = 0; 
-	    virtual cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item 
-													//descritor or NULL if no item is found
 		virtual void dump(){cout<<"Method dump() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;}
 
 		//<aa>
@@ -124,6 +122,7 @@ class base_cache : public abstract_node
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache(
 					chunk_t chunk_id);
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator end_of_cache();
+		virtual cache_item_descriptor* data_lookup (chunk_t);
 		//</aa>
 	
     public:
@@ -149,7 +148,6 @@ class base_cache : public abstract_node
 		//<aa>
 		unsigned  get_slots() { return cache_slots; }
 		void set_slots(unsigned);
-		virtual cache_item_descriptor* data_lookup (chunk_t);
 		//</aa>
 
 		void set_size(uint32_t);
