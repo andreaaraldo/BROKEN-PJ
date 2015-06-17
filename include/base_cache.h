@@ -107,7 +107,7 @@ class base_cache : public abstract_node
 
 		//Inteface function (depending by internal data structures of each cache)
 		virtual void data_store (chunk_t) = 0; 
-	    cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item 
+	    virtual cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item 
 													//descritor or NULL if no item is found
 		virtual void dump(){cout<<"Method dump() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;}
 
