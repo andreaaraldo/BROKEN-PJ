@@ -39,7 +39,12 @@ using namespace std;
 using namespace boost;
 
 class lru_repr_cache:public lru_cache
-{
+{ 
+	public:
+		lru_repr_cache():lru_cache(),lru_(NULL),mru_(NULL){;}
+
+
+
     protected:
 		virtual void if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old);
 

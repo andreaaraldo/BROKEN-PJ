@@ -201,6 +201,16 @@ void base_cache::remove_from_cache(chunk_t chunk_id, unsigned storage_space)
 unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cache(
 			chunk_t chunk_id_without_representation_mask)
 {
+	#ifdef SEVERE_DEBUG
+		if (__representation_mask(chunk_id_without_representation_mask) != 0x0000 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The identifier of the object you want to erase must be representation-agnostic, "<<
+				"i.e. representation_mask should be zero";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+
 	return (unordered_map<chunk_t,cache_item_descriptor *>::iterator)
 			cache.find(chunk_id_without_representation_mask);
 }

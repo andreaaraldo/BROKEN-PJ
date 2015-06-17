@@ -100,6 +100,7 @@ class content_distribution : public cSimpleModule{
 														  // of the popularity of the 
 														  // contained objects
 
+		// {REPRESENTATION FUNCTIONS
 		static const unsigned short get_number_of_representations();
 		static const double get_bitrate(unsigned short representation);
 		static const unsigned get_storage_space_of_representation(unsigned short representation);
@@ -107,7 +108,8 @@ class content_distribution : public cSimpleModule{
 		static const unsigned get_storage_space_of_chunk(chunk_t chunk_id);	// Check what is the representation of the chunk
 																	// and returns the required storage space
 
-
+		static const unsigned short get_representation_number(chunk_t chunk_id);
+		// }REPRESENTATION FUNCTIONS
 		//</aa>
 
 

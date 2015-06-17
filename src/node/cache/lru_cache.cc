@@ -87,11 +87,6 @@ void lru_cache::data_store(chunk_t chunk_id)
 {
 	unsigned storage_space_required_by_new_chunk = content_distribution::get_storage_space_of_chunk(chunk_id);
 
-	// All chunks must be indexed only based on object_id, chunk_number
-	chunk_t chunk_id_without_representation_mask = chunk_id;
-	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
-
-	
     cache_item_descriptor* old = data_lookup(chunk_id_without_representation_mask);
     if ( old != NULL)
 	{
@@ -212,18 +207,13 @@ bool lru_cache::fake_lookup(chunk_t chunk_id)
 // Returns the pointer to the cache item descritor or NULL if no item is found
 cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 {
-	#ifdef SEVERE_DEBUG
-		if (__representation_mask(chunk_id) != 0x0000 )
-		{
-			std::stringstream ermsg; 
-			ermsg<<"The identifier of the object you want to erase must be representation-agnostic, "<<
-				"i.e. representation_mask should be zero";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-	#endif
+	// All chunks must be indexed only based on object_id, chunk_number
+	chunk_t chunk_id_without_representation_mask = chunk_id;
+	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
 
     //updating an element is just a matter of manipulating the list
-    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id);
+    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(
+				chunk_id_without_representation_mask);
 
     //
     //look for the elements
@@ -234,9 +224,6 @@ cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
     }
 
     cache_item_descriptor* pos_elem = it->second;
-	if ( (__representation_mask(pos_elem->k) & __representation_mask(chunk_id) ) == 0 )
-		// The stored representation does not match with the requested ones
-		return NULL;
 
     // If content matched, update the position
     if (pos_elem->older && pos_elem->newer){

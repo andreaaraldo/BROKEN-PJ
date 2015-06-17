@@ -53,7 +53,20 @@ using namespace boost;
 class lru_cache:public base_cache{
     friend class statistics;
     public:
-		lru_cache():base_cache(),lru_(NULL),mru_(NULL){;}
+		lru_cache():base_cache(),lru_(NULL),mru_(NULL)
+		{
+				#ifdef SEVERE_DEBUG
+				if( content_distribution::get_number_of_representations() != 1 )
+				{
+					std::stringstream ermsg; 
+					ermsg<<"This cache policy is intended to work only with one representation for each chunk."<<
+						" Slight modifications may be required in order to handle more than one representation.";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				}
+				#endif
+		}
+
+
 		//<aa>
 		cache_item_descriptor* get_mru();
 		cache_item_descriptor* get_lru();
