@@ -42,7 +42,6 @@ class random_cache: public base_cache{
 	virtual void initialize();
 
 	//Polymorphic functions
-	cache_item_descriptor* data_lookup(chunk_t);
 	void data_store(chunk_t);
 
 	//Deprecated
