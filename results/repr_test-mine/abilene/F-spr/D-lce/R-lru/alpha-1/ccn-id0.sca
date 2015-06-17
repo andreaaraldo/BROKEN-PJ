@@ -1,11 +1,11 @@
 version 2
-run General-0-20150617-10:48:20-6804
+run General-0-20150617-10:51:55-7112
 attr D lce
 attr F spr
 attr R lru
 attr a 1
 attr configname General
-attr datetime 20150617-10:48:20
+attr datetime 20150617-10:51:55
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=lru, $window=60, $variance=0.05, $mytime=180"
@@ -14,7 +14,7 @@ attr measurement "$net=abilene, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=lru,
 attr mytime 180
 attr net abilene
 attr network networks.${net=abilene}_network
-attr processid 6804
+attr processid 7112
 attr rep 0
 attr repetition 0
 attr replication #0
@@ -55,7 +55,6 @@ scalar abilene_network.statistics 	downloads 	195108
 scalar abilene_network.statistics 	total_cost 	0
 scalar abilene_network.statistics 	total_replicas 	1000
 scalar abilene_network.statistics 	inner_hit 	0.27671341000882
-scalar abilene_network.statistics 	interests_sent 	198125
 scalar abilene_network.node[0].core_layer 	interests[0] 	17974
 scalar abilene_network.node[0].core_layer 	data[0] 	13949
 scalar abilene_network.node[0].core_layer 	megabytes_sent[face$o[0]->client[0]] 	0
@@ -187,44 +186,33 @@ scalar abilene_network.node[10].content_store 	decision_ratio[10] 	1
 scalar abilene_network.client[0] 	hdistance[0] 	4.3116883116883
 scalar abilene_network.client[0] 	downloads[0] 	17556
 scalar abilene_network.client[0] 	avg_time[0] 	0.022636986295
-scalar abilene_network.client[0] 	interests_sent[0] 	17974
 scalar abilene_network.client[1] 	hdistance[1] 	3.8955809588807
 scalar abilene_network.client[1] 	downloads[1] 	17583
 scalar abilene_network.client[1] 	avg_time[1] 	0.01555458188
-scalar abilene_network.client[1] 	interests_sent[1] 	18000
 scalar abilene_network.client[2] 	hdistance[2] 	3.2049507735584
 scalar abilene_network.client[2] 	downloads[2] 	17775
 scalar abilene_network.client[2] 	avg_time[2] 	0.011293590681
-scalar abilene_network.client[2] 	interests_sent[2] 	18075
 scalar abilene_network.client[3] 	hdistance[3] 	2.4625208217657
 scalar abilene_network.client[3] 	downloads[3] 	18010
 scalar abilene_network.client[3] 	avg_time[3] 	0.007616404922
-scalar abilene_network.client[3] 	interests_sent[3] 	18262
 scalar abilene_network.client[4] 	hdistance[4] 	1.661507515226
 scalar abilene_network.client[4] 	downloads[4] 	17897
 scalar abilene_network.client[4] 	avg_time[4] 	0.006401645041
-scalar abilene_network.client[4] 	interests_sent[4] 	18140
 scalar abilene_network.client[5] 	hdistance[5] 	0.8650637604629
 scalar abilene_network.client[5] 	downloads[5] 	17801
 scalar abilene_network.client[5] 	avg_time[5] 	0
-scalar abilene_network.client[5] 	interests_sent[5] 	17801
 scalar abilene_network.client[6] 	hdistance[6] 	1.6270459859704
 scalar abilene_network.client[6] 	downloads[6] 	17962
 scalar abilene_network.client[6] 	avg_time[6] 	0.001849814309
-scalar abilene_network.client[6] 	interests_sent[6] 	18015
 scalar abilene_network.client[7] 	hdistance[7] 	2.3710560478636
 scalar abilene_network.client[7] 	downloads[7] 	17717
 scalar abilene_network.client[7] 	avg_time[7] 	0.006533017019
-scalar abilene_network.client[7] 	interests_sent[7] 	17900
 scalar abilene_network.client[8] 	hdistance[8] 	3.0412515392365
 scalar abilene_network.client[8] 	downloads[8] 	17866
 scalar abilene_network.client[8] 	avg_time[8] 	0.01214439008
-scalar abilene_network.client[8] 	interests_sent[8] 	18151
 scalar abilene_network.client[9] 	hdistance[9] 	3.6167962497142
 scalar abilene_network.client[9] 	downloads[9] 	17492
 scalar abilene_network.client[9] 	avg_time[9] 	0.022621049351
-scalar abilene_network.client[9] 	interests_sent[9] 	17945
 scalar abilene_network.client[10] 	hdistance[10] 	4.3384148088716
 scalar abilene_network.client[10] 	downloads[10] 	17449
 scalar abilene_network.client[10] 	avg_time[10] 	0.021969103458
-scalar abilene_network.client[10] 	interests_sent[10] 	17862
