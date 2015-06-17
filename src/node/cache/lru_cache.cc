@@ -54,6 +54,35 @@ bool lru_cache::is_it_empty() const
 }
 //</aa>
 
+// Remove last elements if needed
+void lru_cache::shrink()
+{
+		//<aa> I transformed an if in a loop </aa>
+		while (get_occupied_slots()  > get_slots() )
+		{
+		    //if the cache is full, delete the last element
+		    //
+		    chunk_t evicted_chunk_id = lru_->k;
+
+			//<aa>
+			// All chunks must be indexed only based on object_id, chunk_number
+			chunk_t evicted_chunk_id_without_representation_mask = evicted_chunk_id;
+			__srepresentation_mask(evicted_chunk_id_without_representation_mask, 0x0000);
+			//</aa>
+
+		    cache_item_descriptor *tmp = lru_;
+		    lru_ = tmp->newer;//the new lru is the element before the least recently used
+
+		    lru_->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
+		    tmp->older = 0;
+		    tmp->newer = 0;
+
+		    free(tmp);
+		    remove_from_cache(evicted_chunk_id_without_representation_mask,
+				content_distribution::get_storage_space_of_chunk(evicted_chunk_id) );
+		}
+}
+
 void lru_cache::data_store(chunk_t chunk_id)
 {
 	unsigned storage_space_required_by_new_chunk = content_distribution::get_storage_space_of_chunk(chunk_id);
@@ -63,65 +92,49 @@ void lru_cache::data_store(chunk_t chunk_id)
 	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
 
 	
-    //When the element is already stored within the cache, simply update the 
-    //position of the element within the list and exit
-    if (data_lookup(chunk_id_without_representation_mask) )
+    cache_item_descriptor* old = data_lookup(chunk_id_without_representation_mask);
+    if ( old != NULL)
+	{
+		if_chunk_is_present(chunk_id, old);
 		return;
+	}
 
 
-	cache_item_descriptor *p = new cache_item_descriptor();//position for the new element
-							//<aa> i.e. datastructure for the new element </aa>
-    p->k = chunk_id;// <aa> We store the complete chunk_id because we need to check the 
-					// 		representation_mask later, when a request arrives
-					// </aa>
+	// {DESCRIPTOR UPDATE
+		cache_item_descriptor *p = new cache_item_descriptor();//position for the new element
+								//<aa> i.e. datastructure for the new element </aa>
+		p->k = chunk_id;// <aa> We store the complete chunk_id because we need to check the 
+						// 		representation_mask later, when a request arrives
+						// </aa>
 
-    p->hit_time = simTime();
-    p->newer = 0;
-    p->older = 0;
+		p->hit_time = simTime();
+		p->newer = 0;
+		p->older = 0;
 
-    // The cache is empty. Add just one element if it fits into the cache space. 
-	// The mru and lru element are the same
-    if ( is_it_empty() && ( get_occupied_slots() + storage_space_required_by_new_chunk) <= (unsigned)get_slots() )
-	{
-        lru_ = p;
-		mru_ = p;
-        insert_into_cache(chunk_id_without_representation_mask, p, storage_space_required_by_new_chunk);
-        return;
-    } 
+		// The cache is empty. Add just one element if it fits into the cache space. 
+		// The mru and lru element are the same
+		if ( is_it_empty() )
+		{
+		    lru_ = p;
+			mru_ = p;
+		}else{
+			//The cache is not empty. The new element is the newest. Add it in the front
+			//of the list
+			p->older = mru_; // mru swaps in second position (in terms of utilization rank)
+			mru_->newer = p; // update the newer element for the secon newest element
+			mru_ = p; //update the mru (which becomes that just inserted)
+		}
+	// }DESCRIPTOR UPDATE
 
-    //The cache is not empty. The new element is the newest. Add in the front
-    //of the list
-    p->older = mru_; // mru swaps in second position (in terms of utilization rank)
-    mru_->newer = p; // update the newer element for the secon newest element
-    mru_ = p; //update the mru (which becomes that just inserted)
-
-	//<aa> I transformed an if in a loop </aa>
-    while (get_occupied_slots() + storage_space_required_by_new_chunk  > get_slots() )
-	{
-        //if the cache is full, delete the last element
-        //
-        chunk_t evicted_chunk_id = lru_->k;
-
-		//<aa>
-		// All chunks must be indexed only based on object_id, chunk_number
-		chunk_t evicted_chunk_id_without_representation_mask = evicted_chunk_id;
-		__srepresentation_mask(evicted_chunk_id_without_representation_mask, 0x0000);
-		//</aa>
-
-        cache_item_descriptor *tmp = lru_;
-        lru_ = tmp->newer;//the new lru is the element before the least recently used
-
-        lru_->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
-        tmp->older = 0;
-        tmp->newer = 0;
-
-        free(tmp);
-        remove_from_cache(evicted_chunk_id_without_representation_mask,
-			content_distribution::get_storage_space_of_chunk(evicted_chunk_id) );
-    }
-
-	//store the new element together with its position
+	// Phisically insert the new chunk into the cache
     insert_into_cache(chunk_id_without_representation_mask, p, storage_space_required_by_new_chunk); 
+
+	shrink();
+}
+
+void lru_cache::if_chunk_is_present()
+{
+	//Do nothing
 }
 
 void lru_cache::set_price_to_last_inserted_element(double price)
@@ -177,9 +190,15 @@ const cache_item_descriptor* lru_cache::get_eviction_candidate(){
 
 bool lru_cache::fake_lookup(chunk_t chunk_id)
 {
-	// Each chunk is indexed only based on its object_id and chunk_number.
-	chunk_t chunk_id_without_representation_mask = chunk_id;
-	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
+	#ifdef SEVERE_DEBUG
+		if (__representation_mask(chunk_id) != 0x0000 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The identifier of the object you want to erase must be representation-agnostic, "<<
+				"i.e. representation_mask should be zero";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
 
     unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id_without_representation_mask);
     //look for the elements
@@ -190,27 +209,34 @@ bool lru_cache::fake_lookup(chunk_t chunk_id)
 		return true;
 }
 
-bool lru_cache::data_lookup(chunk_t chunk_id)
+// Returns the pointer to the cache item descritor or NULL if no item is found
+cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 {
-	// Each chunk must be indexed only based on its object_id and chunk_number.
-	chunk_t chunk_id_without_representation_mask = chunk_id;
-	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
+	#ifdef SEVERE_DEBUG
+		if (__representation_mask(chunk_id) != 0x0000 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The identifier of the object you want to erase must be representation-agnostic, "<<
+				"i.e. representation_mask should be zero";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
 
     //updating an element is just a matter of manipulating the list
-    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id_without_representation_mask);
+    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id);
 
     //
     //look for the elements
     if (it==end_of_cache())
 	{
 		//if not found return false and do nothing
-		return false;
+		return NULL;
     }
 
     cache_item_descriptor* pos_elem = it->second;
 	if ( (__representation_mask(pos_elem->k) & __representation_mask(chunk_id) ) == 0 )
 		// The stored representation does not match with the requested ones
-		return false;
+		return NULL;
 
     // If content matched, update the position
     if (pos_elem->older && pos_elem->newer){
@@ -219,7 +245,7 @@ bool lru_cache::data_lookup(chunk_t chunk_id)
         pos_elem->older->newer = pos_elem->newer;
     }else if (!pos_elem->newer){
         //if the element is the mru
-        return true; //do nothing, return true
+        return pos_elem; //do nothing, return true
     } else{
         //if the element is the lru, remove the element from the bottom of the list
         set_lru(pos_elem->newer);
@@ -235,7 +261,7 @@ bool lru_cache::data_lookup(chunk_t chunk_id)
     //update the mru
     set_mru(pos_elem);
     get_mru()->hit_time = simTime();
-    return true;
+    return pos_elem;
 }
 
 

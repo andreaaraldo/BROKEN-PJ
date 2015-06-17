@@ -69,7 +69,8 @@ class lru_cache:public base_cache{
 
     protected:
 		void data_store(chunk_t);
-		bool data_lookup(chunk_t);
+	    cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item 
+													//descritor or NULL if no item is found
 		bool fake_lookup(chunk_t);
 		//<aa>
 		void set_mru(cache_item_descriptor* new_mru);
