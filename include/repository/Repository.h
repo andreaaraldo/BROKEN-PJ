@@ -29,6 +29,7 @@
 
 #include "ccn_data.h"
 #include "ccn_interest.h"
+#include "RepresentationSelector.h"
 
 
 class Repository {
@@ -49,7 +50,11 @@ class Repository {
 		double price;		
 
 		//<aa> number of chunks satisfied by the repository attached to this node</aa>
-		int repo_load; 
+		int repo_load;
+
+		// A repository will always send the lowest among the requested and available 
+		// representation
+		RepresentationSelectorLowest representation_selector; 
 
 		
 };

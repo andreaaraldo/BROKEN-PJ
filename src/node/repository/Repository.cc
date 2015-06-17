@@ -74,7 +74,10 @@ unsigned short Repository::handle_interest(ccn_interest* int_msg)
 		repo_load++;
 
 		// By default representation 1 is selected. Extend this class to change this
-		representation = 1;
+		representation_mask_t available = 0xFFFF; 	// By definition, a repository contains 
+													//all the representations of the served objects
+		representation = representation_selector.select(
+			int_msg->get_representation_mask(), available);
 	}
 	return representation;
 }
