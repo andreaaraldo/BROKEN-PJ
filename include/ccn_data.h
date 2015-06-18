@@ -65,7 +65,7 @@ public:
 
 	uint32_t get_object_id(){ return __id(chunk_var);}
 	uint32_t get_chunk_num(){ return __chunk(chunk_var);}
-	uint32_t get_representation_mask()
+	representation_mask_t get_representation_mask()
 	{ 
 		#ifdef SEVERE_DEBUG
 			check_representation_mask(chunk_var);
@@ -80,6 +80,14 @@ public:
 	static void check_representation_mask(chunk_t chunk_id)
 	{
 		representation_mask_t representation_mask = __representation_mask(chunk_id);
+		if (representation_mask == 0)
+		{
+	        std::stringstream ermsg; 
+			ermsg<<"No representation is recognizable since representation mask is zero";
+		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}		
+
+
 		unsigned short representation = 0;
 		unsigned short i=1;
 		while (representation == 0 && i<=content_distribution::get_number_of_representations() )

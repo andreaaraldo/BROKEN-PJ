@@ -5,7 +5,7 @@
  *
  * People:
  *    Giuseppe Rossini (lead developer, mailto giuseppe.rossini@enst.fr)
- *	  Andrea Araldo (mailto andrea.araldo@gmail.com)
+ *	  Andrea Araldo (andrea.araldo@gmail.com)
  *    Raffaele Chiocchetti (developer, mailto raffaele.chiocchetti@gmail.com)
  *    Dario Rossi (occasional debugger, mailto dario.rossi@enst.fr)
  *
@@ -23,33 +23,34 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef PITHANDLER_H_
+#define PITHANDLER_H_
 
-#ifndef LRU_REPR_CACHE_H_
-#define LRU_REPR_CACHE_H_
 
-#include <boost/unordered_map.hpp>
-#include "lru_cache.h"
 #include "ccnsim.h"
+//<aa>
 #include "error_handling.h"
+#include "content_distribution.h"
 #include "statistics.h"
-#include "client.h"
-
-
-
-using namespace std;
-using namespace boost;
-
-class lru_repr_cache:public lru_cache
-{ 
-	public:
-		lru_repr_cache():lru_cache(){;}
-
-
-
-    protected:
-		virtual void if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old);
-		client* proactive_component;
-		virtual void initialize();
-		virtual cache_item_descriptor* data_lookup(chunk_t chunk_id);
+//</aa>
+//This structure takes care of data forwarding
+struct pit_entry 
+{
+    interface_t interfaces;
+    unordered_set<int> nonces;
+    simtime_t time; //<aa> last time this entry has been updated</aa>
+    std::bitset<1> cacheable;		// Bit indicating if the retrieved Data packet should be cached or not.
 };
+
+
+class PIT
+{
+    protected:
+		boost::unordered_map <chunk_t, pit_entry> table;
+
+	public:
+		// Return the pointer to the pit entry or NULL if no pit entry is found
+		virtual const pit_entry* find(ccn_interest *int_msg) const;
+};
+
 #endif

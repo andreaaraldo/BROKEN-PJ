@@ -46,13 +46,6 @@ class strategy_layer;
 class base_cache;
 
 
-//This structure takes care of data forwarding
-struct pit_entry {
-    interface_t interfaces;
-    unordered_set<int> nonces;
-    simtime_t time; //<aa> last time this entry has been updated</aa>
-    std::bitset<1> cacheable;		// Bit indicating if the retrieved Data packet should be cached or not.
-};
 
 
 //<aa>
@@ -115,7 +108,7 @@ class core_layer : public abstract_node{
 	
 
 		//Architecture data structures
-		boost::unordered_map <chunk_t, pit_entry > PIT;
+		PIT pit;
 		base_cache *ContentStore;
 		strategy_layer *strategy;
 

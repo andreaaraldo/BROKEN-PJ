@@ -41,34 +41,25 @@ Register_Class(core_layer);
 
 
 void  core_layer::initialize(){
-	#ifdef SEVERE_DEBUG
-	i_am_initializing = true;
-	#endif
-
-    RTT = par("RTT");
 	//<aa>
+	#ifdef SEVERE_DEBUG
+		i_am_initializing = true;
+		is_it_initialized = false;
+		it_has_a_repo_attached = false;
+	#endif
 	interest_aggregation = par("interest_aggregation");
 	transparent_to_hops = par("transparent_to_hops");
 	// Notice that repo_price has been initialized by WeightedContentDistribution
 	//</aa>
+ 
+   RTT = par("RTT");
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
-
-	//<aa>
-	#ifdef SEVERE_DEBUG
-		is_it_initialized = false;
-		it_has_a_repo_attached = false;
-	#endif
-	//</aa>
 
 
     //Getting the content store
     ContentStore = (base_cache *) gate("cache_port$o")->getNextGate()->getOwner();
     strategy = (strategy_layer *) gate("strategy_port$o")->getNextGate()->getOwner();
-
-    //Statistics
-    //interests = 0; //<aa> Disabled this. The reset is inside clear_stat() </aa>
-    //data = 0; //<aa> Disabled this. The reset is inside clear_stat() </aa>
 
 	//<aa>
 	initialize_iface_stats();
@@ -348,46 +339,21 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 		unsatisfied_interests++;
 		check_if_correct(__LINE__);
 		#endif
-
-		// PIT operations must ignore the representation mask, because forwarding must be based only on 
-		// object_id and chunk_num
-		__srepresentation_mask(chunk, 0x0000);
 		//</aa>
-
-        unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk);
 
 		//<aa>
 		bool i_will_forward_interest = false;
 		//</aa>
 
-		//<aa> Insert a new PIT entry for this chunk, if not present. If present and invalid, reset the
-		// old entry. If present and valid, do nothing </aa>
-        if (	
-			//<aa> there is no such an entry in the PIT thus I have to forward the interest</aa>
-			pitIt==PIT.end()
-
-			//<aa> There is a PIT entry but it is invalid (the PIT entry has been invalidated by client
-			// because a timer expired and the object has not been found </aa>
-			|| (pitIt != PIT.end() && int_msg->getNfound() ) 
-
-			//<aa> Too much time has been passed since the old PIT entry was added </aa>
-			|| simTime() - PIT[chunk].time > 2*RTT
-        ){
+		bool previously_found_in_pit = pit.handle_interest(int_msg, cacheable);
+        if ( previously_found_in_pit==false )
+		{
 			//<aa> Replaces the lines
 			//		bool * decision = strategy->get_decision(int_msg);
 			//		handle_decision(decision,int_msg);
 			// 		delete [] decision;//free memory for the decision array
 			i_will_forward_interest = true;
 			//</aa>
-
-	    	if (pitIt!=PIT.end())
-				PIT.erase(chunk);
-			//<aa>Last time this entry has been updated is now</aa>
-	    	PIT[chunk].time = simTime(); 
-	    	if(!cacheable)						// Set the cacheable flag inside the PIT entry.
-	    		PIT[chunk].cacheable.reset();
-	    	else
-	    		PIT[chunk].cacheable.set();
 		}
 
 		//<aa>
@@ -406,25 +372,14 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 	    	delete [] decision;//free memory for the decision array
 		}
 		#ifdef SEVERE_DEBUG
-		check_if_correct(__LINE__);
+			check_if_correct(__LINE__);
 
-		client*  c = __get_attached_client( int_msg->getArrivalGate()->getIndex() );
-		if (c && !c->is_active() ){
-			std::stringstream ermsg; 
-			ermsg<<"Trying to add to the PIT an interface where a deactivated client is attached";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-		#endif
-		//</aa>
-
-
-		//<aa> The following line will add the origin interface of the interest 
-		//		msg to the PIT </aa>
-		add_to_pit( chunk, int_msg->getArrivalGate()->getIndex() );
-
-		//<aa>
-		#ifdef SEVERE_DEBUG
-		check_if_correct(__LINE__);
+			client*  c = __get_attached_client( int_msg->getArrivalGate()->getIndex() );
+			if (c && !c->is_active() ){
+				std::stringstream ermsg; 
+				ermsg<<"Trying to add to the PIT an interface where a deactivated client is attached";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
 		#endif
 		//</aa>
     }
@@ -458,16 +413,16 @@ void core_layer::handle_data(ccn_data *data_msg)
 	#endif
 	//</aa>
 
-
+	pit_entry pentry = handle_data(data_msg);
     //If someone had previously requested the data 
-    if ( pitIt != PIT.end() )
+    if ( pentry.interfaces!=0 )
 	{
-    	if (pitIt->second.cacheable.test(0))  // Cache the content only if the cacheable bit is set.
+    	if (pentry.cacheable.test(0))  // Cache the content only if the cacheable bit is set.
     		ContentStore->store(data_msg);
 		else
 			ContentStore->after_discarding_data();
 
-    	interfaces = (pitIt->second).interfaces;	// Get incoming interfaces.
+    	interfaces = pentry.interfaces;	// Get incoming interfaces.
 		i = 0;
 		while (interfaces){
 			if ( interfaces & 1 ){
@@ -489,9 +444,6 @@ void core_layer::handle_data(ccn_data *data_msg)
 	#ifdef SEVERE_DEBUG
 		else unsolicited_data++;
 	#endif
-
-
-    PIT.erase(chunk_with_no_representation_mask); //erase pending interests for that data file
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
@@ -681,37 +633,6 @@ const Repository* core_layer::get_attached_repository()
 	return repository;
 }
 
-void core_layer::add_to_pit(chunk_t chunk, int gateindex)
-{
-	#ifdef SEVERE_DEBUG
-		check_if_correct(__LINE__);
-
-		if (gateindex > gateSize("face$o")-1 )
-		{
-			std::stringstream msg;
-			msg<<"You are inserting a pit entry related to interface "<<gateindex<<
-				". But the number of ports is "<<gateSize("face$o");
-			severe_error(__FILE__, __LINE__, msg.str().c_str() );
-		}
-
-		if (gateindex > (int) sizeof(interface_t)*8-1 )
-		{
-			std::stringstream msg;
-			msg<<"You are inserting a pit entry related to interface "<<gateindex<<
-				". But the maximum interface "
-				<<"number manageable by ccnsim is "<<sizeof(interface_t)*8-1 <<" beacause the type of "
-				<<"interface_t is of size "<<sizeof(interface_t)<<". You can change the definition of "
-				<<"interface_t (in ccnsim.h) to solve this issue and recompile";
-			severe_error(__FILE__, __LINE__, msg.str().c_str() );
-		}
-	#endif	
-
-	__sface( PIT[chunk].interfaces , gateindex );
-
-	#ifdef SEVERE_DEBUG
-		check_if_correct(__LINE__);
-	#endif
-}
 
 int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, int line_of_the_call)
 {
@@ -763,10 +684,6 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 		ccn_data::check_representation_mask(msg->getChunk() );
 		#endif
 	//}CHECKS
-
-	FILE* fp = fopen("/tmp/out.log", "a+");
-	fprintf(fp,"ciao, sending data\n");
-	fclose(fp);
 
 	iface_stats[gateindex].megabytes_sent += msg->getMegabyteLength();
 	return send (msg, gatename, gateindex);

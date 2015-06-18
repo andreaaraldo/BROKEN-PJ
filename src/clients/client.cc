@@ -39,9 +39,8 @@
 Register_Class (client);
 
 
-void client::initialize(){
-
-
+void client::initialize()
+{
     int num_clients = getAncestorPar("num_clients");
     active = false;
     if (find(content_distribution::clients , 
@@ -68,15 +67,17 @@ void client::initialize(){
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
-		interests_sent = 0;
+			interests_sent = 0;
 		#endif
 		//</aa>
 
-		arrival = new cMessage("arrival", ARRIVAL );
-		timer = new cMessage("timer", TIMER);
-		scheduleAt( simTime() + exponential(1./lambda), arrival);
-		scheduleAt( simTime() + check_time, timer  );
-
+		if (lambda > 0)
+		{
+			arrival = new cMessage("arrival", ARRIVAL );
+			timer = new cMessage("timer", TIMER);
+			scheduleAt( simTime() + exponential(1./lambda), arrival);
+			scheduleAt( simTime() + check_time, timer  );
+		}
     }
 }
 
@@ -87,15 +88,8 @@ void client::handleMessage(cMessage *in)
 
     if (in->isSelfMessage()){
 		handle_timers(in);
-			FILE* fp = fopen("/tmp/out.log", "a+");
-			fprintf(fp,"ciao, self message\n");
-			fclose(fp);
 		return;
     }
-
-			FILE* fp = fopen("/tmp/out.log", "a+");
-			fprintf(fp,"ciao, not self message\n");
-			fclose(fp);
 
     switch (in->getKind() )
 	{
@@ -111,7 +105,6 @@ void client::handleMessage(cMessage *in)
 			}
 			#endif
 			//</aa>
-
 
 			ccn_data *data_message = (ccn_data *) in;
 			handle_incoming_chunk (data_message);
@@ -147,22 +140,24 @@ int client::getNodeIndex(){
 
 }
 
-void client::finish(){
-    //Output average local statistics
+//Output average local statistics
+void client::finish()
+{
+	const char* type = par("type").stringValue();
     if (active){
 	char name [30];
-	sprintf ( name, "hdistance[%d]", getNodeIndex());
+	sprintf ( name, "hdistance[%d].%s", getNodeIndex(), type);
 	recordScalar (name, avg_distance);
 
-	sprintf ( name, "downloads[%d]",getNodeIndex());
+	sprintf ( name, "downloads[%d].%s",getNodeIndex(), type);
 	recordScalar (name, tot_downloads );
 
-	sprintf ( name, "avg_time[%d]",getNodeIndex());
+	sprintf ( name, "avg_time[%d].%s",getNodeIndex(), type);
 	recordScalar (name, avg_time);
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
-		sprintf ( name, "interests_sent[%d]",getNodeIndex());
+		sprintf ( name, "interests_sent[%d].%s",getNodeIndex(), type);
 		recordScalar (name, interests_sent );
 
 		if (interests_sent != tot_downloads){
@@ -178,7 +173,7 @@ void client::finish(){
 	//</aa>
 
 	//Output per file statistics
-	sprintf ( name, "hdistance[%d]", getNodeIndex());
+	sprintf ( name, "hdistance[%d].%s", getNodeIndex(), type);
 	cOutVector distance_vector(name);
 
 	for (name_t f = 1; f <= __file_bulk; f++)
@@ -209,8 +204,10 @@ void client::handle_timers(cMessage *timer){
 											// This value wiil be overwritten soon
 						name_t object_name = i->first;
 						chunk_t object_id = __sid(chunk, object_name);
+						const char* type = par("type").stringValue();
+
 						std::stringstream ermsg; 
-						ermsg<<"Client attached to node "<< getNodeIndex() <<" was not able to retrieve object "
+						ermsg<<"Client of type "<< type <<" attached to node "<< getNodeIndex() <<" was not able to retrieve object "
 							<<object_id<< " before the timeout expired. Serial number of the interest="<< 
 							i->second.serial_number <<". This is not necessarily a bug. If you expect "<<
 							"such an event and you think it is not a bug, disable this error message";
@@ -222,7 +219,7 @@ void client::handle_timers(cMessage *timer){
 					cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
 					cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< __size(i->first) 
 						<<" chunks at "<<simTime()<<")"<<endl;
-					resend_interest(i->first,i->second.chunk,-1);
+					resend_interest(i->first,i->second.chunk, i->second.repr_mask, -1);
 				}
 			}
 			scheduleAt( simTime() + check_time, timer );
@@ -242,13 +239,8 @@ void client::handle_timers(cMessage *timer){
 //Generate interest requests 
 void client::request_file()
 {
-    name_t name = content_distribution::zipf.value(dblrand());
-	
 	//<aa>
-	struct download new_download = download (0,simTime() );
 	#ifdef SEVERE_DEBUG
-		new_download.serial_number = interests_sent;
-
 		if (!active){
 			std::stringstream ermsg; 
 			ermsg<<"Client attached to node "<< getNodeIndex() <<" is requesting file but it "
@@ -258,18 +250,33 @@ void client::request_file()
 	#endif
 	//</aa>
 
-    current_downloads.insert(pair<name_t, download >(name, new_download ) );
-    send_interest(name, 0 ,-1);
+    name_t object_id = content_distribution::zipf.value(dblrand());
+	cnumber_t chunk_num = 0;
+	representation_mask_t repr_mask = 0xFFFF;	// We fill the representation mask with all 1s, meaning that,
+												// when the client requests some object, it accepts
+												// all the possible representations
+	request_specific_chunk(object_id, chunk_num, repr_mask);
 }
 
-void client::resend_interest(name_t name,cnumber_t number, int toward){
+void client::request_specific_chunk(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)
+{
+	struct download new_download = download (0,simTime(), repr_mask );
+	#ifdef SEVERE_DEBUG
+		new_download.serial_number = interests_sent;
+	#endif
+
+    current_downloads.insert(pair<name_t, download >(object_id, new_download ) );
+	int toward = -1;
+    send_interest(object_id, chunk_num ,repr_mask, toward);
+}
+
+void client::resend_interest(name_t name,cnumber_t number, representation_mask_t repr_mask, int toward)
+{
     chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
     __sid(chunk, name);
     __schunk(chunk, number);
-	__srepresentation_mask(chunk, 0xFFFF); 	// We fill the mask with all 1s, meaning that,
-										// when the client requests some object, it accepts
-										// all the possible representations
+	__srepresentation_mask(chunk, repr_mask);
 
     interest->setChunk(chunk);
     interest->setHops(-1);
@@ -289,15 +296,14 @@ void client::resend_interest(name_t name,cnumber_t number, int toward){
     //</aa>
 }
 
-void client::send_interest(name_t name,cnumber_t number, int toward){
+void client::send_interest(name_t name,cnumber_t number, representation_mask_t repr_mask, int toward)
+{
     chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
 
     __sid(chunk, name);
     __schunk(chunk, number);
-	__srepresentation_mask(chunk, 0xFFFF); 	// We fill the mask with all 1s, meaning that,
-										// when the client requests some object, it accepts
-										// all the possible representations
+	__srepresentation_mask(chunk, repr_mask);
 
     interest->setChunk(chunk);
     interest->setHops(-1);
@@ -320,8 +326,9 @@ void client::send_interest(name_t name,cnumber_t number, int toward){
 void client::handle_incoming_chunk (ccn_data *data_message)
 {
 
-    cnumber_t chunk_num = data_message -> get_chunk_num();
     name_t object_id      = data_message -> get_object_id();
+    cnumber_t chunk_num = data_message -> get_chunk_num();
+	representation_mask_t repr_mask = data_message->get_representation_mask();
     filesize_t size      = data_message -> get_size();
 
 	//<aa>
@@ -385,7 +392,7 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 			{ 
 		    	it->second.last = simTime();
 		    	//if the file is not yet completed send the next interest
-		    	send_interest(object_id, it->second.chunk, data_message->getTarget());
+		    	send_interest(object_id, it->second.chunk, repr_mask, data_message->getTarget());
             }else{ 
 	        	//if the file is completed delete the entry from the pendent file list
 				simtime_t completion_time = simTime()-it->second.start;
@@ -425,7 +432,7 @@ void client::clear_stat(){
 
     //<aa>
     #ifdef SEVERE_DEBUG
-    interests_sent = 0;
+	    interests_sent = 0;
     #endif
     //</aa>
 

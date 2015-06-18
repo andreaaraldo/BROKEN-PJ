@@ -60,11 +60,10 @@ void base_cache::initialize()
 	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
 	// }COMPUTE CACHE SLOTS
 
+
+    //{ INITIALIZE DECISION POLICY
 	decisor = NULL;
-
     string decision_policy = par("DS");
-
-    //Initialize the storage policy
 	double target_acceptance_ratio;
 	string target_acceptance_ratio_string;
 
@@ -118,6 +117,7 @@ void base_cache::initialize()
 		ermsg<<"Decision policy \""<<decision_policy<<"\" incorrect";
 	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
+    //} INITIALIZE DECISION POLICY
 
 	// CHECKS{
 		if ( decision_policy.find("fix")==0 || 
@@ -165,33 +165,21 @@ void base_cache::initialize()
 }
 
 //<aa>
-void base_cache::insert_into_cache(chunk_t chunk_id_without_representation_mask, 
+void base_cache::insert_into_cache(chunk_t chunk_id, 
 			cache_item_descriptor* descr, unsigned storage_space)
 {
-	#ifdef SEVERE_DEBUG
-		if (__representation_mask(chunk_id_without_representation_mask) != 0x0000 )
-		{
-			std::stringstream ermsg; 
-			ermsg<<"The identifier of the inserted object must be representation-agnostic, "<<
-				"i.e. representation_mask should be zero";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-	#endif
+	// All chunks must be indexed only based on object_id, chunk_number
+	__srepresentation_mask(chunk_id, 0x0000);
+
 	update_occupied_slots(storage_space);
-    cache[chunk_id_without_representation_mask] = descr;
+    cache[chunk_id] = descr;
 }
 
 void base_cache::remove_from_cache(chunk_t chunk_id, unsigned storage_space)
 {
-	#ifdef SEVERE_DEBUG
-		if (__representation_mask(chunk_id) != 0x0000 )
-		{
-			std::stringstream ermsg; 
-			ermsg<<"The identifier of the object you want to erase must be representation-agnostic, "<<
-				"i.e. representation_mask should be zero";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-	#endif
+	// All chunks must be indexed only based on object_id, chunk_number
+	__srepresentation_mask(chunk_id, 0x0000);
+
  	cache.erase(chunk_id);
 	update_occupied_slots(-1*storage_space);
 }
@@ -205,7 +193,7 @@ unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cac
 		if (__representation_mask(chunk_id_without_representation_mask) != 0x0000 )
 		{
 			std::stringstream ermsg; 
-			ermsg<<"The identifier of the object you want to erase must be representation-agnostic, "<<
+			ermsg<<"The identifier of the object you are searching for must be representation-agnostic, "<<
 				"i.e. representation_mask should be zero";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
@@ -288,7 +276,8 @@ void base_cache::finish(){
 
 
 //Base class function: a data has been received:
-void base_cache::store(cMessage *in){
+void base_cache::store(cMessage *in)
+{
     if (cache_slots ==0){
 		//<aa>
 		after_discarding_data();
@@ -440,6 +429,9 @@ void base_cache::set_slots(unsigned slots_)
 //<aa>
 cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
 {
+	// All chunks must be indexed only based on object_id, chunk_number
+	__srepresentation_mask(chunk, 0x0000);
+
 	unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk);
     if ( it != end_of_cache() )
 		return it->second;
@@ -467,7 +459,8 @@ const DecisionPolicy* base_cache::get_decisor(){
 }
 
 #ifdef SEVERE_DEBUG
-bool base_cache::is_initialized(){
+bool base_cache::is_initialized()
+{
 	return initialized;
 }
 #endif

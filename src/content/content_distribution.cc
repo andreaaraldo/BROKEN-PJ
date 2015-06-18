@@ -56,12 +56,13 @@ vector<unsigned>* content_distribution::representation_storage_space_p;
 
 
 //Initialize the catalog, the repository, and distributes contents among them.
-void content_distribution::initialize(){
-
+void content_distribution::initialize()
+{
     double coff = par("cut_off");
 
     nodes = getAncestorPar("n");
-    num_repos = getAncestorPar("num_repos"); //Number of repositories (specifically ccn_node(s) which have a repository connected to them)
+    num_repos = getAncestorPar("num_repos"); 	// Number of repositories (specifically ccn_node(s) 
+												// which have a repository connected to them)
     num_clients = getAncestorPar ("num_clients");
     alpha = par("alpha");
     q = par ("q");
@@ -517,25 +518,29 @@ int *content_distribution::init_clients(vector<int> node_clients){
 //<aa>
 const unsigned short content_distribution::get_representation_number(chunk_t chunk_id)
 {
+	#ifdef SEVERE_DEBUG
+		ccn_data::check_representation_mask(chunk_id);
+	#endif
+
 	unsigned short representation = 0;
+	representation_mask_t repr_mask = __representation_mask(chunk_id);
 	unsigned short i=1; while (representation == 0 && i<=representation_bitrates_p->size() )
 	{
-		if( (representation_mask >> i ) == 0 )
+		if( (repr_mask >> i ) == 0 )
 			representation = i;
 		i++;
 	}
 
-	#ifdef SEVERE_DEBUG
-	ccn_data::check_representation_mask(chunk_id);
-	#endif
 	return representation;
 }
 
 const unsigned content_distribution::get_storage_space_of_chunk(chunk_t chunk_id) 
 {
-	representation_mask_t mask = __representation_mask(chunk_id);
-	get_representation_number(mask);
-	return get_storage_space_of_representation(representation);
+	#ifdef SEVERE_DEBUG
+		ccn_data::check_representation_mask(chunk_id);
+	#endif
+
+	return get_storage_space_of_representation(get_representation_number(chunk_id));
 }
 
 const double content_distribution::get_bitrate(unsigned short representation)
@@ -570,5 +575,12 @@ const unsigned content_distribution::get_storage_space_of_representation(unsigne
 const unsigned short content_distribution::get_number_of_representations() 
 {
 	return representation_storage_space_p->size();
+}
+
+const representation_mask_t content_distribution::set_bit_to_zero(representation_mask_t mask, unsigned short position)
+{
+	representation_mask_t adjoint = (0x0001 << (position-1) );
+	return ~( (~mask) | adjoint);
+	
 }
 //</aa>

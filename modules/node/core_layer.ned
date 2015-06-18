@@ -17,9 +17,10 @@ simple core_layer{
 
     gates:
     	inout strategy_port;
-	inout client_port;
-	inout cache_port;
-	inout face[];
+		inout client_port;
+		inout cache_port;
+		inout proactive_component_port;
+		inout face[];
 }
 
 

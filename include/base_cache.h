@@ -101,7 +101,7 @@ class base_cache : public abstract_node
     friend class statistics;
 
     protected:
-		void initialize();
+		virtual void initialize();
 		void handleMessage (cMessage *){;}
 		void finish();
 
@@ -111,7 +111,7 @@ class base_cache : public abstract_node
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
-		bool initialized;
+			bool initialized;
 		#endif
 
 		virtual void insert_into_cache(chunk_t chunk_id_without_representation_mask, 
@@ -127,7 +127,7 @@ class base_cache : public abstract_node
 	
     public:
 		#ifdef SEVERE_DEBUG
-		base_cache():abstract_node(){initialized=false; occupied_slots=0;};
+			base_cache():abstract_node(){initialized=false; occupied_slots=0;};
 		#endif
 
 		//Outside function behaviour

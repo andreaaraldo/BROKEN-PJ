@@ -35,6 +35,20 @@
 Register_Class(lru_cache);
 
 //<aa>
+void lru_cache::initialize()
+{
+	base_cache::initialize();
+	#ifdef SEVERE_DEBUG
+		if( content_distribution::get_number_of_representations() != 1 )
+		{
+			std::stringstream ermsg; 
+			ermsg<<"This cache policy is intended to work only with one representation for each chunk."<<
+				" Slight modifications may be required in order to handle more than one representation.";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+	#endif
+}
+
 bool lru_cache::is_it_empty() const
 {
 	//{ CHECK
@@ -85,9 +99,13 @@ void lru_cache::shrink()
 
 void lru_cache::data_store(chunk_t chunk_id)
 {
+	#ifdef SEVERE_DEBUG
+		ccn_data::check_representation_mask(chunk_id);
+	#endif
+
 	unsigned storage_space_required_by_new_chunk = content_distribution::get_storage_space_of_chunk(chunk_id);
 
-    cache_item_descriptor* old = data_lookup(chunk_id_without_representation_mask);
+    cache_item_descriptor* old = data_lookup(chunk_id);
     if ( old != NULL)
 	{
 		if_chunk_is_present(chunk_id, old);
@@ -101,6 +119,7 @@ void lru_cache::data_store(chunk_t chunk_id)
 		p->k = chunk_id;// <aa> We store the complete chunk_id because we need to check the 
 						// 		representation_mask later, when a request arrives
 						// </aa>
+
 
 		p->hit_time = simTime();
 		p->newer = 0;
@@ -122,7 +141,7 @@ void lru_cache::data_store(chunk_t chunk_id)
 	// }DESCRIPTOR UPDATE
 
 	// Phisically insert the new chunk into the cache
-    insert_into_cache(chunk_id_without_representation_mask, p, storage_space_required_by_new_chunk); 
+    insert_into_cache(chunk_id, p, storage_space_required_by_new_chunk); 
 
 	shrink();
 }
@@ -207,23 +226,13 @@ bool lru_cache::fake_lookup(chunk_t chunk_id)
 // Returns the pointer to the cache item descritor or NULL if no item is found
 cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 {
-	// All chunks must be indexed only based on object_id, chunk_number
-	chunk_t chunk_id_without_representation_mask = chunk_id;
-	__srepresentation_mask(chunk_id_without_representation_mask, 0x0000);
-
-    //updating an element is just a matter of manipulating the list
-    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(
-				chunk_id_without_representation_mask);
-
-    //
-    //look for the elements
-    if (it==end_of_cache())
+	cache_item_descriptor* pos_elem = base_cache::data_lookup(chunk_id);
+	
+    if (pos_elem == NULL)
 	{
 		//if not found return false and do nothing
 		return NULL;
     }
-
-    cache_item_descriptor* pos_elem = it->second;
 
     // If content matched, update the position
     if (pos_elem->older && pos_elem->newer){

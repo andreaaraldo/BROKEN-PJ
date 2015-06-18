@@ -34,19 +34,22 @@ using namespace std;
 
 
 //Each of these entries contains information about the current downloads
-struct download {
+struct download 
+{
     filesize_t chunk; //number of chunks that still miss within the file
 
     simtime_t start; //start time (for statistic purposes)
     simtime_t last; //last time a chunk has been downloaded
 
 	//<aa>
+	representation_mask_t repr_mask; 
 	#ifdef SEVERE_DEBUG
 		int serial_number;
 	#endif
 	//</aa>
 
-    download (double m = 0,simtime_t t = 0):chunk(m),start(t),last(t){;}
+    download (double m = 0,simtime_t t = 0, representation_mask_t repr_mask_=0x0000):
+			chunk(m),start(t),last(t),repr_mask(repr_mask_){;}
 };
 
 //Each of these entries contains statistics for each single file
@@ -73,6 +76,7 @@ class client : public cSimpleModule {
 		int  getNodeIndex(); //<aa> I moved it to public</aa>
 
 		//<aa>
+		void request_specific_chunk(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask);
 		#ifdef SEVERE_DEBUG
 		// Returns true iff the content is among the current_downloads
 		bool is_waiting_for (name_t content);
@@ -91,8 +95,8 @@ class client : public cSimpleModule {
 		virtual void request_file();
 		virtual void handle_timers(cMessage*);
 
-		void send_interest(name_t, cnumber_t, int);
-		void resend_interest(name_t,cnumber_t,int);
+		void send_interest(name_t, cnumber_t, representation_mask_t, int);
+		void resend_interest(name_t,cnumber_t, representation_mask_t,int);
 
 
     private:

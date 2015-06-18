@@ -60,8 +60,9 @@ class content_distribution : public cSimpleModule{
 		virtual void finalize_total_replica();
 
 		#ifdef SEVERE_DEBUG
-		virtual void verify_replica_number();
+			virtual void verify_replica_number();
 		#endif
+
 		//</aa>
 
 		//</aa> I moved the following members from private to protected </aa>
@@ -73,6 +74,13 @@ class content_distribution : public cSimpleModule{
 
 
     public:
+		#ifdef SEVERE_DEBUG
+			content_distribution():cSimpleModule()
+			{	
+
+			};
+		#endif
+
 		void init_content();
 		int *init_repos(vector<int>);
 		virtual double *init_repo_prices();
@@ -105,10 +113,11 @@ class content_distribution : public cSimpleModule{
 		static const double get_bitrate(unsigned short representation);
 		static const unsigned get_storage_space_of_representation(unsigned short representation);
 
-		static const unsigned get_storage_space_of_chunk(chunk_t chunk_id);	// Check what is the representation of the chunk
-																	// and returns the required storage space
+		static const unsigned get_storage_space_of_chunk(chunk_t chunk_id);	// Check what is the representation of the 
+																	// chunk and returns the required storage space
 
 		static const unsigned short get_representation_number(chunk_t chunk_id);
+		static const representation_mask_t set_bit_to_zero(representation_mask_t mask, unsigned short position);
 		// }REPRESENTATION FUNCTIONS
 		//</aa>
 
@@ -130,7 +139,5 @@ class content_distribution : public cSimpleModule{
 		static vector<unsigned>* representation_storage_space_p; // Associate to each representation the required
 															// storage space, as a multiple of the space of
 															// the lowest representation
-
-
 };
 #endif

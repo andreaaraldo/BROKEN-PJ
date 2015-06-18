@@ -55,15 +55,6 @@ class lru_cache:public base_cache{
     public:
 		lru_cache():base_cache(),lru_(NULL),mru_(NULL)
 		{
-				#ifdef SEVERE_DEBUG
-				if( content_distribution::get_number_of_representations() != 1 )
-				{
-					std::stringstream ermsg; 
-					ermsg<<"This cache policy is intended to work only with one representation for each chunk."<<
-						" Slight modifications may be required in order to handle more than one representation.";
-					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-				}
-				#endif
 		}
 
 
@@ -80,7 +71,8 @@ class lru_cache:public base_cache{
 
 		
 
-    protected:
+    protected:		
+		virtual void initialize();
 		void data_store(chunk_t);
 	    cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item 
 													//descritor or NULL if no item is found
@@ -90,18 +82,13 @@ class lru_cache:public base_cache{
 		void set_lru(cache_item_descriptor* new_lru);
 		virtual void shrink();
 		virtual void if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old);
+		virtual void set_price_to_last_inserted_element(double price);
 		//</aa>
 
 		void dump();
 
-
-
-    private:
 		cache_item_descriptor* lru_; //least recently used item
 		cache_item_descriptor* mru_; //most recently used item
-
-
-		virtual void set_price_to_last_inserted_element(double price);
 
 };
 #endif
