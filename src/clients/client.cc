@@ -41,12 +41,17 @@ Register_Class (client);
 
 void client::initialize()
 {
+	type = par("type").stringValue();
+
     int num_clients = getAncestorPar("num_clients");
     active = false;
+
     if (find(content_distribution::clients , 
 			content_distribution::clients + num_clients ,getNodeIndex()
-		) 
-	  != content_distribution::clients + num_clients
+		) != content_distribution::clients + num_clients
+		||
+		strcmp(type, "proactive_component") == 0// If I am a proactive_component
+												// I always activate
 	){
 
 		active = true;
@@ -84,9 +89,8 @@ void client::initialize()
 
 void client::handleMessage(cMessage *in)
 {
-
-
-    if (in->isSelfMessage()){
+    if (in->isSelfMessage())
+	{
 		handle_timers(in);
 		return;
     }
@@ -143,45 +147,50 @@ int client::getNodeIndex(){
 //Output average local statistics
 void client::finish()
 {
-	const char* type = par("type").stringValue();
-    if (active){
-	char name [30];
-	sprintf ( name, "hdistance[%d].%s", getNodeIndex(), type);
-	recordScalar (name, avg_distance);
-
-	sprintf ( name, "downloads[%d].%s",getNodeIndex(), type);
-	recordScalar (name, tot_downloads );
-
-	sprintf ( name, "avg_time[%d].%s",getNodeIndex(), type);
-	recordScalar (name, avg_time);
-
-	//<aa>
-	#ifdef SEVERE_DEBUG
-		sprintf ( name, "interests_sent[%d].%s",getNodeIndex(), type);
-		recordScalar (name, interests_sent );
-
-		if (interests_sent != tot_downloads){
-			std::stringstream ermsg; 
-			ermsg<<"interests_sent="<<interests_sent<<"; tot_downloads="<<tot_downloads<<
-				". If **.size==1 in omnetpp and all links has 0 delay, this "<<
-				" is an error. Otherwise, it is not. In the latter case, ignore "<<
-				"this message";
-			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
-
-		}
-	#endif
-	//</aa>
-
-	//Output per file statistics
-	sprintf ( name, "hdistance[%d].%s", getNodeIndex(), type);
-	cOutVector distance_vector(name);
-
-	for (name_t f = 1; f <= __file_bulk; f++)
-	    distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
-
-	//cancelAndDelete(timer);
-	//cancelAndDelete(arrival);
+	if (strcmp(type, "proactive_component")==0 && 
+		avg_distance + tot_downloads + avg_time + interests_sent == 0
+	){ 
+		// I am not a real client but a proactive component of node
+	  	// All my statistics are 0; this means I have never been called during
+		// simulation. Therefore, it is not worth printing statistics
+		return;
+	}
 	
+    if (active)
+	{
+		char name [30];
+		sprintf ( name, "hdistance[%d].%s", getNodeIndex(), type);
+		recordScalar (name, avg_distance);
+
+		sprintf ( name, "downloads[%d].%s",getNodeIndex(), type);
+		recordScalar (name, tot_downloads );
+
+		sprintf ( name, "avg_time[%d].%s",getNodeIndex(), type);
+		recordScalar (name, avg_time);
+
+		//<aa>
+		#ifdef SEVERE_DEBUG
+			sprintf ( name, "interests_sent[%d].%s",getNodeIndex(), type);
+			recordScalar (name, interests_sent );
+
+			if (interests_sent != tot_downloads){
+				std::stringstream ermsg; 
+				ermsg<<"interests_sent="<<interests_sent<<"; tot_downloads="<<tot_downloads<<
+					". If **.size==1 in omnetpp and all links has 0 delay, this "<<
+					" is an error. Otherwise, it is not. In the latter case, ignore "<<
+					"this message";
+				debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
+
+			}
+		#endif
+		//</aa>
+
+		//Output per file statistics
+		sprintf ( name, "hdistance[%d].%s", getNodeIndex(), type);
+		cOutVector distance_vector(name);
+
+		for (name_t f = 1; f <= __file_bulk; f++)
+			distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
     }
 }
 
@@ -261,6 +270,7 @@ void client::request_file()
 void client::request_specific_chunk(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)
 {
 	struct download new_download = download (0,simTime(), repr_mask );
+	
 	#ifdef SEVERE_DEBUG
 		new_download.serial_number = interests_sent;
 	#endif
@@ -362,14 +372,13 @@ void client::handle_incoming_chunk (ccn_data *data_message)
     // slow for huge catalog size, and at the same time quite useless
     // (statistics for the 12345234th file are not so meaningful at all)
 	// <aa> Therefore, we compute statistics only for the most popular files </aa>
-    if (object_id <= __file_bulk){
-
+    if (object_id <= __file_bulk)
+	{
         client_stats[object_id].avg_distance = 
 				( client_stats[object_id].tot_chunks*client_stats[object_id].avg_distance+data_message->getHops() )/
 				( client_stats[object_id].tot_chunks+1 );
         client_stats[object_id].tot_chunks++;
         client_stats[object_id].tot_downloads+=1./size;
-
     }
 
 
@@ -385,8 +394,9 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 
     while (it != ii.second)
 	{
-        if ( it->second.chunk == chunk_num )
+        if ( it->second.chunk == chunk_num && (it->second.repr_mask & repr_mask) != 0x0000 )
 		{
+			// We were waiting for such a chunk
             it->second.chunk++;
             if (it->second.chunk< __size(object_id) )
 			{ 
@@ -410,11 +420,10 @@ void client::handle_incoming_chunk (ccn_data *data_message)
         ++it;
     }
     tot_chunks++;
-
-
 }
 
-void client::clear_stat(){
+void client::clear_stat()
+{
 	#ifdef SEVERE_DEBUG
 		if (client_stats == 0)
 		{

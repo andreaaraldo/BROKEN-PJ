@@ -23,8 +23,8 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef PITHANDLER_H_
-#define PITHANDLER_H_
+#ifndef PIT_H_
+#define PIT_H_
 
 
 #include "ccnsim.h"
@@ -47,10 +47,19 @@ class PIT
 {
     protected:
 		boost::unordered_map <chunk_t, pit_entry> table;
+		double RTT; // Round Trip Time. We will use this value to decide whether to remove a PIT entry	
 
 	public:
-		// Return the pointer to the pit entry or NULL if no pit entry is found
-		virtual const pit_entry* find(ccn_interest *int_msg) const;
+		PIT(double RTT);
+
+		// If no entry exists for the requested object a new entry is inserted and
+		// a NULL pointer is returned.
+		// If a previous PIT entry is found, it is updated adding to the related 
+		// interfaces, the one where this interest comes from.
+		bool handle_interest(ccn_interest *int_msg, bool cacheable);
+
+		// If a PIT entry related to the incoming data is found, it is consumed (thus removed)
+		pit_entry handle_data(ccn_data* data_msg);
 };
 
 #endif

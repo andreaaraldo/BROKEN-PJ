@@ -65,7 +65,8 @@ struct client_stat_entry{
 
 
 
-class client : public cSimpleModule {
+class client : public cSimpleModule 
+{
 	//<aa>
 	public:
 		double get_avg_distance();
@@ -97,6 +98,7 @@ class client : public cSimpleModule {
 
 		void send_interest(name_t, cnumber_t, representation_mask_t, int);
 		void resend_interest(name_t,cnumber_t, representation_mask_t,int);
+		const char* type;
 
 
     private:

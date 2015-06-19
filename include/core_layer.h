@@ -34,6 +34,7 @@
 
 //<aa>
 #include "repository/Repository.h"
+#include "PIT.h"
 //</aa>
 
 using namespace std;
@@ -54,7 +55,8 @@ typedef struct iface_stats{
 } iface_stats_t;
 //</aa>
 
-class core_layer : public abstract_node{
+class core_layer : public abstract_node
+{
     friend class statistics;
     
     public:
@@ -104,11 +106,10 @@ class core_layer : public abstract_node{
 		unsigned long max_pit;
 		unsigned short nodes;
 		double my_btw;
-		double RTT;
 	
 
 		//Architecture data structures
-		PIT pit;
+		PIT* pit;
 		base_cache *ContentStore;
 		strategy_layer *strategy;
 

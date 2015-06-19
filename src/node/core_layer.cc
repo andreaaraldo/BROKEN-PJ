@@ -35,12 +35,14 @@
 //<aa>
 #include "error_handling.h"
 #include "repository/Repository.h"
+#include "PIT.h"
 //</aa>
 
 Register_Class(core_layer);
 
 
-void  core_layer::initialize(){
+void  core_layer::initialize()
+{
 	//<aa>
 	#ifdef SEVERE_DEBUG
 		i_am_initializing = true;
@@ -52,7 +54,7 @@ void  core_layer::initialize(){
 	// Notice that repo_price has been initialized by WeightedContentDistribution
 	//</aa>
  
-   RTT = par("RTT");
+	double RTT = par("RTT");
     nodes = getAncestorPar("n"); //Number of nodes
     my_btw = getAncestorPar("betweenness");
 
@@ -89,6 +91,8 @@ void  core_layer::initialize(){
 
 	i_am_initializing = false;
 	#endif
+
+	pit = new PIT(RTT);
 	//</aa>
 
 }
@@ -345,7 +349,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 		bool i_will_forward_interest = false;
 		//</aa>
 
-		bool previously_found_in_pit = pit.handle_interest(int_msg, cacheable);
+		bool previously_found_in_pit = pit->handle_interest(int_msg, cacheable);
         if ( previously_found_in_pit==false )
 		{
 			//<aa> Replaces the lines
@@ -400,12 +404,9 @@ void core_layer::handle_interest(ccn_interest *int_msg)
  */
 void core_layer::handle_data(ccn_data *data_msg)
 {
+
     int i = 0;
     interface_t interfaces = 0;
-    chunk_t chunk = data_msg -> getChunk(); //Get information about the file
-
-	chunk_t chunk_with_no_representation_mask = chunk; __srepresentation_mask(chunk_with_no_representation_mask, 0x0000);
-    unordered_map < chunk_t , pit_entry >::iterator pitIt = PIT.find(chunk_with_no_representation_mask);
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
@@ -413,10 +414,12 @@ void core_layer::handle_data(ccn_data *data_msg)
 	#endif
 	//</aa>
 
-	pit_entry pentry = handle_data(data_msg);
-    //If someone had previously requested the data 
+	pit_entry pentry = pit->handle_data(data_msg);
+
     if ( pentry.interfaces!=0 )
 	{
+
+		// A pit entry for this chunk was found
     	if (pentry.cacheable.test(0))  // Cache the content only if the cacheable bit is set.
     		ContentStore->store(data_msg);
 		else
@@ -424,8 +427,10 @@ void core_layer::handle_data(ccn_data *data_msg)
 
     	interfaces = pentry.interfaces;	// Get incoming interfaces.
 		i = 0;
-		while (interfaces){
-			if ( interfaces & 1 ){
+		while (interfaces)
+		{
+			if ( interfaces & 1 )
+			{
 				//<aa> I transformed send in send_data</aa>
 				send_data(data_msg->dup(), "face$o", i,__LINE__ ); //follow bread crumbs back
 
@@ -443,11 +448,7 @@ void core_layer::handle_data(ccn_data *data_msg)
 	// Otherwise the data are unrequested
 	#ifdef SEVERE_DEBUG
 		else unsolicited_data++;
-	#endif
-
-	//<aa>
-	#ifdef SEVERE_DEBUG
-	check_if_correct(__LINE__);
+		check_if_correct(__LINE__);
 	#endif
 	//</aa>
 }
@@ -543,8 +544,9 @@ bool core_layer::check_ownership(vector<int> repositories){
  */
 ccn_data* core_layer::compose_data(chunk_t chunk_id, unsigned short representation)
 {
-	representation_mask_t representation_mask = 1 << (representation-1);
+	representation_mask_t representation_mask = 0x0001 << (representation-1);
 	__srepresentation_mask(chunk_id, representation_mask);
+
     ccn_data* data = new ccn_data("data",CCN_D);
     data -> setChunk (chunk_id);
     data -> setHops(0);
