@@ -68,6 +68,7 @@ class core_layer : public abstract_node
 		vector<int> get_interfaces_in_PIT(chunk_t chunk);
 		bool is_it_initialized;
 		bool i_am_initializing; //true only during module initialization
+		client* get_client_attached_to_core_layer_interface(int interface);
 		#endif
 
 		const Repository* get_attached_repository();

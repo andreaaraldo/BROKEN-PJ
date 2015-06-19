@@ -78,6 +78,7 @@ void  core_layer::initialize()
 	check_if_correct(__LINE__);
 	is_it_initialized = true;
 
+	cout << "ciao: gateSize="<<gateSize("face$o")<<endl;
 	if (gateSize("face$o") > (int) sizeof(interface_t)*8 )
 	{
 		std::stringstream msg;
@@ -240,17 +241,22 @@ void core_layer::finish()
 */
 void core_layer::handle_interest(ccn_interest *int_msg)
 {
+	cout <<"ciao: handle_interest: begin"<<endl;
 	//<aa>
 	#ifdef SEVERE_DEBUG
-		client* cli = __get_attached_client( int_msg->getArrivalGate()->getIndex() );
-		if (cli && !cli->is_active() ) {
+		cout <<"ciao: handle_interest: int_msg->getArrivalGate()->getIndex() )="<<int_msg->getArrivalGate()->getIndex()  <<endl;
+		cout<<"ciao: getIndex()="<<getIndex()<<endl;
+		client* cli = get_client_attached_to_core_layer_interface( int_msg->getArrivalGate()->getIndex() );
+		if (cli && !cli->is_active()  ) 
+		{
 			std::stringstream msg; 
 			msg<<"I am node "<< getIndex()<<" and I received an interest from interface "<<
 				int_msg->getArrivalGate()->getIndex()<<". This is an error since there is "<<
-				"a deactivated client attached there";
+				"a deactivated client of type "<< cli->get_type() <<" attached there";
 			debug_message(__FILE__, __LINE__, msg.str().c_str() );
 		}
 	#endif
+	cout << "ciao: after debug print"<<endl;
 	//</aa>
 
  
@@ -302,7 +308,8 @@ void core_layer::handle_interest(ccn_interest *int_msg)
         //</aa>
 
     } else if ( repository!=NULL && (selected_data_representation = repository->handle_interest(int_msg ) ) )
-	{		
+	{	
+			cout <<"ciao: handle_interest: repository: begin"<<endl;	
 			//
 			//b) Look locally (only if you own a repository)
 			// we are mimicking a message sent to the repository
@@ -333,11 +340,12 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 			check_if_correct(__LINE__);
 			#endif
 			//</aa>
+			cout <<"ciao: handle_interest: repository: end"<<endl;	
    } else {
         //
         //c) Put the interface within the PIT (and follow your FIB)
         //
-        
+		cout <<"ciao: handle_interest: adding pit: begin"<<endl;	
    		//<aa>
 		#ifdef SEVERE_DEBUG
 		unsatisfied_interests++;
@@ -378,7 +386,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 		#ifdef SEVERE_DEBUG
 			check_if_correct(__LINE__);
 
-			client*  c = __get_attached_client( int_msg->getArrivalGate()->getIndex() );
+			client*  c = get_client_attached_to_core_layer_interface( int_msg->getArrivalGate()->getIndex() );
 			if (c && !c->is_active() ){
 				std::stringstream ermsg; 
 				ermsg<<"Trying to add to the PIT an interface where a deactivated client is attached";
@@ -386,6 +394,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 			}
 		#endif
 		//</aa>
+		cout <<"ciao: handle_interest: adding pit: end"<<endl;	
     }
     
     //<aa>
@@ -393,6 +402,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     check_if_correct(__LINE__);
     #endif
     //</aa>
+	cout <<"ciao: handle_interest: end"<<endl;
 }
 
 
@@ -659,18 +669,19 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 			severe_error(__FILE__, __LINE__, msg.str().c_str() );
 		}
 
-		client* c = __get_attached_client(gateindex);
+		client* c = get_client_attached_to_core_layer_interface(gateindex);
 		if (c)
 		{	//There is a client attached to that port
 			if ( !c->is_waiting_for( msg->get_object_id() ) )
 			{
-				std::stringstream msg; 
-				msg<<"I am node "<< getIndex()<<". I am sending a data to the attached client that is not "<<
-					" waiting for it. This is not necessarily an error, as this data could have been "
+				std::stringstream errmsg; 
+				errmsg<<"I am node "<< getIndex()<<". I am sending a chunk of object "<< msg->get_object_id() <<
+					" to the attached client of type "<< c->get_type() << 
+					" that is not waiting for it. This is not necessarily an error, as this data could have been "
 					<<" requested by the client and the client could have retrieved it before and now"
 					<<" it may be fine and not wanting the data anymore. If it is the case, "<<
 					"ignore this message ";
-				debug_message(__FILE__, __LINE__, msg.str().c_str() );
+				debug_message(__FILE__, __LINE__, errmsg.str().c_str() );
 			}
 
 			if ( !c->is_active() )
@@ -692,4 +703,23 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 
 	return send (msg, gatename, gateindex);
 }
+
+#ifdef SEVERE_DEBUG
+	//		If there is a client attached to the specified interface, it will be returned. 
+	//		Otherwise a null pointer will be returned
+	client* core_layer::get_client_attached_to_core_layer_interface(int interface)
+	{
+		cout<<"ciao: checking clientness of interface "<< interface<<endl;
+		client *c;
+		if (interface == 0) 
+		{
+			// Interface 0 of core layer is always connected to the proactive component
+			c = dynamic_cast<client *> ( gate("face$o",interface)->getNextGate()->getOwnerModule() );
+		}else
+			// Interface 1 is connected to the node border interface 0, 2 with 1 and so on ...
+			c = __get_attached_client(interface-1);
+		return c;
+	}
+#endif
+
 //</aa>

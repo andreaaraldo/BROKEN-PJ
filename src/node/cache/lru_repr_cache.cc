@@ -46,8 +46,9 @@ cache_item_descriptor* lru_repr_cache::data_lookup(chunk_t chunk_id)
 				{	// There is no representation higher 
 					name_t object_id = __id(chunk_id);
 					cnumber_t chunk_num = __chunk(chunk_id);
-					//proactive_component->request_specific_chunk(object_id, chunk_num, improving_mask);
-					std::cout<<"ciao: sent a request through proactive component";
+					proactive_component->request_specific_chunk_from_another_class(
+												object_id, chunk_num, improving_mask);
+					
 				}
 			}
 		}

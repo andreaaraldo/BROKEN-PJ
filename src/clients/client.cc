@@ -33,6 +33,7 @@
 #include "client.h"
 
 //<aa>
+#include <iostream>
 #include "error_handling.h"
 //</aa>
 
@@ -266,6 +267,14 @@ void client::request_file()
 	request_specific_chunk(object_id, chunk_num, repr_mask);
 }
 
+void client::request_specific_chunk_from_another_class(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)
+{
+	Enter_Method("Requesting a chunk"); // If you do not add this invocation and you call this method from another C++ class, an
+					// error will raise. Search the manual for "Enter_Method" for more information
+	cout<<"ciao proactive request"<<endl;
+	request_specific_chunk(object_id, chunk_num, repr_mask);
+}
+
 void client::request_specific_chunk(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)
 {
 	struct download new_download = download (0,simTime(), repr_mask );
@@ -327,6 +336,8 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 	#endif
 	//</aa>
 
+	cout << "ciao::  gate "<< gate("client_port$o")->getNextGate()->getFullName() <<" of "
+		<<gate("client_port$o")->getNextGate()->getOwnerModule()->getFullName() <<endl;
     send(interest, "client_port$o");
 }
 
@@ -347,7 +358,7 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 		if ( !is_waiting_for(object_id) )
 		{
 			std::stringstream ermsg; 
-			ermsg<<"Client attached to node "<< getNodeIndex() <<" is receiving object "
+			ermsg<<"Client of type "<< type <<" attached to node "<< getNodeIndex() <<" is receiving object "
 				<<object_id<<" but it is not waiting for it" <<endl;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
@@ -469,6 +480,20 @@ void client::clear_stat()
 }
 
 //<aa> Get functions
+bool client::is_it_proactive_component()
+{
+	cout << "ciao: comparing "<< type <<" with proactive_component"<<endl;
+	if ( strcmp(type, "proactive_component") == 0 )
+		return true;
+	else
+		return false;
+}
+
+const char* client::get_type() const{
+	return type;
+}
+
+
 double client::get_avg_distance(){
 	return avg_distance;
 }
@@ -487,9 +512,9 @@ unsigned int client::get_interests_sent(){
 	return interests_sent;
 }
 
-bool client::is_waiting_for(name_t name)
+bool client::is_waiting_for(name_t object_id)
 {
-	multimap<name_t, download>::iterator it = current_downloads.find(name);
+	multimap<name_t, download>::iterator it = current_downloads.find(object_id);
 	return it != current_downloads.end();
 }
 #endif

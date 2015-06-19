@@ -4,10 +4,10 @@ network video_simple_scenario_network extends base_network{
 
     parameters:
         //Number of ccn nodes
-    	n = 2;
+    	n = 1;
 
 	//Number of repositories
-	node_repos = "1";
+	node_repos = "0";
 	num_repos = 1;
 	replicas = 1;
 
@@ -15,11 +15,10 @@ network video_simple_scenario_network extends base_network{
 	num_clients = 1;
 	node_clients = "0";
 	
-	node[1].content_store.C = 0;
 	node[0].content_store.C = 1;
 
 connections:
-    node[0].face++ <--> node[1].face++;
+//    node[0].face++ <--> node[1].face++;
 
     
 }

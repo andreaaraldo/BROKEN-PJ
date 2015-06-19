@@ -19,7 +19,6 @@ simple core_layer{
     	inout strategy_port;
 		inout client_port;
 		inout cache_port;
-		inout proactive_component_port;
 		inout face[];
 }
 

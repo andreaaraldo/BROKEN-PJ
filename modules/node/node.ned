@@ -26,13 +26,14 @@ module node like Inode{
 		proactive_component : ProactiveComponent;
 
     connections :
+		core_layer.face++ <--> proactive_component.client_port;
+
 		for i=0..sizeof(face)-1{
 			core_layer.face++ <--> face [i];
 		}
 
 		core_layer.client_port <--> client_port;
 		core_layer.cache_port  <--> content_store.cache_port;
-		core_layer.proactive_component_port <--> proactive_component.client_port;
 		core_layer.strategy_port <--> strategy_layer.strategy_port;
 }
 
