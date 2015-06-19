@@ -687,7 +687,9 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 		#endif
 	//}CHECKS
 
+
 	iface_stats[gateindex].megabytes_sent += msg->getMegabyteLength();
+
 	return send (msg, gatename, gateindex);
 }
 //</aa>

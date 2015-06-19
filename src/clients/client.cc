@@ -49,9 +49,8 @@ void client::initialize()
     if (find(content_distribution::clients , 
 			content_distribution::clients + num_clients ,getNodeIndex()
 		) != content_distribution::clients + num_clients
-		||
-		strcmp(type, "proactive_component") == 0// If I am a proactive_component
-												// I always activate
+		|| strcmp(type, "proactive_component") == 0	// If I am a proactive_component,
+													// I always activate
 	){
 
 		active = true;
@@ -335,6 +334,8 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 
 void client::handle_incoming_chunk (ccn_data *data_message)
 {
+	if (strcmp(type, "proactive_component")==0 )
+		throw std::invalid_argument("handling incoming chunks");
 
     name_t object_id      = data_message -> get_object_id();
     cnumber_t chunk_num = data_message -> get_chunk_num();
@@ -396,6 +397,15 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 	{
         if ( it->second.chunk == chunk_num && (it->second.repr_mask & repr_mask) != 0x0000 )
 		{
+			#ifdef SEVERE_DEBUG
+				if (strcmp(type, "proactive_component")==0 && repr_mask == 0x0001 )
+				{
+					std::stringstream ermsg; 
+					ermsg<<"A proactice component should never ask for lowest representations";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+				}
+			#endif
+
 			// We were waiting for such a chunk
             it->second.chunk++;
             if (it->second.chunk< __size(object_id) )
