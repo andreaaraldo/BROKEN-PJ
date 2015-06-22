@@ -41,7 +41,6 @@ bool lru_repr_cache::if_chunk_is_present(chunk_t new_chunk_id, cache_item_descri
 cache_item_descriptor* lru_repr_cache::data_lookup(chunk_t chunk_id)
 {
 	cache_item_descriptor* stored = lru_cache::data_lookup(chunk_id);
-	throw std::invalid_argument("The following operations have to be performed only when a data comes, not an interest");
 	if (stored != NULL)
 	{
 		representation_mask_t request_mask = __representation_mask(chunk_id);

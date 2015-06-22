@@ -28,8 +28,11 @@
 
 Register_Class(two_cache);
 
-void two_cache::data_store(chunk_t chunk)
+void two_cache::data_store(ccn_data* data_msg)
 {
+	base_cache::data_store(data_msg);
+	chunk_t chunk = getChunk();
+
 	#ifdef SEVERE_DEBUG
 	if( content_distribution::get_number_of_representations() != 1 )
 	{

@@ -100,32 +100,27 @@ void lru_cache::shrink()
 	cout<<"ciao: occupied after shrink "<< get_occupied_slots() <<endl;
 }
 
-void lru_cache::data_store(chunk_t chunk_id)
+bool lru_cache::data_store(ccn_data* data_msg)
 {
+	bool accept_new_chunk = base_cache::data_store(data_msg);
+	chunk_t chunk_id = data_msg->getChunk();
 	#ifdef SEVERE_DEBUG
 		ccn_data::check_representation_mask(chunk_id);
 	#endif
 
-	unsigned storage_space_required_by_new_chunk = content_distribution::get_storage_space_of_chunk(chunk_id);
-
-	bool accept_new_chunk = true; // At first, I suppose I want to store the new chunk
-    cache_item_descriptor* old = data_lookup(chunk_id);
-    if ( old != NULL)
+	if (accept_new_chunk)
 	{
-		// A chunk with the same object_id, chunk_number existed. I have to decide whether 
-		// to store the new one
-		accept_new_chunk = if_chunk_is_present(chunk_id, old);
+		unsigned storage_space_required_by_new_chunk = 
+				content_distribution::get_storage_space_of_chunk(chunk_id);
+
+		cache_item_descriptor* old = data_lookup(chunk_id);
+		if ( old != NULL)
+		{
+			// A chunk with the same object_id, chunk_number existed. I have to decide whether 
+			// to store the new one
+			accept_new_chunk = if_chunk_is_present(chunk_id, old);
+		}
 	}
-
-	cout<<"ciao: lru_cache::data_store: looking for chunk "<<__id(chunk_id) <<":"<< __chunk(chunk_id) <<". Found? "<<
-		(old !=NULL ? "yes":"no")<<". Incoming repr "<< __representation_mask(chunk_id) << 
-		". Occupied slots "<< get_occupied_slots() <<endl;
-
-	if (accept_new_chunk && old!=NULL && get_occupied_slots()>0)
-		throw std::invalid_argument("TEMPORARY EXCEPTION. REMOVE IT. You did not remove the corresponding element");
-
-	if ( __representation_mask(chunk_id)>1 && old ==NULL)
-		throw std::invalid_argument("TEMPORARY EXCEPTION. REMOVE IT. You cannot receive repr 2 and not find a lower repr");
 
 	if (accept_new_chunk)
 	{
@@ -160,6 +155,13 @@ void lru_cache::data_store(chunk_t chunk_id)
 		insert_into_cache(chunk_id, p, storage_space_required_by_new_chunk); 
 		cout<<"ciao: inserted "<<storage_space_required_by_new_chunk<<" slots"<<endl;
 		shrink();
+	}
+
+	if (accept_new_chunk)
+	{
+		if (statistics::record_cache_value)
+			set_price_to_last_inserted_element(data_msg->getPrice() );
+		decisor->after_insertion_action( );
 	}
 }
 

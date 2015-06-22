@@ -81,6 +81,7 @@ void base_cache::initialize()
 		target_acceptance_ratio_string = decision_policy.substr( strlen("costaware") );
 		target_acceptance_ratio = atof(target_acceptance_ratio_string.c_str());
 		decisor = new Costaware(target_acceptance_ratio);
+		check that only lru cache is acceptable
 	}
 	else if (decision_policy.compare("two_lru")==0)			// 2-LRU
 	{
@@ -310,45 +311,31 @@ void base_cache::finish(){
 
 
 
-//Base class function: a data has been received:
-void base_cache::store(cMessage *in)
+// Returns true if the data has been stored
+bool base_cache::data_store(ccn_data* data_msg)
 {
+	bool should_i_cache;
     if (cache_slots ==0){
 		//<aa>
 		after_discarding_data();
 		//</aa>
-		return;
+		should_i_cache = false;
 	}
 
-	ccn_data* data_msg = (ccn_data*)in;
-
-    if (decisor->data_to_cache(data_msg ) ){
+    if (decisor->data_to_cache(data_msg ) )
+	{
 		//<aa>
 		decision_yes++;
 		//</aa>
-		data_store( data_msg->getChunk() ); 	// data_ store is an interface funtion:
-												// each caching node should reimplement
-												// that function
+		should_i_cache = true; 	// data_ store is an interface funtion:
+							// each caching node should reimplement
+							// that function
 
-		//<aa>
-		if (statistics::record_cache_value)
-			set_price_to_last_inserted_element(data_msg->getPrice() );
-
-		decisor->after_insertion_action( );
-		//</aa>
 	}
-	//<aa>
-	else after_discarding_data();
-	//</aa>
+	else
+		decision_no++;
 }
 
-//<aa>
-// Call it when you decide not to store an incoming data pkt
-void base_cache::after_discarding_data()
-{
-	decision_no++;
-}
-//</aa>
 
 /*
  *    Storage handling of the received content ID inside the name cache (only with 2-LRU meta-caching).
