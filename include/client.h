@@ -79,7 +79,6 @@ class client : public cSimpleModule
 		//<aa>
 		void request_specific_chunk_from_another_class(name_t object_id, cnumber_t chunk_num, 
 									representation_mask_t repr_mask);
-		const char* get_type() const;
 		bool is_it_proactive_component();
 		#ifdef SEVERE_DEBUG
 		// Returns true iff the content is among the current_downloads
@@ -102,8 +101,8 @@ class client : public cSimpleModule
 		void send_interest(name_t, cnumber_t, representation_mask_t, int);
 		void resend_interest(name_t,cnumber_t, representation_mask_t,int);
 		//<aa>
-		const char* type = NULL;
 		void request_specific_chunk(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask);
+		bool is_it_proactive_component_;
 		//</aa>
 
 

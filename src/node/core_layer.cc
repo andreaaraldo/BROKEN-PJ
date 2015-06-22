@@ -78,7 +78,6 @@ void  core_layer::initialize()
 	check_if_correct(__LINE__);
 	is_it_initialized = true;
 
-	cout << "ciao: gateSize="<<gateSize("face$o")<<endl;
 	if (gateSize("face$o") > (int) sizeof(interface_t)*8 )
 	{
 		std::stringstream msg;
@@ -222,10 +221,27 @@ void core_layer::finish()
 	for (int j=0; j<gateSize(gatename); j++)
 	{
 		const char* this_gate = gate(gatename, j)->getFullName();
-		cGate* border_gate_of_this_node = gate(gatename, j)->getNextGate();
-		const char* other_node = border_gate_of_this_node->getNextGate()->getOwnerModule()->getFullName();
-		sprintf ( name, "megabytes_sent[%s->%s]", this_gate, other_node);
-		recordScalar(name, iface_stats[j].megabytes_sent );
+		cModule* attached_module = gate(gatename, j)->getNextGate()->getOwnerModule();
+		if (attached_module == getParentModule() )
+		{
+			// this_gate is attached to a border gate of the node
+			cGate* border_gate_of_this_node = gate(gatename, j)->getNextGate();
+			const char* other_node = border_gate_of_this_node->getNextGate()->
+												getOwnerModule()->getFullName();
+			sprintf ( name, "megabytes_sent[%s->%s]", this_gate, other_node);
+			recordScalar(name, iface_stats[j].megabytes_sent );
+		}
+			
+		#ifdef SEVERE_DEBUG
+		else if (attached_module->getModuleType() != 
+				cModuleType::find("modules.clients.ProactiveComponent")
+		){
+			std::stringstream ermsg; 
+			ermsg<<"Module attached to this gate was not recognised. Its type is "<< 
+					attached_module->getModuleType();
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}	
+		#endif
 	}
 	//</aa>
 }
@@ -241,22 +257,18 @@ void core_layer::finish()
 */
 void core_layer::handle_interest(ccn_interest *int_msg)
 {
-	cout <<"ciao: handle_interest: begin"<<endl;
 	//<aa>
 	#ifdef SEVERE_DEBUG
-		cout <<"ciao: handle_interest: int_msg->getArrivalGate()->getIndex() )="<<int_msg->getArrivalGate()->getIndex()  <<endl;
-		cout<<"ciao: getIndex()="<<getIndex()<<endl;
 		client* cli = get_client_attached_to_core_layer_interface( int_msg->getArrivalGate()->getIndex() );
 		if (cli && !cli->is_active()  ) 
 		{
 			std::stringstream msg; 
 			msg<<"I am node "<< getIndex()<<" and I received an interest from interface "<<
 				int_msg->getArrivalGate()->getIndex()<<". This is an error since there is "<<
-				"a deactivated client of type "<< cli->get_type() <<" attached there";
+				"a deactivated client of type "<< cli->getModuleType() <<" attached there";
 			debug_message(__FILE__, __LINE__, msg.str().c_str() );
 		}
 	#endif
-	cout << "ciao: after debug print"<<endl;
 	//</aa>
 
  
@@ -309,7 +321,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
     } else if ( repository!=NULL && (selected_data_representation = repository->handle_interest(int_msg ) ) )
 	{	
-			cout <<"ciao: handle_interest: repository: begin"<<endl;	
 			//
 			//b) Look locally (only if you own a repository)
 			// we are mimicking a message sent to the repository
@@ -340,12 +351,10 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 			check_if_correct(__LINE__);
 			#endif
 			//</aa>
-			cout <<"ciao: handle_interest: repository: end"<<endl;	
    } else {
         //
         //c) Put the interface within the PIT (and follow your FIB)
         //
-		cout <<"ciao: handle_interest: adding pit: begin"<<endl;	
    		//<aa>
 		#ifdef SEVERE_DEBUG
 		unsatisfied_interests++;
@@ -394,7 +403,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 			}
 		#endif
 		//</aa>
-		cout <<"ciao: handle_interest: adding pit: end"<<endl;	
     }
     
     //<aa>
@@ -402,7 +410,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     check_if_correct(__LINE__);
     #endif
     //</aa>
-	cout <<"ciao: handle_interest: end"<<endl;
 }
 
 
@@ -676,7 +683,7 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 			{
 				std::stringstream errmsg; 
 				errmsg<<"I am node "<< getIndex()<<". I am sending a chunk of object "<< msg->get_object_id() <<
-					" to the attached client of type "<< c->get_type() << 
+					" to the attached client of type "<< c->getModuleType() << 
 					" that is not waiting for it. This is not necessarily an error, as this data could have been "
 					<<" requested by the client and the client could have retrieved it before and now"
 					<<" it may be fine and not wanting the data anymore. If it is the case, "<<
@@ -709,7 +716,6 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 	//		Otherwise a null pointer will be returned
 	client* core_layer::get_client_attached_to_core_layer_interface(int interface)
 	{
-		cout<<"ciao: checking clientness of interface "<< interface<<endl;
 		client *c;
 		if (interface == 0) 
 		{

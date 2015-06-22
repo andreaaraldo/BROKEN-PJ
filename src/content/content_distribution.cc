@@ -583,4 +583,5 @@ const representation_mask_t content_distribution::set_bit_to_zero(representation
 	return ~( (~mask) | adjoint);
 	
 }
+
 //</aa>

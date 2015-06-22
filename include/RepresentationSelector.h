@@ -44,6 +44,15 @@ class RepresentationSelector
 		virtual const representation_mask_t select(representation_mask_t available, representation_mask_t req) const = 0;
 };
 
+class RepresentationSelectorSimple: public RepresentationSelector
+{
+	public:
+		const representation_mask_t select(representation_mask_t req,representation_mask_t available) const
+		{
+			return 1;
+		}
+};
+
 class RepresentationSelectorLowest: public RepresentationSelector
 {
 	public:
@@ -51,14 +60,14 @@ class RepresentationSelectorLowest: public RepresentationSelector
 		{
 			representation_mask_t req_and_available = (req & available);
 			representation_mask_t filter = 0x0001;
-			unsigned i = 1;
+			unsigned i = 0;
 			while ( ( (filter<<i) & req_and_available) == 0 && 
-						i <= content_distribution::get_number_of_representations() )
+						i < content_distribution::get_number_of_representations() )
 			{
 				i++;
 			}
 			if (i <= content_distribution::get_number_of_representations() )
-				return i;
+				return i+1;
 			else return 0;
 		}
 };

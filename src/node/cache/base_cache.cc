@@ -35,6 +35,7 @@
 #include "costaware_policy.h"
 #include "ideal_costaware_policy.h"
 #include "error_handling.h"
+#include "ccn_data.h"
 //</aa>
 #include "two_lru_policy.h"
 #include "lcd_policy.h"
@@ -53,13 +54,7 @@ void base_cache::initialize()
     nodes      = getAncestorPar("n");
     level = getAncestorPar("level");
 
-	// {COMPUTE CACHE SLOTS
-    int chunks_at_highest_representation = par("C");
-	unsigned highest_representation_space = content_distribution::get_storage_space_of_representation(
-		content_distribution::get_number_of_representations() );
-	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
-	// }COMPUTE CACHE SLOTS
-
+	initialize_cache_slots();
 
     //{ INITIALIZE DECISION POLICY
 	decisor = NULL;
@@ -164,6 +159,19 @@ void base_cache::initialize()
 
 }
 
+void base_cache::initialize_cache_slots()
+{
+	if ( content_distribution::get_number_of_representations() > 1 )
+	{
+		std::stringstream ermsg; 
+		ermsg<<"A generic cache cannot handle more than one representation"<< 
+			"per object. Use some specific subclass in this case";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	cache_slots = par("C");
+}
+
+
 //<aa>
 void base_cache::insert_into_cache(chunk_t chunk_id, 
 			cache_item_descriptor* descr, unsigned storage_space)
@@ -171,8 +179,26 @@ void base_cache::insert_into_cache(chunk_t chunk_id,
 	// All chunks must be indexed only based on object_id, chunk_number
 	__srepresentation_mask(chunk_id, 0x0000);
 
+	#ifdef SEVERE_DEBUG
+		unordered_map<chunk_t,cache_item_descriptor *>::iterator it =
+				find_in_cache(chunk_id);
+		if (it != end_of_cache() &&
+			__representation_mask(it->second->k) >= __representation_mask(descr->k)
+		){
+			std::stringstream ermsg; 
+			ermsg<<"Representation "<< (__representation_mask(it->second->k) )<< "was already present, and you are "<<
+				"trying to insert a lower representation "<<(__representation_mask(descr->k) )<<". This is forbidden"<<endl;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		
+		}
+
+		ccn_data::check_representation_mask(descr->k);
+	#endif
+
 	update_occupied_slots(storage_space);
     cache[chunk_id] = descr;
+	cout << "ciao: chunk "<< __id(cache[chunk_id]->k ) <<":"<<__chunk(cache[chunk_id]->k ) <<
+		":"<<__representation_mask(cache[chunk_id]->k ) << " inserted."<<endl;
 }
 
 void base_cache::remove_from_cache(chunk_t chunk_id, unsigned storage_space)
@@ -199,14 +225,23 @@ unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cac
 		}
 	#endif
 
-	return (unordered_map<chunk_t,cache_item_descriptor *>::iterator)
+	unordered_map<chunk_t,cache_item_descriptor *>::iterator return_value = 
 			cache.find(chunk_id_without_representation_mask);
+	cout<<"ciao: base_cache::find_in_cache: looking for "<<chunk_id_without_representation_mask<<" found? "<<
+		(return_value == end_of_cache() ? "no":"yes") << endl;
+	return return_value;
 }
 
 unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::end_of_cache()
 {
 	return cache.end();
 }
+
+unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::beginning_of_cache()
+{
+	return cache.begin();
+}
+
 
 bool base_cache::full()
 {
@@ -429,13 +464,40 @@ void base_cache::set_slots(unsigned slots_)
 //<aa>
 cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
 {
+	cache_item_descriptor* descr;
+	representation_mask_t requested_mask = __representation_mask(chunk);	
+
 	// All chunks must be indexed only based on object_id, chunk_number
 	__srepresentation_mask(chunk, 0x0000);
 
+
+
 	unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk);
     if ( it != end_of_cache() )
-		return it->second;
-	else return NULL;
+		descr = it->second;
+	else 
+		descr = NULL;
+
+	cout<<"ciao: base cache looks for chunk "<<__id(chunk) <<":"<< __chunk(chunk) <<
+		" at representation "<< __representation_mask(chunk) <<". Old representation found "<<
+		(descr !=NULL ? __representation_mask(descr->k) :0 ) << endl;
+
+	//{ REMOVE IT
+	if (requested_mask>1 && descr ==NULL)
+	{
+		cout<<"cache content: ";
+		unordered_map<chunk_t,cache_item_descriptor *>::iterator it_;
+		for ( it_ = beginning_of_cache(); it_ != end_of_cache(); ++it_ )
+		{
+			chunk_t chunk_id = it_->second->k;
+			cout<< __id(chunk_id) << ":" <<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id)<<";    ";
+		}
+		cout<<endl;
+		throw std::invalid_argument("TEMPORARY EXCEPTION. REMOVE IT. base_cache::data_lookup: You cannot receive repr 2 and not find a lower repr");
+	}
+	//} REMOVE IT
+
+	return descr;
 }
 
 uint32_t base_cache::get_decision_yes()

@@ -102,8 +102,9 @@ class base_cache : public abstract_node
 
     protected:
 		virtual void initialize();
+		virtual void initialize_cache_slots();
 		void handleMessage (cMessage *){;}
-		void finish();
+		virtual void finish();
 
 		//Inteface function (depending by internal data structures of each cache)
 		virtual void data_store (chunk_t) = 0; 
@@ -122,10 +123,15 @@ class base_cache : public abstract_node
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache(
 					chunk_t chunk_id);
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator end_of_cache();
+		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator beginning_of_cache();
 		virtual cache_item_descriptor* data_lookup (chunk_t);
 		//</aa>
 	
     public:
+		//<aa> I replaced cache_size with cache_slots </aa>
+		unsigned cache_slots;// <aa> A cache slot is the elementary unit of cache space. A chunk can occupy
+						// one or more cache slots, depending on its representation level </aa>
+
 		#ifdef SEVERE_DEBUG
 			base_cache():abstract_node(){initialized=false; occupied_slots=0;};
 		#endif
@@ -194,9 +200,6 @@ class base_cache : public abstract_node
 		//</aa>
 
     private:
-		//<aa> I replaced cache_size with cache_slots </aa>
-		unsigned cache_slots;// <aa> A cache slot is the elementary unit of cache space. A chunk can occupy
-						// one or more cache slots, depending on its representation level </aa>
 
 		int name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
 

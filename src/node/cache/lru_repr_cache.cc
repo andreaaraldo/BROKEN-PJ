@@ -11,20 +11,37 @@ void lru_repr_cache::initialize()
 		proactive_component = (client*) getParentModule()->getSubmodule("proactive_component");
 	else
 		proactive_component = NULL;
+
+	cout<<"ciao: cache slots "<<cache_slots<<endl;
 }
 
-void lru_repr_cache::if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old)
+void lru_repr_cache::initialize_cache_slots()
 {
+    int chunks_at_highest_representation = par("C");
+	unsigned highest_representation_space = content_distribution::get_storage_space_of_representation(
+		content_distribution::get_number_of_representations() );
+	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
+}
+
+bool lru_repr_cache::if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old)
+{
+	bool accept_new_chunk;
 	chunk_t old_chunk_id = old->k;
-	old->k = new_chunk_id;
-	unsigned old_storage = content_distribution::get_storage_space_of_chunk(old_chunk_id);
-	unsigned new_storage = content_distribution::get_storage_space_of_chunk(new_chunk_id);
-	update_occupied_slots(new_storage - old_storage);
+	if (__representation_mask(new_chunk_id) >  __representation_mask(old_chunk_id) )
+	{
+		accept_new_chunk = true;
+		unsigned old_storage = content_distribution::get_storage_space_of_chunk(old_chunk_id);
+		remove_from_cache(old_chunk_id, old_storage);
+	}else
+		accept_new_chunk = false;
+	cout << "ciao: the chunk "<<new_chunk_id<<" was already present. Should I accept? "<<accept_new_chunk<<endl;
+	return accept_new_chunk;
 }
 
 cache_item_descriptor* lru_repr_cache::data_lookup(chunk_t chunk_id)
 {
 	cache_item_descriptor* stored = lru_cache::data_lookup(chunk_id);
+	throw std::invalid_argument("The following operations have to be performed only when a data comes, not an interest");
 	if (stored != NULL)
 	{
 		representation_mask_t request_mask = __representation_mask(chunk_id);
@@ -55,4 +72,27 @@ cache_item_descriptor* lru_repr_cache::data_lookup(chunk_t chunk_id)
 	}
 	return stored;
 }
-//</aa>
+
+void lru_repr_cache::finish()
+{
+	lru_cache::finish();
+
+	//{ COMPUTE REPRESENTATION BREAKDOWN
+	unsigned short num_of_repr = content_distribution::get_number_of_representations();
+	unsigned* breakdown = (unsigned*)calloc(content_distribution::get_number_of_representations(), sizeof(unsigned) );
+	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
+	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
+	{
+		chunk_t chunk_id = it->second->k;
+	    breakdown[content_distribution::get_representation_number(chunk_id)-1]++;
+	}
+	std::stringstream breakdown_str;
+	for (unsigned i = 0; i < num_of_repr; i++)
+		breakdown_str << breakdown[i]<<":";
+    char name [60];
+    sprintf ( name, "representation_breakdown[%d] %s", getIndex(), breakdown_str.str().c_str());
+    recordScalar (name, 0);
+	//} COMPUTE REPRESENTATION BREAKDOWN
+}
+
+//</aa

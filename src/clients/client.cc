@@ -42,16 +42,18 @@ Register_Class (client);
 
 void client::initialize()
 {
-	type = par("type").stringValue();
+	is_it_proactive_component_ = 
+		getModuleType() == cModuleType::find("modules.clients.ProactiveComponent") ?
+		true: false;
 
     int num_clients = getAncestorPar("num_clients");
     active = false;
 
-    if (find(content_distribution::clients , 
-			content_distribution::clients + num_clients ,getNodeIndex()
-		) != content_distribution::clients + num_clients
-		|| strcmp(type, "proactive_component") == 0	// If I am a proactive_component,
-													// I always activate
+    if (find(	content_distribution::clients , 
+				content_distribution::clients + num_clients ,getNodeIndex()
+			) != content_distribution::clients + num_clients
+		|| is_it_proactive_component_	// If I am a proactive_component,
+										// I always activate
 	){
 
 		active = true;
@@ -147,7 +149,7 @@ int client::getNodeIndex(){
 //Output average local statistics
 void client::finish()
 {
-	if (strcmp(type, "proactive_component")==0 && 
+	if ( is_it_proactive_component_ && 
 		avg_distance + tot_downloads + avg_time + interests_sent == 0
 	){ 
 		// I am not a real client but a proactive component of node
@@ -156,6 +158,8 @@ void client::finish()
 		return;
 	}
 	
+	const char* type = is_it_proactive_component_? "proactive_component":"real";
+
     if (active)
 	{
 		char name [30];
@@ -269,9 +273,9 @@ void client::request_file()
 
 void client::request_specific_chunk_from_another_class(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)
 {
-	Enter_Method("Requesting a chunk"); // If you do not add this invocation and you call this method from another C++ class, an
-					// error will raise. Search the manual for "Enter_Method" for more information
-	cout<<"ciao proactive request"<<endl;
+	Enter_Method("Requesting a chunk"); // If you do not add this invocation and you call this 
+										// method from another C++ class, an error will raise.
+										// Search the manual for "Enter_Method" for more information
 	request_specific_chunk(object_id, chunk_num, repr_mask);
 }
 
@@ -336,8 +340,6 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 	#endif
 	//</aa>
 
-	cout << "ciao::  gate "<< gate("client_port$o")->getNextGate()->getFullName() <<" of "
-		<<gate("client_port$o")->getNextGate()->getOwnerModule()->getFullName() <<endl;
     send(interest, "client_port$o");
 }
 
@@ -345,9 +347,6 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 
 void client::handle_incoming_chunk (ccn_data *data_message)
 {
-	if (strcmp(type, "proactive_component")==0 )
-		throw std::invalid_argument("handling incoming chunks");
-
     name_t object_id      = data_message -> get_object_id();
     cnumber_t chunk_num = data_message -> get_chunk_num();
 	representation_mask_t repr_mask = data_message->get_representation_mask();
@@ -358,7 +357,7 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 		if ( !is_waiting_for(object_id) )
 		{
 			std::stringstream ermsg; 
-			ermsg<<"Client of type "<< type <<" attached to node "<< getNodeIndex() <<" is receiving object "
+			ermsg<<"Client of type "<< getModuleType() <<" attached to node "<< getNodeIndex() <<" is receiving object "
 				<<object_id<<" but it is not waiting for it" <<endl;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
@@ -408,16 +407,17 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 	{
         if ( it->second.chunk == chunk_num && (it->second.repr_mask & repr_mask) != 0x0000 )
 		{
+			// We were waiting for such a chunk
+
 			#ifdef SEVERE_DEBUG
-				if (strcmp(type, "proactive_component")==0 && repr_mask == 0x0001 )
+				if ( is_it_proactive_component() && it->second.repr_mask == 0x0001 )
 				{
 					std::stringstream ermsg; 
-					ermsg<<"A proactice component should never ask for lowest representations";
+					ermsg<<"A proactice component should never ask for the lowest representations";
 					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 				}
 			#endif
 
-			// We were waiting for such a chunk
             it->second.chunk++;
             if (it->second.chunk< __size(object_id) )
 			{ 
@@ -482,17 +482,8 @@ void client::clear_stat()
 //<aa> Get functions
 bool client::is_it_proactive_component()
 {
-	cout << "ciao: comparing "<< type <<" with proactive_component"<<endl;
-	if ( strcmp(type, "proactive_component") == 0 )
-		return true;
-	else
-		return false;
+	return is_it_proactive_component_;
 }
-
-const char* client::get_type() const{
-	return type;
-}
-
 
 double client::get_avg_distance(){
 	return avg_distance;

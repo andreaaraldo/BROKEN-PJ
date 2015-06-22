@@ -14,8 +14,7 @@ network video_simple_scenario_network extends base_network{
 	//Number of clients 
 	num_clients = 1;
 	node_clients = "0";
-	
-	node[0].content_store.C = 1;
+	content_distribution.representation_bitrates = "0.3_3"; // in Mbps
 
 connections:
 //    node[0].face++ <--> node[1].face++;

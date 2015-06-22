@@ -7,7 +7,7 @@ simple content_distribution like IContentDistribution{
 		double alpha = default (1);
 		double q = default(0);
 		double cut_off = default(1);
-		string representation_bitrates = default("0.3"); // in Mbps
+		string representation_bitrates = default("1"); // in Mbps
 
 	@display("i=block/browser;is=l");
 	
