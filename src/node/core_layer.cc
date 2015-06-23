@@ -293,7 +293,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
 
     unsigned short selected_data_representation = 0;
-  if (ContentStore->lookup(chunk))
+  if (ContentStore->handle_interest(chunk))
   {
        //
        //a) Check in your Content Store
@@ -341,7 +341,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 			data_msg->setTSB(1);
 			data_msg->setFound(true);
 
-		    ContentStore->store(data_msg);
+		    ContentStore->data_store(data_msg);
 
 			//<aa> I transformed send in send_data</aa>
 			send_data(data_msg,"face$o",int_msg->getArrivalGate()->getIndex(),__LINE__);
@@ -438,9 +438,7 @@ void core_layer::handle_data(ccn_data *data_msg)
 
 		// A pit entry for this chunk was found
     	if (pentry.cacheable.test(0))  // Cache the content only if the cacheable bit is set.
-    		ContentStore->store(data_msg);
-		else
-			ContentStore->after_discarding_data();
+    		ContentStore->data_store(data_msg);
 
     	interfaces = pentry.interfaces;	// Get incoming interfaces.
 		i = 0;

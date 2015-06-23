@@ -27,6 +27,7 @@
 #include "lru_cache.h"
 
 //<aa>
+#include <stdexcept>
 #include "ccnsim.h"
 #include "error_handling.h"
 #include "costaware_ancestor_policy.h"
@@ -217,7 +218,7 @@ bool lru_cache::fake_lookup(chunk_t chunk_id)
 cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 {
 	cache_item_descriptor* pos_elem = base_cache::data_lookup(chunk_id);
-	
+
     if (pos_elem == NULL)
 	{
 		//if not found return false and do nothing

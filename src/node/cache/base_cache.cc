@@ -237,8 +237,6 @@ unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cac
 
 	unordered_map<chunk_t,cache_item_descriptor *>::iterator return_value = 
 			cache.find(chunk_id_without_representation_mask);
-	cout<<"ciao: base_cache::find_in_cache: looking for "<<chunk_id_without_representation_mask<<" found? "<<
-		(return_value == end_of_cache() ? "no":"yes") << endl;
 	return return_value;
 }
 
@@ -324,25 +322,18 @@ void base_cache::finish(){
 bool base_cache::data_store(ccn_data* data_msg)
 {
 	bool should_i_cache;
-    if (cache_slots ==0){
-		//<aa>
-		after_discarding_data();
-		//</aa>
-		should_i_cache = false;
-	}
 
-    if (decisor->data_to_cache(data_msg ) )
+    if (cache_slots>0 && decisor->data_to_cache(data_msg ) )
 	{
-		//<aa>
 		decision_yes++;
-		//</aa>
 		should_i_cache = true; 	// data_ store is an interface funtion:
 							// each caching node should reimplement
 							// that function
-
 	}
-	else
+	else{
 		decision_no++;
+		should_i_cache = false;
+	}
 
 	return should_i_cache;
 }
@@ -381,7 +372,7 @@ bool base_cache::handle_interest(chunk_t chunk ) //<aa> Previously called lookup
     bool found = false;
     name_t name = __id(chunk);
 
-    if (data_lookup(chunk))		// The requested content is cached locally.
+    if (data_lookup_receiving_interest(chunk))		// The requested content is cached locally.
    {
 	//Average cache statistics(hit)
     	hit++;
@@ -464,20 +455,21 @@ void base_cache::set_slots(unsigned slots_)
 
 //<aa>
 cache_item_descriptor* base_cache::data_lookup_receiving_data (chunk_t data_chunk_id)
-{	return data_lookup(data_chunk_id);	}
+{	cout << "data arrived"<<endl;
+	return data_lookup(data_chunk_id);	
+}
 
 cache_item_descriptor* base_cache::data_lookup_receiving_interest (chunk_t interest_chunk_id)
-{	return data_lookup(interest_chunk_id);	}
+{	cout << "interest arrived"<<endl;
+	return data_lookup(interest_chunk_id);	
+}
 
 cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
 {
 	cache_item_descriptor* descr;
-	representation_mask_t requested_mask = __representation_mask(chunk);	
 
 	// All chunks must be indexed only based on object_id, chunk_number
 	__srepresentation_mask(chunk, 0x0000);
-
-
 
 	unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk);
     if ( it != end_of_cache() )
@@ -486,23 +478,8 @@ cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
 		descr = NULL;
 
 	cout<<"ciao: base cache looks for chunk "<<__id(chunk) <<":"<< __chunk(chunk) <<
-		" at representation "<< __representation_mask(chunk) <<". Old representation found "<<
+		". Old representation found "<<
 		(descr !=NULL ? __representation_mask(descr->k) :0 ) << endl;
-
-	//{ REMOVE IT
-	if (requested_mask>1 && descr ==NULL)
-	{
-		cout<<"cache content: ";
-		unordered_map<chunk_t,cache_item_descriptor *>::iterator it_;
-		for ( it_ = beginning_of_cache(); it_ != end_of_cache(); ++it_ )
-		{
-			chunk_t chunk_id = it_->second->k;
-			cout<< __id(chunk_id) << ":" <<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id)<<";    ";
-		}
-		cout<<endl;
-		throw std::invalid_argument("TEMPORARY EXCEPTION. REMOVE IT. base_cache::data_lookup: You cannot receive repr 2 and not find a lower repr");
-	}
-	//} REMOVE IT
 
 	return descr;
 }

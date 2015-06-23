@@ -107,8 +107,6 @@ class base_cache : public abstract_node
 		void handleMessage (cMessage *){;}
 		virtual void finish();
 
-		//Inteface function (depending by internal data structures of each cache)
-		virtual bool data_store(ccn_data*) = 0;
 		virtual void dump(){cout<<"Method dump() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;}
 		virtual cache_item_descriptor* data_lookup(chunk_t);
 
@@ -132,6 +130,9 @@ class base_cache : public abstract_node
 		//<aa> I replaced cache_size with cache_slots </aa>
 		unsigned cache_slots;// <aa> A cache slot is the elementary unit of cache space. A chunk can occupy
 						// one or more cache slots, depending on its representation level </aa>
+
+		//Inteface function (depending by internal data structures of each cache)
+		virtual bool data_store(ccn_data*) = 0;
 
 		#ifdef SEVERE_DEBUG
 			base_cache():abstract_node(){initialized=false; occupied_slots=0;};
@@ -184,7 +185,6 @@ class base_cache : public abstract_node
 		virtual void set_decision_yes(uint32_t n);
 		virtual void set_decision_no(uint32_t n);
 		virtual const DecisionPolicy* get_decisor();
-		virtual void after_discarding_data(); // Call it when you decide not to store an incoming data pkt
 		virtual bool full();
 		virtual unsigned get_occupied_slots();
 
@@ -198,13 +198,6 @@ class base_cache : public abstract_node
 			exit(-1);
 		}
 
-
-
-		virtual void set_price_to_last_inserted_element(double price){
-			cout<<"Method set_price_to_last_inserted_element not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
-			exit(-1);
-		}
-
 		#ifdef SEVERE_DEBUG
 		virtual bool is_initialized();
 		#endif
@@ -214,7 +207,7 @@ class base_cache : public abstract_node
 		bool lookup(chunk_t)
 		{
 			std::stringstream ermsg; 
-			ermsg<<"In this version of ccnSim this function has been renamed in handle_interest(..)";
+			ermsg<<"In this version of ccnSim the function lookup has been renamed in handle_interest(..)";
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			return false;
 		}
