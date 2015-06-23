@@ -106,39 +106,12 @@ class Ideal_costaware_grandparent: public Costaware_ancestor{
 					decision = true;
 			}
 
-			if (decision == true)
-				set_last_accepted_content_price(data_msg );
-
 			return decision;
 		};
 
 		virtual double compute_correction_factor(){
 			return 0;
 		};
-
-		virtual void after_insertion_action()
-		{
-			DecisionPolicy::after_insertion_action();
-			#ifdef SEVERE_DEBUG
-			if ( get_last_accepted_content_price() == UNSET_COST ){
-				std::stringstream ermsg; 
-				ermsg<<"price_of_the_last_accepted_element="<<get_last_accepted_content_price() <<
-					", while it MUST NOT be a negative number. Something goes wrong with the "<<
-					"initialization of this attribute";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-			#endif
-
-			// Annotate the price of the last inserted element
-			mycache->get_mru()->set_price( get_last_accepted_content_price() );
-
-			#ifdef SEVERE_DEBUG
-			// Unset this field to check if it is set again at the appropriate time
-			// without erroneously use an old value
-			last_accepted_content_price = UNSET_COST;
-			#endif
-			
-		}
 
 		virtual double compute_content_weight(chunk_t id, double price)=0; // This is an abstract class
 		virtual bool decide_with_cache_not_full(chunk_t id, double price)=0;

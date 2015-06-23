@@ -58,8 +58,9 @@ class Two_Lru: public DecisionPolicy
 	/*
 	 *  Check the presence of the content ID inside the Name Cache, and eventually stores it.
 	 */
-	bool name_to_cache(chunk_t chunk)
+	bool name_to_cache(ccn_interest *int_msg)
 	{
+		chunk_t chunk = int_msg->getChunk();
 		if (name_cache->lookup_name(chunk))
 		{
 			// The ID is already present inside the Name Cache, so update its position and return True.
@@ -70,7 +71,7 @@ class Two_Lru: public DecisionPolicy
 		{
 			// The ID is NOT present inside the Name Cache, so insert it and return False.
 			// As a consequence, the 'cacheable' flag inside the PIT will be set to 0.
-			name_cache->store_name(chunk);
+			name_cache->store_name(int_msg);
 			return false;
 		}
 	}

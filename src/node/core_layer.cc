@@ -283,7 +283,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     if (decision_policy.compare("two_lru")==0)
     {
     	Two_Lru* tLruPointer = (Two_Lru *) (ContentStore->get_decisor());
-    	if (!(tLruPointer->name_to_cache(chunk)))	// The ID is not present inside the Name Cache, so the
+    	if (!(tLruPointer->name_to_cache(int_msg)))	// The ID is not present inside the Name Cache, so the
     												// cacheable flag inside the PIT will be set to '0'.
     			cacheable = false;
     }

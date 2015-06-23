@@ -81,7 +81,16 @@ void base_cache::initialize()
 		target_acceptance_ratio_string = decision_policy.substr( strlen("costaware") );
 		target_acceptance_ratio = atof(target_acceptance_ratio_string.c_str());
 		decisor = new Costaware(target_acceptance_ratio);
-		check that only lru cache is acceptable
+		//{ CHECKS
+			if ( getModuleType() != cModuleType::find("modules.node.cache.lru_cache") )
+			{
+				std::stringstream ermsg; 
+				ermsg<<"Cost-aware policies have been tested only with LRU replacement policy"
+					<< ". Modifications may be required to use cost-aware policies with other "
+					<<" replacement policies";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+		//} CHECKS
 	}
 	else if (decision_policy.compare("two_lru")==0)			// 2-LRU
 	{
@@ -334,6 +343,8 @@ bool base_cache::data_store(ccn_data* data_msg)
 	}
 	else
 		decision_no++;
+
+	return should_i_cache;
 }
 
 
@@ -362,7 +373,7 @@ void base_cache::store_name(chunk_t elem)
  * 		Parameters:
  * 			- chunk: content ID of the received Interest.
  */
-bool base_cache::lookup(chunk_t chunk )
+bool base_cache::handle_interest(chunk_t chunk ) //<aa> Previously called lookup(..)</aa>
 {
     bool found = false;
     name_t name = __id(chunk);
@@ -449,6 +460,12 @@ void base_cache::set_slots(unsigned slots_)
 
 
 //<aa>
+cache_item_descriptor* base_cache::data_lookup_receiving_data (chunk_t data_chunk_id)
+{	data_lookup(data_chunk_id);	}
+
+cache_item_descriptor* base_cache::data_lookup_receiving_interest (chunk_t interest_chunk_id)
+{	data_lookup(data_chunk_id);	}
+
 cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
 {
 	cache_item_descriptor* descr;

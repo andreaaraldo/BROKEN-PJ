@@ -73,7 +73,7 @@ class lru_cache:public base_cache{
 
     protected:		
 		virtual void initialize();
-		void data_store(chunk_t);
+		bool data_store(ccn_data* data_msg);
 	    cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item 
 													//descritor or NULL if no item is found
 		bool fake_lookup(chunk_t);
@@ -81,7 +81,6 @@ class lru_cache:public base_cache{
 		void set_mru(cache_item_descriptor* new_mru);
 		void set_lru(cache_item_descriptor* new_lru);
 		virtual void shrink();
-		virtual bool if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old);
 		virtual void set_price_to_last_inserted_element(double price);
 		//</aa>
 

@@ -103,7 +103,7 @@ void lru_cache::shrink()
 bool lru_cache::data_store(ccn_data* data_msg)
 {
 	bool accept_new_chunk = base_cache::data_store(data_msg);
-	chunk_t chunk_id = data_msg->getChunk();
+	chunk_t chunk_id = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 		ccn_data::check_representation_mask(chunk_id);
 	#endif
@@ -122,6 +122,7 @@ bool lru_cache::data_store(ccn_data* data_msg)
 		}
 	}
 
+	// If I still want to accept_new_chunk
 	if (accept_new_chunk)
 	{
 		// {DESCRIPTOR UPDATE
@@ -135,6 +136,7 @@ bool lru_cache::data_store(ccn_data* data_msg)
 			p->hit_time = simTime();
 			p->newer = 0;
 			p->older = 0;
+			p->price = data_msg->getPrice();
 
 			// The cache is empty. Add just one element if it fits into the cache space. 
 			// The mru and lru element are the same
@@ -155,13 +157,6 @@ bool lru_cache::data_store(ccn_data* data_msg)
 		insert_into_cache(chunk_id, p, storage_space_required_by_new_chunk); 
 		cout<<"ciao: inserted "<<storage_space_required_by_new_chunk<<" slots"<<endl;
 		shrink();
-	}
-
-	if (accept_new_chunk)
-	{
-		if (statistics::record_cache_value)
-			set_price_to_last_inserted_element(data_msg->getPrice() );
-		decisor->after_insertion_action( );
 	}
 }
 
@@ -252,32 +247,34 @@ cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 	{
 		//if not found return false and do nothing
 		return NULL;
-    }
+    }else{
+		//{ UPDATE DESCRIPTOR
+			// If content matched, update the position
+			if (pos_elem->older && pos_elem->newer){
+				//if the element is in the middle remove the element from the list
+				pos_elem->newer->older = pos_elem->older;
+				pos_elem->older->newer = pos_elem->newer;
+			}else if (!pos_elem->newer){
+				//if the element is the mru
+				return pos_elem; //do nothing, return true
+			} else{
+				//if the element is the lru, remove the element from the bottom of the list
+				set_lru(pos_elem->newer);
+				get_lru()->older = 0;
+			}
 
-    // If content matched, update the position
-    if (pos_elem->older && pos_elem->newer){
-        //if the element is in the middle remove the element from the list
-        pos_elem->newer->older = pos_elem->older;
-        pos_elem->older->newer = pos_elem->newer;
-    }else if (!pos_elem->newer){
-        //if the element is the mru
-        return pos_elem; //do nothing, return true
-    } else{
-        //if the element is the lru, remove the element from the bottom of the list
-        set_lru(pos_elem->newer);
-        get_lru()->older = 0;
-    }
 
+			//Place the elements as in front of the position list (it's the newest one)
+			pos_elem->older = get_mru();
+			pos_elem->newer = 0;
+			get_mru()->newer = pos_elem;
 
-    //Place the elements as in front of the position list (it's the newest one)
-    pos_elem->older = get_mru();
-    pos_elem->newer = 0;
-    get_mru()->newer = pos_elem;
-
-    //update the mru
-    set_mru(pos_elem);
-    get_mru()->hit_time = simTime();
-    return pos_elem;
+			//update the mru
+			set_mru(pos_elem);
+			get_mru()->hit_time = simTime();
+		//} UPDATE DESCRIPTOR
+		return pos_elem;
+	}
 }
 
 

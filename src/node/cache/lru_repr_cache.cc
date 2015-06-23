@@ -38,12 +38,14 @@ bool lru_repr_cache::if_chunk_is_present(chunk_t new_chunk_id, cache_item_descri
 	return accept_new_chunk;
 }
 
-cache_item_descriptor* lru_repr_cache::data_lookup(chunk_t chunk_id)
+cache_item_descriptor* lru_repr_cache::data_lookup_receiving_interest(chunk_t requested_chunk_id)
 {
-	cache_item_descriptor* stored = lru_cache::data_lookup(chunk_id);
+	cache_item_descriptor* stored = lru_cache::data_lookup_receiving_interest(requested_chunk_id);
 	if (stored != NULL)
 	{
-		representation_mask_t request_mask = __representation_mask(chunk_id);
+		// There is a chunk with the same [object_id, chunk_num] stored in the cache.
+		// I check if the stored representation can satisfy the interest
+		representation_mask_t request_mask = __representation_mask(requested_chunk_id);
 		representation_mask_t stored_mask = __representation_mask(stored->k);
 		representation_mask_t intersection = stored_mask & request_mask;
 		if ( intersection == 0 )
@@ -60,13 +62,31 @@ cache_item_descriptor* lru_repr_cache::data_lookup(chunk_t chunk_id)
 					content_distribution::set_bit_to_zero(request_mask, representation_found);
 				if (improving_mask != 0x0000)
 				{	// There is no representation higher 
-					name_t object_id = __id(chunk_id);
-					cnumber_t chunk_num = __chunk(chunk_id);
+					name_t object_id = __id(requested_chunk_id);
+					cnumber_t chunk_num = __chunk(requested_chunk_id);
 					proactive_component->request_specific_chunk_from_another_class(
 												object_id, chunk_num, improving_mask);
 					
 				}
 			}
+		}
+	}
+	return stored;
+}
+
+cache_item_descriptor* lru_repr_cache::data_lookup_receiving_data(chunk_t incoming_chunk_id)
+{
+	cache_item_descriptor* stored = lru_cache::data_lookup_receiving_data(incoming_chunk_id);
+	if (stored != NULL)
+	{
+		// There is a chunk with the same [object_id, chunk_num] stored in the cache.
+		representation_mask_t incoming_mask = __representation_mask(incoming_chunk_id);
+		representation_mask_t stored_mask = __representation_mask(stored->k);
+		if (stored_mask < incoming_mask )
+		{	// The incoming representation is better than the stored one.
+			unsigned old_storage = content_distribution::get_storage_space_of_chunk(old_chunk_id);
+			remove_from_cache(old_chunk_id, old_storage);
+			stored = NULL; // To signal that the new chunk must be stored
 		}
 	}
 	return stored;

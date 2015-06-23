@@ -63,6 +63,7 @@ public:
 			return 1;
 	};
 
+	const chunk_t get_chunk_id() const { return chunk_var;}
 	uint32_t get_object_id(){ return __id(chunk_var);}
 	uint32_t get_chunk_num(){ return __chunk(chunk_var);}
 	representation_mask_t get_representation_mask()

@@ -31,6 +31,7 @@
 #include "error_handling.h"
 #include "content_distribution.h"
 #include "statistics.h"
+#include "ccn_data.h"
 //</aa>
 class DecisionPolicy;
 
@@ -107,7 +108,8 @@ class base_cache : public abstract_node
 		virtual void finish();
 
 		//Inteface function (depending by internal data structures of each cache)
-		virtual void data_store (chunk_t) = 0; 
+		virtual bool data_store(chunk_t chunk_id, double price) = 0; 
+		virtual bool data_store(chunk_t chunk_id);
 		virtual void dump(){cout<<"Method dump() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;}
 
 		//<aa>
@@ -124,7 +126,6 @@ class base_cache : public abstract_node
 					chunk_t chunk_id);
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator end_of_cache();
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator beginning_of_cache();
-		virtual cache_item_descriptor* data_lookup (chunk_t);
 		//</aa>
 	
     public:
@@ -154,12 +155,15 @@ class base_cache : public abstract_node
 		//<aa>
 		unsigned  get_slots() { return cache_slots; }
 		void set_slots(unsigned);
+		virtual cache_item_descriptor* data_lookup_receiving_data (chunk_t incoming_chunk_id);
+		virtual cache_item_descriptor* data_lookup_receiving_interest (chunk_t requested_chunk_id);
 		//</aa>
 
 		void set_size(uint32_t);
 
 		virtual bool fake_lookup(chunk_t);
-		bool lookup(chunk_t);
+		bool handle_interest(chunk_t);
+
 		// Lookup without hit/miss statistics (used with the 2-LRU meta-caching strategy to lookup the name cache)
 		bool lookup_name(chunk_t);
 		void store (cMessage *);
@@ -199,6 +203,16 @@ class base_cache : public abstract_node
 		#endif
 		//</aa>
 
+		//{ FOR RETROCOMPATIBILITY
+		bool lookup(chunk_t)
+		{
+			std::stringstream ermsg; 
+			ermsg<<"In this version of ccnSim this function has been renamed in handle_interest(..)";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			return false;
+		}
+		//} FOR RETROCOMPATIBILITY
+
     private:
 
 		int name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
@@ -223,6 +237,8 @@ class base_cache : public abstract_node
 
 		uint32_t occupied_slots; //actual size of the cache
 		unordered_map<chunk_t, cache_item_descriptor*> cache;
+
+		virtual cache_item_descriptor* data_lookup (chunk_t);
 };
 
 #endif

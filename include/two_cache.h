@@ -40,7 +40,7 @@ using namespace std;
 class two_cache: public base_cache{
     public:
 
-	virtual void data_store(chunk_t);
+	virtual bool data_store(ccn_data* data_msg);
 
     private:
 	deque<uint64_t> deq;

@@ -30,8 +30,8 @@ Register_Class(two_cache);
 
 void two_cache::data_store(ccn_data* data_msg)
 {
-	base_cache::data_store(data_msg);
-	chunk_t chunk = getChunk();
+	return_value = base_cache::data_store(data_msg);
+	chunk_t chunk = data_msg->get_chunk_id();
 
 	#ifdef SEVERE_DEBUG
 	if( content_distribution::get_number_of_representations() != 1 )
@@ -86,7 +86,7 @@ void two_cache::data_store(ccn_data* data_msg)
    }else
        deq.push_back(chunk);
 
-
+	return return_value;
 }
 
 

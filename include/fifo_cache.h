@@ -39,7 +39,7 @@ using boost::unordered_map;
 class fifo_cache: public base_cache{
     public:
 	//Polymorphic methods
-	virtual void data_store (chunk_t);
+	virtual void data_store (ccn_data* data_msg);
     private:
 	deque<chunk_t> deq;//Deque for the order 
 

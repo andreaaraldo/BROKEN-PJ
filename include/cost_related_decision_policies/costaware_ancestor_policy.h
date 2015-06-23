@@ -102,10 +102,6 @@ class Costaware_ancestor: public DecisionPolicy{
 			return last_accepted_content_price;
 		};
 
-		virtual void set_last_accepted_content_price(ccn_data * data_msg){
-			last_accepted_content_price = data_msg->getPrice();
-		}
-
 		virtual double compute_correction_factor()=0; // This is an abstract class
 
 		// Content weight depends from the cost and the popularity of the object

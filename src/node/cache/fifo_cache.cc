@@ -28,10 +28,11 @@
 
 Register_Class(fifo_cache);
 
-void fifo_cache::data_store(ccn_data* data_msg)
+bool fifo_cache::data_store(ccn_data* data_msg)
 {
+	bool return_value;
 	base_cache::data_store(data_msg);
-	chunk_t chunk = getChunk();
+	chunk_t chunk = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 	if( content_distribution::get_number_of_representations() != 1 )
 	{
@@ -52,7 +53,7 @@ void fifo_cache::data_store(ccn_data* data_msg)
        deq.pop_front();
        remove_from_cache(toErase, storage_space);
    }
-
+	return return_value;
 }
 
 
