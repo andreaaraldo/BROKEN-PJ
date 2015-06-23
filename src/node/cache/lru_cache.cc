@@ -114,73 +114,48 @@ bool lru_cache::data_store(ccn_data* data_msg)
 				content_distribution::get_storage_space_of_chunk(chunk_id);
 
 		cache_item_descriptor* old = data_lookup(chunk_id);
-		if ( old != NULL)
+		if (old == NULL)
 		{
-			// A chunk with the same object_id, chunk_number existed. I have to decide whether 
-			// to store the new one
-			accept_new_chunk = if_chunk_is_present(chunk_id, old);
-		}
+			// There is no chunk already stored that is equivalent to the incoming one.
+			// We need to store the incoming one.
+
+			// {DESCRIPTOR UPDATE
+				cache_item_descriptor *p = new cache_item_descriptor();//position for the new element
+										//<aa> i.e. datastructure for the new element </aa>
+				p->k = chunk_id;// <aa> We store the complete chunk_id because we need to check the 
+								// 		representation_mask later, when a request arrives
+								// </aa>
+
+
+				p->hit_time = simTime();
+				p->newer = 0;
+				p->older = 0;
+				p->price_ = data_msg->getPrice();
+
+				// The cache is empty. Add just one element if it fits into the cache space. 
+				// The mru and lru element are the same
+				if ( is_it_empty() )
+				{
+					lru_ = p;
+					mru_ = p;
+				}else{
+					//The cache is not empty. The new element is the newest. Add it in the front
+					//of the list
+					p->older = mru_; // mru swaps in second position (in terms of utilization rank)
+					mru_->newer = p; // update the newer element for the secon newest element
+					mru_ = p; //update the mru (which becomes that just inserted)
+				}
+			// }DESCRIPTOR UPDATE
+
+			// Phisically insert the new chunk into the cache
+			insert_into_cache(chunk_id, p, storage_space_required_by_new_chunk); 
+			cout<<"ciao: inserted "<<storage_space_required_by_new_chunk<<" slots"<<endl;
+			shrink();
+		} else 
+			//There is already a chunk that can replace the incoming one
+			accept_new_chunk = false;
 	}
-
-	// If I still want to accept_new_chunk
-	if (accept_new_chunk)
-	{
-		// {DESCRIPTOR UPDATE
-			cache_item_descriptor *p = new cache_item_descriptor();//position for the new element
-									//<aa> i.e. datastructure for the new element </aa>
-			p->k = chunk_id;// <aa> We store the complete chunk_id because we need to check the 
-							// 		representation_mask later, when a request arrives
-							// </aa>
-
-
-			p->hit_time = simTime();
-			p->newer = 0;
-			p->older = 0;
-			p->price = data_msg->getPrice();
-
-			// The cache is empty. Add just one element if it fits into the cache space. 
-			// The mru and lru element are the same
-			if ( is_it_empty() )
-			{
-				lru_ = p;
-				mru_ = p;
-			}else{
-				//The cache is not empty. The new element is the newest. Add it in the front
-				//of the list
-				p->older = mru_; // mru swaps in second position (in terms of utilization rank)
-				mru_->newer = p; // update the newer element for the secon newest element
-				mru_ = p; //update the mru (which becomes that just inserted)
-			}
-		// }DESCRIPTOR UPDATE
-
-		// Phisically insert the new chunk into the cache
-		insert_into_cache(chunk_id, p, storage_space_required_by_new_chunk); 
-		cout<<"ciao: inserted "<<storage_space_required_by_new_chunk<<" slots"<<endl;
-		shrink();
-	}
-}
-
-bool lru_cache::if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old)
-{
-	bool accept_new_chunk = false;
 	return accept_new_chunk;
-}
-
-void lru_cache::set_price_to_last_inserted_element(double price)
-{
-	#ifdef SEVERE_DEBUG	
-	if ( !statistics::record_cache_value )
-	{
-			std::stringstream ermsg; 
-			ermsg<<"statistics::record_cache_value="<<statistics::record_cache_value<<": ";
-			ermsg<<"set_price_to_last_inserted_element(..) is useful when you want to record "<<
-				" the cache_value; when statistics::record_cache_value is disabled this method "<<
-				" may be useless. Make sure you really need this method. If yes, disable this"<<
-				" error.If not, try to rethink your code";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
-	#endif
-	mru_->set_price(price);
 }
 
 //<aa>

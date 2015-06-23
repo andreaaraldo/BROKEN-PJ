@@ -28,9 +28,9 @@
 
 Register_Class(two_cache);
 
-void two_cache::data_store(ccn_data* data_msg)
+bool two_cache::data_store(ccn_data* data_msg)
 {
-	return_value = base_cache::data_store(data_msg);
+	bool return_value = base_cache::data_store(data_msg);
 	chunk_t chunk = data_msg->get_chunk_id();
 
 	#ifdef SEVERE_DEBUG
@@ -46,8 +46,8 @@ void two_cache::data_store(ccn_data* data_msg)
    unsigned storage = 1; //How many slots a chunk requires
    insert_into_cache(chunk, NULL, storage);
 
-   if (deq.size() == (unsigned)get_size()){
-
+   if (deq.size() == (unsigned)get_size())
+	{
        //Random extraction of two elements
        unsigned int  pos1 = intrand( deq.size() );
        unsigned int  pos2 = intrand( deq.size() );

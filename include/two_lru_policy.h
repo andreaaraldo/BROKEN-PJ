@@ -71,7 +71,7 @@ class Two_Lru: public DecisionPolicy
 		{
 			// The ID is NOT present inside the Name Cache, so insert it and return False.
 			// As a consequence, the 'cacheable' flag inside the PIT will be set to 0.
-			name_cache->store_name(int_msg);
+			name_cache->store_name(chunk);
 			return false;
 		}
 	}

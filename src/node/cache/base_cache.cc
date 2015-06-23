@@ -354,6 +354,8 @@ bool base_cache::data_store(ccn_data* data_msg)
  *    Parameters:
  *    	 - elem: content ID to be stored.
  */
+//TODO: <aa> In this position this method seems more general then it is, while I think it is
+// only related to two_lru. Can we find another place to put it? </aa>
 void base_cache::store_name(chunk_t elem)
 {
     if (cache_slots ==0)
@@ -363,7 +365,8 @@ void base_cache::store_name(chunk_t elem)
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
 
-   data_store(elem);  // Store the content ID inside the Name Cache.
+	ccn_data* fake_data = new ccn_data(); fake_data->setChunk(elem);
+	data_store(fake_data);  // Store the content ID inside the Name Cache.
 }
 
 /*
@@ -461,10 +464,10 @@ void base_cache::set_slots(unsigned slots_)
 
 //<aa>
 cache_item_descriptor* base_cache::data_lookup_receiving_data (chunk_t data_chunk_id)
-{	data_lookup(data_chunk_id);	}
+{	return data_lookup(data_chunk_id);	}
 
 cache_item_descriptor* base_cache::data_lookup_receiving_interest (chunk_t interest_chunk_id)
-{	data_lookup(data_chunk_id);	}
+{	return data_lookup(interest_chunk_id);	}
 
 cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
 {

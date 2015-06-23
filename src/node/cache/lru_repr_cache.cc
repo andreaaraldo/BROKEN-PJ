@@ -80,8 +80,9 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_data(chunk_t incomi
 	if (stored != NULL)
 	{
 		// There is a chunk with the same [object_id, chunk_num] stored in the cache.
+		chunk_t old_chunk_id = stored->k;
 		representation_mask_t incoming_mask = __representation_mask(incoming_chunk_id);
-		representation_mask_t stored_mask = __representation_mask(stored->k);
+		representation_mask_t stored_mask = __representation_mask(old_chunk_id);
 		if (stored_mask < incoming_mask )
 		{	// The incoming representation is better than the stored one.
 			unsigned old_storage = content_distribution::get_storage_space_of_chunk(old_chunk_id);

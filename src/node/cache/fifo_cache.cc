@@ -30,7 +30,7 @@ Register_Class(fifo_cache);
 
 bool fifo_cache::data_store(ccn_data* data_msg)
 {
-	bool return_value;
+	bool return_value = true;
 	base_cache::data_store(data_msg);
 	chunk_t chunk = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
