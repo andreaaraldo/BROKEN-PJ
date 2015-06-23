@@ -279,6 +279,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     
     // Check if the meta-caching is 2-LRU. In this case, we need to lookup for the content ID inside the Name Cache.
     string decision_policy = ContentStore->par("DS");
+	//TODO: //<aa> move it in the initialization part, to do it only once</aa>
 
     if (decision_policy.compare("two_lru")==0)
     {
@@ -290,7 +291,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
 
 	
-
 
     unsigned short selected_data_representation = 0;
   if (ContentStore->handle_interest(chunk))
@@ -321,6 +321,8 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
     } else if ( repository!=NULL && (selected_data_representation = repository->handle_interest(int_msg ) ) )
 	{	
+			if (selected_data_representation>1)
+				debug_message(__FILE__,__LINE__,"sending representation two. It should only happen once");
 			//
 			//b) Look locally (only if you own a repository)
 			// we are mimicking a message sent to the repository

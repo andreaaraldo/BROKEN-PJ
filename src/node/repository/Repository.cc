@@ -70,6 +70,7 @@ unsigned short Repository::handle_interest(ccn_interest* int_msg)
 	unsigned short representation = 0;
 	if (bitmask & __repo( int_msg->get_object_id() ) )
 	{
+
 		// This repo contains the object
 		repo_load++;
 

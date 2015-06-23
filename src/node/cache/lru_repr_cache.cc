@@ -12,7 +12,6 @@ void lru_repr_cache::initialize()
 	else
 		proactive_component = NULL;
 
-	cout<<"ciao: cache slots "<<cache_slots<<endl;
 }
 
 void lru_repr_cache::initialize_cache_slots()
@@ -34,7 +33,6 @@ bool lru_repr_cache::if_chunk_is_present(chunk_t new_chunk_id, cache_item_descri
 		remove_from_cache(old_chunk_id, old_storage);
 	}else
 		accept_new_chunk = false;
-	cout << "ciao: the chunk "<<new_chunk_id<<" was already present. Should I accept? "<<accept_new_chunk<<endl;
 	return accept_new_chunk;
 }
 
@@ -52,7 +50,6 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_interest(chunk_t re
 			// The stored representation does not match with the requested ones
 			return NULL;
 		else{
-			cout<<"ciao: lru_repr: good representation_found"<<endl;
 			// A good chunk has been found
 			unsigned short representation_found = content_distribution::get_representation_number(stored->k);
 			
@@ -63,10 +60,8 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_interest(chunk_t re
 					content_distribution::set_bit_to_zero(request_mask, representation_found);
 				if (improving_mask != 0x0000)
 				{	// There is no representation higher 
-					cout<<"ciao: possibility to improve"<<endl;
 					name_t object_id = __id(requested_chunk_id);
 					cnumber_t chunk_num = __chunk(requested_chunk_id);
-					severe_error(__FILE__,__LINE__,"Before sending an interest outside to improve my cache content, I should check my local repository. See if the ordinary client check the local repository before searching outside");
 					proactive_component->request_specific_chunk_from_another_class(
 												object_id, chunk_num, improving_mask);
 					
@@ -79,7 +74,6 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_interest(chunk_t re
 
 cache_item_descriptor* lru_repr_cache::data_lookup_receiving_data(chunk_t incoming_chunk_id)
 {
-	cout << "ciao: lru_repr: receiving data"<<endl;
 	cache_item_descriptor* stored = lru_cache::data_lookup_receiving_data(incoming_chunk_id);
 	if (stored != NULL)
 	{

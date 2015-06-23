@@ -207,8 +207,6 @@ void base_cache::insert_into_cache(chunk_t chunk_id,
 
 	update_occupied_slots(storage_space);
     cache[chunk_id] = descr;
-	cout << "ciao: chunk "<< __id(cache[chunk_id]->k ) <<":"<<__chunk(cache[chunk_id]->k ) <<
-		":"<<__representation_mask(cache[chunk_id]->k ) << " inserted."<<endl;
 }
 
 void base_cache::remove_from_cache(chunk_t chunk_id, unsigned storage_space)
@@ -460,7 +458,7 @@ cache_item_descriptor* base_cache::data_lookup_receiving_data (chunk_t data_chun
 }
 
 cache_item_descriptor* base_cache::data_lookup_receiving_interest (chunk_t interest_chunk_id)
-{	cout << "interest arrived"<<endl;
+{
 	return data_lookup(interest_chunk_id);	
 }
 
@@ -476,10 +474,6 @@ cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
 		descr = it->second;
 	else 
 		descr = NULL;
-
-	cout<<"ciao: base cache looks for chunk "<<__id(chunk) <<":"<< __chunk(chunk) <<
-		". Old representation found "<<
-		(descr !=NULL ? __representation_mask(descr->k) :0 ) << endl;
 
 	return descr;
 }
