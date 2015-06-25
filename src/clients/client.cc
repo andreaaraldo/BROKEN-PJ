@@ -119,12 +119,23 @@ void client::handleMessage(cMessage *in)
 		}
 		//<aa>
 		#ifdef SEVERE_DEBUG
+		case CCN_I:
+		{
+			ccn_interest *int_msg = (ccn_interest *) in;
+			chunk_t chunk_id = int_msg->getChunk();
+			std::stringstream ermsg; 
+			ermsg<<"A client can only receive data, while this is an interest for "<<
+				__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<< __representation_mask(chunk_id);
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
 		default:
+		{
 			std::stringstream ermsg; 
 			ermsg<<"A client can only receive data, while this is a message"<<
 				" of a kind "<<in->getKind();
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		#endif
+		}
 		//</aa>
     }
 
@@ -340,6 +351,7 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 	#endif
 	//</aa>
 
+	cout<<"ciao: sending interest"<<endl;
     send(interest, "client_port$o");
 }
 
