@@ -89,6 +89,11 @@ class core_layer : public abstract_node
 		virtual void initialize_iface_stats();
 		Repository* repository;
 		virtual Repository* create_repository();
+
+		bool* is_face_to_client;	// is_face_to_client is true if face i is
+									// attached to a client
+		unsigned face_cardinality;// The number of interfaces (including the one connected
+								  // to the proactive component)
 		//</aa>
 
 		//Custom functions

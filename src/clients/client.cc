@@ -351,7 +351,9 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 	#endif
 	//</aa>
 
-	cout<<"ciao: sending interest"<<endl;
+	cout<<"ciao: I am a client of type "<< getModuleType() <<" attached to "<<
+			gate("client_port$o")->getNextGate()->getOwnerModule()->getModuleType()
+			<< ". I am sending an interest to it "<<endl;
     send(interest, "client_port$o");
 }
 

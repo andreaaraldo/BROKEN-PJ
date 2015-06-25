@@ -370,7 +370,7 @@ cache_item_descriptor* base_cache::handle_interest(chunk_t chunk ) //<aa> Previo
 	cache_item_descriptor* old = NULL;
     name_t object_id = __id(chunk);
 
-    if ( old = data_lookup_receiving_interest(chunk) ) // The requested content is cached locally.
+    if ( (old = data_lookup_receiving_interest(chunk) )!=NULL ) // The requested content is cached locally.
 	{
 		//Average cache statistics(hit)
     	hit++;

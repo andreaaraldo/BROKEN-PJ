@@ -93,6 +93,28 @@ void  core_layer::initialize()
 	#endif
 
 	pit = new PIT(RTT);
+
+	//{ RETRIEVE CLIENT INTERFACES
+		face_cardinality =  gateSize("face");
+		is_face_to_client = (bool*) malloc( sizeof(bool)*face_cardinality );
+		for (unsigned i = 0; i < face_cardinality; i++)
+		{
+
+			if ( 	gate("face$o",i)->getNextGate()->getOwnerModule()->getModuleType() ==
+					cModuleType::find("modules.clients.ProactiveComponent") ||
+					gate("face$o",i)->getNextGate()->getNextGate()->getOwnerModule()->getModuleType() ==
+					cModuleType::find("modules.clients.client")
+			)
+				is_face_to_client[i] = true;
+			else
+				is_face_to_client[i] = false;
+		}
+
+		cout<<"ciao ";
+		for (unsigned i = 0; i < face_cardinality; i++)
+			cout<< is_face_to_client[i]<<":";
+		cout << endl;
+	//} RETRIEVE CLIENT INTERFACES
 	//</aa>
 
 }
@@ -294,11 +316,12 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
     chunk_t chunk_id_to_deliver = 0;
 	cache_item_descriptor* cache_item = NULL;
+	cout << "ciao: core_layer: I received an interest from interface "<<int_msg->getArrivalGate()->getIndex()<<endl;
   if ( (cache_item = ContentStore->handle_interest(chunk) ) != NULL )
   {
        // A corresponding item has been found in cache
 		chunk_id_to_deliver = cache_item->k;
-        ccn_data* data_msg = compose_data( chunk_id_to_deliver );
+		ccn_data* data_msg = compose_data( chunk_id_to_deliver );
 
         data_msg->setHops(0);
         data_msg->setBtw(int_btw); //Copy the highest betweenness
@@ -357,8 +380,8 @@ void core_layer::handle_interest(ccn_interest *int_msg)
         //
    		//<aa>
 		#ifdef SEVERE_DEBUG
-		unsatisfied_interests++;
-		check_if_correct(__LINE__);
+			unsatisfied_interests++;
+			check_if_correct(__LINE__);
 		#endif
 		//</aa>
 
@@ -392,6 +415,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 	    	handle_decision(decision,int_msg);
 	    	delete [] decision;//free memory for the decision array
 		}
+
 		#ifdef SEVERE_DEBUG
 			check_if_correct(__LINE__);
 
@@ -407,7 +431,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     
     //<aa>
     #ifdef SEVERE_DEBUG
-    check_if_correct(__LINE__);
+    	check_if_correct(__LINE__);
     #endif
     //</aa>
 }
@@ -472,18 +496,18 @@ void core_layer::handle_data(ccn_data *data_msg)
 void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 	//<aa>
 	#ifdef SEVERE_DEBUG
-	bool interest_has_been_forwarded = false;
+		bool interest_has_been_forwarded = false;
 	#endif
 	//</aa>
 
     if (my_btw > interest->getBtw())
 		interest->setBtw(my_btw);
 
-    for (int i = 0; i < __get_outer_interfaces(); i++)
+    for (unsigned i = 0; i < face_cardinality; i++)
 	{
 		//<aa>
 		#ifdef SEVERE_DEBUG
-			if (decision[i] == true && __check_client(i) )
+			if (decision[i] == true && is_face_to_client[i] )
 			{
 				std::stringstream msg; 
 				msg<<"I am node "<< getIndex()<<" and the interface supposed to give"<<
@@ -496,12 +520,13 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 		#endif
 		//</aa>
 
-		if (decision[i] == true && !__check_client(i)
+		if (decision[i] == true && !is_face_to_client[i]
 			//&& interest->getArrivalGate()->getIndex() != i
 		){
+			cout <<"ciao: core_layer: sending interest to interface "<<i<<endl;
 			sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
 			#ifdef SEVERE_DEBUG
-			interest_has_been_forwarded = true;
+				interest_has_been_forwarded = true;
 			#endif
 		}
 	}
@@ -513,15 +538,15 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 			int affirmative_decision_from_client = 0;
 			int last_affermative_decision = -1;
 
-			for (int i = 0; i < __get_outer_interfaces(); i++)
+			for (unsigned i = 0; i < face_cardinality; i++)
 			{
 				if (decision[i] == true)
 				{
-					if ( __check_client(i) ){
+					if ( is_face_to_client[i] ){
 						affirmative_decision_from_client++;
 						last_affermative_decision = i;
 					}
-					if ( interest->getArrivalGate()->getIndex() == i ){
+					if ( (unsigned)interest->getArrivalGate()->getIndex() == i ){
 						affirmative_decision_from_arrival_gate++;
 						last_affermative_decision = i;
 					}
@@ -719,7 +744,8 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 			c = dynamic_cast<client *> ( gate("face$o",interface)->getNextGate()->getOwnerModule() );
 		}else
 			// Interface 1 is connected to the node border interface 0, 2 with 1 and so on ...
-			c = __get_attached_client(interface-1);
+			c = dynamic_cast<client *>
+						(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
 		return c;
 	}
 #endif

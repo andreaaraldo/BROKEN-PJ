@@ -84,6 +84,9 @@ class strategy_layer: public abstract_node{
 							int distance);
 		const vector<int_f> get_FIB_entries(int destination_node_index);
 		virtual vector<int> choose_paths(int num_paths)=0;
+
+		virtual const int get_outer_interfaces() const;
+		virtual const bool check_client(int interface) const;
 		//</aa>
 
 

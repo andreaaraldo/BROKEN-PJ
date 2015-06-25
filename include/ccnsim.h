@@ -3,9 +3,9 @@
 
 #include <vector>
 #include <omnetpp.h>
-
-
 //<aa>
+#include "error_handling.h"
+
 // If SEVERE_DEBUG is enabled, overabundant checks will be performed in order to avoid inconsistent
 // state. It will slow down the simulation (for example a run of 10 s disabling SEVERE_DEBUG
 // may take 14 s when enabling it), but if you are considerably modifying 
@@ -75,27 +75,24 @@ class abstract_node: public cSimpleModule{
 	}
 
 	virtual int __get_outer_interfaces(){
-	    return getParentModule()->gateSize("face");
+		severe_error(__FILE__,__LINE__,
+				"In this version of ccnSim this method moved to strategy_layer::get_outer_interfaces()");
+	    return 0;
 	}
 
-	//<aa> Check whether the module attached to that interface is a client or not</aa>
-	bool __check_client(int interface){
-	    client *c;
-	    bool check= false;
-	    c = dynamic_cast<client *>
-			(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
-	    if (c)
-			check=true;
-	    return check;
+	bool __check_client(int interface)
+	{
+		severe_error(__FILE__,__LINE__,
+				"In this version of ccnSim this method moved to strategy_layer::check_client(..)");
+	    return false;
 	}
 
 	//<aa>	If there is a client attached to the specified interface, it will be returned. 
 	//		Otherwise a null pointer will be returned
 	client* __get_attached_client(int interface)
 	{
-	    client *c = dynamic_cast<client *>
-			(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
-	    return c;
+		severe_error(__FILE__,__LINE__,"In this version of ccnSim this method has been removed");
+		return NULL;
 	}
 	//</aa>
 

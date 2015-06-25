@@ -175,5 +175,24 @@ const vector<int_f> strategy_layer::get_FIB_entries(
 	//return FIB[destination_node_index];
 }
 
+const int strategy_layer::get_outer_interfaces() const
+{
+    return getParentModule()->gateSize("face");
+}
 
+//<aa> Check whether the module attached to that interface is a client or not</aa>
+const bool strategy_layer::check_client(int interface) const
+{
+	severe_error(__FILE__,__LINE__,
+			"In this version of ccnSim this method moved to strategy_layer::check_client(..)");
+    return false;
+
+    client *c;
+    bool check= false;
+    c = dynamic_cast<client *>
+		(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
+    if (c)
+		check=true;
+    return check;
+}
 //</aa>
