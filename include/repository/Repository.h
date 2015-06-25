@@ -36,7 +36,11 @@ class Repository {
     public:
 		Repository(int attached_node_index_, int repo_index_, double price_);
 		virtual double get_price() const;
-		virtual unsigned short handle_interest(ccn_interest* int_msg) ;
+
+		// Returns the chunk_id that the repo is providing or 0 if the repo does not 
+		// own the requested chunk
+		virtual chunk_t handle_interest(ccn_interest* int_msg) ;
+
 		virtual void finish(cComponent* parentModule) const;
 		virtual void clear_stat();
 

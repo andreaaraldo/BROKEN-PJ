@@ -61,13 +61,13 @@ double Repository::get_price() const
 }
 
 /**
- * Returns a representation of the requested chunk or 0 if the object is not owned by the 
- * repository
+ * Returns the chunk_id that the repo is providing or 0 if the repo does not own the requested chunk
+ * 
 */
-unsigned short Repository::handle_interest(ccn_interest* int_msg)
+chunk_t Repository::handle_interest(ccn_interest* int_msg)
 {
 
-	unsigned short representation = 0;
+	chunk_t chunk_to_deliver = 0;
 	if (bitmask & __repo( int_msg->get_object_id() ) )
 	{
 
@@ -76,10 +76,15 @@ unsigned short Repository::handle_interest(ccn_interest* int_msg)
 
 		representation_mask_t available = 0xFFFF; 	// By definition, a repository contains 
 													//all the representations of the served objects
-		representation = representation_selector.select(
-			int_msg->get_representation_mask(), available);
+		representation_mask_t representation_mask = representation_selector.select(
+										int_msg->get_representation_mask(), available);
+		if (representation_mask != 0)
+		{
+			chunk_to_deliver = int_msg->getChunk();
+			__srepresentation_mask(chunk_to_deliver, representation_mask);
+		}			
 	}
-	return representation;
+	return chunk_to_deliver;
 }
 
 //	Print node statistics

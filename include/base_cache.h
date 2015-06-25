@@ -163,7 +163,7 @@ class base_cache : public abstract_node
 		void set_size(uint32_t);
 
 		virtual bool fake_lookup(chunk_t);
-		bool handle_interest(chunk_t);
+		cache_item_descriptor* handle_interest(chunk_t);
 
 		// Lookup without hit/miss statistics (used with the 2-LRU meta-caching strategy to lookup the name cache)
 		bool lookup_name(chunk_t);

@@ -76,7 +76,6 @@ void lru_cache::shrink()
 		//<aa> I transformed an if in a loop </aa>
 		while (get_occupied_slots()  > get_slots() )
 		{
-			cout << "ciao: need to shrink: occupied "<< get_occupied_slots()<<"; slots "<<get_slots()<<endl;
 		    //if the cache is full, delete the last element
 		    //
 		    chunk_t evicted_chunk_id = lru_->k;
@@ -98,7 +97,6 @@ void lru_cache::shrink()
 		    remove_from_cache(evicted_chunk_id_without_representation_mask,
 				content_distribution::get_storage_space_of_chunk(evicted_chunk_id) );
 		}
-	cout<<"ciao: occupied after shrink "<< get_occupied_slots() <<endl;
 }
 
 bool lru_cache::data_store(ccn_data* data_msg)
@@ -114,10 +112,10 @@ bool lru_cache::data_store(ccn_data* data_msg)
 		unsigned storage_space_required_by_new_chunk = 
 				content_distribution::get_storage_space_of_chunk(chunk_id);
 
-		cache_item_descriptor* old = data_lookup(chunk_id);
+		cache_item_descriptor* old = data_lookup_receiving_data(chunk_id);
 		if (old == NULL)
 		{
-			// There is no chunk already stored that is equivalent to the incoming one.
+			// There is no chunk already stored that can replace the incoming one.
 			// We need to store the incoming one.
 
 			// {DESCRIPTOR UPDATE
@@ -150,11 +148,12 @@ bool lru_cache::data_store(ccn_data* data_msg)
 
 			// Phisically insert the new chunk into the cache
 			insert_into_cache(chunk_id, p, storage_space_required_by_new_chunk); 
-			cout<<"ciao: inserted "<<storage_space_required_by_new_chunk<<" slots"<<endl;
 			shrink();
 		} else 
+		{
 			//There is already a chunk that can replace the incoming one
 			accept_new_chunk = false;
+		}
 	}
 	return accept_new_chunk;
 }

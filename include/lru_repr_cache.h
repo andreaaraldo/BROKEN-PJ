@@ -48,7 +48,6 @@ class lru_repr_cache:public lru_cache
 
     protected:
 		virtual void initialize_cache_slots();
-		virtual bool if_chunk_is_present(chunk_t new_chunk_id, cache_item_descriptor* old);
 		client* proactive_component;
 		virtual void initialize();
 		virtual cache_item_descriptor* data_lookup_receiving_data(chunk_t incoming_chunk_id);

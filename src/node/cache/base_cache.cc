@@ -365,34 +365,31 @@ void base_cache::store_name(chunk_t elem)
  * 		Parameters:
  * 			- chunk: content ID of the received Interest.
  */
-bool base_cache::handle_interest(chunk_t chunk ) //<aa> Previously called lookup(..)</aa>
+cache_item_descriptor* base_cache::handle_interest(chunk_t chunk ) //<aa> Previously called lookup(..)</aa>
 {
-    bool found = false;
-    name_t name = __id(chunk);
+	cache_item_descriptor* old = NULL;
+    name_t object_id = __id(chunk);
 
-    if (data_lookup_receiving_interest(chunk))		// The requested content is cached locally.
-   {
-	//Average cache statistics(hit)
+    if ( old = data_lookup_receiving_interest(chunk) ) // The requested content is cached locally.
+	{
+		//Average cache statistics(hit)
     	hit++;
-    	found = true;
 
-	//Per file cache statistics(hit)
-	if (name <= __file_bulk)
-	    cache_stats[name].hit++;
+		//Per file cache statistics(hit)
+		if (object_id <= __file_bulk)
+			cache_stats[object_id].hit++;
 
-    }
-   else		// The local cache does not contain the requested content.
-   {
-	       found = false;
+	}
+	else		// The local cache does not contain the requested content.
+	{
 		//Average cache statistics(miss)
 		miss++;
 
 		//Per file cache statistics(miss)
-		if ( name <= __file_bulk )
-			cache_stats[name].miss++;
-
-   }
-    return found;
+		if ( object_id <= __file_bulk )
+			cache_stats[object_id].miss++;
+	}
+    return old;
 }
 
 /*
@@ -453,8 +450,7 @@ void base_cache::set_slots(unsigned slots_)
 
 //<aa>
 cache_item_descriptor* base_cache::data_lookup_receiving_data (chunk_t data_chunk_id)
-{	cout << "data arrived"<<endl;
-	return data_lookup(data_chunk_id);	
+{	return data_lookup(data_chunk_id);	
 }
 
 cache_item_descriptor* base_cache::data_lookup_receiving_interest (chunk_t interest_chunk_id)

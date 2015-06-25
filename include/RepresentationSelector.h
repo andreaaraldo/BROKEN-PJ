@@ -61,13 +61,14 @@ class RepresentationSelectorLowest: public RepresentationSelector
 			representation_mask_t req_and_available = (req & available);
 			representation_mask_t filter = 0x0001;
 			unsigned i = 0;
-			while ( ( (filter<<i) & req_and_available) == 0 && 
+			while ( ( filter & req_and_available) == 0 && 
 						i < content_distribution::get_number_of_representations() )
 			{
+				filter = filter<<1;
 				i++;
 			}
 			if (i <= content_distribution::get_number_of_representations() )
-				return i+1;
+				return filter;
 			else return 0;
 		}
 };

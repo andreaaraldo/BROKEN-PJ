@@ -99,7 +99,7 @@ class core_layer : public abstract_node
 
 
 		bool check_ownership(vector<int>);
-		ccn_data *compose_data(uint64_t response_data, unsigned short representation);
+		ccn_data *compose_data(chunk_t chunk_id);
 		void clear_stat();
 
 

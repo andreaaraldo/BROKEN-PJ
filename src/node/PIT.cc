@@ -65,7 +65,6 @@ bool PIT::handle_interest(ccn_interest *int_msg, bool cacheable)
 
 	int gateindex = int_msg->getArrivalGate()->getIndex();
 	__sface( table[chunk_id_without_representation].interfaces , gateindex );
-	cout <<"ciao: interfaces "<<table[chunk_id_without_representation].interfaces<< endl;
 	return previously_found;
 }
 

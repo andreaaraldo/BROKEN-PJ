@@ -292,13 +292,13 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
 	
 
-    unsigned short selected_data_representation = 0;
-  if (ContentStore->handle_interest(chunk))
+    chunk_t chunk_id_to_deliver = 0;
+	cache_item_descriptor* cache_item = NULL;
+  if ( (cache_item = ContentStore->handle_interest(chunk) ) != NULL )
   {
-       //
-       //a) Check in your Content Store
-       //
-        ccn_data* data_msg = compose_data(chunk,1);
+       // A corresponding item has been found in cache
+		chunk_id_to_deliver = cache_item->k;
+        ccn_data* data_msg = compose_data( chunk_id_to_deliver );
 
         data_msg->setHops(0);
         data_msg->setBtw(int_btw); //Copy the highest betweenness
@@ -319,15 +319,13 @@ void core_layer::handle_interest(ccn_interest *int_msg)
         #endif
         //</aa>
 
-    } else if ( repository!=NULL && (selected_data_representation = repository->handle_interest(int_msg ) ) )
+    } else if ( repository!=NULL && (chunk_id_to_deliver = repository->handle_interest(int_msg ) ) )
 	{	
-			if (selected_data_representation>1)
-				debug_message(__FILE__,__LINE__,"sending representation two. It should only happen once");
 			//
 			//b) Look locally (only if you own a repository)
 			// we are mimicking a message sent to the repository
 			//
-		    ccn_data* data_msg = compose_data(chunk, selected_data_representation );
+		    ccn_data* data_msg = compose_data(chunk_id_to_deliver );
 	
 			//<aa>
 			data_msg->setPrice(repository->get_price() ); 	// I fix in the data msg the cost of the object
@@ -559,12 +557,10 @@ bool core_layer::check_ownership(vector<int> repositories){
 /*
  * 	Create a Data packet in response to the received Interest.
  */
-ccn_data* core_layer::compose_data(chunk_t chunk_id, unsigned short representation)
+ccn_data* core_layer::compose_data(chunk_t chunk_id)
 {
-	representation_mask_t representation_mask = 0x0001 << (representation-1);
-	__srepresentation_mask(chunk_id, representation_mask);
-
     ccn_data* data = new ccn_data("data",CCN_D);
+	data->setMegabyteLength( content_distribution::get_storage_space_of_chunk(chunk_id) );
     data -> setChunk (chunk_id);
     data -> setHops(0);
     data->setTimestamp(simTime());
