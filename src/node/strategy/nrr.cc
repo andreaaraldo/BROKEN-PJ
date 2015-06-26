@@ -98,7 +98,7 @@ bool *nrr::exploit(ccn_interest *interest){
 
 	output_iface = -1;
 
-    gsize = __get_outer_interfaces();
+    gsize = get_outer_interfaces();
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
 

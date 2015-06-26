@@ -42,7 +42,9 @@ class DecisionPolicy;
 // inserting it within the head of the list
 struct cache_item_descriptor
 {
-	cache_item_descriptor() : price_(-1) {}; // Initialize the price as undefined
+	cache_item_descriptor(); // Initialize the price as undefined
+	cache_item_descriptor(chunk_t chunk_id); // Initialize the price as undefined
+	cache_item_descriptor(chunk_t chunk_id, double price);
 
     //older and newer track the lru_position within the 
     //lru cache
@@ -115,10 +117,8 @@ class base_cache : public abstract_node
 			bool initialized;
 		#endif
 
-		virtual void insert_into_cache(chunk_t chunk_id_without_representation_mask, 
-					cache_item_descriptor* descr, unsigned storage_space);
-		virtual void remove_from_cache(chunk_t chunk_id_without_representation_mask,
-					unsigned storage_space);
+		virtual void insert_into_cache(cache_item_descriptor* descr);
+		virtual void remove_from_cache(chunk_t chunk_id, unsigned storage_space);
 		virtual void update_occupied_slots(int difference);
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache(
 					chunk_t chunk_id);
@@ -134,24 +134,8 @@ class base_cache : public abstract_node
 		//Inteface function (depending by internal data structures of each cache)
 		virtual bool data_store(ccn_data*) = 0;
 
-		#ifdef SEVERE_DEBUG
-			base_cache():abstract_node(){initialized=false; occupied_slots=0;};
-		#endif
-
 		//Outside function behaviour
-		int get_size() 
-		{
-			#ifdef SEVERE_DEBUG
-			if( content_distribution::get_number_of_representations() != 1 )
-			{
-				std::stringstream ermsg; 
-				ermsg<<"This function cannot be used if more than one representation per content is considered"<<
-					". Use get_slots() directly in all the other cases.";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-			#endif
-			return get_slots(); 
-		}
+		int get_size(); //deprecated
 
 		//<aa>
 		unsigned  get_slots() { return cache_slots; }
@@ -167,13 +151,7 @@ class base_cache : public abstract_node
 
 		// Lookup without hit/miss statistics (used with the 2-LRU meta-caching strategy to lookup the name cache)
 		bool lookup_name(chunk_t);
-		void store (cMessage *)
-		{
-			std::stringstream ermsg; 
-			ermsg<<"In this version of ccnSim this method does not exist anymore."<<
-				" You can directly call data_store";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
+		void store (cMessage *); //deprecated
 
 		void store_name(chunk_t);    // Store the content ID inside the name cache (only with 2-LRU meta-caching).
 
@@ -189,29 +167,18 @@ class base_cache : public abstract_node
 		virtual unsigned get_occupied_slots();
 
 
-		virtual double get_cache_value(){
-			cout<<"Method get_cache_value() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
-			exit(-1);
-		}
-		virtual double get_average_price(){
-			cout<<"Method get_average_price() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;
-			exit(-1);
-		}
+		virtual double get_cache_value();
+		virtual double get_average_price();
 
 		#ifdef SEVERE_DEBUG
-		virtual bool is_initialized();
+			virtual bool is_initialized();
+			base_cache():abstract_node(){initialized=false; occupied_slots=0;};
+			virtual void check_if_correct();
+			virtual const char* get_cache_content();
 		#endif
 		//</aa>
 
-		//{ FOR RETROCOMPATIBILITY
-		bool lookup(chunk_t)
-		{
-			std::stringstream ermsg; 
-			ermsg<<"In this version of ccnSim the function lookup has been renamed in handle_interest(..)";
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			return false;
-		}
-		//} FOR RETROCOMPATIBILITY
+		bool lookup(chunk_t); //deprecated
 
     private:
 

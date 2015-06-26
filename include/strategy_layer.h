@@ -62,8 +62,8 @@ class strategy_layer: public abstract_node{
 		//order to get the interfaces on which sending the current interest
 		//<aa>
 		/**
-		 * It returns an array of boolean values, one for each output gate.
-		 * If the i-th element of this array is 1, the message must be forwaded
+		 * It returns an array of boolean values, one for each node qsoutput gate.
+		 * If the i-th element of this array is 1, the message must be forwarded
 		 * toward gate i.
 		 */
 		//</aa>
@@ -94,8 +94,10 @@ class strategy_layer: public abstract_node{
 		//FIB (available to all subclasses, for sake of utilization)
 		//<aa> Associates to each destination node,
 		// an output interface to reach it</aa>
-		unordered_map <int ,vector<int_f> > FIB; 	
-		unordered_map <int, int> gatelu;	
+		unordered_map <int ,vector<int_f> > FIB;
+
+		// <aa> gatelu[i] is the index of the node attached to the i-th interface </aa>
+		unordered_map <int, int> gatelu;
 		
 		//<aa> For each index identifying a client
 		//module, associates the interface through

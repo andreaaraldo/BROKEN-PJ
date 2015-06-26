@@ -134,8 +134,8 @@ void client::handleMessage(cMessage *in)
 			ermsg<<"A client can only receive data, while this is a message"<<
 				" of a kind "<<in->getKind();
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		#endif
 		}
+		#endif
 		//</aa>
     }
 
@@ -160,8 +160,11 @@ int client::getNodeIndex(){
 //Output average local statistics
 void client::finish()
 {
-	if ( is_it_proactive_component_ && 
-		avg_distance + tot_downloads + avg_time + interests_sent == 0
+	auto sum = avg_distance + tot_downloads + avg_time;
+	#ifdef SEVERE_DEBUG
+	sum += interests_sent;
+	#endif
+	if ( is_it_proactive_component_ && sum == 0
 	){ 
 		// I am not a real client but a proactive component of node
 	  	// All my statistics are 0; this means I have never been called during
@@ -351,9 +354,6 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 	#endif
 	//</aa>
 
-	cout<<"ciao: I am a client of type "<< getModuleType() <<" attached to "<<
-			gate("client_port$o")->getNextGate()->getOwnerModule()->getModuleType()
-			<< ". I am sending an interest to it "<<endl;
     send(interest, "client_port$o");
 }
 

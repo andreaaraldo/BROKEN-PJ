@@ -33,14 +33,17 @@ ifstream strategy_layer::frouting;
 
 void strategy_layer::initialize()
 {
-    for (int i = 0; i<getParentModule()->gateSize("face$o");i++)
+	cModule* node = getParentModule();
+    for (int i = 0; i < node->gateSize("face$o");i++)
     {
-	int index ;
-	if (!__check_client(i))
-		//<aa> If the module attached to the ith interface is a client, 
-		//get the index that identifies that module</aa>
-	    index = getParentModule()->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
-        gatelu[index] = i;
+		int index ;
+		if (!check_client(i))
+		{
+			//<aa> If the module attached to the ith interface is a client, 
+			//get the index that identifies that module</aa>
+			index = node->gate("face$o",i)->getNextGate()->getOwnerModule()->getIndex();
+		    gatelu[index] = i;
+		}
     }
     
     
@@ -183,14 +186,11 @@ const int strategy_layer::get_outer_interfaces() const
 //<aa> Check whether the module attached to that interface is a client or not</aa>
 const bool strategy_layer::check_client(int interface) const
 {
-	severe_error(__FILE__,__LINE__,
-			"In this version of ccnSim this method moved to strategy_layer::check_client(..)");
-    return false;
-
     client *c;
     bool check= false;
+	cModule* node = getParentModule();
     c = dynamic_cast<client *>
-		(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
+		( node->gate("face$o",interface)->getNextGate()->getOwnerModule());
     if (c)
 		check=true;
     return check;

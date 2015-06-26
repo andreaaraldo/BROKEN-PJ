@@ -54,7 +54,7 @@ bool *spr::exploit(ccn_interest *interest){
 	outif,
 	gsize;
 
-    gsize = __get_outer_interfaces();
+    gsize = get_outer_interfaces();
 
     vector<int> repos = interest->get_repos();
     repository = nearest(repos);

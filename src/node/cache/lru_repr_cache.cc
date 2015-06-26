@@ -64,16 +64,19 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_data(chunk_t incomi
 	if (stored != NULL)
 	{
 		// There is a chunk with the same [object_id, chunk_num] stored in the cache.
+		// It has already been put at the head of the position list
 		chunk_t old_chunk_id = stored->k;
 		representation_mask_t incoming_mask = __representation_mask(incoming_chunk_id);
 		representation_mask_t stored_mask = __representation_mask(old_chunk_id);
 		if (stored_mask < incoming_mask )
 		{	// The incoming representation is better than the stored one.
-			unsigned old_storage = content_distribution::get_storage_space_of_chunk(old_chunk_id);
-			remove_from_cache(old_chunk_id, old_storage);
+			remove_from_cache(stored);
 			stored = NULL; // To signal that the new chunk must be stored
 		}
 	}
+	#ifdef SEVERE_DEBUG
+	check_if_correct();
+	#endif
 	return stored;
 }
 
@@ -90,6 +93,7 @@ void lru_repr_cache::finish()
 		chunk_t chunk_id = it->second->k;
 	    breakdown[content_distribution::get_representation_number(chunk_id)-1]++;
 	}
+
 	std::stringstream breakdown_str;
 	for (unsigned i = 0; i < num_of_repr; i++)
 		breakdown_str << breakdown[i]<<":";

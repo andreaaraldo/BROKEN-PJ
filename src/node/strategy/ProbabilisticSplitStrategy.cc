@@ -157,7 +157,7 @@ bool* ProbabilisticSplitStrategy::exploit(ccn_interest *interest)
     int repository,
 	gsize;
 
-    gsize = __get_outer_interfaces(); //number of gates
+    gsize = get_outer_interfaces(); //number of gates
 	repository = decide_target_repository(interest);
 
     bool *decision = new bool[gsize];

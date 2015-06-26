@@ -44,7 +44,7 @@ bool fifo_cache::data_store(ccn_data* data_msg)
 	#endif
 
    unsigned storage_space = 1;
-   insert_into_cache(chunk, NULL, storage_space);
+   insert_into_cache(new cache_item_descriptor(chunk) );
    deq.push_back(chunk);
 
    if ( get_occupied_slots() > (unsigned)get_size() ) {

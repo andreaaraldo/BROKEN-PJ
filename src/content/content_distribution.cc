@@ -179,6 +179,17 @@ void content_distribution::initialize_representation_info()
 			}
 		#endif
 	}
+
+	//{ CHECK INPUT
+	unsigned storage_temp = get_storage_space_of_representation(1);
+	for (unsigned i = 2; i <= get_number_of_representations(); i++)
+	{
+		if (get_storage_space_of_representation(i) < storage_temp)
+			severe_error(__FILE__,__LINE__, 
+						"The representation should be specified in increasing quality order");
+		storage_temp = content_distribution::get_storage_space_of_representation(i);
+	}
+	//} CHECK INPUT
 }
 //</aa>
 

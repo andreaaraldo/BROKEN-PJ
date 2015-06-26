@@ -30,7 +30,7 @@ Register_Class(nrr1);
 
 bool *nrr1::get_decision(cMessage *in){//check this function
     bool *decision;
-    int gsize = __get_outer_interfaces();
+    int gsize = get_outer_interfaces();
     decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
     ccn_interest *interest;
@@ -42,7 +42,7 @@ bool *nrr1::get_decision(cMessage *in){//check this function
 	if (interest->getNfound()){
 	    decision = exploit_nearest(interest);
 	}else if (interest->getHops() >= dyn_TTL){
-	    int gsize = __get_outer_interfaces();
+	    int gsize = get_outer_interfaces();
 	    decision = new bool[gsize];
 	    std::fill(decision,decision+gsize,0);
 	}else {
@@ -63,7 +63,7 @@ bool *nrr1::explore(ccn_interest *interest){
         gsize;
     bool *decision;
 
-    gsize = __get_outer_interfaces();
+    gsize = get_outer_interfaces();
     arrival_gate = interest->getArrivalGate()->getIndex();
     decision = new bool[gsize];
 
@@ -89,7 +89,7 @@ bool *nrr1::exploit(ccn_interest *interest){
 	gsize,
 	target;
 
-    gsize = __get_outer_interfaces();
+    gsize = get_outer_interfaces();
     target = interest->getTarget();
 
     if (interest->getTarget() == getIndex()){//failure
@@ -116,7 +116,7 @@ bool *nrr1::exploit_nearest(ccn_interest *interest){
         outif,
         gsize;
 
-    gsize = __get_outer_interfaces();
+    gsize = get_outer_interfaces();
 
     vector<int> repos = interest->get_repos();
     repository = nearest(repos);

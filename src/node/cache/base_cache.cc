@@ -48,6 +48,21 @@
 #include "ccnsim.h"
 
 
+cache_item_descriptor::cache_item_descriptor()
+{
+	price_ = -1;
+}
+
+cache_item_descriptor::cache_item_descriptor(chunk_t chunk_id)
+{
+	k = chunk_id; price_ = -1;
+}
+cache_item_descriptor::cache_item_descriptor(chunk_t chunk_id, double price)
+{
+	k = chunk_id; price_ = price;
+}
+
+
 //Initialization function
 void base_cache::initialize()
 {
@@ -183,29 +198,31 @@ void base_cache::initialize_cache_slots()
 
 
 //<aa>
-void base_cache::insert_into_cache(chunk_t chunk_id, 
-			cache_item_descriptor* descr, unsigned storage_space)
+void base_cache::insert_into_cache(cache_item_descriptor* descr)
 {
+	chunk_t chunk_id = descr->k;
+	unsigned required_storage = content_distribution::get_storage_space_of_chunk(chunk_id);
 	// All chunks must be indexed only based on object_id, chunk_number
 	__srepresentation_mask(chunk_id, 0x0000);
 
 	#ifdef SEVERE_DEBUG
+		check_if_correct();
 		unordered_map<chunk_t,cache_item_descriptor *>::iterator it =
 				find_in_cache(chunk_id);
-		if (it != end_of_cache() &&
-			__representation_mask(it->second->k) >= __representation_mask(descr->k)
-		){
+		if ( it != end_of_cache() )
+		{
 			std::stringstream ermsg; 
-			ermsg<<"Representation "<< (__representation_mask(it->second->k) )<< "was already present, and you are "<<
-				"trying to insert a lower representation "<<(__representation_mask(descr->k) )<<". This is forbidden"<<endl;
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		
+			ermsg<<"Representation "<< (__representation_mask(it->second->k) )<< "was already present, and "<<
+				"you are trying to insert another representation "<<(__representation_mask(descr->k) )<<
+				". This is forbidden"<<endl;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );		
 		}
 
 		ccn_data::check_representation_mask(descr->k);
 	#endif
 
-	update_occupied_slots(storage_space);
+	update_occupied_slots( required_storage );
+
     cache[chunk_id] = descr;
 }
 
@@ -494,10 +511,95 @@ const DecisionPolicy* base_cache::get_decisor(){
 	return decisor;
 }
 
+//{ DEPRECATED FUNCTIONS
+double base_cache::get_cache_value()
+{
+	severe_error(__FILE__,__LINE__,"Method get_cache_value() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it.");
+	return -1;
+}
+double base_cache::get_average_price()
+{
+	severe_error(__FILE__,__LINE__,"Method get_average_price() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it.");
+	return -1;
+}
+
+int base_cache::get_size()
+{
+	if( content_distribution::get_number_of_representations() != 1 )
+	{
+		std::stringstream ermsg; 
+		ermsg<<"This function cannot be used if more than one representation per content is considered"<<
+			". Use get_slots() directly in all the other cases.";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	return get_slots(); 
+}
+//} DEPRECATED FUNCTIONS
+
+
 #ifdef SEVERE_DEBUG
 bool base_cache::is_initialized()
 {
 	return initialized;
+}
+
+
+void base_cache::store (cMessage *)
+{
+	std::stringstream ermsg; 
+	ermsg<<"In this version of ccnSim this method does not exist anymore."<<
+		" You can directly call data_store";
+	severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+}
+
+bool base_cache::lookup(chunk_t)
+{
+	std::stringstream ermsg; 
+	ermsg<<"In this version of ccnSim the function lookup has been renamed in handle_interest(..)";
+	severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	return false;
+}
+
+const char* base_cache::get_cache_content()
+{
+	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
+	std::stringstream content_str;
+	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
+	{
+		content_str << __id(it->second->k)<<"("<<
+				content_distribution::get_representation_number(it->second->k)<<"):";
+	}
+	return content_str.str().c_str();
+}
+
+void base_cache::check_if_correct()
+{
+	unsigned num_of_repr = content_distribution::get_number_of_representations();
+	unsigned* breakdown = (unsigned*)calloc(num_of_repr, sizeof(unsigned) );
+	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
+	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
+	{
+		chunk_t chunk_id = it->second->k;
+	    breakdown[content_distribution::get_representation_number(chunk_id)-1]++;
+	}
+
+	std::stringstream breakdown_str;
+	for (unsigned i = 0; i < num_of_repr; i++)
+		breakdown_str << breakdown[i]<<":";
+
+
+	unsigned occupied_slots_tmp = 0;
+	for (unsigned i = 0; i < num_of_repr; i++)
+		occupied_slots_tmp += breakdown[i] * content_distribution::get_storage_space_of_representation(i+1);
+	if (occupied_slots_tmp != occupied_slots || occupied_slots > get_slots() )
+	{
+		std::stringstream ermsg; 
+		ermsg<<"error in the computation of the occupied slots. occupied_slots_tmp="<<occupied_slots_tmp<<
+			"; occupied_slots="<<occupied_slots <<"; get_slots()="<<get_slots()<<"; breakdown_str="<<
+			breakdown_str.str()<< "; content_str="<<get_cache_content();
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	free(breakdown);
 }
 #endif
 //</aa>

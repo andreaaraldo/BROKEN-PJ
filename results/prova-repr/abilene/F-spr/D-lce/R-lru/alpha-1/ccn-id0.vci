@@ -1,0 +1,72 @@
+file 33691 1435341626                                           
+version 2
+run General-0-20150626-20:00:25-14930
+attr D lce
+attr F spr
+attr R lru
+attr a 1
+attr configname General
+attr datetime 20150626-20:00:25
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=abilene, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=lru, $window=60, $variance=0.05, $mytime=1800"
+attr iterationvars2 "$net=abilene, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=lru, $window=60, $variance=0.05, $mytime=1800, $repetition=0"
+attr measurement "$net=abilene, $rep=0, $a=1, $F=spr, $ttl=1000, $D=lce, $R=lru, $window=60, $variance=0.05, $mytime=1800"
+attr mytime 1800
+attr net abilene
+attr network networks.${net=abilene}_network
+attr processid 14930
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+attr ttl 1000
+attr variance 0.05
+attr window 60
+
+vector 0  abilene_network.node[0].content_store  hit_node[0]  ETV
+0	903 1321 376965 376965 1 76 76 0 0.59354838709677 -nan -nan
+vector 1  abilene_network.node[1].content_store  hit_node[1]  ETV
+1	2290 1528 376965 376965 1 76 76 0 0.47798742138365 3.3192029720055 0.64311981843923
+vector 2  abilene_network.node[2].content_store  hit_node[2]  ETV
+2	3884 1459 376965 376965 1 76 76 0 0.40730337078652 2.1242541613599 0.33434890908773
+vector 3  abilene_network.node[3].content_store  hit_node[3]  ETV
+3	5409 1405 376965 376965 1 76 76 0 0.33823529411765 1.441940720104 0.20373875026871
+vector 4  abilene_network.node[4].content_store  hit_node[4]  ETV
+4	6880 1450 376965 376965 1 76 76 0 0.26984126984127 1.5921768076474 0.18160308754897
+vector 5  abilene_network.node[5].content_store  hit_node[5]  ETV
+5	8396 1762 376965 376965 1 76 76 0 0.29268292682927 2.4817692714303 0.24170730401908
+vector 6  abilene_network.node[6].content_store  hit_node[6]  ETV
+6	10224 1475 376965 376965 1 76 76 0 0.38753387533875 2.5003863440964 0.34441499490763
+vector 7  abilene_network.node[7].content_store  hit_node[7]  ETV
+7	11765 1494 376965 376965 1 76 76 0 0.38907849829352 3.044600784839 0.48549487209207
+vector 8  abilene_network.node[8].content_store  hit_node[8]  ETV
+8	13325 1374 376965 376965 1 76 76 0 0.52674897119342 3.8274027182581 0.85985142451344
+vector 9  abilene_network.node[9].content_store  hit_node[9]  ETV
+9	14765 1278 376965 376965 1 76 76 0 0.70707070707071 3.1741392661234 0.98001326063705
+vector 10  abilene_network.node[10].content_store  hit_node[10]  ETV
+10	16112 1394 376965 376965 1 76 76 0 0.66480446927374 -nan -nan
+vector 11  abilene_network.client[0]  hdistance[0].real  ETV
+11	17567 1476 376965 376965 1 76 76 0 6 403.77240711518 2254.3998672571
+vector 12  abilene_network.client[1]  hdistance[1].real  ETV
+12	19104 1397 376965 376965 1 76 76 0 5 337.30709779768 1590.3587914943
+vector 13  abilene_network.client[2]  hdistance[2].real  ETV
+13	20562 1379 376965 376965 1 76 76 0 4 280.82589715959 1068.2611476345
+vector 14  abilene_network.client[3]  hdistance[3].real  ETV
+14	22002 1411 376965 376965 1 76 76 0 3 212.11774627774 607.44637102749
+vector 15  abilene_network.client[4]  hdistance[4].real  ETV
+15	23474 1377 376965 376965 1 76 76 0 2 138.32651372004 262.44913044794
+vector 16  abilene_network.client[5]  hdistance[5].real  ETV
+16	24912 1448 376965 376965 1 76 76 0 1 67.133198848795 64.156982684796
+vector 17  abilene_network.client[6]  hdistance[6].real  ETV
+17	26421 1383 376965 376965 1 76 76 0 2 133.69398119437 249.34989899078
+vector 18  abilene_network.client[7]  hdistance[7].real  ETV
+18	27865 1354 376965 376965 1 76 76 0 3 206.49733823676 586.33865103621
+vector 19  abilene_network.client[8]  hdistance[8].real  ETV
+19	29280 1463 376965 376965 1 76 76 0 4 266.07101166305 983.05698466258
+vector 20  abilene_network.client[9]  hdistance[9].real  ETV
+20	30804 1413 376965 376965 1 76 76 0.82323232323232 5 347.4422826263 1632.9361192644
+vector 21  abilene_network.client[10]  hdistance[10].real  ETV
+21	32280 1411 376965 376965 1 76 76 0 6 407.78436839273 2289.6215105884

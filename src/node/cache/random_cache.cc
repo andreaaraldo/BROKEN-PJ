@@ -51,7 +51,7 @@ bool random_cache::data_store(ccn_data* data_msg)
 
 	unsigned storage = 1; //how many slots each chunk occupies
 
-    insert_into_cache(chunk, NULL, storage);
+    insert_into_cache( new cache_item_descriptor(chunk) );
     if ( get_occupied_slots() == get_slots() ){
         //Replacing a random element
         unsigned int pos = intrand(  deq.size() );
@@ -74,12 +74,11 @@ bool random_cache::warmup(){
     int k = getIndex();
     uint64_t chunk=0;
 
-	unsigned storage = 1; //How many slots a chunk requires
     cout<<"Starting warmup..."<<endl;
     for (int i = k*C+1; i<=(k+1)*C; i++)
 	{
 		__sid(chunk,i);
-		insert_into_cache(chunk, NULL, storage);
+		insert_into_cache( new cache_item_descriptor(chunk) );
 		//cout<<"cache index "<<k<<" storing "<<i<<endl;
 		//deq.push_back(chunk);
     }

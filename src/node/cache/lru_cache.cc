@@ -77,77 +77,87 @@ void lru_cache::shrink()
 		while (get_occupied_slots()  > get_slots() )
 		{
 		    //if the cache is full, delete the last element
-		    //
-		    chunk_t evicted_chunk_id = lru_->k;
-
-			//<aa>
-			// All chunks must be indexed only based on object_id, chunk_number
-			chunk_t evicted_chunk_id_without_representation_mask = evicted_chunk_id;
-			__srepresentation_mask(evicted_chunk_id_without_representation_mask, 0x0000);
-			//</aa>
-
-		    cache_item_descriptor *tmp = lru_;
-		    lru_ = tmp->newer;//the new lru is the element before the least recently used
-
-		    lru_->older = 0; //as it is still in memory for a while set the actual lru point to null (CHECK this)
-		    tmp->older = 0;
-		    tmp->newer = 0;
-
-		    free(tmp);
-		    remove_from_cache(evicted_chunk_id_without_representation_mask,
-				content_distribution::get_storage_space_of_chunk(evicted_chunk_id) );
+			remove_from_cache(lru_);
 		}
+		#ifdef SEVERE_DEBUG
+		check_if_correct();
+		#endif
 }
+
+//<aa>
+void lru_cache::remove_from_cache(chunk_t chunk_id, unsigned storage_space)
+{
+	severe_error(__FILE__,__LINE__,"remove_from_cache(chunk_t, unsigned) cannot be called on lru_cache. Use remove_from_cache(cache_item_descriptor*) instead.");
+}
+
+void lru_cache::insert_into_cache(cache_item_descriptor* p)
+{
+	// {DESCRIPTOR UPDATE
+	p->hit_time = simTime();
+	p->newer = 0;
+	p->older = 0;
+
+	// The cache is empty. Add just one element if it fits into the cache space. 
+	// The mru and lru element are the same
+	if ( is_it_empty() )
+	{
+		lru_ = p;
+		mru_ = p;
+	}else{
+		//The cache is not empty. The new element is the newest. Add it in the front
+		//of the list
+		p->older = mru_; // mru swaps in second position (in terms of utilization rank)
+		mru_->newer = p; // update the newer element for the secon newest element
+		mru_ = p; //update the mru (which becomes that just inserted)
+	}
+	// }DESCRIPTOR UPDATE
+	base_cache::insert_into_cache(p); 
+}
+
+void lru_cache::remove_from_cache(cache_item_descriptor* descr)
+{
+	cache_item_descriptor* newer = descr->newer;
+	cache_item_descriptor* older = descr->older;
+
+	if (older!=NULL)
+	{	// the evicted object was not the lru. Therefore exists an older object
+		// that we must update
+		older->newer = newer;
+	}
+
+	if (newer!=NULL)
+	{	// the evicted object was not the mru. Therefore exists a newer object
+		// that we must update
+		newer->older = older;
+	}
+
+	if (older == NULL)
+		lru_=newer;
+	if (newer == NULL)
+		mru_=older;
+
+    base_cache::remove_from_cache(descr->k, content_distribution::get_storage_space_of_chunk(descr->k));
+	free(descr);
+}
+//</aa>
 
 bool lru_cache::data_store(ccn_data* data_msg)
 {
 	bool accept_new_chunk = base_cache::data_store(data_msg);
 	chunk_t chunk_id = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
+		check_if_correct();
 		ccn_data::check_representation_mask(chunk_id);
 	#endif
 
 	if (accept_new_chunk)
 	{
-		unsigned storage_space_required_by_new_chunk = 
-				content_distribution::get_storage_space_of_chunk(chunk_id);
-
 		cache_item_descriptor* old = data_lookup_receiving_data(chunk_id);
 		if (old == NULL)
 		{
 			// There is no chunk already stored that can replace the incoming one.
 			// We need to store the incoming one.
-
-			// {DESCRIPTOR UPDATE
-				cache_item_descriptor *p = new cache_item_descriptor();//position for the new element
-										//<aa> i.e. datastructure for the new element </aa>
-				p->k = chunk_id;// <aa> We store the complete chunk_id because we need to check the 
-								// 		representation_mask later, when a request arrives
-								// </aa>
-
-
-				p->hit_time = simTime();
-				p->newer = 0;
-				p->older = 0;
-				p->price_ = data_msg->getPrice();
-
-				// The cache is empty. Add just one element if it fits into the cache space. 
-				// The mru and lru element are the same
-				if ( is_it_empty() )
-				{
-					lru_ = p;
-					mru_ = p;
-				}else{
-					//The cache is not empty. The new element is the newest. Add it in the front
-					//of the list
-					p->older = mru_; // mru swaps in second position (in terms of utilization rank)
-					mru_->newer = p; // update the newer element for the secon newest element
-					mru_ = p; //update the mru (which becomes that just inserted)
-				}
-			// }DESCRIPTOR UPDATE
-
-			// Phisically insert the new chunk into the cache
-			insert_into_cache(chunk_id, p, storage_space_required_by_new_chunk); 
+			insert_into_cache(new cache_item_descriptor(chunk_id, data_msg->getPrice() )  );
 			shrink();
 		} else 
 		{
@@ -220,12 +230,15 @@ cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 
     if (pos_elem == NULL)
 	{
-		//if not found return false and do nothing
+		// No chunk with the same [object_id, chunk_num] has been found
 		return NULL;
     }else{
+		// A chunk with the same [object_id, chunk_num] has been found. I put it at the head of
+		// the list
 		//{ UPDATE DESCRIPTOR
 			// If content matched, update the position
-			if (pos_elem->older && pos_elem->newer){
+			if (pos_elem->older && pos_elem->newer)
+			{
 				//if the element is in the middle remove the element from the list
 				pos_elem->newer->older = pos_elem->older;
 				pos_elem->older->newer = pos_elem->newer;
@@ -238,8 +251,7 @@ cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 				get_lru()->older = 0;
 			}
 
-
-			//Place the elements as in front of the position list (it's the newest one)
+			//Place the elements in front of the position list (it's the newest one)
 			pos_elem->older = get_mru();
 			pos_elem->newer = 0;
 			get_mru()->newer = pos_elem;
@@ -252,14 +264,27 @@ cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 	}
 }
 
-
-void lru_cache::dump(){
-    cache_item_descriptor *it = get_mru();
-    int p = 1;
-    while (it){
-	cout<<p++<<" ]"<< __id(it->k)<<"/"<<__chunk(it->k)<<endl;
-	it = it->older;
+const char* lru_cache::get_cache_content()
+{
+	std::stringstream content_str;
+	cache_item_descriptor *it = get_mru();
+    while (it)
+	{
+		content_str<< __id(it->k)<<":"<<__chunk(it->k)<<":"<<__representation_mask(it->k)<<", ";
+		it = it->older;
     }
+	if (it!= NULL)
+	{
+		std::stringstream ermsg; 
+		ermsg<<"cache content is already "<<content_str.str().c_str();
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	return content_str.str().c_str();
+}
+
+void lru_cache::dump()
+{
+	cout<<get_cache_content()<<endl;
 }
 
 //<aa>
@@ -329,6 +354,28 @@ void lru_cache::dump(){
 		return average_price;
 	}
 	//</aa>
-
-
 // }STATISTICS
+
+#ifdef SEVERE_DEBUG
+void lru_cache::check_if_correct()
+{
+	base_cache::check_if_correct();
+	unordered_map<chunk_t, unsigned> cache_counter; //counts how many representations are stored per
+													// each chunk
+	cache_item_descriptor *it = get_mru();
+    while (it)
+	{
+		chunk_t chunk_id = it->k;
+		__srepresentation_mask(chunk_id, 0x0000);
+		cache_counter[chunk_id]++;
+		if (cache_counter[chunk_id]>1)
+		{
+			std::stringstream ermsg; 
+			ermsg<<"The chunk "<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<" has been stored more than once"
+				<<". Cache content is "<<get_cache_content();
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		it = it->older;
+    }
+}
+#endif

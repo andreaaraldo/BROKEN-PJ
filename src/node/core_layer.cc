@@ -109,11 +109,6 @@ void  core_layer::initialize()
 			else
 				is_face_to_client[i] = false;
 		}
-
-		cout<<"ciao ";
-		for (unsigned i = 0; i < face_cardinality; i++)
-			cout<< is_face_to_client[i]<<":";
-		cout << endl;
 	//} RETRIEVE CLIENT INTERFACES
 	//</aa>
 
@@ -316,9 +311,8 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
     chunk_t chunk_id_to_deliver = 0;
 	cache_item_descriptor* cache_item = NULL;
-	cout << "ciao: core_layer: I received an interest from interface "<<int_msg->getArrivalGate()->getIndex()<<endl;
-  if ( (cache_item = ContentStore->handle_interest(chunk) ) != NULL )
-  {
+	if ( (cache_item = ContentStore->handle_interest(chunk) ) != NULL )
+	{
        // A corresponding item has been found in cache
 		chunk_id_to_deliver = cache_item->k;
 		ccn_data* data_msg = compose_data( chunk_id_to_deliver );
@@ -342,7 +336,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
         #endif
         //</aa>
 
-    } else if ( repository!=NULL && (chunk_id_to_deliver = repository->handle_interest(int_msg ) ) )
+	} else if ( repository!=NULL && (chunk_id_to_deliver = repository->handle_interest(int_msg ) ) )
 	{	
 			//
 			//b) Look locally (only if you own a repository)
@@ -503,16 +497,21 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
     if (my_btw > interest->getBtw())
 		interest->setBtw(my_btw);
 
-    for (unsigned i = 0; i < face_cardinality; i++)
+	// <aa> face_cardinality is the number of faces of core_layer while node_face_cardinality
+	// is the number of faces of the node that contains this core_layer. Each core_layer face is attached
+	// to a node face except the 1st, that is attached to the proative component
+	// </aa>
+    for (unsigned i = 1; i < face_cardinality; i++)
 	{
 		//<aa>
 		#ifdef SEVERE_DEBUG
-			if (decision[i] == true && is_face_to_client[i] )
+			if (decision[i-1] == true && is_face_to_client[i] )
 			{
+				chunk_t chunk_id = interest->getChunk();
 				std::stringstream msg; 
-				msg<<"I am node "<< getIndex()<<" and the interface supposed to give"<<
-					" access to chunk "<< interest->getChunk() <<" is "<<i
-					<<". This is impossible "<<
+				msg<<"I am node "<< getIndex()<<" and the node interface supposed to give"<<
+					" access to chunk "<< __id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id) <<
+					" is "<<i<<". This is impossible "<<
 					" since that interface is to reach a client and you cannot access"
 					<< " a content from a client ";
 				severe_error(__FILE__, __LINE__, msg.str().c_str() );
@@ -520,10 +519,9 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 		#endif
 		//</aa>
 
-		if (decision[i] == true && !is_face_to_client[i]
+		if (decision[i-1] == true && !is_face_to_client[i]
 			//&& interest->getArrivalGate()->getIndex() != i
 		){
-			cout <<"ciao: core_layer: sending interest to interface "<<i<<endl;
 			sendDelayed(interest->dup(),interest->getDelay(),"face$o",i);
 			#ifdef SEVERE_DEBUG
 				interest_has_been_forwarded = true;
@@ -738,14 +736,19 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 	client* core_layer::get_client_attached_to_core_layer_interface(int interface)
 	{
 		client *c;
-		if (interface == 0) 
-		{
-			// Interface 0 of core layer is always connected to the proactive component
-			c = dynamic_cast<client *> ( gate("face$o",interface)->getNextGate()->getOwnerModule() );
-		}else
-			// Interface 1 is connected to the node border interface 0, 2 with 1 and so on ...
-			c = dynamic_cast<client *>
-						(getParentModule()->gate("face$o",interface)->getNextGate()->getOwnerModule());
+		cModule* directly_connected_module = gate("face$o",interface)->getNextGate()->getOwnerModule();
+		cModule* module_to_check;
+		if (directly_connected_module == getParentModule() && 
+			cModuleType::find("modules.node.node") == getParentModule()->getModuleType() 
+		){
+			// directly_connected_module is the node that contains this core_layer
+			module_to_check = gate("face$o",interface)->getNextGate()->getNextGate()->getOwnerModule();
+			c = (module_to_check->getModuleType()== cModuleType::find("modules.clients.client") )?
+				dynamic_cast<client *> (module_to_check) : NULL;
+		} else if (directly_connected_module->getModuleType() == cModuleType::find("modules.clients.ProactiveComponent") )
+			c = dynamic_cast<client *> (directly_connected_module);
+		else
+			severe_error(__FILE__,__LINE__,"error in recognizing modules attached to faces");
 		return c;
 	}
 #endif

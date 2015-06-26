@@ -46,7 +46,7 @@ bool *random_repository::exploit(ccn_interest *interest){
 	outif,
 	gsize;
 
-    gsize = __get_outer_interfaces(); //<aa> number of gates</aa>
+    gsize = get_outer_interfaces(); //<aa> number of gates</aa>
 
     //if (interest->getRep_target == ccn_interest_Base.UNDEFINED_VALUE)
 	if(1)

@@ -63,12 +63,16 @@ class lru_cache:public base_cache{
 		cache_item_descriptor* get_lru();
 		const cache_item_descriptor* get_eviction_candidate();
 		bool is_it_empty() const;
+		virtual const char* get_cache_content(); // Print the cache content from the mru to the lru
+		
+		#ifdef SEVERE_DEBUG
+		virtual void check_if_correct();
+		#endif
 		//</aa>
 	
 		double get_cache_value();	//<aa> It gives an indication of the cost of objects stored 
 									// in the cache. </aa>
 		double get_average_price();
-
 		
 
     protected:		
@@ -81,6 +85,9 @@ class lru_cache:public base_cache{
 		void set_mru(cache_item_descriptor* new_mru);
 		void set_lru(cache_item_descriptor* new_lru);
 		virtual void shrink();
+		virtual void remove_from_cache(chunk_t chunk_id, unsigned storage_space); //deprecated
+		virtual void insert_into_cache(cache_item_descriptor* descr);
+		virtual void remove_from_cache(cache_item_descriptor* descr);
 		//</aa>
 
 		void dump();

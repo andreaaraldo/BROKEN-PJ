@@ -44,7 +44,7 @@ bool two_cache::data_store(ccn_data* data_msg)
 	#endif
 
    unsigned storage = 1; //How many slots a chunk requires
-   insert_into_cache(chunk, NULL, storage);
+   insert_into_cache( new cache_item_descriptor(chunk) ) ;
 
    if (deq.size() == (unsigned)get_size())
 	{

@@ -65,10 +65,12 @@ void statistics::initialize(){
     vector<string> clients_vec(1,"modules.clients.client");
     topo.extractByNedTypeName(clients_vec);
     int k = 0;
-    for (int i = 0;i<topo.getNumNodes();i++){
+    for (int i = 0;i<topo.getNumNodes();i++)
+	{
 		    int c = ((client *)topo.getNode(i)->getModule())->getNodeIndex();
 		if ( find (content_distribution::clients, content_distribution::clients + num_clients, c) 
-			!= content_distribution::clients + num_clients)  {
+			!= content_distribution::clients + num_clients
+		){
 			clients[k++] = (client *)topo.getNode(i)->getModule();
 		}
     }
@@ -283,7 +285,8 @@ void statistics::finish(){
     sprintf ( name, "data" );
     recordScalar(name,global_data * 1./num_nodes);
 
-    for (int i = 0;i<num_clients;i++){
+    for (int i = 0;i<num_clients;i++)
+	{
 		global_avg_distance += clients[i]->get_avg_distance();
 		global_tot_downloads += clients[i]->get_tot_downloads();
 		global_avg_time  += clients[i]->get_avg_time();
