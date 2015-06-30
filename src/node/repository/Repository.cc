@@ -69,7 +69,7 @@ chunk_t Repository::handle_interest(ccn_interest* int_msg)
 	chunk_t chunk_to_deliver = 0;
 
 	#ifdef SEVERE_DEBUG
-		content_distribution::get_repr_h()->check_representation_mask(chunk_id_to_deliver, CCN_I );
+		content_distribution::get_repr_h()->check_representation_mask(int_msg->getChunk(), CCN_I );
 	#endif
 
 
@@ -79,18 +79,23 @@ chunk_t Repository::handle_interest(ccn_interest* int_msg)
 		// This repo contains the object
 		repo_load++;
 
-		representation_mask_t available = 0xFFFF; 	// By definition, a repository contains 
-													//all the representations of the served objects
+		// By definition, a repository contains all the possible representations of the served objects
+		representation_mask_t available = (	0xFFFF);
 		representation_mask_t representation_mask = representation_selector.select(
 										int_msg->get_representation_mask(), available);
-		if (representation_mask != 0)
-		{
-			chunk_to_deliver = int_msg->getChunk();
-			__srepresentation_mask(chunk_to_deliver, representation_mask);
 
-			if (representation_mask > 2)
-				cout<<"ciao: Repository: delivering repr mask "<<representation_mask<<endl;
-		}			
+		#ifdef SEVERE_DEBUG
+		if (representation_mask == 0)
+		{
+			std::stringstream ermsg;
+			ermsg<<"The interest "<< __id(int_msg->getChunk() )<< ":"<< __chunk(int_msg->getChunk() )<<":"<<
+				__representation_mask(int_msg->getChunk() )<< " arrived to the repo is not correct";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+		
+		chunk_to_deliver = int_msg->getChunk();
+		__srepresentation_mask(chunk_to_deliver, representation_mask);
 	}
 	return chunk_to_deliver;
 }

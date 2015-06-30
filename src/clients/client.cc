@@ -281,9 +281,10 @@ void client::request_file()
 
     name_t object_id = content_distribution::zipf.value(dblrand());
 	cnumber_t chunk_num = 0;
-	representation_mask_t repr_mask = 0xFFFF;	// We fill the representation mask with all 1s, meaning that,
-												// when the client requests some object, it accepts
-												// all the possible representations
+	representation_mask_t repr_mask = content_distribution::get_repr_h()->get_possible_representation_mask();
+
+	// We fill the representation mask with all 1s, meaning that, when the client requests some object, it accepts
+	// all the possible representations
 	request_specific_chunk(object_id, chunk_num, repr_mask);
 }
 

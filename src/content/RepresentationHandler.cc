@@ -53,6 +53,7 @@ RepresentationHandler::RepresentationHandler(const char* bitrates)
 
 	possible_representation_mask = ( (0xFFFF << get_number_of_representations() ) & 0xFFFF);
 	possible_representation_mask = (~possible_representation_mask);
+	cout <<"ciao, possible_representation_mask="<<possible_representation_mask<<endl;
 
 	//{ CHECK INPUT
 	unsigned storage_temp = get_storage_space_of_representation(1);
@@ -66,7 +67,7 @@ RepresentationHandler::RepresentationHandler(const char* bitrates)
 	//} CHECK INPUT
 }
 
-const representation_mask RepresentationHandler::get_possible_representation_mask() const
+const representation_mask_t RepresentationHandler::get_possible_representation_mask() const
 {
 	return possible_representation_mask;
 }

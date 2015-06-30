@@ -60,10 +60,7 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_interest(chunk_t re
 				cnumber_t chunk_num = __chunk(requested_chunk_id);
 				proactive_component->request_specific_chunk_from_another_class(
 											object_id, chunk_num, improving_mask);
-
-				cout<<"ciao: lru_repr_cache: improving_mask "<<improving_mask<<endl;
-			}else
-				cout<<"ciao: lru_repr_cache: improving_mask zero "<<improving_mask<<endl;
+			}
 		}
 	}
 	return stored;

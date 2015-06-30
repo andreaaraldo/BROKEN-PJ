@@ -66,7 +66,7 @@ class RepresentationSelectorLowest: public RepresentationSelector
 				filter = filter<<1;
 				i++;
 			}
-			if (i <= content_distribution::get_repr_h()->get_number_of_representations() )
+			if (i < content_distribution::get_repr_h()->get_number_of_representations() )
 			{
 				return filter;
 			}
