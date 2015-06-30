@@ -54,7 +54,7 @@ bool *random_repository::exploit(ccn_interest *interest){
 		severe_error(__FILE__, __LINE__, "Leva il fatto dell'1");
     	//<aa> Get all the repositories that store the content demanded by the
     	// interest </aa>
-		vector<int> repos = interest->get_repos();
+		vector<int> repos = content_distribution::get_repo_vector (__id(interest->getChunk() )) ;
 		
 		//<aa> Choose one of them </aa>
 		repository = random(repos);

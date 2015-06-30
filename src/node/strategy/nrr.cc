@@ -130,7 +130,7 @@ bool *nrr::exploit(ccn_interest *interest){
 		vector<Centry>::iterator it = 
 			std::find_if (cfib.begin(),cfib.end(),lookup(interest->getChunk()) );
 
-		vector<int> repos = interest->get_repos();
+		vector<int> repos = content_distribution::get_repo_vector (__id(interest->getChunk() )) ;
 		repository = nearest(repos);
 
 		//<aa>
@@ -264,7 +264,7 @@ bool *nrr::exploit(ccn_interest *interest){
 	//<aa>
 	else if (interest->getTarget() == getIndex() )
 	{
-		vector<int> repos = interest->get_repos();
+		vector<int> repos = content_distribution::get_repo_vector (__id(interest->getChunk() )) ;
 		repository = nearest(repos);
 		const int_f FIB_entry = get_FIB_entry(repository);
 

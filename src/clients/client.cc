@@ -160,7 +160,7 @@ int client::getNodeIndex(){
 //Output average local statistics
 void client::finish()
 {
-	auto sum = avg_distance + tot_downloads + avg_time;
+	double sum = avg_distance + tot_downloads + avg_time.dbl();
 	#ifdef SEVERE_DEBUG
 	sum += interests_sent;
 	#endif
@@ -243,8 +243,10 @@ void client::handle_timers(cMessage *timer){
 					//</aa>
 			
 					//resend the request for the given chunk
-					cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<")************"<<endl;
-					cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< __size(i->first) 
+					cout<<getIndex()<<"]**********Client timer hitting ("<<simTime()-i->second.last<<
+						")************"<<endl;
+					cout<<i->first<<"(while waiting for chunk n. "<<i->second.chunk << ",of a file of "<< 
+						content_distribution::get_num_of_chunks( __id(i->first) ) 
 						<<" chunks at "<<simTime()<<")"<<endl;
 					resend_interest(i->first,i->second.chunk, i->second.repr_mask, -1);
 				}
@@ -363,15 +365,16 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 {
     name_t object_id      = data_message -> get_object_id();
     cnumber_t chunk_num = data_message -> get_chunk_num();
-	representation_mask_t repr_mask = data_message->get_representation_mask();
-    filesize_t size      = data_message -> get_size();
+	representation_mask_t repr_mask = __representation_mask(data_message->getChunk() );
+    filesize_t size      = content_distribution::get_num_of_chunks( __id(data_message->getChunk() ) );
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
 		if ( !is_waiting_for(object_id) )
 		{
 			std::stringstream ermsg; 
-			ermsg<<"Client of type "<< getModuleType() <<" attached to node "<< getNodeIndex() <<" is receiving object "
+			ermsg<<"Client of type "<< getModuleType() <<" attached to node "<< getNodeIndex() <<
+				" is receiving object "
 				<<object_id<<" but it is not waiting for it" <<endl;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
@@ -433,7 +436,7 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 			#endif
 
             it->second.chunk++;
-            if (it->second.chunk< __size(object_id) )
+            if (it->second.chunk< content_distribution::get_num_of_chunks(object_id) )
 			{ 
 		    	it->second.last = simTime();
 		    	//if the file is not yet completed send the next interest

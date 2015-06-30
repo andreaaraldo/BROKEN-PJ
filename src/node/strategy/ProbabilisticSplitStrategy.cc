@@ -140,7 +140,7 @@ int ProbabilisticSplitStrategy::decide_target_repository(ccn_interest *interest)
     {
     	// Get all the repositories that store the content demanded by the
     	// interest
-		vector<int> repos = interest->get_repos();
+		vector<int> repos = content_distribution::get_repo_vector (__id(interest->getChunk() )) ;
 		
 		// Choose one of them
 		repository = repos[intrand(repos.size())];

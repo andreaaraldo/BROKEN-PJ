@@ -36,6 +36,7 @@
 #include "error_handling.h"
 #include "repository/Repository.h"
 #include "PIT.h"
+#include "RepresentationHandler.h"
 //</aa>
 
 Register_Class(core_layer);
@@ -534,7 +535,6 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 		{
 			int affirmative_decision_from_arrival_gate = 0;
 			int affirmative_decision_from_client = 0;
-			int last_affermative_decision = -1;
 
 			for (unsigned i = 0; i < face_cardinality; i++)
 			{
@@ -542,26 +542,15 @@ void core_layer::handle_decision(bool* decision,ccn_interest *interest){
 				{
 					if ( is_face_to_client[i] ){
 						affirmative_decision_from_client++;
-						last_affermative_decision = i;
 					}
 					if ( (unsigned)interest->getArrivalGate()->getIndex() == i ){
 						affirmative_decision_from_arrival_gate++;
-						last_affermative_decision = i;
 					}
 				}
 			}
 			std::stringstream msg; 
 			msg<<"I am node "<< getIndex()<<" and interest for chunk "<<
-				interest->getChunk()<<" has not been forwarded. "<<
-				". One of the possible repositories of this chunk is "<< 
-				interest->get_repos()[0] <<" and the target of the interest is "<<
-				interest->getTarget() <<
-				". affirmative_decision_for_client = "<<
-				affirmative_decision_from_client<<
-				". affirmative_decision_for_arrival_gate = "<<
-				affirmative_decision_from_arrival_gate<<
-				". I would have sent the interest to interface "<<
-				last_affermative_decision;
+				interest->getChunk()<<" has not been forwarded. ";
 			severe_error(__FILE__, __LINE__, msg.str().c_str() );
 		}
 	#endif
@@ -583,13 +572,13 @@ bool core_layer::check_ownership(vector<int> repositories){
 ccn_data* core_layer::compose_data(chunk_t chunk_id)
 {
     ccn_data* data = new ccn_data("data",CCN_D);
-	data->setMegabyteLength( content_distribution::get_storage_space_of_chunk(chunk_id) );
+	data->setMegabyteLength( content_distribution::get_repr_h()->get_storage_space_of_chunk(chunk_id) );
     data -> setChunk (chunk_id);
     data -> setHops(0);
     data->setTimestamp(simTime());
 
 	#ifdef SEVERE_DEBUG
-		ccn_data::check_representation_mask(chunk_id);
+		content_distribution::get_repr_h()->check_representation_mask(chunk_id);
 	#endif
     return data;
 }
@@ -720,7 +709,7 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 			}
 		}
 
-		ccn_data::check_representation_mask(msg->getChunk() );
+		content_distribution::get_repr_h()->check_representation_mask(msg->getChunk() );
 		#endif
 	//}CHECKS
 

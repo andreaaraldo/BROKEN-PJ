@@ -56,7 +56,7 @@ bool *spr::exploit(ccn_interest *interest){
 
     gsize = get_outer_interfaces();
 
-    vector<int> repos = interest->get_repos();
+    vector<int> repos = content_distribution::get_repo_vector (__id(interest->getChunk() )) ;
     repository = nearest(repos);
 
 	//<aa>

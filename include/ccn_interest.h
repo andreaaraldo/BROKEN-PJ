@@ -76,39 +76,6 @@ public:
 	virtual name_t get_object_id(){return __id(chunk_var);}
 	virtual name_t get_chunk_number(){return __chunk(chunk_var);}
 	virtual name_t get_representation_mask(){return __representation_mask(chunk_var);}
-
-
-	virtual vector<int> get_repos()
-	{
-	    repo_t repo;
-	    vector<int> repos;
-	    int i;
-
-	    repo = __repo(__id(chunk_var));
-	    i = 0;
-
-	    while (repo)
-	    {
-			if (repo & 1) 
-				repos.push_back(content_distribution::repositories[i]);
-			repo >>= 1;
-			i++;
-	    }
-
-		//<aa>
-		#ifdef SEVERE_DEBUG
-		if (repos.size() ==0){
-			std::stringstream ermsg; 
-			ermsg<<"There are 0 repositories for interest "<<__id(chunk_var);
-			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}
-		#endif
-		//</aa>
-
-	    return repos;
-	}
-
-	
 };
 Register_Class(ccn_interest);
 #endif 

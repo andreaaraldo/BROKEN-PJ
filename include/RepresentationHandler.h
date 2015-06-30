@@ -22,29 +22,45 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef REPRESENTATIONAWARE_DISTRIBUTION_H
-#define REPRESENTATIONAWARE_DISTRIBUTION_H
+#ifndef REPRESENTATION_HANDLER_H
+#define REPRESENTATION_HANDLER_H
 #include <omnetpp.h>
 #include "ccnsim.h"
-#include "content_distribution.h"
-#include "zipf.h"
+
+//<aa>
+#include "ccn_data.h"
 
 
 using namespace std;
 
 //<aa>
-class RepresentationAwareContentDistribution : public content_distribution{
+class RepresentationHandler
+{
 	public:
-		static const unsigned short get_number_of_representations();
-		static const double get_bitrate(unsigned short representation);
-		static const unsigned get_storage_space_of_representation(unsigned short representation);
+		RepresentationHandler(const char* bitrates);
+		const unsigned short get_number_of_representations();
+		const double get_bitrate(unsigned short representation);
+		const unsigned get_storage_space_of_representation(unsigned short representation);
 
-		static const unsigned get_storage_space_of_chunk(chunk_t chunk_id);	// Check what is the representation of 
+		const unsigned get_storage_space_of_chunk(chunk_t chunk_id);	// Check what is the representation of 
 																			// the chunk and returns the required
 																			// storage space
 
-		static const unsigned short get_representation_number(chunk_t chunk_id);
-		static const representation_mask_t set_bit_to_zero(representation_mask_t mask, unsigned short position);
+		const unsigned short get_representation_number(chunk_t chunk_id);
+		const representation_mask_t set_bit_to_zero(representation_mask_t mask, unsigned short position);
+		const representation_mask_t get_representation_mask(ccn_data* data) const;
+
+		#ifdef SEVERE_DEBUG
+		void check_representation_mask(chunk_t chunk_id) const;
+		#endif
+
+
+	private:
+		vector<double>* representation_bitrates_p;
+		vector<unsigned>* representation_storage_space_p; // Associate to each representation the required
+															// storage space, as a multiple of the space of
+															// the lowest representation
+		
 };
 //</aa>
 #endif

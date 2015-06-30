@@ -102,6 +102,7 @@ class abstract_node: public cSimpleModule{
 	}
 
 };
+
 //Macros
 //--------------
 //Chunk handling
@@ -142,28 +143,6 @@ inline chunk_t next_chunk (chunk_t c){
 }
 
 
-//--------------
-//Catalog handling
-//--------------
-//The catalog is a huge array of file entries. Within each entry is an 
-//information field 32-bits long. These 32 bits are composed by:
-//[file_size|repositories] of 16 bits each
-//file_size is the number of chunks composing that object
-//
-#define REPO_OFFSET     0
-#define SIZE_OFFSET     16
-
-//Bitmasks
-#define REPO_MSK (0xFFFF << REPO_OFFSET)
-#define SIZE_MSK (0xFFFF << SIZE_OFFSET)
-
-#define __info(object_id) ( content_distribution::catalog[object_id].info) //retrieve info about the given content 
-
-#define __size(object_id)  ( (__info(object_id) & SIZE_MSK) >> SIZE_OFFSET ) //set the size of a given file
-#define __repo(object_id)  ( (__info(object_id) & REPO_MSK) >> REPO_OFFSET )
-
-#define __ssize(object_id,s) ( __info(object_id) = (__info(object_id) & ~SIZE_MSK ) | s << SIZE_OFFSET )
-#define __srepo(object_id,r) ( __info(object_id) = (__info(object_id) & ~REPO_MSK ) | r << REPO_OFFSET )
 
 //<aa>
 // File statistics. Collecting statistics for all files would be tremendously

@@ -68,7 +68,7 @@ chunk_t Repository::handle_interest(ccn_interest* int_msg)
 {
 
 	chunk_t chunk_to_deliver = 0;
-	if (bitmask & __repo( int_msg->get_object_id() ) )
+	if (bitmask & content_distribution::get_repos( int_msg->get_object_id() ) )
 	{
 
 		// This repo contains the object

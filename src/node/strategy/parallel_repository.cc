@@ -50,7 +50,7 @@ bool *parallel_repository::exploit(ccn_interest *interest){
     bool *decision = new bool[gsize];
     std::fill(decision,decision+gsize,0);
 
-    vector<int> repos = (interest->get_repos());
+    vector<int> repos = content_distribution::get_repo_vector (__id(interest->getChunk() )) ;
     for (vector<int>::iterator it = repos.begin(); it!=repos.end();it++){
     
     //<aa>

@@ -25,12 +25,19 @@
 #ifndef CONTENT_DISTRIBUTION_H
 #define CONTENT_DISTRIBUTION_H
 #include <omnetpp.h>
-#include "ccnsim.h"
 #include "zipf.h"
 
+//<aa>
+#include "RepresentationHandler.h"
+//</aa>
 
 #pragma pack(push)
 #pragma pack(1)
+
+
+
+
+
 //
 //This structure is very critical in terms of space. 
 //In fact, it accounts for the startup memory requirement
@@ -46,8 +53,25 @@ struct file{
 using namespace std;
 
 
+//--------------
+//Catalog handling
+//--------------
+//The catalog is a huge array of file entries. Within each entry is an 
+//information field 32-bits long. These 32 bits are composed by:
+//[file_size|repositories] of 16 bits each
+//file_size is the number of chunks composing that object
+//
+#define REPO_OFFSET     0
+#define SIZE_OFFSET     16
 
-class content_distribution : public cSimpleModule{
+//Bitmasks
+#define REPO_MSK (0xFFFF << REPO_OFFSET)
+#define SIZE_MSK (0xFFFF << SIZE_OFFSET)
+
+
+
+class content_distribution : public cSimpleModule
+{
     protected:
 		virtual void initialize();
 		void handleMessage(cMessage *){;}
@@ -55,7 +79,6 @@ class content_distribution : public cSimpleModule{
 		//<aa>
 		virtual int choose_repos(int object_index);
 		virtual void initialize_repo_popularity();
-		virtual void initialize_representation_info();
 
 		virtual void finalize_total_replica();
 
@@ -108,12 +131,19 @@ class content_distribution : public cSimpleModule{
 														  // of the popularity of the 
 														  // contained objects
 
+		static RepresentationHandler* get_repr_h();
+		static const filesize_t get_num_of_chunks(name_t object_id);
+		static const repo_t get_repos(name_t object_id);
+		static const vector<int> get_repo_vector(name_t object_id);
+		static void set_num_of_chunks(name_t object_id, filesize_t num_of_chunks);
+		static void set_repo(name_t object_id, repo_t repo);
 		//</aa>
 
 
     private:
 		//<aa>
 		vector<int> repo_strings; //It is a temporary variable used to generate content dispacement among repos
+		static RepresentationHandler* repr_h;
 		//</aa>
 		
 		//INI parameters
@@ -124,9 +154,8 @@ class content_distribution : public cSimpleModule{
 		double alpha;
 		double q;
 
-		static vector<double>* representation_bitrates_p;
-		static vector<unsigned>* representation_storage_space_p; // Associate to each representation the required
-															// storage space, as a multiple of the space of
-															// the lowest representation
 };
+
+
+
 #endif

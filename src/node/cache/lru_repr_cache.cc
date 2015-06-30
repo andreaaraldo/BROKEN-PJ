@@ -17,8 +17,8 @@ void lru_repr_cache::initialize()
 void lru_repr_cache::initialize_cache_slots()
 {
     int chunks_at_highest_representation = par("C");
-	unsigned highest_representation_space = content_distribution::get_storage_space_of_representation(
-		content_distribution::get_number_of_representations() );
+	unsigned highest_representation_space = content_distribution::get_repr_h()->get_storage_space_of_representation(
+		content_distribution::get_repr_h()->get_number_of_representations() );
 	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
 }
 
@@ -37,13 +37,13 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_interest(chunk_t re
 			return NULL;
 		else{
 			// A good chunk has been found
-			unsigned short representation_found = content_distribution::get_representation_number(stored->k);
+			unsigned short representation_found = content_distribution::get_repr_h()->get_representation_number(stored->k);
 			
-			if (representation_found < content_distribution::get_number_of_representations() )
+			if (representation_found < content_distribution::get_repr_h()->get_number_of_representations() )
 			{
 				// Try to retrieve a better representation of this chunk
 				representation_mask_t improving_mask = 
-					content_distribution::set_bit_to_zero(request_mask, representation_found);
+					content_distribution::get_repr_h()->set_bit_to_zero(request_mask, representation_found);
 				if (improving_mask != 0x0000)
 				{	// There is no representation higher 
 					name_t object_id = __id(requested_chunk_id);
@@ -85,13 +85,13 @@ void lru_repr_cache::finish()
 	lru_cache::finish();
 
 	//{ COMPUTE REPRESENTATION BREAKDOWN
-	unsigned short num_of_repr = content_distribution::get_number_of_representations();
-	unsigned* breakdown = (unsigned*)calloc(content_distribution::get_number_of_representations(), sizeof(unsigned) );
+	unsigned short num_of_repr = content_distribution::get_repr_h()->get_number_of_representations();
+	unsigned* breakdown = (unsigned*)calloc(content_distribution::get_repr_h()->get_number_of_representations(), sizeof(unsigned) );
 	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
 	{
 		chunk_t chunk_id = it->second->k;
-	    breakdown[content_distribution::get_representation_number(chunk_id)-1]++;
+	    breakdown[content_distribution::get_repr_h()->get_representation_number(chunk_id)-1]++;
 	}
 
 	std::stringstream breakdown_str;

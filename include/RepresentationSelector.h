@@ -32,7 +32,6 @@
 #include "error_handling.h"
 #include "content_distribution.h"
 
-
 class RepresentationSelector
 {
     public:
@@ -62,12 +61,12 @@ class RepresentationSelectorLowest: public RepresentationSelector
 			representation_mask_t filter = 0x0001;
 			unsigned i = 0;
 			while ( ( filter & req_and_available) == 0 && 
-						i < content_distribution::get_number_of_representations() )
+						i < content_distribution::get_repr_h()->get_number_of_representations() )
 			{
 				filter = filter<<1;
 				i++;
 			}
-			if (i <= content_distribution::get_number_of_representations() )
+			if (i <= content_distribution::get_repr_h()->get_number_of_representations() )
 				return filter;
 			else return 0;
 		}

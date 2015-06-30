@@ -38,6 +38,7 @@ Register_Class(content_distribution);
 
 vector<file> content_distribution::catalog;
 zipf_distribution  content_distribution::zipf;
+RepresentationHandler*  content_distribution::repr_h;
 
 name_t  content_distribution::stabilization_bulk = 0;
 name_t  content_distribution::perfile_bulk = 0;
@@ -49,8 +50,6 @@ double  *content_distribution::repo_prices = 0;
 int  *content_distribution::clients = 0;
 int  *content_distribution::total_replicas_p;
 vector<double>  *content_distribution::repo_popularity_p;
-vector<double>* content_distribution::representation_bitrates_p;
-vector<unsigned>* content_distribution::representation_storage_space_p;
 
 
 
@@ -107,6 +106,7 @@ void content_distribution::initialize()
     repositories = init_repos(tokenizer.asIntVector());
 
 	//<aa>
+	repr_h = new RepresentationHandler(par("representation_bitrates").stringValue() );
     repo_prices = init_repo_prices();
 	//</aa>
 
@@ -116,10 +116,6 @@ void content_distribution::initialize()
 		sprintf(name,"repo-%d",i);
 		recordScalar(name,repositories[i]);
     }
-
-	//<aa>
-	initialize_representation_info();
-	//</aa>
 
     //
     //Clients initialization
@@ -158,42 +154,7 @@ void content_distribution::initialize_repo_popularity()
 	repo_popularity_p = NULL;
 }
 
-void content_distribution::initialize_representation_info()
-{
 
-	const char *str = par("representation_bitrates").stringValue();
-	cStringTokenizer(str,"_").asDoubleVector();
-	representation_bitrates_p = new vector<double> (cStringTokenizer(str,"_").asDoubleVector() );
-	representation_storage_space_p = new vector<unsigned>(representation_bitrates_p->size() );
-	for (unsigned i=0 ; i < representation_bitrates_p->size() ; i++)
-	{
-		(*representation_storage_space_p) [i] = 
-				round( (*representation_bitrates_p)[i] / (*representation_bitrates_p)[0] );
-
-		#ifdef SEVERE_DEBUG
-			if ( (*representation_storage_space_p) [i] == 0 )
-			{
-				std::stringstream ermsg; 
-				ermsg<<"Rapresentation "<< i+1 <<" has storage space 0";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-		#endif
-	}
-
-	//{ CHECK INPUT
-	unsigned storage_temp = get_storage_space_of_representation(1);
-	for (unsigned i = 2; i <= get_number_of_representations(); i++)
-	{
-		if (get_storage_space_of_representation(i) < storage_temp)
-			severe_error(__FILE__,__LINE__, 
-						"The representation should be specified in increasing quality order");
-		storage_temp = content_distribution::get_storage_space_of_representation(i);
-	}
-	//} CHECK INPUT
-}
-//</aa>
-
-//<aa>
 void content_distribution::finalize_total_replica(){
 
 	*total_replicas_p = cardF*replicas;
@@ -281,6 +242,63 @@ int content_distribution::choose_repos (int object_index )
 
 	return repo_string;
 }
+
+
+RepresentationHandler* content_distribution::get_repr_h()
+{
+	return repr_h;
+}
+
+const filesize_t content_distribution::get_num_of_chunks(name_t object_id)
+{
+	return ( ( catalog[object_id].info & SIZE_MSK) >> SIZE_OFFSET );
+}
+
+const repo_t content_distribution::get_repos(name_t object_id)
+{
+	return ( ( catalog[object_id].info & REPO_MSK) >> REPO_OFFSET );
+}
+
+const vector<int> content_distribution::get_repo_vector(name_t object_id)
+{
+    repo_t repo;
+    vector<int> repos;
+    int i;
+
+    repo = get_repos(object_id);
+	i = 0;
+    while (repo)
+    {
+		if (repo & 1) 
+			repos.push_back(repositories[i]);
+		repo >>= 1;
+		i++;
+    }
+
+	//<aa>
+	#ifdef SEVERE_DEBUG
+	if (repos.size() ==0)
+	{
+		std::stringstream ermsg; 
+		ermsg<<"There are 0 repositories for content "<<object_id;
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+	}
+	#endif
+	//</aa>
+
+    return repos;
+}
+
+void content_distribution::set_num_of_chunks(name_t object_id, filesize_t num_of_chunks)
+{
+	catalog[object_id].info = ( catalog[object_id].info & ~SIZE_MSK ) | num_of_chunks << SIZE_OFFSET;
+}
+
+
+void content_distribution::set_repo(name_t object_id, repo_t repo)
+{
+	catalog[object_id].info = ( catalog[object_id].info & ~REPO_MSK ) | repo << REPO_OFFSET;
+}
 //</aa>
 
 //Store information about the content:
@@ -305,15 +323,15 @@ void content_distribution::init_content()
     for (int object_id = 1; object_id <= cardF; object_id++)
     {
 		//Reset the information field of a given object
-		__info(object_id) = 0;
+		catalog[object_id].info = 0;
 
 		//<aa> F is the size of a file</aa>
 		if (F > 1){
 			//Set the file size (distributed like a geometric)
-			filesize_t s = geometric( 1.0 / F ) + 1;
-			__ssize ( object_id, s );
+			filesize_t num_of_chunks = geometric( 1.0 / F ) + 1;
+			set_num_of_chunks ( object_id, num_of_chunks );
 		}else 
-			__ssize( object_id , 1);
+			set_num_of_chunks( object_id , 1);
 
 		// <aa>
 		vector<int> chosen_repos; 
@@ -321,7 +339,7 @@ void content_distribution::init_content()
 
 		//Set the repositories
 		if (num_repos==1){
-			__srepo ( object_id , 1 );
+			set_repo ( object_id , 1 );
 			// <aa> Compute the chosen_repo
 			chosen_repos.push_back(0);
 			// </aa>
@@ -329,10 +347,10 @@ void content_distribution::init_content()
 			// <aa> Choose a replica placement among all the possibile ones. 
 			// 		repos is a replica placement </aa>				
 			repo_t repos = choose_repos(object_id); //<aa>This method had no input parameters before</aa>
-			__srepo (object_id ,repos);
+			set_repo (object_id ,repos);
 
 			// <aa> Compute the chosen_repos
-			repo_t repo_extracted = __repo(object_id);
+			repo_t repo_extracted = get_repos(object_id);
 			unsigned k = 0;
 			while (repo_extracted)
 			{	if (repo_extracted & 1) 

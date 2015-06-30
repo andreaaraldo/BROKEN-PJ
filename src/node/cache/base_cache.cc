@@ -36,6 +36,7 @@
 #include "ideal_costaware_policy.h"
 #include "error_handling.h"
 #include "ccn_data.h"
+#include "RepresentationHandler.h"
 //</aa>
 #include "two_lru_policy.h"
 #include "lcd_policy.h"
@@ -186,7 +187,7 @@ void base_cache::initialize()
 
 void base_cache::initialize_cache_slots()
 {
-	if ( content_distribution::get_number_of_representations() > 1 )
+	if ( content_distribution::get_repr_h()->get_number_of_representations() > 1 )
 	{
 		std::stringstream ermsg; 
 		ermsg<<"A generic cache cannot handle more than one representation"<< 
@@ -201,7 +202,7 @@ void base_cache::initialize_cache_slots()
 void base_cache::insert_into_cache(cache_item_descriptor* descr)
 {
 	chunk_t chunk_id = descr->k;
-	unsigned required_storage = content_distribution::get_storage_space_of_chunk(chunk_id);
+	unsigned required_storage = content_distribution::get_repr_h()->get_storage_space_of_chunk(chunk_id);
 	// All chunks must be indexed only based on object_id, chunk_number
 	__srepresentation_mask(chunk_id, 0x0000);
 
@@ -218,7 +219,7 @@ void base_cache::insert_into_cache(cache_item_descriptor* descr)
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );		
 		}
 
-		ccn_data::check_representation_mask(descr->k);
+		content_distribution::get_repr_h()->check_representation_mask(descr->k);
 	#endif
 
 	update_occupied_slots( required_storage );
@@ -525,7 +526,7 @@ double base_cache::get_average_price()
 
 int base_cache::get_size()
 {
-	if( content_distribution::get_number_of_representations() != 1 )
+	if( content_distribution::get_repr_h()->get_number_of_representations() != 1 )
 	{
 		std::stringstream ermsg; 
 		ermsg<<"This function cannot be used if more than one representation per content is considered"<<
@@ -567,20 +568,20 @@ const char* base_cache::get_cache_content()
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
 	{
 		content_str << __id(it->second->k)<<"("<<
-				content_distribution::get_representation_number(it->second->k)<<"):";
+				content_distribution::get_repr_h()->get_representation_number(it->second->k)<<"):";
 	}
 	return content_str.str().c_str();
 }
 
 void base_cache::check_if_correct()
 {
-	unsigned num_of_repr = content_distribution::get_number_of_representations();
+	unsigned num_of_repr = content_distribution::get_repr_h()->get_number_of_representations();
 	unsigned* breakdown = (unsigned*)calloc(num_of_repr, sizeof(unsigned) );
 	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
 	{
 		chunk_t chunk_id = it->second->k;
-	    breakdown[content_distribution::get_representation_number(chunk_id)-1]++;
+	    breakdown[content_distribution::get_repr_h()->get_representation_number(chunk_id)-1]++;
 	}
 
 	std::stringstream breakdown_str;
@@ -590,7 +591,7 @@ void base_cache::check_if_correct()
 
 	unsigned occupied_slots_tmp = 0;
 	for (unsigned i = 0; i < num_of_repr; i++)
-		occupied_slots_tmp += breakdown[i] * content_distribution::get_storage_space_of_representation(i+1);
+		occupied_slots_tmp += breakdown[i] * content_distribution::get_repr_h()->get_storage_space_of_representation(i+1);
 	if (occupied_slots_tmp != occupied_slots || occupied_slots > get_slots() )
 	{
 		std::stringstream ermsg; 

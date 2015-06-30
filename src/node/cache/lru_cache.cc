@@ -41,7 +41,7 @@ void lru_cache::initialize()
 {
 	base_cache::initialize();
 	#ifdef SEVERE_DEBUG
-		if( content_distribution::get_number_of_representations() != 1 )
+		if( content_distribution::get_repr_h()->get_number_of_representations() != 1 )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"This cache policy is intended to work only with one representation for each chunk."<<
@@ -136,7 +136,7 @@ void lru_cache::remove_from_cache(cache_item_descriptor* descr)
 	if (newer == NULL)
 		mru_=older;
 
-    base_cache::remove_from_cache(descr->k, content_distribution::get_storage_space_of_chunk(descr->k));
+    base_cache::remove_from_cache(descr->k, content_distribution::get_repr_h()->get_storage_space_of_chunk(descr->k));
 	free(descr);
 }
 //</aa>
@@ -147,7 +147,7 @@ bool lru_cache::data_store(ccn_data* data_msg)
 	chunk_t chunk_id = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 		check_if_correct();
-		ccn_data::check_representation_mask(chunk_id);
+		content_distribution::get_repr_h()->check_representation_mask(chunk_id);
 	#endif
 
 	if (accept_new_chunk)
