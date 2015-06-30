@@ -350,6 +350,7 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
+	content_distribution::get_repr_h()->check_representation_mask(chunk, CCN_I);
 	interest->setSerialNumber(interests_sent);
 	interest->setOrigin( getNodeIndex() );
 	interests_sent++;

@@ -219,7 +219,7 @@ void base_cache::insert_into_cache(cache_item_descriptor* descr)
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );		
 		}
 
-		content_distribution::get_repr_h()->check_representation_mask(descr->k);
+		content_distribution::get_repr_h()->check_representation_mask(descr->k, CCN_D);
 	#endif
 
 	update_occupied_slots( required_storage );

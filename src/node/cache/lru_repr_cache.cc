@@ -39,20 +39,31 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_interest(chunk_t re
 			// A good chunk has been found
 			unsigned short representation_found = content_distribution::get_repr_h()->get_representation_number(stored->k);
 			
-			if (representation_found < content_distribution::get_repr_h()->get_number_of_representations() )
-			{
-				// Try to retrieve a better representation of this chunk
-				representation_mask_t improving_mask = 
-					content_distribution::get_repr_h()->set_bit_to_zero(request_mask, representation_found);
-				if (improving_mask != 0x0000)
-				{	// There is no representation higher 
-					name_t object_id = __id(requested_chunk_id);
-					cnumber_t chunk_num = __chunk(requested_chunk_id);
-					proactive_component->request_specific_chunk_from_another_class(
-												object_id, chunk_num, improving_mask);
-					
+			// Try to retrieve a better representation of this chunk
+			representation_mask_t improving_mask = (0xFFFF << representation_found );
+			improving_mask = (improving_mask & request_mask);
+
+			#ifdef SEVERE_DEBUG
+				if( (improving_mask & 0x0001) != 0 )
+				{
+					std::stringstream ermsg; 
+					ermsg<< "An improving mask cannot ask for repr 1. This would not be an improvement."<<
+						"request_mask="<<request_mask<<"; stored_mask="<<stored_mask<<"; representation_found="<<
+						representation_found;
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 				}
-			}
+			#endif
+
+			if (improving_mask != 0x0000)
+			{	// There is a higher representation and I want to retrieve it
+				name_t object_id = __id(requested_chunk_id);
+				cnumber_t chunk_num = __chunk(requested_chunk_id);
+				proactive_component->request_specific_chunk_from_another_class(
+											object_id, chunk_num, improving_mask);
+
+				cout<<"ciao: lru_repr_cache: improving_mask "<<improving_mask<<endl;
+			}else
+				cout<<"ciao: lru_repr_cache: improving_mask zero "<<improving_mask<<endl;
 		}
 	}
 	return stored;

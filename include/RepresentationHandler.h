@@ -49,9 +49,10 @@ class RepresentationHandler
 		const unsigned short get_representation_number(chunk_t chunk_id);
 		const representation_mask_t set_bit_to_zero(representation_mask_t mask, unsigned short position);
 		const representation_mask_t get_representation_mask(ccn_data* data) const;
+		const get_possible_representation_mask() const;
 
 		#ifdef SEVERE_DEBUG
-		void check_representation_mask(chunk_t chunk_id) const;
+		void check_representation_mask(chunk_t chunk_id, unsigned pkt_type) const;
 		#endif
 
 
@@ -60,7 +61,7 @@ class RepresentationHandler
 		vector<unsigned>* representation_storage_space_p; // Associate to each representation the required
 															// storage space, as a multiple of the space of
 															// the lowest representation
-		
+		representation_mask_t possible_representation_mask;
 };
 //</aa>
 #endif

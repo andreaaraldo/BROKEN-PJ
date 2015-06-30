@@ -66,8 +66,13 @@ double Repository::get_price() const
 */
 chunk_t Repository::handle_interest(ccn_interest* int_msg)
 {
-
 	chunk_t chunk_to_deliver = 0;
+
+	#ifdef SEVERE_DEBUG
+		content_distribution::get_repr_h()->check_representation_mask(chunk_id_to_deliver, CCN_I );
+	#endif
+
+
 	if (bitmask & content_distribution::get_repos( int_msg->get_object_id() ) )
 	{
 
@@ -82,6 +87,9 @@ chunk_t Repository::handle_interest(ccn_interest* int_msg)
 		{
 			chunk_to_deliver = int_msg->getChunk();
 			__srepresentation_mask(chunk_to_deliver, representation_mask);
+
+			if (representation_mask > 2)
+				cout<<"ciao: Repository: delivering repr mask "<<representation_mask<<endl;
 		}			
 	}
 	return chunk_to_deliver;

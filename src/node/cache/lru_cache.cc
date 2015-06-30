@@ -147,7 +147,7 @@ bool lru_cache::data_store(ccn_data* data_msg)
 	chunk_t chunk_id = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 		check_if_correct();
-		content_distribution::get_repr_h()->check_representation_mask(chunk_id);
+		content_distribution::get_repr_h()->check_representation_mask(chunk_id, CCN_D);
 	#endif
 
 	if (accept_new_chunk)

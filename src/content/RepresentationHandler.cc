@@ -51,6 +51,9 @@ RepresentationHandler::RepresentationHandler(const char* bitrates)
 		#endif
 	}
 
+	possible_representation_mask = ( (0xFFFF << get_number_of_representations() ) & 0xFFFF);
+	possible_representation_mask = (~possible_representation_mask);
+
 	//{ CHECK INPUT
 	unsigned storage_temp = get_storage_space_of_representation(1);
 	for (unsigned i = 2; i <= get_number_of_representations(); i++)
@@ -63,13 +66,13 @@ RepresentationHandler::RepresentationHandler(const char* bitrates)
 	//} CHECK INPUT
 }
 
+const representation_mask RepresentationHandler::get_possible_representation_mask() const
+{
+	return possible_representation_mask;
+}
 
 const unsigned short RepresentationHandler::get_representation_number(chunk_t chunk_id)
 {
-	#ifdef SEVERE_DEBUG
-		check_representation_mask(chunk_id);
-	#endif
-
 	unsigned short representation = 0;
 	representation_mask_t repr_mask = __representation_mask(chunk_id);
 	unsigned short i=1; while (representation == 0 && i<=representation_bitrates_p->size() )
@@ -85,7 +88,7 @@ const unsigned short RepresentationHandler::get_representation_number(chunk_t ch
 const unsigned RepresentationHandler::get_storage_space_of_chunk(chunk_t chunk_id) 
 {
 	#ifdef SEVERE_DEBUG
-		check_representation_mask(chunk_id);
+		check_representation_mask(chunk_id, CCN_D);
 	#endif
 
 	return get_storage_space_of_representation(get_representation_number(chunk_id));
@@ -132,68 +135,85 @@ const representation_mask_t RepresentationHandler::set_bit_to_zero(representatio
 }
 
 
-const representation_mask_t RepresentationHandler::get_representation_mask(ccn_data* data) const
-{ 
-	chunk_t chunk_var = data->getChunk();
-	#ifdef SEVERE_DEBUG
-		check_representation_mask(chunk_var);
-	#endif
-	return __representation_mask(chunk_var);
-}
-
 #ifdef SEVERE_DEBUG
 // Check if the representation mask denotes one and only one representation
-void RepresentationHandler::check_representation_mask(chunk_t chunk_id) const
+void RepresentationHandler::check_representation_mask(chunk_t chunk_id, unsigned pkt_type) const
 {
-		representation_mask_t representation_mask = __representation_mask(chunk_id);
-		if (representation_mask == 0)
+	representation_mask_t representation_mask = __representation_mask(chunk_id);
+
+	switch(pkt_type)
+	{
+		case (CCN_D):
 		{
-	        std::stringstream ermsg; 
-			ermsg<<"No representation is recognizable since representation mask is zero";
-		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}		
-
-
-		unsigned short representation = 0;
-		unsigned short i=1;
-		while (representation == 0 && i<= content_distribution::get_repr_h()->get_number_of_representations() )
-		{
-			if( (representation_mask >> i ) == 0 )
-				representation = i;
-			i++;
-		}
-
-		if (representation == 0 )
-		{
-	        std::stringstream ermsg; 
-			ermsg<<"Invalid bitmask: no representation is recognizable. object_id:chunk_number:representation_mask="
-				<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id);
-		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}		
-
-		unsigned short representation2 = 0;
-		unsigned short j=0;
-		bool found = false;
-
-		while (representation2 == 0 )
-		{			
-			j++;
-			if( ( (representation_mask << j ) & 0x000000000000FFFF) == 0 )
+			if (representation_mask == 0)
 			{
-				representation2 = sizeof(representation_mask)*8-j+1;
-				found = true;
-			}
-		}
-		if (representation2 != representation)
-		{
-	        std::stringstream ermsg; 
-			ermsg<<"Invalid bitmask: there is more than one 1. object_id:chunk_number:representation_mask="
-				<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id)<<
-				" representation="<<representation <<"; representation2="<<representation2<<"; j="<<j<<
-				"; sizeof(representation_mask="<<sizeof(representation_mask)<<"; found="<<found;
-		    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-		}		
+			    std::stringstream ermsg; 
+				ermsg<<"No representation is recognizable since representation mask is zero";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}		
 
+
+			unsigned short representation = 0;
+			unsigned short i=1;
+			while (representation == 0 && i<= content_distribution::get_repr_h()->get_number_of_representations() )
+			{
+				if( (representation_mask >> i ) == 0 )
+					representation = i;
+				i++;
+			}
+
+			if ( (possible_representation_mask & representation_mask) ==0 ||representation == 0 )
+			{
+			    std::stringstream ermsg; 
+				ermsg<<"Invalid bitmask: no representation is recognizable. object_id:chunk_number:repr_mask="
+					<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id);
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}		
+
+			unsigned short representation2 = 0;
+			unsigned short j=0;
+			bool found = false;
+
+			while (representation2 == 0 )
+			{			
+				j++;
+				if( ( (representation_mask << j ) & 0x000000000000FFFF) == 0 )
+				{
+					representation2 = sizeof(representation_mask)*8-j+1;
+					found = true;
+				}
+			}
+			if (representation2 != representation)
+			{
+			    std::stringstream ermsg; 
+				ermsg<<"Invalid bitmask: there is more than one 1. object_id:chunk_number:representation_mask="
+					<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id)<<
+					" representation="<<representation <<"; representation2="<<representation2<<"; j="<<j<<
+					"; sizeof(representation_mask="<<sizeof(representation_mask)<<"; found="<<found;
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+			break;
+		}
+
+		case (CCN_I):
+		{
+			if ( (representation_mask &  0xFFFF) == 0)
+			{
+			    std::stringstream ermsg; 
+				ermsg<<"You are requesting a representation "<< representation_mask<<" that is incorrect";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+
+			if ( (representation_mask & 0x0001)!=0 && (representation_mask & 0x0002)==0  )
+				severe_error(__FILE__,__LINE__,"You are requesting quality 1 but not 2. It is impossible");
+			break;
+		}
+
+		default:
+		{
+			severe_error(__FILE__,__LINE__, "unrecognized pkt");
+		}
+	}
 };
 #endif
 

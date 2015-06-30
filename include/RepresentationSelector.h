@@ -67,7 +67,9 @@ class RepresentationSelectorLowest: public RepresentationSelector
 				i++;
 			}
 			if (i <= content_distribution::get_repr_h()->get_number_of_representations() )
+			{
 				return filter;
+			}
 			else return 0;
 		}
 };

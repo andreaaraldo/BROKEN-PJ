@@ -339,6 +339,10 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
 	} else if ( repository!=NULL && (chunk_id_to_deliver = repository->handle_interest(int_msg ) ) )
 	{	
+			#ifdef SEVERE_DEBUG
+				content_distribution::get_repr_h()->check_representation_mask(chunk_id_to_deliver, CCN_D );
+			#endif
+
 			//
 			//b) Look locally (only if you own a repository)
 			// we are mimicking a message sent to the repository
@@ -578,7 +582,7 @@ ccn_data* core_layer::compose_data(chunk_t chunk_id)
     data->setTimestamp(simTime());
 
 	#ifdef SEVERE_DEBUG
-		content_distribution::get_repr_h()->check_representation_mask(chunk_id);
+		content_distribution::get_repr_h()->check_representation_mask(chunk_id, CCN_D);
 	#endif
     return data;
 }
@@ -709,7 +713,7 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 			}
 		}
 
-		content_distribution::get_repr_h()->check_representation_mask(msg->getChunk() );
+		content_distribution::get_repr_h()->check_representation_mask(msg->getChunk(), CCN_D );
 		#endif
 	//}CHECKS
 
