@@ -45,6 +45,10 @@ void statistics::initialize(){
     num_nodes 	= getAncestorPar("n");
     num_clients = getAncestorPar("num_clients");
 
+	//<aa>
+	const char* client_type = getAncestorPar("client_type");
+	//</aa>
+
    
     //Statistics parameters
     ts          = par("ts"); //sampling time
@@ -62,7 +66,8 @@ void statistics::initialize(){
     cTopology topo;
     //Extracting clients
     clients = new client* [num_clients];
-    vector<string> clients_vec(1,"modules.clients.client");
+	stringstream client_type_complete; client_type_complete<<"modules.clients."<<client_type;
+    vector<string> clients_vec(1,client_type_complete.str().c_str() );
     topo.extractByNedTypeName(clients_vec);
     int k = 0;
     for (int i = 0;i<topo.getNumNodes();i++)
@@ -222,6 +227,7 @@ void statistics::finish(){
     //<aa>
     uint32_t global_repo_load = 0;
 	long total_cost = 0;
+	float global_utility = 0; //sum of utilities perceived by users 
     //</aa>
 
     double global_avg_distance = 0;
@@ -290,7 +296,9 @@ void statistics::finish(){
 		global_avg_distance += clients[i]->get_avg_distance();
 		global_tot_downloads += clients[i]->get_tot_downloads();
 		global_avg_time  += clients[i]->get_avg_time();
+		
 		//<aa>
+		global_utility += clients[i]->get_utility();
 		#ifdef SEVERE_DEBUG
 		global_interests_sent += clients[i]->get_interests_sent();
 		#endif
@@ -321,6 +329,9 @@ void statistics::finish(){
     cout<<"total_replicas: "<<total_replicas<<endl;
 
     //<aa>
+    sprintf ( name, "avg_utility");
+    recordScalar(name,global_utility/global_tot_downloads);
+
     // It is the fraction of traffic that is satisfied by some cache inside
     // the network and thus does not exit the network </aa>
     sprintf (name, "inner_hit");
@@ -363,8 +374,8 @@ void statistics::finish(){
 void statistics::clear_stat()
 {
     for (int i = 0;i<num_clients;i++)
-	if (clients[i]->is_active() )
-	    clients[i]->clear_stat();
+		if (clients[i]->is_active() )
+			clients[i]->clear_stat();
 
     for (int i = 0;i<num_nodes;i++)
         cores[i]->clear_stat();

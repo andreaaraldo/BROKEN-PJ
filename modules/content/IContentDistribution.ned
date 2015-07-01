@@ -1,7 +1,8 @@
 package modules.content;
 
 //<aa>
-moduleinterface IContentDistribution {
+moduleinterface IContentDistribution 
+{
     parameters:
 		double file_size;
 			int objects;

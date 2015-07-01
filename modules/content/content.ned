@@ -1,6 +1,7 @@
 package modules.content;
 
-simple content_distribution like IContentDistribution{
+simple content_distribution like IContentDistribution
+{
     parameters:
 		double file_size = default (10);
 		int objects = default (100);

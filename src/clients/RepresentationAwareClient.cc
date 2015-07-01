@@ -56,5 +56,11 @@ void RepresentationAwareClient::clear_stat()
 	client::clear_stat();
 	utility = 0;
 }
+
+
+const float RepresentationAwareClient::get_utility() const
+{
+	return utility;
+}
 //</aa>
 

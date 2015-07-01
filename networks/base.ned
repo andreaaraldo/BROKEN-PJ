@@ -5,6 +5,7 @@ import modules.clients.client;
 import modules.node.node;
 import modules.node.Inode;
 import modules.node.BorderNode;
+import modules.clients.IClient;
 
 network base_network {
 
@@ -23,6 +24,7 @@ network base_network {
 
 		//<aa>
 		string content_distribution_type = default("content_distribution");
+		string client_type = default("client");
 		//</aa>
 
     submodules:
@@ -37,7 +39,7 @@ network base_network {
 	}
 
         node [n]: <default("node")> like Inode; // BorderNode;
-		client[n]: client;
+		client[n]: <client_type> like IClient;
 
 
 

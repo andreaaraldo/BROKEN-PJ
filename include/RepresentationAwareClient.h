@@ -34,6 +34,7 @@ class RepresentationAwareClient : public client
 {
 	public:
 		virtual void clear_stat();
+		const virtual float get_utility() const; // Returns the sum of the utilities perceived by the client
 
 	protected:
 		virtual void initialize();
@@ -41,5 +42,5 @@ class RepresentationAwareClient : public client
 
 	private:
 		float utility;
-}
+};
 #endif
