@@ -4,7 +4,6 @@ import modules.statistics.statistics;
 import modules.clients.client;
 import modules.node.node;
 import modules.node.Inode;
-import modules.node.BorderNode;
 import modules.clients.IClient;
 
 network base_network {

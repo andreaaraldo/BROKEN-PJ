@@ -230,15 +230,14 @@ void RepresentationHandler::check_representation_mask(chunk_t chunk_id, unsigned
 				ermsg<<"You are requesting a representation "<< representation_mask<<" that is incorrect";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}
-
-			if ( (representation_mask & 0x0001)!=0 && (representation_mask & 0x0002)==0  )
-				severe_error(__FILE__,__LINE__,"You are requesting quality 1 but not 2. It is impossible");
 			break;
 		}
 
 		default:
-		{
-			severe_error(__FILE__,__LINE__, "unrecognized pkt");
+        {
+            std::stringstream ermsg;
+            ermsg<<"unrecognized pkt type "<< pkt_type;
+			severe_error(__FILE__,__LINE__, ermsg.str().c_str());
 		}
 	}
 };

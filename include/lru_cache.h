@@ -53,11 +53,10 @@ using namespace boost;
 class lru_cache:public base_cache{
     friend class statistics;
     public:
-		lru_cache():base_cache(),lru_(NULL),mru_(NULL)
-		{
-		}
+		lru_cache():base_cache(),lru_(NULL),mru_(NULL){}
 
-
+		bool data_store(ccn_data* data_msg);
+		virtual void initialize();
 		//<aa>
 		cache_item_descriptor* get_mru();
 		cache_item_descriptor* get_lru();
@@ -76,9 +75,7 @@ class lru_cache:public base_cache{
 		
 
     protected:		
-		virtual void initialize();
-		bool data_store(ccn_data* data_msg);
-	    cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item 
+		cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item
 													//descritor or NULL if no item is found
 		bool fake_lookup(chunk_t);
 		//<aa>

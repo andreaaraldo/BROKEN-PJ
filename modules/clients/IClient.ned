@@ -8,4 +8,7 @@ moduleinterface IClient
 		double W;
 		double check_time;
 		double RTT;
+			
+	gates:
+    	inout client_port;
 }

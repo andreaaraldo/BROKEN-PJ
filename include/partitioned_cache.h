@@ -22,27 +22,26 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef TWO_CACHE_H_
-#define TWO_CACHE_H_
+#ifndef PARTITIONED_CACHE_H_
+#define PARTITIONED_CACHE_H_
 
 #include "base_cache.h"
-#include <deque>
-#include <boost/unordered_map.hpp>
+#include "lru_cache.h"
 
 using namespace boost;
 using namespace std;
 
-/*Power of two replacement: elements are pushed back into the cache If the
- * cache if filled replacement is fulfilled in this way:
- *    a) two random elements are taken from the cache 
- *    b) the "most popular" (out of the two) element is replaced.
-*/
-class two_cache: public base_cache
+class partitioned_cache: public base_cache
 {
     public:
-	    virtual bool data_store(ccn_data* data_msg);
+
+    protected:
+        void initialize();
+        bool data_store(ccn_data* data_msg);
+        lru_cache** subcaches;
+        unordered_map<chunk_t, unsigned> quality_map;   // Map each chunk to the representation level
+                                                        // which is stored of it
 
     private:
-	deque<uint64_t> deq;
 };
 #endif

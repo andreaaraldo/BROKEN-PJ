@@ -1,6 +1,5 @@
 package networks;
 
-import modules.channels.IcnChannel;
 
 
 network abilene_cost_network extends base_network{

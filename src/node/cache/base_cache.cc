@@ -63,18 +63,21 @@ cache_item_descriptor::cache_item_descriptor(chunk_t chunk_id, double price)
 	k = chunk_id; price_ = price;
 }
 
-
-//Initialization function
 void base_cache::initialize()
 {
-    nodes      = getAncestorPar("n");
-    level = getAncestorPar("level");
+    initialize(getAncestorPar("n"), getAncestorPar("level"), par("DS"), par("C") );
+}
 
-	initialize_cache_slots();
+//Initialization function
+void base_cache::initialize(nodes_, level_, string decision_policy, cache_slots)
+{
+    nodes      = nodes_;
+    level = level_;
+
+	initialize_cache_slots(cache_slots);
 
     //{ INITIALIZE DECISION POLICY
 	decisor = NULL;
-    string decision_policy = par("DS");
 	double target_acceptance_ratio;
 	string target_acceptance_ratio_string;
 
@@ -185,7 +188,7 @@ void base_cache::initialize()
 
 }
 
-void base_cache::initialize_cache_slots()
+void base_cache::initialize_cache_slots(cache_slots_)
 {
 	if ( content_distribution::get_repr_h()->get_number_of_representations() > 1 )
 	{
@@ -194,7 +197,7 @@ void base_cache::initialize_cache_slots()
 			"per object. Use some specific subclass in this case";
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
-	cache_slots = par("C");
+	cache_slots = cache_slots_;
 }
 
 
