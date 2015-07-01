@@ -21,3 +21,9 @@ simple ProactiveComponent extends client{
 		lambda = 0; // It does not spontanously send interests
 }
 
+simple RepresentationAwareClient extends client
+{
+	parameters:
+		@class(RepresentationAwareClient);
+}
+

@@ -73,7 +73,7 @@ class client : public cSimpleModule
 		double get_tot_downloads();
 		simtime_t get_avg_time();
 		bool is_active();
-		void clear_stat(); //<aa> I moved this function to public</aa>
+		virtual void clear_stat(); //<aa> I moved this function to public</aa>
 		int  getNodeIndex(); //<aa> I moved it to public</aa>
 
 		//<aa>
@@ -94,7 +94,7 @@ class client : public cSimpleModule
 		virtual void handleMessage(cMessage *);
 		virtual void finish();
 
-		virtual void handle_incoming_chunk(ccn_data *);
+		virtual bool handle_incoming_chunk(ccn_data *);
 		virtual void request_file();
 		virtual void handle_timers(cMessage*);
 
@@ -138,7 +138,5 @@ class client : public cSimpleModule
 
 		//Set if the client actively sends interests for files
 		bool active;
-
-
 };
 #endif

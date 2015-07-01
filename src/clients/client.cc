@@ -362,9 +362,10 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 }
 
 
-
-void client::handle_incoming_chunk (ccn_data *data_message)
+// Returns true if the client was waiting for this chunk
+bool client::handle_incoming_chunk (ccn_data *data_message)
 {
+	bool is_chunk_expected = false;
     name_t object_id      = data_message -> get_object_id();
     cnumber_t chunk_num = data_message -> get_chunk_num();
 	representation_mask_t repr_mask = __representation_mask(data_message->getChunk() );
@@ -415,7 +416,7 @@ void client::handle_incoming_chunk (ccn_data *data_message)
 
 
     //-----------Handling downloads------
-    //Handling the download list (TODO put this piece of code within a virtual method, in this way implementing new strategies should be direct).
+    //Handling the download list
     pair< multimap<name_t, download>::iterator, multimap<name_t, download>::iterator > ii;
     multimap<name_t, download>::iterator it; 
 
@@ -427,12 +428,13 @@ void client::handle_incoming_chunk (ccn_data *data_message)
         if ( it->second.chunk == chunk_num && (it->second.repr_mask & repr_mask) != 0x0000 )
 		{
 			// We were waiting for such a chunk
+			is_chunk_expected = true;
 
 			#ifdef SEVERE_DEBUG
 				if ( is_it_proactive_component() && it->second.repr_mask == 0x0001 )
 				{
 					std::stringstream ermsg; 
-					ermsg<<"A proactice component should never ask for the lowest representations";
+					ermsg<<"A proactive component should never ask for the lowest representations";
 					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 				}
 			#endif
@@ -460,6 +462,7 @@ void client::handle_incoming_chunk (ccn_data *data_message)
         ++it;
     }
     tot_chunks++;
+	return is_chunk_expected;
 }
 
 void client::clear_stat()

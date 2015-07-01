@@ -106,7 +106,8 @@ void content_distribution::initialize()
     repositories = init_repos(tokenizer.asIntVector());
 
 	//<aa>
-	repr_h = new RepresentationHandler(par("representation_bitrates").stringValue() );
+	repr_h = new RepresentationHandler(	par("representation_bitrates").stringValue(),
+										par("utility_function").stringValue() );
     repo_prices = init_repo_prices();
 	//</aa>
 

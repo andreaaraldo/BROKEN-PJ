@@ -31,7 +31,7 @@
 #include <core_layer.h>
 #include "ccn_data.h"
 
-RepresentationHandler::RepresentationHandler(const char* bitrates)
+RepresentationHandler::RepresentationHandler(const char* bitrates, const char* utility_function)
 {
 	cStringTokenizer(bitrates,"_").asDoubleVector();
 	representation_bitrates_p = new vector<double> (cStringTokenizer(bitrates,"_").asDoubleVector() );
@@ -53,7 +53,28 @@ RepresentationHandler::RepresentationHandler(const char* bitrates)
 
 	possible_representation_mask = ( (0xFFFF << get_number_of_representations() ) & 0xFFFF);
 	possible_representation_mask = (~possible_representation_mask);
-	cout <<"ciao, possible_representation_mask="<<possible_representation_mask<<endl;
+
+	// {COMPUTE UTILITIES
+	unsigned num_of_representations = representation_bitrates_p->size();
+	utilities = (float*) malloc(num_of_representations * sizeof(float) );
+	if (strcmp(utility_function, "linear")==0 )
+	{
+		for (unsigned i=0; i < num_of_representations; i++)
+		{
+			utilities[i] = (float) i / (float) num_of_representations;
+		}
+	}else if (strcmp(utility_function, "power4")==0 )
+		for (unsigned i=0; i < num_of_representations; i++)
+			utilities[i] = pow( (float)(i+1),1.0/4) / pow( (float)num_of_representations, 1.0/4);
+	else
+		severe_error(__FILE__,__LINE__,"utility function not recognized");
+
+	cout<<"ciao: utility_function is "<< utility_function << "; utilities ";
+	for (unsigned i=0; i < num_of_representations; i++)
+		cout << utilities[i]<<":";
+	cout<<endl;
+	// }COMPUTE UTILITIES
+
 
 	//{ CHECK INPUT
 	unsigned storage_temp = get_storage_space_of_representation(1);
@@ -72,7 +93,7 @@ const representation_mask_t RepresentationHandler::get_possible_representation_m
 	return possible_representation_mask;
 }
 
-const unsigned short RepresentationHandler::get_representation_number(chunk_t chunk_id)
+unsigned short RepresentationHandler::get_representation_number(chunk_t chunk_id) const
 {
 	unsigned short representation = 0;
 	representation_mask_t repr_mask = __representation_mask(chunk_id);
@@ -127,6 +148,11 @@ const unsigned RepresentationHandler::get_storage_space_of_representation(unsign
 const unsigned short RepresentationHandler::get_number_of_representations() 
 {
 	return representation_storage_space_p->size();
+}
+
+const float RepresentationHandler::get_utility(chunk_t chunk_id) const
+{
+	return utilities[ get_representation_number(chunk_id) -1];
 }
 
 const representation_mask_t RepresentationHandler::set_bit_to_zero(representation_mask_t mask, unsigned short position)

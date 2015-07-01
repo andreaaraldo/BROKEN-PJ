@@ -37,7 +37,7 @@ using namespace std;
 class RepresentationHandler
 {
 	public:
-		RepresentationHandler(const char* bitrates);
+		RepresentationHandler(const char* bitrates, const char* utility_function);
 		const unsigned short get_number_of_representations();
 		const double get_bitrate(unsigned short representation);
 		const unsigned get_storage_space_of_representation(unsigned short representation);
@@ -46,10 +46,11 @@ class RepresentationHandler
 																			// the chunk and returns the required
 																			// storage space
 
-		const unsigned short get_representation_number(chunk_t chunk_id);
+		unsigned short get_representation_number(chunk_t chunk_id) const;
 		const representation_mask_t set_bit_to_zero(representation_mask_t mask, unsigned short position);
 		const representation_mask_t get_representation_mask(ccn_data* data) const;
 		const representation_mask_t get_possible_representation_mask() const;
+		const float get_utility(chunk_t chunk_id) const;
 
 		#ifdef SEVERE_DEBUG
 		void check_representation_mask(chunk_t chunk_id, unsigned pkt_type) const;
@@ -62,6 +63,7 @@ class RepresentationHandler
 															// storage space, as a multiple of the space of
 															// the lowest representation
 		representation_mask_t possible_representation_mask;
+		float* utilities;
 };
 //</aa>
 #endif
