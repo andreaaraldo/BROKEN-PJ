@@ -18,7 +18,7 @@ void lru_repr_cache::initialize_cache_slots()
 {
     int chunks_at_highest_representation = par("C");
 	unsigned highest_representation_space = content_distribution::get_repr_h()->get_storage_space_of_representation(
-		content_distribution::get_repr_h()->get_number_of_representations() );
+		content_distribution::get_repr_h()->get_num_of_representations() );
 	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
 }
 
@@ -93,8 +93,8 @@ void lru_repr_cache::finish()
 	lru_cache::finish();
 
 	//{ COMPUTE REPRESENTATION BREAKDOWN
-	unsigned short num_of_repr = content_distribution::get_repr_h()->get_number_of_representations();
-	unsigned* breakdown = (unsigned*)calloc(content_distribution::get_repr_h()->get_number_of_representations(), sizeof(unsigned) );
+	unsigned short num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
+	unsigned* breakdown = (unsigned*)calloc(content_distribution::get_repr_h()->get_num_of_representations(), sizeof(unsigned) );
 	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
 	{

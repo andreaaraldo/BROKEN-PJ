@@ -41,7 +41,7 @@ void lru_cache::initialize()
 {
 	base_cache::initialize();
 	#ifdef SEVERE_DEBUG
-		if( content_distribution::get_repr_h()->get_number_of_representations() != 1 )
+		if( content_distribution::get_repr_h()->get_num_of_representations() != 1 )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"This cache policy is intended to work only with one representation for each chunk."<<

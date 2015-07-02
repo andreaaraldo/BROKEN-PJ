@@ -51,7 +51,7 @@ RepresentationHandler::RepresentationHandler(const char* bitrates, const char* u
 		#endif
 	}
 
-	possible_representation_mask = ( (0xFFFF << get_number_of_representations() ) & 0xFFFF);
+	possible_representation_mask = ( (0xFFFF << get_num_of_representations() ) & 0xFFFF);
 	possible_representation_mask = (~possible_representation_mask);
 
 	// {COMPUTE UTILITIES
@@ -78,7 +78,7 @@ RepresentationHandler::RepresentationHandler(const char* bitrates, const char* u
 
 	//{ CHECK INPUT
 	unsigned storage_temp = get_storage_space_of_representation(1);
-	for (unsigned i = 2; i <= get_number_of_representations(); i++)
+	for (unsigned i = 2; i <= get_num_of_representations(); i++)
 	{
 		if (get_storage_space_of_representation(i) < storage_temp)
 			severe_error(__FILE__,__LINE__, 
@@ -145,7 +145,7 @@ const unsigned RepresentationHandler::get_storage_space_of_representation(unsign
 	return space;
 }
 
-const unsigned short RepresentationHandler::get_number_of_representations() 
+const unsigned short RepresentationHandler::get_num_of_representations() 
 {
 	return representation_storage_space_p->size();
 }
@@ -182,7 +182,7 @@ void RepresentationHandler::check_representation_mask(chunk_t chunk_id, unsigned
 
 			unsigned short representation = 0;
 			unsigned short i=1;
-			while (representation == 0 && i<= content_distribution::get_repr_h()->get_number_of_representations() )
+			while (representation == 0 && i<= content_distribution::get_repr_h()->get_num_of_representations() )
 			{
 				if( (representation_mask >> i ) == 0 )
 					representation = i;

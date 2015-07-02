@@ -38,7 +38,7 @@ class RepresentationHandler
 {
 	public:
 		RepresentationHandler(const char* bitrates, const char* utility_function);
-		const unsigned short get_number_of_representations();
+		const unsigned short get_num_of_representations();
 		const double get_bitrate(unsigned short representation);
 		const unsigned get_storage_space_of_representation(unsigned short representation);
 

@@ -189,7 +189,7 @@ void base_cache::initialize_(std::string decision_policy, unsigned cache_slots)
 
 void base_cache::initialize_cache_slots(unsigned cache_slots_)
 {
-	if ( content_distribution::get_repr_h()->get_number_of_representations() > 1 )
+	if ( content_distribution::get_repr_h()->get_num_of_representations() > 1 )
 	{
 		std::stringstream ermsg; 
 		ermsg<<"A generic cache cannot handle more than one representation"<< 
@@ -529,7 +529,7 @@ double base_cache::get_average_price()
 
 int base_cache::get_size()
 {
-	if( content_distribution::get_repr_h()->get_number_of_representations() != 1 )
+	if( content_distribution::get_repr_h()->get_num_of_representations() != 1 )
 	{
 		std::stringstream ermsg; 
 		ermsg<<"This function cannot be used if more than one representation per content is considered"<<
@@ -584,7 +584,7 @@ const char* base_cache::get_cache_content()
 
 void base_cache::check_if_correct()
 {
-	unsigned num_of_repr = content_distribution::get_repr_h()->get_number_of_representations();
+	unsigned num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
 	unsigned* breakdown = (unsigned*)calloc(num_of_repr, sizeof(unsigned) );
 	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
