@@ -28,10 +28,10 @@
 
 Register_Class(fifo_cache);
 
-bool fifo_cache::data_store(ccn_data* data_msg)
+bool fifo_cache::handle_data(ccn_data* data_msg)
 {
 	bool return_value = true;
-	base_cache::data_store(data_msg);
+	base_cache::handle_data(data_msg);
 	chunk_t chunk = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 	if( content_distribution::get_repr_h()->get_number_of_representations() != 1 )

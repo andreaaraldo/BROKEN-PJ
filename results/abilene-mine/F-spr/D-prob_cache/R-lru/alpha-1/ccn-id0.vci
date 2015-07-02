@@ -1,4 +1,4 @@
-file 34875 1426096785                                           
+file 34875 1435756841                                           
 version 2
 run General-22-20150311-18:59:43-28977
 attr D prob_cache
@@ -22,48 +22,5 @@ attr resultdir results
 attr runnumber 22
 attr seedset 0
 attr ttl 1000
-
-vector 0  abilene_network.node[0].content_store  hit_node[0]  ETV
-0	756 1266 536204 536204 1 76 76 0 1 42.530952380952 37.791799886621
-vector 1  abilene_network.node[1].content_store  hit_node[1]  ETV
-1	2088 1553 536204 536204 1 76 76 0 1 34.589319246285 24.716961010796
-vector 2  abilene_network.node[2].content_store  hit_node[2]  ETV
-2	3707 1648 536204 536204 1 76 76 0 1 26.617752238536 16.676083767537
-vector 3  abilene_network.node[3].content_store  hit_node[3]  ETV
-3	5421 1665 536204 536204 1 76 76 0 1 26.143863906263 16.339961661019
-vector 4  abilene_network.node[4].content_store  hit_node[4]  ETV
-4	7152 1694 536204 536204 1 76 76 0 1 25.083712350807 16.256539607436
-vector 5  abilene_network.node[5].content_store  hit_node[5]  ETV
-5	8912 1750 536204 536204 1 76 76 0 1 25.154679461385 14.746017183557
-vector 6  abilene_network.node[6].content_store  hit_node[6]  ETV
-6	10728 1616 536204 536204 1 76 76 0 1 28.447786056991 18.018786656757
-vector 7  abilene_network.node[7].content_store  hit_node[7]  ETV
-7	12410 1479 536204 536204 1 76 76 0 1 32.011254839931 23.63457793568
-vector 8  abilene_network.node[8].content_store  hit_node[8]  ETV
-8	13955 1397 536204 536204 1 76 76 0 1 35.387667887668 28.602089354479
-vector 9  abilene_network.node[9].content_store  hit_node[9]  ETV
-9	15418 1255 536204 536204 1 76 76 0 1 -nan -nan
-vector 10  abilene_network.node[10].content_store  hit_node[10]  ETV
-10	16742 1317 536204 536204 1 76 76 0 1 37.716666666667 32.480116213152
-vector 11  abilene_network.client[0]  hdistance[0]  ETV
-11	18115 1354 536204 536204 1 76 76 0 6 99.532142857143 309.4312712585
-vector 12  abilene_network.client[1]  hdistance[1]  ETV
-12	19525 1481 536204 536204 1 76 76 0 5 114.87441264875 327.78785336542
-vector 13  abilene_network.client[2]  hdistance[2]  ETV
-13	21062 1500 536204 536204 1 76 76 0 4 123.38333439801 303.69137419685
-vector 14  abilene_network.client[3]  hdistance[3]  ETV
-14	22618 1552 536204 536204 1 76 76 0 3 107.59629010281 218.58188784972
-vector 15  abilene_network.client[4]  hdistance[4]  ETV
-15	24226 1545 536204 536204 1 76 76 0 2 85.8070757837 136.71598065521
-vector 16  abilene_network.client[5]  hdistance[5]  ETV
-16	25827 1587 536204 536204 1 76 76 0 1 47.966074808268 39.309010824026
-vector 17  abilene_network.client[6]  hdistance[6]  ETV
-17	27470 1549 536204 536204 1 76 76 0 2 80.124227436687 113.00913749797
-vector 18  abilene_network.client[7]  hdistance[7]  ETV
-18	29075 1479 536204 536204 1 76 76 0 3 101.20121961372 214.30591739695
-vector 19  abilene_network.client[8]  hdistance[8]  ETV
-19	30610 1418 536204 536204 1 76 76 0 4 97.993376068376 238.73149425149
-vector 20  abilene_network.client[9]  hdistance[9]  ETV
-20	32084 1414 536204 536204 1 76 76 0 5 93.707287157287 310.83169791608
 vector 21  abilene_network.client[10]  hdistance[10]  ETV
 21	33556 1319 536204 536204 1 76 76 0 6 110.55595238095 368.81442318594

@@ -34,13 +34,17 @@ using namespace std;
 class partitioned_cache: public base_cache
 {
     public:
+        virtual cache_item_descriptor* data_lookup_receiving_interest(chunk_t requested_chunk_id);
+        virtual cache_item_descriptor* data_lookup_receiving_data(chunk_t requested_chunk_id);
+        virtual bool full(); // Returns true only if all the subcaches are full
 
     protected:
         void initialize();
-        bool data_store(ccn_data* data_msg);
+        bool handle_data(ccn_data* data_msg);
         lru_cache** subcaches;
         unordered_map<chunk_t, unsigned> quality_map;   // Map each chunk to the representation level
                                                         // which is stored of it
+        unsigned short num_of_partitions;
 
     private:
 };

@@ -55,7 +55,7 @@ class lru_cache:public base_cache{
     public:
 		lru_cache():base_cache(),lru_(NULL),mru_(NULL){}
 
-		bool data_store(ccn_data* data_msg);
+		bool handle_data(ccn_data* data_msg);
 		virtual void initialize();
 		//<aa>
 		cache_item_descriptor* get_mru();

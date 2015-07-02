@@ -40,7 +40,8 @@ Register_Class(statistics);
 
 using namespace std;
 
-void statistics::initialize(){
+void statistics::initialize()
+{
     //Node property
     num_nodes 	= getAncestorPar("n");
     num_clients = getAncestorPar("num_clients");
@@ -125,7 +126,10 @@ void statistics::initialize(){
     vector<string> nodes_vec(1,"modules.node.node");
     topo.extractByNedTypeName(nodes_vec);
 
-    for (int i = 0;i<topo.getNumNodes();i++){
+    cout << "ciao: nodes are "<< topo.getNumNodes()<<endl;
+
+    for (int i = 0;i<topo.getNumNodes();i++)
+    {
 		caches[i] = (base_cache *) (topo.getNode(i)->getModule()->getModuleByRelativePath("content_store"));
 		cores [i] = (core_layer *) (topo.getNode(i)->getModule()->getModuleByRelativePath("core_layer"));
     }
@@ -155,22 +159,23 @@ void statistics::handleMessage(cMessage *in){
     switch (in->getKind()){
         case FULL_CHECK:
             for (int i = 0; i < num_nodes;i++)
-        	full += (int)caches[i]->full();
+                full += (int)caches[i]->full();
 
-            if (full >= partial_n || simTime()>=10*3600){
-        	cout<<"Caches filled at time "<<simTime()<<endl;
-        	clear_stat();
-        	scheduleAt(simTime() + ts, stable_check);
-        	delete full_check;
+            if (full >= partial_n || simTime()>=10*3600)
+            {
+                cout<<"Caches filled at time "<<simTime()<<endl;
+                clear_stat();
+                scheduleAt(simTime() + ts, stable_check);
+                delete full_check;
             }else
-        	scheduleAt(simTime() + ts, in);
+                scheduleAt(simTime() + ts, in);
 
             break;
 
         case STABLE_CHECK:
 
             for (int i = 0;i<num_nodes;i++)
-        	stables += (int) stable(i);
+                stables += (int) stable(i);
 
             if ( stables >= partial_n )
             {
@@ -187,8 +192,8 @@ void statistics::handleMessage(cMessage *in){
 
 }
 
-bool statistics::stable(int n){
-
+bool statistics::stable(int n)
+{
     bool stable = false;
     double var = 0.0;
     double rate = caches[n]->hit * 1./ ( caches[n]->hit + caches[n]->miss );
@@ -203,12 +208,12 @@ bool statistics::stable(int n){
 	{ //variance each window seconds
 		var =variance(samples[n]); 
         // cout<<n<<"] variance = "<<var<<endl; //<aa> I disabled this line </aa>
-        if ( var <= variance_threshold){
+        if ( var <= variance_threshold)
+        {
             stabilization_time = simTime().dbl();
             stable = true;
         }
         samples[n].clear();
-
     }
     return stable;
 

@@ -90,7 +90,7 @@ struct cache_item_descriptor
 
 //Base cache class: it implements the basic behaviour of every cache by the mean of two abstract functions:
 //
-//-) data_store: stores chunks within the cache with a given policy
+//-) handle_data: stores chunks within the cache with a given policy
 //
 struct cache_stat_entry{
     unsigned int  miss; //Total number of misses
@@ -105,7 +105,7 @@ class base_cache : public abstract_node
 
     protected:
 		virtual void initialize();
-		virtual void initialize_cache_slots();
+		virtual void initialize_cache_slots(unsigned cache_slots);
 		void handleMessage (cMessage *){;}
 		virtual void finish();
 
@@ -132,12 +132,13 @@ class base_cache : public abstract_node
 						// one or more cache slots, depending on its representation level </aa>
 
 		//Inteface function (depending by internal data structures of each cache)
-		virtual bool data_store(ccn_data*) = 0;
+		virtual bool handle_data(ccn_data*) = 0;
 
 		//Outside function behaviour
 		int get_size(); //deprecated
 
 		//<aa>
+		virtual void initialize_(std::string decision_policy, unsigned cache_slots);
 		unsigned  get_slots() { return cache_slots; }
 		void set_slots(unsigned);
 		virtual cache_item_descriptor* data_lookup_receiving_data (chunk_t incoming_chunk_id);
@@ -178,14 +179,14 @@ class base_cache : public abstract_node
 		#endif
 		//</aa>
 
-		bool lookup(chunk_t); //deprecated
+		//{ DEPRECATED
+		bool lookup(chunk_t);
+		virtual bool data_store(ccn_data*);
+		//} DEPRECATED
 
     private:
 
 		int name_cache_size;   		// Size of the name cache expressed in number of content IDs (only with 2-LRU meta-caching).
-
-		int nodes;
-		int level;
 
 		DecisionPolicy *decisor;
 

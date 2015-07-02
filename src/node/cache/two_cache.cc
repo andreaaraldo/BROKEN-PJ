@@ -28,9 +28,9 @@
 
 Register_Class(two_cache);
 
-bool two_cache::data_store(ccn_data* data_msg)
+bool two_cache::handle_data(ccn_data* data_msg)
 {
-	bool return_value = base_cache::data_store(data_msg);
+	bool return_value = base_cache::handle_data(data_msg);
 	chunk_t chunk = data_msg->get_chunk_id();
 
 	#ifdef SEVERE_DEBUG

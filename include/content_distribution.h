@@ -98,10 +98,7 @@ class content_distribution : public cSimpleModule
 
     public:
 		#ifdef SEVERE_DEBUG
-			content_distribution():cSimpleModule()
-			{	
-
-			};
+			content_distribution():cSimpleModule(){};
 		#endif
 
 		void init_content();

@@ -65,16 +65,15 @@ cache_item_descriptor::cache_item_descriptor(chunk_t chunk_id, double price)
 
 void base_cache::initialize()
 {
-    initialize(getAncestorPar("n"), getAncestorPar("level"), par("DS"), par("C") );
+	std::string decision = par("DS");
+	unsigned slots = par("C");
+    initialize_(decision, slots );
 }
 
 //Initialization function
-void base_cache::initialize(nodes_, level_, string decision_policy, cache_slots)
+void base_cache::initialize_(std::string decision_policy, unsigned cache_slots)
 {
-    nodes      = nodes_;
-    level = level_;
-
-	initialize_cache_slots(cache_slots);
+    initialize_cache_slots(cache_slots);
 
     //{ INITIALIZE DECISION POLICY
 	decisor = NULL;
@@ -188,7 +187,7 @@ void base_cache::initialize(nodes_, level_, string decision_policy, cache_slots)
 
 }
 
-void base_cache::initialize_cache_slots(cache_slots_)
+void base_cache::initialize_cache_slots(unsigned cache_slots_)
 {
 	if ( content_distribution::get_repr_h()->get_number_of_representations() > 1 )
 	{
@@ -338,7 +337,7 @@ void base_cache::finish(){
 
 
 // Returns true if the data has been stored
-bool base_cache::data_store(ccn_data* data_msg)
+bool base_cache::handle_data(ccn_data* data_msg)
 {
 	bool should_i_cache;
 
@@ -376,7 +375,7 @@ void base_cache::store_name(chunk_t elem)
 	}
 
 	ccn_data* fake_data = new ccn_data(); fake_data->setChunk(elem);
-	data_store(fake_data);  // Store the content ID inside the Name Cache.
+	handle_data(fake_data);  // Store the content ID inside the Name Cache.
 }
 
 /*
@@ -410,6 +409,7 @@ cache_item_descriptor* base_cache::handle_interest(chunk_t chunk ) //<aa> Previo
 		if ( object_id <= __file_bulk )
 			cache_stats[object_id].miss++;
 	}
+
     return old;
 }
 
@@ -538,6 +538,12 @@ int base_cache::get_size()
 	}
 	return get_slots(); 
 }
+
+bool base_cache::data_store(ccn_data*)
+{
+    severe_error(__FILE__,__LINE__, "In this version of ccnSim, base_cache::data_store(...) has been renamed in base_cache::handle_data");
+    return false;
+}
 //} DEPRECATED FUNCTIONS
 
 
@@ -552,7 +558,7 @@ void base_cache::store (cMessage *)
 {
 	std::stringstream ermsg; 
 	ermsg<<"In this version of ccnSim this method does not exist anymore."<<
-		" You can directly call data_store";
+		" You can directly call handle_data";
 	severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 }
 

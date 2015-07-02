@@ -141,9 +141,9 @@ void lru_cache::remove_from_cache(cache_item_descriptor* descr)
 }
 //</aa>
 
-bool lru_cache::data_store(ccn_data* data_msg)
+bool lru_cache::handle_data(ccn_data* data_msg)
 {
-	bool accept_new_chunk = base_cache::data_store(data_msg);
+	bool accept_new_chunk = base_cache::handle_data(data_msg);
 	chunk_t chunk_id = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 		check_if_correct();

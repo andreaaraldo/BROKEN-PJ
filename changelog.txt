@@ -11,3 +11,4 @@
 #### TODO ##########################
 ####################################
 - Verify replacement policies
+- Disable "Per file cache statistics" (look for this string in base_cache.cc) when not needed
