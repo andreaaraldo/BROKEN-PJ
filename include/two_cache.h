@@ -40,7 +40,7 @@ using namespace std;
 class two_cache: public base_cache
 {
     public:
-	    virtual bool handle_data(ccn_data* data_msg);
+	    virtual bool handle_data(ccn_data* data_msg, chunk_t& evicted);
 
     private:
 	deque<uint64_t> deq;

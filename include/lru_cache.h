@@ -55,7 +55,10 @@ class lru_cache:public base_cache{
     public:
 		lru_cache():base_cache(),lru_(NULL),mru_(NULL){}
 
-		bool handle_data(ccn_data* data_msg);
+		const bool fake_lookup(chunk_t) const; // Look for the chunk without any internal modification
+		bool handle_data(ccn_data* data_msg, chunk_t& last_evicted_object); 	// Decides whether to store
+																			// the new chunk. If chunk,
+																			// evicts lru object if needed
 		virtual void initialize();
 		//<aa>
 		cache_item_descriptor* get_mru();
@@ -72,19 +75,18 @@ class lru_cache:public base_cache{
 		double get_cache_value();	//<aa> It gives an indication of the cost of objects stored 
 									// in the cache. </aa>
 		double get_average_price();
+        virtual void remove_from_cache(cache_item_descriptor* descr);
 		
 
     protected:		
 		cache_item_descriptor* data_lookup(chunk_t);// Returns the pointer to the cache item
 													//descritor or NULL if no item is found
-		bool fake_lookup(chunk_t);
 		//<aa>
 		void set_mru(cache_item_descriptor* new_mru);
 		void set_lru(cache_item_descriptor* new_lru);
-		virtual void shrink();
+		virtual chunk_t shrink(); // Removes last element if needed and returns its chunk_id
 		virtual void remove_from_cache(chunk_t chunk_id, unsigned storage_space); //deprecated
 		virtual void insert_into_cache(cache_item_descriptor* descr);
-		virtual void remove_from_cache(cache_item_descriptor* descr);
 		//</aa>
 
 		void dump();

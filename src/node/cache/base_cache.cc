@@ -204,18 +204,17 @@ void base_cache::initialize_cache_slots(unsigned cache_slots_)
 void base_cache::insert_into_cache(cache_item_descriptor* descr)
 {
 	chunk_t chunk_id = descr->k;
-	unsigned required_storage = content_distribution::get_repr_h()->get_storage_space_of_chunk(chunk_id);
+
 	// All chunks must be indexed only based on object_id, chunk_number
 	__srepresentation_mask(chunk_id, 0x0000);
 
 	#ifdef SEVERE_DEBUG
 		check_if_correct();
-		unordered_map<chunk_t,cache_item_descriptor *>::iterator it =
-				find_in_cache(chunk_id);
-		if ( it != end_of_cache() )
+		cache_item_descriptor *cached  = find_in_cache(chunk_id);
+		if ( cached != NULL )
 		{
 			std::stringstream ermsg; 
-			ermsg<<"Representation "<< (__representation_mask(it->second->k) )<< "was already present, and "<<
+			ermsg<<"Representation "<< (__representation_mask(cached->k) )<< "was already present, and "<<
 				"you are trying to insert another representation "<<(__representation_mask(descr->k) )<<
 				". This is forbidden"<<endl;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );		
@@ -224,24 +223,27 @@ void base_cache::insert_into_cache(cache_item_descriptor* descr)
 		content_distribution::get_repr_h()->check_representation_mask(descr->k, CCN_D);
 	#endif
 
-	update_occupied_slots( required_storage );
-
+    update_occupied_slots( descr->k, insertion ); 	// I use the original chunk identifier descr->k, with
+    												// the representation mask
     cache[chunk_id] = descr;
 }
 
-void base_cache::remove_from_cache(chunk_t chunk_id, unsigned storage_space)
+void base_cache::remove_from_cache(cache_item_descriptor* descr)
 {
-	// All chunks must be indexed only based on object_id, chunk_number
-	__srepresentation_mask(chunk_id, 0x0000);
+    chunk_t chunk_id = descr->k;
+    chunk_t chunk_id_without_repr = chunk_id;
 
- 	cache.erase(chunk_id);
-	update_occupied_slots(-1*storage_space);
+    // All chunks must be indexed only based on object_id, chunk_number
+	__srepresentation_mask(chunk_id_without_repr, 0x0000);
+ 	cache.erase(chunk_id_without_repr );
+
+	update_occupied_slots(chunk_id, removal);
 }
 
 
 
-unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cache(
-			chunk_t chunk_id_without_representation_mask)
+cache_item_descriptor * base_cache::find_in_cache(
+			chunk_t chunk_id_without_representation_mask) const
 {
 	#ifdef SEVERE_DEBUG
 		if (__representation_mask(chunk_id_without_representation_mask) != 0x0000 )
@@ -253,17 +255,20 @@ unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::find_in_cac
 		}
 	#endif
 
-	unordered_map<chunk_t,cache_item_descriptor *>::iterator return_value = 
+	boost::unordered_map<chunk_t,cache_item_descriptor *>::const_iterator it =
 			cache.find(chunk_id_without_representation_mask);
-	return return_value;
+	if (it == cache.end() )
+		return NULL;
+	else
+		return it->second;
 }
 
-unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::end_of_cache()
+unordered_map<chunk_t,cache_item_descriptor *>::const_iterator base_cache::end_of_cache() const
 {
 	return cache.end();
 }
 
-unordered_map<chunk_t,cache_item_descriptor *>::iterator base_cache::beginning_of_cache()
+unordered_map<chunk_t,cache_item_descriptor *>::const_iterator base_cache::beginning_of_cache() const
 {
 	return cache.begin();
 }
@@ -274,8 +279,10 @@ bool base_cache::full()
 	return (get_occupied_slots() == get_slots());
 }
 
-void base_cache::update_occupied_slots(int increment)
+void base_cache::update_occupied_slots(chunk_t chunk_id, operation op)
 {
+    unsigned storage_space = 1;
+    int increment = (op == insertion)? storage_space : -storage_space;
 	occupied_slots += increment;
 }
 
@@ -336,8 +343,9 @@ void base_cache::finish(){
 
 
 
-// Returns true if the data has been stored
-bool base_cache::handle_data(ccn_data* data_msg)
+// Decides whether to store the new chunk. If storing, evicts some chunk, if needed,
+// and returns the last evicted chunk_id
+bool base_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted)
 {
 	bool should_i_cache;
 
@@ -375,7 +383,8 @@ void base_cache::store_name(chunk_t elem)
 	}
 
 	ccn_data* fake_data = new ccn_data(); fake_data->setChunk(elem);
-	handle_data(fake_data);  // Store the content ID inside the Name Cache.
+	chunk_t evicted;
+	handle_data(fake_data, evicted);  // Store the content ID inside the Name Cache.
 }
 
 /*
@@ -431,7 +440,8 @@ bool base_cache::lookup_name(chunk_t chunk )
     return found;
 }
 
-bool base_cache::fake_lookup(chunk_t chunk){
+const bool base_cache::fake_lookup(chunk_t chunk) const
+{
     return data_lookup(chunk);
 }
 
@@ -471,28 +481,21 @@ void base_cache::set_slots(unsigned slots_)
 
 //<aa>
 cache_item_descriptor* base_cache::data_lookup_receiving_data (chunk_t data_chunk_id)
-{	return data_lookup(data_chunk_id);	
+{	return (cache_item_descriptor*) data_lookup(data_chunk_id);
 }
 
 cache_item_descriptor* base_cache::data_lookup_receiving_interest (chunk_t interest_chunk_id)
 {
-	return data_lookup(interest_chunk_id);	
+	return (cache_item_descriptor*) data_lookup(interest_chunk_id);
 }
 
-cache_item_descriptor* base_cache::data_lookup(chunk_t chunk)
+cache_item_descriptor* base_cache::data_lookup(chunk_t chunk) const
 {
-	cache_item_descriptor* descr;
-
 	// All chunks must be indexed only based on object_id, chunk_number
 	__srepresentation_mask(chunk, 0x0000);
 
-	unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk);
-    if ( it != end_of_cache() )
-		descr = it->second;
-	else 
-		descr = NULL;
-
-	return descr;
+	cache_item_descriptor * cached = find_in_cache(chunk);
+    return cached;
 }
 
 uint32_t base_cache::get_decision_yes()
@@ -572,7 +575,7 @@ bool base_cache::lookup(chunk_t)
 
 const char* base_cache::get_cache_content()
 {
-	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
+	unordered_map<chunk_t,cache_item_descriptor *>::const_iterator it;
 	std::stringstream content_str;
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
 	{
@@ -586,9 +589,11 @@ void base_cache::check_if_correct()
 {
 	unsigned num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
 	unsigned* breakdown = (unsigned*)calloc(num_of_repr, sizeof(unsigned) );
-	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
+	unordered_map<chunk_t,cache_item_descriptor *>::const_iterator it;
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
 	{
+		if (__representation_mask(it->first) != 0x0000 )
+			severe_error(__FILE__,__LINE__,"All objects must be indexed in a representation-unaware fashon");
 		chunk_t chunk_id = it->second->k;
 	    breakdown[content_distribution::get_repr_h()->get_representation_number(chunk_id)-1]++;
 	}

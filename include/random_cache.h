@@ -42,7 +42,7 @@ class random_cache: public base_cache{
 	virtual void initialize();
 
 	//Polymorphic functions
-	bool handle_data(ccn_data* data_msg);
+	bool handle_data(ccn_data* data_msg, chunk_t& evicted);
 
 	//Deprecated
 	bool warmup();

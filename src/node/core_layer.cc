@@ -363,7 +363,9 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 			data_msg->setTSB(1);
 			data_msg->setFound(true);
 
-		    ContentStore->handle_data(data_msg);
+			// Store the chunk in the local cache
+			chunk_t evicted = 0;
+		    ContentStore->handle_data(data_msg, evicted);
 
 			//<aa> I transformed send in send_data</aa>
 			send_data(data_msg,"face$o",int_msg->getArrivalGate()->getIndex(),__LINE__);
@@ -460,8 +462,11 @@ void core_layer::handle_data(ccn_data *data_msg)
 	{
 
 		// A pit entry for this chunk was found
-    	if (pentry.cacheable.test(0))  // Cache the content only if the cacheable bit is set.
-    		ContentStore->handle_data(data_msg);
+    	if (pentry.cacheable.test(0))
+    	{	// Cache the content only if the cacheable bit is set.
+    		chunk_t evicted = 0;
+    		ContentStore->handle_data(data_msg, evicted);
+    	}
 
     	interfaces = pentry.interfaces;	// Get incoming interfaces.
 		i = 0;

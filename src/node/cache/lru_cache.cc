@@ -70,18 +70,18 @@ bool lru_cache::is_it_empty() const
 }
 //</aa>
 
-// Remove last elements if needed
-void lru_cache::shrink()
+// Removes last element if needed and returns its chunk_id
+chunk_t lru_cache::shrink()
 {
-		//<aa> I transformed an if in a loop </aa>
-		while (get_occupied_slots()  > get_slots() )
-		{
+		chunk_t evicted = lru_->k;
+		if (get_occupied_slots()  > get_slots() )
 		    //if the cache is full, delete the last element
 			remove_from_cache(lru_);
-		}
+
 		#ifdef SEVERE_DEBUG
 		check_if_correct();
 		#endif
+		return evicted;
 }
 
 //<aa>
@@ -136,14 +136,15 @@ void lru_cache::remove_from_cache(cache_item_descriptor* descr)
 	if (newer == NULL)
 		mru_=older;
 
-    base_cache::remove_from_cache(descr->k, content_distribution::get_repr_h()->get_storage_space_of_chunk(descr->k));
+    base_cache::remove_from_cache(descr);
 	free(descr);
 }
 //</aa>
 
-bool lru_cache::handle_data(ccn_data* data_msg)
+// Decides whether to store the new chunk. If chunk, evicts lru object if needed
+bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk)
 {
-	bool accept_new_chunk = base_cache::handle_data(data_msg);
+	bool accept_new_chunk = base_cache::handle_data(data_msg, last_evicted_chunk);
 	chunk_t chunk_id = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 		check_if_correct();
@@ -158,7 +159,7 @@ bool lru_cache::handle_data(ccn_data* data_msg)
 			// There is no chunk already stored that can replace the incoming one.
 			// We need to store the incoming one.
 			insert_into_cache(new cache_item_descriptor(chunk_id, data_msg->getPrice() )  );
-			shrink();
+			last_evicted_chunk = shrink();
 		} else 
 		{
 			//There is already a chunk that can replace the incoming one
@@ -202,7 +203,7 @@ const cache_item_descriptor* lru_cache::get_eviction_candidate(){
 
 //</aa>
 
-bool lru_cache::fake_lookup(chunk_t chunk_id)
+const bool lru_cache::fake_lookup(chunk_t chunk_id) const
 {
 	#ifdef SEVERE_DEBUG
 		if (__representation_mask(chunk_id) != 0x0000 )
@@ -214,12 +215,13 @@ bool lru_cache::fake_lookup(chunk_t chunk_id)
 		}
 	#endif
 
-    unordered_map<chunk_t,cache_item_descriptor *>::iterator it = find_in_cache(chunk_id);
+    cache_item_descriptor* cached = find_in_cache(chunk_id);
     //look for the elements
-    if (it==end_of_cache()){
+    if (cached)
+    {
+		return true;
+    }else
 		//if not found return false and do nothing
-		return false;
-    }else 
 		return true;
 }
 

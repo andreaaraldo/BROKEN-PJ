@@ -1,5 +1,6 @@
 //<aa>
 #include "lru_repr_cache.h"
+#include "content_distribution.h"
 Register_Class(lru_repr_cache);
 
 void lru_repr_cache::initialize()
@@ -95,7 +96,7 @@ void lru_repr_cache::finish()
 	//{ COMPUTE REPRESENTATION BREAKDOWN
 	unsigned short num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
 	unsigned* breakdown = (unsigned*)calloc(content_distribution::get_repr_h()->get_num_of_representations(), sizeof(unsigned) );
-	unordered_map<chunk_t,cache_item_descriptor *>::iterator it;
+	unordered_map<chunk_t,cache_item_descriptor *>::const_iterator it;
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
 	{
 		chunk_t chunk_id = it->second->k;
@@ -111,4 +112,25 @@ void lru_repr_cache::finish()
 	//} COMPUTE REPRESENTATION BREAKDOWN
 }
 
+chunk_t lru_repr_cache::shrink()
+{
+	chunk_t evicted;
+	while (get_occupied_slots()  > get_slots() )
+	{
+		evicted = lru_->k;
+		//if the cache is full, delete the last element
+		remove_from_cache(lru_);
+	}
+	#ifdef SEVERE_DEBUG
+		check_if_correct();
+	#endif
+	return evicted;
+}
+
+void lru_repr_cache::update_occupied_slots(chunk_t chunk_id, operation op)
+{
+    unsigned storage_space = content_distribution::get_repr_h()->get_storage_space_of_chunk(chunk_id);
+    int increment = (op == insertion)? storage_space : -storage_space;
+    occupied_slots += increment;
+}
 //</aa

@@ -38,11 +38,17 @@ class partitioned_cache: public base_cache
         virtual cache_item_descriptor* data_lookup_receiving_data(chunk_t requested_chunk_id);
         virtual bool full(); // Returns true only if all the subcaches are full
 
+		#ifdef SEVERE_DEBUG
+			virtual void check_if_correct();
+			virtual void dump();
+		#endif
+
     protected:
         void initialize();
-        bool handle_data(ccn_data* data_msg);
+        bool handle_data(ccn_data* data_msg, chunk_t& evicted);
+        void remove_from_cache(cache_item_descriptor* descr);
         lru_cache** subcaches;
-        unordered_map<chunk_t, unsigned> quality_map;   // Map each chunk to the representation level
+        unordered_map<chunk_t, unsigned short> quality_map;   // Map each chunk to the representation level
                                                         // which is stored of it
         unsigned short num_of_partitions;
 

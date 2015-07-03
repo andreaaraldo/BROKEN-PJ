@@ -34,9 +34,9 @@ void random_cache::initialize(){
     base_cache::initialize();
 }
 
-bool random_cache::handle_data(ccn_data* data_msg)
+bool random_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 {
-	bool return_value= base_cache::handle_data(data_msg);
+	bool return_value= base_cache::handle_data(data_msg, evicted);
 	chunk_t chunk = data_msg->get_chunk_id();
 
 	#ifdef SEVERE_DEBUG
@@ -49,16 +49,14 @@ bool random_cache::handle_data(ccn_data* data_msg)
 	}
 	#endif
 
-	unsigned storage = 1; //how many slots each chunk occupies
-
-    insert_into_cache( new cache_item_descriptor(chunk) );
+	insert_into_cache( new cache_item_descriptor(chunk) );
     if ( get_occupied_slots() == get_slots() ){
         //Replacing a random element
         unsigned int pos = intrand(  deq.size() );
-        chunk_t toErase = deq.at(pos);
+        chunk_t evicted = deq.at(pos);
 
         deq.at(pos) = chunk;
-        remove_from_cache(toErase, storage);
+        remove_from_cache( new cache_item_descriptor(evicted) );
 
     } else
         deq.push_back(chunk);

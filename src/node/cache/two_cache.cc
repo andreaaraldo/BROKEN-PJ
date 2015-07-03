@@ -28,9 +28,9 @@
 
 Register_Class(two_cache);
 
-bool two_cache::handle_data(ccn_data* data_msg)
+bool two_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 {
-	bool return_value = base_cache::handle_data(data_msg);
+	bool return_value = base_cache::handle_data(data_msg, evicted);
 	chunk_t chunk = data_msg->get_chunk_id();
 
 	#ifdef SEVERE_DEBUG
@@ -43,7 +43,6 @@ bool two_cache::handle_data(ccn_data* data_msg)
 	}
 	#endif
 
-   unsigned storage = 1; //How many slots a chunk requires
    insert_into_cache( new cache_item_descriptor(chunk) ) ;
 
    if (deq.size() == (unsigned)get_size())
@@ -55,7 +54,7 @@ bool two_cache::handle_data(ccn_data* data_msg)
 
        chunk_t  toErase1 = deq.at(pos1);
        chunk_t  toErase2 = deq.at(pos2);
-       chunk_t  toErase;
+       chunk_t  evicted;
 
        name_t name1 = __id(toErase1);
        name_t name2 = __id(toErase2);
@@ -64,25 +63,25 @@ bool two_cache::handle_data(ccn_data* data_msg)
        //Comparing content popularity (a realistic implementation can employ a the freq map
        if (name1 > name2){
 
-	   toErase = toErase2;
+	   evicted = toErase2;
 	   pos = pos2;
 
        }else if (name1 == name2){
 	   if ( intrand(2) == 0 ){
-	       toErase = toErase1;
+	       evicted = toErase1;
 	       pos=pos1;
 	   }else{
-	       toErase=toErase2;
+	       evicted=toErase2;
 	       pos=pos2;
 	   }
        }else{
-	   toErase = toErase1;
+	   evicted = toErase1;
 	   pos = pos1;
        }
 
        //Erase the more popular elements among the two
        deq.at(pos)=chunk;
-       remove_from_cache(toErase, storage);
+       remove_from_cache( new cache_item_descriptor(evicted) );
    }else
        deq.push_back(chunk);
 

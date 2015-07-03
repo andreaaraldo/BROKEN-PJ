@@ -28,10 +28,10 @@
 
 Register_Class(fifo_cache);
 
-bool fifo_cache::handle_data(ccn_data* data_msg)
+bool fifo_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 {
 	bool return_value = true;
-	base_cache::handle_data(data_msg);
+	base_cache::handle_data(data_msg, evicted);
 	chunk_t chunk = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 	if( content_distribution::get_repr_h()->get_num_of_representations() != 1 )
@@ -43,15 +43,14 @@ bool fifo_cache::handle_data(ccn_data* data_msg)
 	}
 	#endif
 
-   unsigned storage_space = 1;
    insert_into_cache(new cache_item_descriptor(chunk) );
    deq.push_back(chunk);
 
    if ( get_occupied_slots() > (unsigned)get_size() ) {
    //Eviction of the last element
-       chunk_t toErase = deq.front();
+       evicted = deq.front();
        deq.pop_front();
-       remove_from_cache(toErase, storage_space);
+       remove_from_cache( new cache_item_descriptor(evicted) );
    }
 	return return_value;
 }

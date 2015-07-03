@@ -32,8 +32,10 @@
 #include "content_distribution.h"
 #include "statistics.h"
 #include "ccn_data.h"
+enum operation {insertion, removal};
 //</aa>
 class DecisionPolicy;
+
 
 // Indicate the position within the cache. It is useful with policies like lru. You can ignore it when you
 // you use policies that do not require any ordering.
@@ -104,13 +106,17 @@ class base_cache : public abstract_node
     friend class statistics;
 
     protected:
+		//<aa> I replaced cache_size with cache_slots </aa>
+		unsigned cache_slots;// <aa> A cache slot is the elementary unit of cache space. A chunk can occupy
+							 // one or more cache slots, depending on its representation level </aa>
+    	uint32_t occupied_slots; //actual size of the cache
 		virtual void initialize();
 		virtual void initialize_cache_slots(unsigned cache_slots);
 		void handleMessage (cMessage *){;}
 		virtual void finish();
 
 		virtual void dump(){cout<<"Method dump() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;}
-		virtual cache_item_descriptor* data_lookup(chunk_t);
+		virtual cache_item_descriptor* data_lookup(chunk_t) const;
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
@@ -118,21 +124,20 @@ class base_cache : public abstract_node
 		#endif
 
 		virtual void insert_into_cache(cache_item_descriptor* descr);
-		virtual void remove_from_cache(chunk_t chunk_id, unsigned storage_space);
-		virtual void update_occupied_slots(int difference);
-		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator find_in_cache(
-					chunk_t chunk_id);
-		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator end_of_cache();
-		virtual unordered_map<chunk_t,cache_item_descriptor *>::iterator beginning_of_cache();
+		virtual void update_occupied_slots(chunk_t chunk_id, operation op);
+		virtual cache_item_descriptor* find_in_cache(chunk_t chunk_id) const; //NULL if not found
+		virtual unordered_map<chunk_t,cache_item_descriptor *>::const_iterator end_of_cache() const;
+		virtual unordered_map<chunk_t,cache_item_descriptor *>::const_iterator beginning_of_cache() const;
 		//</aa>
 	
     public:
-		//<aa> I replaced cache_size with cache_slots </aa>
-		unsigned cache_slots;// <aa> A cache slot is the elementary unit of cache space. A chunk can occupy
-						// one or more cache slots, depending on its representation level </aa>
+
+		virtual void remove_from_cache(cache_item_descriptor* descr);
 
 		//Inteface function (depending by internal data structures of each cache)
-		virtual bool handle_data(ccn_data*) = 0;
+		virtual bool handle_data(ccn_data*, chunk_t& last_evicted_chunk) = 0;// Decides whether to store the new chunk. If stored, it
+																			// evicts some stored chunks, if needed, and returns the last
+																			// evicted one
 
 		//Outside function behaviour
 		int get_size(); //deprecated
@@ -147,7 +152,7 @@ class base_cache : public abstract_node
 
 		void set_size(uint32_t);
 
-		virtual bool fake_lookup(chunk_t);
+		const virtual bool fake_lookup(chunk_t) const; // Look for the chunk without internal modifications
 		cache_item_descriptor* handle_interest(chunk_t);
 
 		// Lookup without hit/miss statistics (used with the 2-LRU meta-caching strategy to lookup the name cache)
@@ -203,7 +208,6 @@ class base_cache : public abstract_node
 		//Per file statistics
 		cache_stat_entry *cache_stats;
 
-		uint32_t occupied_slots; //actual size of the cache
 		unordered_map<chunk_t, cache_item_descriptor*> cache;
 
 };
