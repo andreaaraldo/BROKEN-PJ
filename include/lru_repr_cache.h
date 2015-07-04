@@ -33,6 +33,7 @@
 #include "error_handling.h"
 #include "statistics.h"
 #include "client.h"
+#include "ProactiveComponent.h"
 
 
 
@@ -47,13 +48,17 @@ class lru_repr_cache:public lru_cache
 
 
     protected:
-		client* proactive_component;
-		virtual void initialize_cache_slots();
+		ProactiveComponent* proactive_component;
+		virtual void initialize_cache_slots(unsigned chunks_at_highest_representation);
 		virtual void update_occupied_slots(chunk_t chunk_id, operation op);
 		virtual void initialize();
 		virtual cache_item_descriptor* data_lookup_receiving_data(chunk_t incoming_chunk_id);
 		virtual cache_item_descriptor* data_lookup_receiving_interest(chunk_t requested_chunk_id);
 		virtual void finish();
-		chunk_t shrink(); // Set the cache to the right size and returns the evicted chunk id
+		virtual chunk_t shrink();	// Set the cache to the right size and returns the evicted
+									// chunk id
+		#ifdef SEVERE_DEBUG
+			virtual void check_representation_compatibility();
+		#endif
 };
 #endif

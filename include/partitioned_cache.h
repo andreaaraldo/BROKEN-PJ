@@ -41,12 +41,15 @@ class partitioned_cache: public base_cache
 		#ifdef SEVERE_DEBUG
 			virtual void check_if_correct();
 			virtual void dump();
+			virtual void check_representation_compatibility();
 		#endif
 
     protected:
         void initialize();
+        virtual void finish();
         bool handle_data(ccn_data* data_msg, chunk_t& evicted);
         void remove_from_cache(cache_item_descriptor* descr);
+        client* proactive_component;
         lru_cache** subcaches;
         unordered_map<chunk_t, unsigned short> quality_map;   // Map each chunk to the representation level
                                                         // which is stored of it

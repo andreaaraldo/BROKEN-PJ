@@ -8,11 +8,31 @@ void partitioned_cache::initialize()
 	base_cache::initialize();
 	num_of_partitions = content_distribution::get_repr_h()->get_num_of_representations();
 	subcaches = (lru_cache**) malloc(num_of_partitions * sizeof(lru_cache*) );
+
+	//{ PARTITION SET UP
+	// cache_slots is the number of chunk that we can store at high quality.
+	unsigned possible_lowest_repr_chunks = cache_slots*
+		content_distribution::get_repr_h()->get_storage_space_of_representation(num_of_partitions);
+
+	unsigned subcache_size[num_of_partitions];
+	for (unsigned short i=0; i<num_of_partitions; i++)
+	{
+		subcache_size[i] = (possible_lowest_repr_chunks / num_of_partitions)/
+			content_distribution::get_repr_h()->get_storage_space_of_representation(i+1);
+	}
+
 	for (unsigned short i=0; i<num_of_partitions; i++)
 	{
 	    subcaches[i] = new lru_cache();
-	    subcaches[i]->initialize_(std::string("lce"), cache_slots/num_of_partitions);
+	    subcaches[i]->initialize_(std::string("lce"), subcache_size[i] );
 	}
+	//} PARTITION SET UP
+
+	if (cache_slots > 0)
+		// Retrieve the proactive component
+		proactive_component = (client*) getParentModule()->getSubmodule("proactive_component");
+	else
+		proactive_component = NULL;
 }
 
 bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
@@ -25,7 +45,6 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 		if (evicted != 0)
 			severe_error(__FILE__,__LINE__,"Evicted should be 0 now");
 	#endif
-	cout<<"ciao: incoming object is "<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id)<<endl;
 
 	if (accept_new_chunk)
 	{
@@ -39,7 +58,6 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 				unsigned occupied_before = subcache->get_occupied_slots();
 			#endif
 
-		    cout<<"ciao: subcache was "<<occupied_before<<" before. ";
 		    subcaches[repr-1]->handle_data(data_msg, evicted);
 
 			#ifdef SEVERE_DEBUG
@@ -48,14 +66,11 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 			#endif
 
 
-		    cout<<"evicted is "<<__id(evicted)<<":"<<__chunk(evicted)<<":"<<__representation_mask(evicted)<<" and after eviction subcache is "<<subcaches[repr-1]->get_occupied_slots()<<endl;
 		    if (evicted != 0)
 		    {
 		    	chunk_t evicted_with_no_repr = evicted;
 		    	__srepresentation_mask(evicted_with_no_repr, 0x0000);
-		    	cout<<"ciao quality map was "<<quality_map.size()<<" before and after erasing is ";
 		    	quality_map.erase(evicted_with_no_repr);
-		    	cout<<quality_map.size()<<endl;
 		    }
 		    unsigned short incoming_representation =
 		                    content_distribution::get_repr_h()->get_representation_number(chunk_id);
@@ -75,10 +90,30 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 	return accept_new_chunk;
 }
 
-cache_item_descriptor* partitioned_cache::data_lookup_receiving_interest(chunk_t chunk_id)
+cache_item_descriptor* partitioned_cache::data_lookup_receiving_interest(chunk_t requested_chunk_id)
 {
-    unsigned short repr = content_distribution::get_repr_h()->get_representation_number(chunk_id);
-	return subcaches[repr-1]->data_lookup_receiving_interest(chunk_id);
+	- find the stored representation through quality map
+	- See if it satisfies the interest. If yes, stored = that repr
+	- Moreover, if yes, trigger the proactive component
+
+    unsigned short repr = quality_map[....]
+    cache_item_descriptor* stored = subcaches[repr-1]->data_lookup_receiving_interest(chunk_id);
+    if (stored != NULL)
+    {
+    	// There is a chunk with the same [object_id, chunk_num] stored in the cache.
+    	// I check if the stored representation can satisfy the interest
+    	representation_mask_t request_mask = __representation_mask(requested_chunk_id);
+    	representation_mask_t stored_mask = __representation_mask(stored->k);
+    	representation_mask_t intersection = stored_mask & request_mask;
+    	if ( intersection == 0 )
+    		// The stored representation does not match with the requested ones
+    		return NULL;
+    	else
+    		// A good chunk has been found
+    		proactive_component->try_to_improve(stored->k, requested_chunk_id);
+    }
+    return stored;
+
 }
 
 cache_item_descriptor* partitioned_cache::data_lookup_receiving_data(chunk_t chunk_id)
@@ -150,6 +185,21 @@ bool partitioned_cache::full()
     return true;
 }
 
+void partitioned_cache::finish()
+{
+	base_cache::finish();
+
+	unsigned short num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
+
+	std::stringstream breakdown_str;
+	for (unsigned i = 0; i < num_of_repr; i++)
+		breakdown_str << subcaches[i]->get_occupied_slots()<<":";
+    char name [60];
+    sprintf ( name, "representation_breakdown[%d] %s", getIndex(), breakdown_str.str().c_str());
+    recordScalar (name, 0);
+}
+
+
 #ifdef SEVERE_DEBUG
 void partitioned_cache::check_if_correct()
 {
@@ -186,16 +236,18 @@ void partitioned_cache::check_if_correct()
 
 void partitioned_cache::dump()
 {
-	cout<<"ciao: caches: ";
+	cout<<"caches: ";
 	for (unsigned short i=0; i<num_of_partitions; i++)
 		cout<<subcaches[i]->get_cache_content()<<" ; ";
 	cout<<endl;
 
-	cout<<"ciao: quality map: ";
+	cout<<"quality map: ";
 	for (unordered_map<chunk_t, unsigned short>::iterator it = quality_map.begin(); it != quality_map.end(); it++ )
 		cout<<__id(it->first)<<":"<<__chunk(it->first)<<":"<<__representation_mask(it->first)<<" ;";
 	cout<<endl;
 }
+
+void partitioned_cache::check_representation_compatibility(){}
 #endif
 
 //</aa

@@ -74,8 +74,6 @@ bool lru_cache::is_it_empty() const
 chunk_t lru_cache::shrink()
 {
 		chunk_t evicted = 0;
-		cout<<"ciao: get_occupied_slots()="<<get_occupied_slots()<<"; get_slots()="<<
-				get_slots()<<endl;
 		if (get_occupied_slots()  > get_slots() )
 		{
 			evicted = lru_->k;
@@ -148,11 +146,12 @@ void lru_cache::remove_from_cache(cache_item_descriptor* descr)
 }
 //</aa>
 
-// Decides whether to store the new chunk. If chunk, evicts lru object if needed
+// Decides whether to store the new chunk. If storing, evicts lru object if needed
 bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk)
 {
 	bool accept_new_chunk = base_cache::handle_data(data_msg, last_evicted_chunk);
 	chunk_t chunk_id = data_msg->get_chunk_id();
+
 	#ifdef SEVERE_DEBUG
 		unsigned occupied_before = get_occupied_slots();
 		check_if_correct();
@@ -161,6 +160,7 @@ bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk)
 		if (last_evicted_chunk != 0)
 					content_distribution::get_repr_h()->check_representation_mask(
 							last_evicted_chunk, CCN_D);
+		unsigned occupied_after_insertion;
 	#endif
 
 	if (accept_new_chunk)
@@ -171,6 +171,11 @@ bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk)
 			// There is no chunk already stored that can replace the incoming one.
 			// We need to store the incoming one.
 			insert_into_cache(new cache_item_descriptor(chunk_id, data_msg->getPrice() )  );
+
+			#ifdef SEVERE_DEBUG
+				occupied_after_insertion = get_occupied_slots();
+			#endif
+
 			last_evicted_chunk = shrink();
 		} else 
 		{
@@ -189,9 +194,10 @@ bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk)
 			std::stringstream ermsg;
 			ermsg<<"Incoming chunk "<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<
 				__representation_mask(chunk_id)<<". Immediately after you cached it, you "<<
-				"evicted it. This is weird";
-					severe_error(__FILE__,__LINE__,ermsg.str().c_str());
-				}
+				"evicted it. This is weird. Occupation before : after_insertion : after_shrink "<<
+				occupied_before<<" : "<< occupied_after_insertion <<" : "<< get_occupied_slots();
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str());
+		}
 
 		if (occupied_before == 0 && last_evicted_chunk != 0)
 		{

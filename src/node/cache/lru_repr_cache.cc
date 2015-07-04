@@ -9,16 +9,15 @@ void lru_repr_cache::initialize()
 
 	if (get_slots() > 0)
 		// Retrieve the proactive component
-		proactive_component = (client*) getParentModule()->getSubmodule("proactive_component");
+		proactive_component = (ProactiveComponent*) getParentModule()->getSubmodule("proactive_component");
 	else
 		proactive_component = NULL;
 
 }
 
-void lru_repr_cache::initialize_cache_slots()
+void lru_repr_cache::initialize_cache_slots(unsigned chunks_at_highest_representation)
 {
-    int chunks_at_highest_representation = par("C");
-	unsigned highest_representation_space = content_distribution::get_repr_h()->get_storage_space_of_representation(
+    unsigned highest_representation_space = content_distribution::get_repr_h()->get_storage_space_of_representation(
 		content_distribution::get_repr_h()->get_num_of_representations() );
 	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
 }
@@ -36,36 +35,13 @@ cache_item_descriptor* lru_repr_cache::data_lookup_receiving_interest(chunk_t re
 		if ( intersection == 0 )
 			// The stored representation does not match with the requested ones
 			return NULL;
-		else{
+		else
 			// A good chunk has been found
-			unsigned short representation_found = content_distribution::get_repr_h()->get_representation_number(stored->k);
-			
-			// Try to retrieve a better representation of this chunk
-			representation_mask_t improving_mask = (0xFFFF << representation_found );
-			improving_mask = (improving_mask & request_mask);
-
-			#ifdef SEVERE_DEBUG
-				if( (improving_mask & 0x0001) != 0 )
-				{
-					std::stringstream ermsg; 
-					ermsg<< "An improving mask cannot ask for repr 1. This would not be an improvement."<<
-						"request_mask="<<request_mask<<"; stored_mask="<<stored_mask<<"; representation_found="<<
-						representation_found;
-					severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-				}
-			#endif
-
-			if (improving_mask != 0x0000)
-			{	// There is a higher representation and I want to retrieve it
-				name_t object_id = __id(requested_chunk_id);
-				cnumber_t chunk_num = __chunk(requested_chunk_id);
-				proactive_component->request_specific_chunk_from_another_class(
-											object_id, chunk_num, improving_mask);
-			}
-		}
+			proactive_component->try_to_improve(stored->k, requested_chunk_id);
 	}
 	return stored;
 }
+
 
 cache_item_descriptor* lru_repr_cache::data_lookup_receiving_data(chunk_t incoming_chunk_id)
 {
@@ -121,12 +97,13 @@ chunk_t lru_repr_cache::shrink()
 		//if the cache is full, delete the last element
 		remove_from_cache(lru_);
 	}
+
 	#ifdef SEVERE_DEBUG
 		if (evicted != 0)
 			content_distribution::get_repr_h()->check_representation_mask(evicted, CCN_D);
-
 		check_if_correct();
 	#endif
+
 	return evicted;
 }
 
@@ -136,4 +113,8 @@ void lru_repr_cache::update_occupied_slots(chunk_t chunk_id, operation op)
     int increment = (op == insertion)? storage_space : -storage_space;
     occupied_slots += increment;
 }
+
+#ifdef SEVERE_DEBUG
+void lru_repr_cache::check_representation_compatibility(){}
+#endif
 //</aa

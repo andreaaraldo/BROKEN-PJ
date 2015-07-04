@@ -120,6 +120,7 @@ class base_cache : public abstract_node
 
 		//<aa>
 		#ifdef SEVERE_DEBUG
+			virtual void check_representation_compatibility();
 			bool initialized;
 		#endif
 

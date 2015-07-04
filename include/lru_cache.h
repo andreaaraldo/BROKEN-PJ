@@ -55,11 +55,11 @@ class lru_cache:public base_cache{
     public:
 		lru_cache():base_cache(),lru_(NULL),mru_(NULL){}
 
+		virtual void initialize();
 		const bool fake_lookup(chunk_t) const; // Look for the chunk without any internal modification
 		bool handle_data(ccn_data* data_msg, chunk_t& last_evicted_object); 	// Decides whether to store
 																			// the new chunk. If chunk,
 																			// evicts lru object if needed
-		virtual void initialize();
 		//<aa>
 		cache_item_descriptor* get_mru();
 		cache_item_descriptor* get_lru();

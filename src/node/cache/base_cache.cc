@@ -68,6 +68,10 @@ void base_cache::initialize()
 	std::string decision = par("DS");
 	unsigned slots = par("C");
     initialize_(decision, slots );
+
+	#ifdef SEVERE_DEBUG
+		check_representation_compatibility();
+	#endif
 }
 
 //Initialization function
@@ -189,13 +193,6 @@ void base_cache::initialize_(std::string decision_policy, unsigned cache_slots)
 
 void base_cache::initialize_cache_slots(unsigned cache_slots_)
 {
-	if ( content_distribution::get_repr_h()->get_num_of_representations() > 1 )
-	{
-		std::stringstream ermsg; 
-		ermsg<<"A generic cache cannot handle more than one representation"<< 
-			"per object. Use some specific subclass in this case";
-		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
 	cache_slots = cache_slots_;
 }
 
@@ -616,5 +613,12 @@ void base_cache::check_if_correct()
 	}
 	free(breakdown);
 }
+
+void base_cache::check_representation_compatibility()
+{
+	if (content_distribution::get_repr_h()->get_num_of_representations() != 1)
+		severe_error(__FILE__,__LINE__,"This policy cannot work with more than one repr");
+}
+
 #endif
 //</aa>

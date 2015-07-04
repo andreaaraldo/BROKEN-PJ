@@ -38,6 +38,8 @@ RepresentationHandler::RepresentationHandler(const char* bitrates, const char* u
 	representation_storage_space_p = new vector<unsigned>(representation_bitrates_p->size() );
 	for (unsigned i=0 ; i < representation_bitrates_p->size() ; i++)
 	{
+		// The slots needed for a certain representation are denotes as a multiple of the slots
+		// needed for the lowest representation.
 		(*representation_storage_space_p) [i] = 
 				round( (*representation_bitrates_p)[i] / (*representation_bitrates_p)[0] );
 

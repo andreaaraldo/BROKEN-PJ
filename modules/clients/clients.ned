@@ -19,6 +19,7 @@ simple client like IClient
 simple ProactiveComponent extends client
 {
 	parameters:
+	    @class(ProactiveComponent);
 		lambda = 0; // It does not spontanously send interests
 }
 

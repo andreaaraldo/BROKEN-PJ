@@ -126,8 +126,6 @@ void statistics::initialize()
     vector<string> nodes_vec(1,"modules.node.node");
     topo.extractByNedTypeName(nodes_vec);
 
-    cout << "ciao: nodes are "<< topo.getNumNodes()<<endl;
-
     for (int i = 0;i<topo.getNumNodes();i++)
     {
 		caches[i] = (base_cache *) (topo.getNode(i)->getModule()->getModuleByRelativePath("content_store"));
