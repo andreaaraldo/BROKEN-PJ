@@ -174,7 +174,9 @@ void RepresentationHandler::check_representation_mask(chunk_t chunk_id, unsigned
 		{
 			if (representation_mask == 0)
 			{
-			    std::stringstream ermsg; 
+			    std::stringstream ermsg;
+			    ermsg<<"Checking chunk "<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<
+			    		__representation_mask(chunk_id)<<". ";
 				ermsg<<"No representation is recognizable since representation mask is zero";
 				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 			}		

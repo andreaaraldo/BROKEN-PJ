@@ -73,12 +73,19 @@ bool lru_cache::is_it_empty() const
 // Removes last element if needed and returns its chunk_id
 chunk_t lru_cache::shrink()
 {
-		chunk_t evicted = lru_->k;
+		chunk_t evicted = 0;
+		cout<<"ciao: get_occupied_slots()="<<get_occupied_slots()<<"; get_slots()="<<
+				get_slots()<<endl;
 		if (get_occupied_slots()  > get_slots() )
+		{
+			evicted = lru_->k;
 		    //if the cache is full, delete the last element
 			remove_from_cache(lru_);
+		}
 
 		#ifdef SEVERE_DEBUG
+		if (evicted !=0 )
+			content_distribution::get_repr_h()->check_representation_mask(evicted,CCN_D);
 		check_if_correct();
 		#endif
 		return evicted;
@@ -147,8 +154,13 @@ bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk)
 	bool accept_new_chunk = base_cache::handle_data(data_msg, last_evicted_chunk);
 	chunk_t chunk_id = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
+		unsigned occupied_before = get_occupied_slots();
 		check_if_correct();
 		content_distribution::get_repr_h()->check_representation_mask(chunk_id, CCN_D);
+
+		if (last_evicted_chunk != 0)
+					content_distribution::get_repr_h()->check_representation_mask(
+							last_evicted_chunk, CCN_D);
 	#endif
 
 	if (accept_new_chunk)
@@ -166,6 +178,33 @@ bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk)
 			accept_new_chunk = false;
 		}
 	}
+
+	#ifdef SEVERE_DEBUG
+		if (last_evicted_chunk != 0)
+			content_distribution::get_repr_h()->check_representation_mask(
+					last_evicted_chunk, CCN_D);
+
+		if (last_evicted_chunk == chunk_id)
+		{
+			std::stringstream ermsg;
+			ermsg<<"Incoming chunk "<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<
+				__representation_mask(chunk_id)<<". Immediately after you cached it, you "<<
+				"evicted it. This is weird";
+					severe_error(__FILE__,__LINE__,ermsg.str().c_str());
+				}
+
+		if (occupied_before == 0 && last_evicted_chunk != 0)
+		{
+			std::stringstream ermsg;
+			ermsg<<"Incoming chunk "<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<
+					__representation_mask(chunk_id)<<"; evicted_chunk:"<<
+					__id(last_evicted_chunk)<<":"<<__chunk(last_evicted_chunk)<<":"<<
+					__representation_mask(last_evicted_chunk)<<" while it should be 0,"<<
+					"given that before the reception of the incoming chunk, cache was empty";
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str());
+		}
+	#endif
+
 	return accept_new_chunk;
 }
 

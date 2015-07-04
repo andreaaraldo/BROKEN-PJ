@@ -114,7 +114,7 @@ void lru_repr_cache::finish()
 
 chunk_t lru_repr_cache::shrink()
 {
-	chunk_t evicted;
+	chunk_t evicted=0;
 	while (get_occupied_slots()  > get_slots() )
 	{
 		evicted = lru_->k;
@@ -122,6 +122,9 @@ chunk_t lru_repr_cache::shrink()
 		remove_from_cache(lru_);
 	}
 	#ifdef SEVERE_DEBUG
+		if (evicted != 0)
+			content_distribution::get_repr_h()->check_representation_mask(evicted, CCN_D);
+
 		check_if_correct();
 	#endif
 	return evicted;

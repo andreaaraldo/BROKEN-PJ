@@ -22,6 +22,8 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 	#ifdef SEVERE_DEBUG
 		check_if_correct();
 		content_distribution::get_repr_h()->check_representation_mask(chunk_id, CCN_D);
+		if (evicted != 0)
+			severe_error(__FILE__,__LINE__,"Evicted should be 0 now");
 	#endif
 	cout<<"ciao: incoming object is "<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<":"<<__representation_mask(chunk_id)<<endl;
 
