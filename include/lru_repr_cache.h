@@ -45,6 +45,9 @@ class lru_repr_cache:public lru_cache
 	public:
 		lru_repr_cache():lru_cache(){;}
 
+		#ifdef SEVERE_DEBUG
+			virtual void check_if_correct();
+		#endif
 
 
     protected:

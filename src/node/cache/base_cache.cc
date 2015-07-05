@@ -185,7 +185,8 @@ void base_cache::initialize_(std::string decision_policy, unsigned cache_slots)
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
-	initialized = true;
+    	initialized = true;
+		check_if_correct();
 	#endif
 	//</aa>
 
@@ -348,7 +349,7 @@ bool base_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted)
 
     if (cache_slots>0 && decisor->data_to_cache(data_msg ) )
 	{
-		decision_yes++;
+    	decision_yes++;
 		should_i_cache = true; 	// data_ store is an interface funtion:
 							// each caching node should reimplement
 							// that function
@@ -545,7 +546,11 @@ bool base_cache::data_store(ccn_data*)
     return false;
 }
 //} DEPRECATED FUNCTIONS
-
+const char* base_cache::dump()
+{
+	severe_error(__FILE__,__LINE__,"Method dump() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it.");
+	return "nothing";
+}
 
 #ifdef SEVERE_DEBUG
 bool base_cache::is_initialized()
@@ -584,34 +589,12 @@ const char* base_cache::get_cache_content()
 
 void base_cache::check_if_correct()
 {
-	unsigned num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
-	unsigned* breakdown = (unsigned*)calloc(num_of_repr, sizeof(unsigned) );
 	unordered_map<chunk_t,cache_item_descriptor *>::const_iterator it;
 	for ( it = beginning_of_cache(); it != end_of_cache(); ++it )
 	{
 		if (__representation_mask(it->first) != 0x0000 )
 			severe_error(__FILE__,__LINE__,"All objects must be indexed in a representation-unaware fashon");
-		chunk_t chunk_id = it->second->k;
-	    breakdown[content_distribution::get_repr_h()->get_representation_number(chunk_id)-1]++;
 	}
-
-	std::stringstream breakdown_str;
-	for (unsigned i = 0; i < num_of_repr; i++)
-		breakdown_str << breakdown[i]<<":";
-
-
-	unsigned occupied_slots_tmp = 0;
-	for (unsigned i = 0; i < num_of_repr; i++)
-		occupied_slots_tmp += breakdown[i] * content_distribution::get_repr_h()->get_storage_space_of_representation(i+1);
-	if (occupied_slots_tmp != occupied_slots || occupied_slots > get_slots() )
-	{
-		std::stringstream ermsg; 
-		ermsg<<"error in the computation of the occupied slots. occupied_slots_tmp="<<occupied_slots_tmp<<
-			"; occupied_slots="<<occupied_slots <<"; get_slots()="<<get_slots()<<"; breakdown_str="<<
-			breakdown_str.str()<< "; content_str="<<get_cache_content();
-		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
-	free(breakdown);
 }
 
 void base_cache::check_representation_compatibility()

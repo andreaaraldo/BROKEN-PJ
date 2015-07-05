@@ -115,7 +115,7 @@ class base_cache : public abstract_node
 		void handleMessage (cMessage *){;}
 		virtual void finish();
 
-		virtual void dump(){cout<<"Method dump() not implemented in all subclasses of base_cache. Check that you are using a subclass that implements it."<<endl;}
+		virtual const char* dump();
 		virtual cache_item_descriptor* data_lookup(chunk_t) const;
 
 		//<aa>

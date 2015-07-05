@@ -150,7 +150,7 @@ void core_layer::handleMessage(cMessage *in)
 {
 	//<aa>
 	#ifdef SEVERE_DEBUG
-	check_if_correct(__LINE__);
+		check_if_correct(__LINE__);
 	#endif
 	//</aa>
 
@@ -652,6 +652,8 @@ void core_layer::check_if_correct(int line)
 						". The sum of "<< "decision_yes + decision_no + unsolicited_data must be data";
 					severe_error(__FILE__,line,ermsg.str().c_str() );
 	}
+
+	ContentStore->check_if_correct();
 } //end of check_if_correct(..)
 #endif
 

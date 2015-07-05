@@ -89,7 +89,7 @@ class lru_cache:public base_cache{
 		virtual void insert_into_cache(cache_item_descriptor* descr);
 		//</aa>
 
-		void dump();
+		const char* dump();
 
 		cache_item_descriptor* lru_; //least recently used item
 		cache_item_descriptor* mru_; //most recently used item

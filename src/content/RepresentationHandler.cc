@@ -33,49 +33,37 @@
 
 RepresentationHandler::RepresentationHandler(const char* bitrates, const char* utility_function)
 {
-	cStringTokenizer(bitrates,"_").asDoubleVector();
-	representation_bitrates_p = new vector<double> (cStringTokenizer(bitrates,"_").asDoubleVector() );
-	representation_storage_space_p = new vector<unsigned>(representation_bitrates_p->size() );
-	for (unsigned i=0 ; i < representation_bitrates_p->size() ; i++)
+	representation_bitrates = cStringTokenizer(bitrates,"_").asDoubleVector();
+
+	// {COMPUTE STORAGE
+	for (unsigned i=0 ; i < representation_bitrates.size() ; i++)
 	{
 		// The slots needed for a certain representation are denotes as a multiple of the slots
 		// needed for the lowest representation.
-		(*representation_storage_space_p) [i] = 
-				round( (*representation_bitrates_p)[i] / (*representation_bitrates_p)[0] );
-
-		#ifdef SEVERE_DEBUG
-			if ( (*representation_storage_space_p) [i] == 0 )
-			{
-				std::stringstream ermsg; 
-				ermsg<<"Rapresentation "<< i+1 <<" has storage space 0";
-				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-			}
-		#endif
+		representation_storage_space.push_back(
+				round( representation_bitrates[i] / representation_bitrates[0] ) );
 	}
+	// }COMPUTE STORAGE
 
 	possible_representation_mask = ( (0xFFFF << get_num_of_representations() ) & 0xFFFF);
 	possible_representation_mask = (~possible_representation_mask);
 
 	// {COMPUTE UTILITIES
-	unsigned num_of_representations = representation_bitrates_p->size();
-	utilities = (float*) malloc(num_of_representations * sizeof(float) );
 	if (strcmp(utility_function, "linear")==0 )
 	{
-		for (unsigned i=0; i < num_of_representations; i++)
-		{
-			utilities[i] = (float) i / (float) num_of_representations;
-		}
+		for (unsigned i=0; i < representation_bitrates.size(); i++)
+			utilities.push_back( (float) (i+1) / (float) representation_bitrates.size() );
 	}else if (strcmp(utility_function, "power4")==0 )
-		for (unsigned i=0; i < num_of_representations; i++)
-			utilities[i] = pow( (float)(i+1),1.0/4) / pow( (float)num_of_representations, 1.0/4);
+		for (unsigned i=0; i < representation_bitrates.size(); i++)
+			utilities.push_back( 	pow( (float)(i+1),1.0/4) /
+									pow( (float)representation_bitrates.size(), 1.0/4) );
 	else
 		severe_error(__FILE__,__LINE__,"utility function not recognized");
-
-	cout<<"ciao: utility_function is "<< utility_function << "; utilities ";
-	for (unsigned i=0; i < num_of_representations; i++)
-		cout << utilities[i]<<":";
-	cout<<endl;
 	// }COMPUTE UTILITIES
+
+	#ifdef SEVERE_DEBUG
+			check_if_correct();
+	#endif
 
 
 	//{ CHECK INPUT
@@ -88,6 +76,7 @@ RepresentationHandler::RepresentationHandler(const char* bitrates, const char* u
 		storage_temp = get_storage_space_of_representation(i);
 	}
 	//} CHECK INPUT
+
 }
 
 const representation_mask_t RepresentationHandler::get_possible_representation_mask() const
@@ -99,7 +88,7 @@ unsigned short RepresentationHandler::get_representation_number(chunk_t chunk_id
 {
 	unsigned short representation = 0;
 	representation_mask_t repr_mask = __representation_mask(chunk_id);
-	unsigned short i=1; while (representation == 0 && i<=representation_bitrates_p->size() )
+	unsigned short i=1; while (representation == 0 && i<=representation_bitrates.size() )
 	{
 		if( (repr_mask >> i ) == 0 )
 			representation = i;
@@ -120,7 +109,7 @@ const unsigned RepresentationHandler::get_storage_space_of_chunk(chunk_t chunk_i
 
 const double RepresentationHandler::get_bitrate(unsigned short representation)
 {
-	return (*representation_bitrates_p)[representation-1]; 
+	return representation_bitrates[representation-1];
 }
 
 const unsigned RepresentationHandler::get_storage_space_of_representation(unsigned short representation)
@@ -134,7 +123,7 @@ const unsigned RepresentationHandler::get_storage_space_of_representation(unsign
 	}	
 	#endif
 
-	unsigned space = (*representation_storage_space_p)[representation-1];
+	unsigned space = representation_storage_space[representation-1];
 
 	#ifdef SEVERE_DEBUG
 	if (space == 0)
@@ -149,7 +138,7 @@ const unsigned RepresentationHandler::get_storage_space_of_representation(unsign
 
 const unsigned short RepresentationHandler::get_num_of_representations() 
 {
-	return representation_storage_space_p->size();
+	return representation_storage_space.size();
 }
 
 const float RepresentationHandler::get_utility(chunk_t chunk_id) const
@@ -163,8 +152,41 @@ const representation_mask_t RepresentationHandler::set_bit_to_zero(representatio
 	return ~( (~mask) | adjoint);
 }
 
+const bool RepresentationHandler::is_it_compatible(chunk_t present, chunk_t req) const
+{
+	representation_mask_t stored_mask = __representation_mask(present);
+	representation_mask_t request_mask = __representation_mask(req);
+	representation_mask_t intersection = stored_mask & request_mask;
+	return (bool) intersection;
+}
+
+
 
 #ifdef SEVERE_DEBUG
+const char* RepresentationHandler::dump_storage()
+{
+	std::stringstream result;
+	for (unsigned i=0 ; i < representation_storage_space.size() ; i++)
+		result<< representation_storage_space[i]<<":";
+	return result.str().c_str();
+}
+
+const char* RepresentationHandler::dump_bitrates()
+{
+	std::stringstream result;
+	for (unsigned i=0 ; i < representation_bitrates.size() ; i++)
+		result<< representation_bitrates[i]<<":";
+	return result.str().c_str();
+}
+
+const char* RepresentationHandler::dump_utilities()
+{
+	std::stringstream str;
+	for (unsigned i=0; i < representation_bitrates.size(); i++)
+		str<<utilities[i]<<":";
+	return str.str().c_str();
+}
+
 // Check if the representation mask denotes one and only one representation
 void RepresentationHandler::check_representation_mask(chunk_t chunk_id, unsigned pkt_type) const
 {
@@ -245,6 +267,43 @@ void RepresentationHandler::check_representation_mask(chunk_t chunk_id, unsigned
 		}
 	}
 };
+
+void RepresentationHandler::check_if_correct()
+{
+	if ( 	utilities.size()!=representation_bitrates.size() ||
+			representation_storage_space.size()!=representation_bitrates.size()
+	){
+		std::stringstream ermsg;
+		ermsg<<"representation_bitrates.size()="<<representation_bitrates.size()<<
+				"; utilities.size()="<<utilities.size()<<"; representation_storage_space.size()="<<
+				representation_storage_space.size();
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str());
+	}
+
+	if ( representation_storage_space[0] != 1)
+	{
+		std::stringstream ermsg;
+		ermsg<<"The lowest representation has "<<representation_storage_space[0]<<
+				" while it should be 0";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str());
+	}
+
+
+	if (utilities[0]==0 || utilities[representation_bitrates.size()-1]!=1 )
+	{
+		std::stringstream ermsg;
+		ermsg<<"Utility vector "<<dump_utilities()<<" is incorrect";
+		severe_error(__FILE__,__LINE__,ermsg.str().c_str());
+	}
+}
+
+const char* RepresentationHandler::dump_chunk(chunk_t cid)
+{
+	std::stringstream ret;
+	ret<<__id(cid)<<":"<<__chunk(cid)<<":"<<__representation_mask(cid);
+	return ret.str().c_str();
+}
+
 #endif
 
 //</aa>

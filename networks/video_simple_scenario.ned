@@ -14,6 +14,8 @@ network video_simple_scenario_network extends base_network{
 	//Number of clients 
 	num_clients = 1;
 	node_clients = "0";
+	
+	client_type = "RepresentationAwareClient";
 
 
 connections:

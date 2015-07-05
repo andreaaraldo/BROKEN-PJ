@@ -82,9 +82,9 @@ chunk_t lru_cache::shrink()
 		}
 
 		#ifdef SEVERE_DEBUG
-		if (evicted !=0 )
-			content_distribution::get_repr_h()->check_representation_mask(evicted,CCN_D);
-		check_if_correct();
+			if (evicted !=0 )
+				content_distribution::get_repr_h()->check_representation_mask(evicted,CCN_D);
+			check_if_correct();
 		#endif
 		return evicted;
 }
@@ -121,6 +121,10 @@ void lru_cache::insert_into_cache(cache_item_descriptor* p)
 
 void lru_cache::remove_from_cache(cache_item_descriptor* descr)
 {
+	#ifdef SEVERE_DEBUG
+		if(get_occupied_slots()==0 )
+			severe_error(__FILE__,__LINE__,"Trying to remove a chunk from an empty cache");
+	#endif
 	cache_item_descriptor* newer = descr->newer;
 	cache_item_descriptor* older = descr->older;
 
@@ -141,8 +145,8 @@ void lru_cache::remove_from_cache(cache_item_descriptor* descr)
 	if (newer == NULL)
 		mru_=older;
 
-    base_cache::remove_from_cache(descr);
-	free(descr);
+	base_cache::remove_from_cache(descr);
+    free(descr);
 }
 //</aa>
 
@@ -329,9 +333,11 @@ const char* lru_cache::get_cache_content()
 	return content_str.str().c_str();
 }
 
-void lru_cache::dump()
+const char* lru_cache::dump()
 {
-	cout<<get_cache_content()<<endl;
+	std::stringstream ret;
+	ret<<get_cache_content();
+	return ret.str().c_str();
 }
 
 //<aa>
@@ -409,9 +415,13 @@ void lru_cache::check_if_correct()
 	base_cache::check_if_correct();
 	unordered_map<chunk_t, unsigned> cache_counter; //counts how many representations are stored per
 													// each chunk
+	cache_item_descriptor *newer = NULL;
 	cache_item_descriptor *it = get_mru();
     while (it)
 	{
+    	if(it->newer != newer)
+    		severe_error(__FILE__,__LINE__,"Error in pointers" );
+
 		chunk_t chunk_id = it->k;
 		__srepresentation_mask(chunk_id, 0x0000);
 		cache_counter[chunk_id]++;
@@ -422,6 +432,7 @@ void lru_cache::check_if_correct()
 				<<". Cache content is "<<get_cache_content();
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
+		newer = it;
 		it = it->older;
     }
 }

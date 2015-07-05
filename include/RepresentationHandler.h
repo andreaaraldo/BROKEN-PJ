@@ -51,19 +51,25 @@ class RepresentationHandler
 		const representation_mask_t get_representation_mask(ccn_data* data) const;
 		const representation_mask_t get_possible_representation_mask() const;
 		const float get_utility(chunk_t chunk_id) const;
+		const bool is_it_compatible(chunk_t present, chunk_t req) const;
 
 		#ifdef SEVERE_DEBUG
+		void check_if_correct();
+		const char* dump_storage();
+		const char* dump_bitrates();
+		const char* dump_utilities();
+		const char* dump_chunk(chunk_t cid);
 		void check_representation_mask(chunk_t chunk_id, unsigned pkt_type) const;
 		#endif
 
 
 	private:
-		vector<double>* representation_bitrates_p;
-		vector<unsigned>* representation_storage_space_p; // Associate to each representation the required
+		vector<double> representation_bitrates;
+		vector<unsigned> representation_storage_space; // Associate to each representation the required
 															// storage space, as a multiple of the space of
 															// the lowest representation
+		vector<float> utilities;
 		representation_mask_t possible_representation_mask;
-		float* utilities;
 };
 //</aa>
 #endif

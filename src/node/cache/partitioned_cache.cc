@@ -30,7 +30,7 @@ void partitioned_cache::initialize()
 
 	if (cache_slots > 0)
 		// Retrieve the proactive component
-		proactive_component = (client*) getParentModule()->getSubmodule("proactive_component");
+		proactive_component = (ProactiveComponent*) getParentModule()->getSubmodule("proactive_component");
 	else
 		proactive_component = NULL;
 }
@@ -39,6 +39,7 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 {
 	bool accept_new_chunk = base_cache::handle_data(data_msg, evicted);
 	chunk_t chunk_id = data_msg->get_chunk_id();
+	unsigned short incoming_repr = content_distribution::get_repr_h()->get_representation_number(chunk_id);
 	#ifdef SEVERE_DEBUG
 		check_if_correct();
 		content_distribution::get_repr_h()->check_representation_mask(chunk_id, CCN_D);
@@ -49,22 +50,31 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 	if (accept_new_chunk)
 	{
 		cache_item_descriptor* old = data_lookup_receiving_data(chunk_id);
+
+		if(	old != NULL &&
+			content_distribution::get_repr_h()->get_representation_number(old->k) < incoming_repr
+		){
+			// There is a chunk with the same [object_id, chunk_num] but the incoming representation is
+			// better. I will remove the old one and accept the new one.
+            remove_from_cache(old);
+            old = NULL; // To signal that the new chunk must be stored
+		}
+
 		if (old == NULL)
 		{
-			unsigned short repr = content_distribution::get_repr_h()->get_representation_number(chunk_id);
-			lru_cache* subcache = subcaches[repr-1];
+			// No chunk with the same [object_id, chunk_num] is in cache
+			lru_cache* subcache = subcaches[incoming_repr-1];
 
 			#ifdef SEVERE_DEBUG
 				unsigned occupied_before = subcache->get_occupied_slots();
 			#endif
 
-		    subcaches[repr-1]->handle_data(data_msg, evicted);
+			accept_new_chunk = subcaches[incoming_repr-1]->handle_data(data_msg, evicted);
 
-			#ifdef SEVERE_DEBUG
-				if (occupied_before == 0 && evicted!=0)
+		    #ifdef SEVERE_DEBUG
+		    	if (occupied_before == 0 && evicted!=0)
 					severe_error(__FILE__,__LINE__,"You evicted a ghost chunk");
 			#endif
-
 
 		    if (evicted != 0)
 		    {
@@ -72,15 +82,19 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 		    	__srepresentation_mask(evicted_with_no_repr, 0x0000);
 		    	quality_map.erase(evicted_with_no_repr);
 		    }
+		} else
+		{
+			//There is already a chunk that can replace the incoming one
+			accept_new_chunk = false;
+		}
+
+		if (accept_new_chunk)
+		{
 		    unsigned short incoming_representation =
 		                    content_distribution::get_repr_h()->get_representation_number(chunk_id);
 		    chunk_t chunk_id_without_repr = chunk_id;
 		    __srepresentation_mask(chunk_id_without_repr, 0x0000);
 		    quality_map[chunk_id_without_repr ] =incoming_representation;
-		} else
-		{
-			//There is already a chunk that can replace the incoming one
-			accept_new_chunk = false;
 		}
 	}
 	#ifdef SEVERE_DEBUG
@@ -92,28 +106,23 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 
 cache_item_descriptor* partitioned_cache::data_lookup_receiving_interest(chunk_t requested_chunk_id)
 {
-	- find the stored representation through quality map
-	- See if it satisfies the interest. If yes, stored = that repr
-	- Moreover, if yes, trigger the proactive component
+	cache_item_descriptor* stored = NULL;
+	chunk_t chunk_id_without_repr = requested_chunk_id;
+	__srepresentation_mask(chunk_id_without_repr, 0x0000);
+	unordered_map<chunk_t, unsigned short>::iterator it = quality_map.find(chunk_id_without_repr);
 
-    unsigned short repr = quality_map[....]
-    cache_item_descriptor* stored = subcaches[repr-1]->data_lookup_receiving_interest(chunk_id);
-    if (stored != NULL)
-    {
-    	// There is a chunk with the same [object_id, chunk_num] stored in the cache.
-    	// I check if the stored representation can satisfy the interest
-    	representation_mask_t request_mask = __representation_mask(requested_chunk_id);
-    	representation_mask_t stored_mask = __representation_mask(stored->k);
-    	representation_mask_t intersection = stored_mask & request_mask;
-    	if ( intersection == 0 )
-    		// The stored representation does not match with the requested ones
-    		return NULL;
-    	else
-    		// A good chunk has been found
-    		proactive_component->try_to_improve(stored->k, requested_chunk_id);
-    }
-    return stored;
-
+	if (it != quality_map.end() )
+	{
+		unsigned short stored_representation = it->second;
+		stored = subcaches[stored_representation-1]->data_lookup_receiving_interest(requested_chunk_id);
+		if ( content_distribution::get_repr_h()->is_it_compatible(stored->k, requested_chunk_id) )
+			// A good chunk has been found
+			proactive_component->try_to_improve(stored->k, requested_chunk_id);
+		else
+			// The stored representation does not match with the requested ones
+			stored = NULL;
+	}
+	return stored;
 }
 
 cache_item_descriptor* partitioned_cache::data_lookup_receiving_data(chunk_t chunk_id)
@@ -134,30 +143,19 @@ cache_item_descriptor* partitioned_cache::data_lookup_receiving_data(chunk_t chu
         good_already_stored_chunk =  NULL;
     else{
         unsigned short old_representation = it->second;
-        unsigned short incoming_representation =
-                content_distribution::get_repr_h()->get_representation_number(chunk_id);
-        if (incoming_representation > old_representation)
-        {
-            good_already_stored_chunk = NULL; // To signal that the new chunk must be stored
+    	good_already_stored_chunk =
+    			subcaches[old_representation-1]->data_lookup_receiving_data(chunk_id);
+		#ifdef SEVERE_DEBUG
+			if (good_already_stored_chunk ==NULL)
+			{
+				std::stringstream ermsg;
+				ermsg<<"quality_map said that a good chunk was stored in the cache partition of level "
+						<<old_representation<<" but looking into it I get a NULL pointer. This is an "
+						<<"error";
+				severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+			}
+		#endif
 
-            // I remove the old representation
-            remove_from_cache(new cache_item_descriptor(chunk_id) );
-        }else{
-        	// I do not have to store the incoming chunk, since I already have a better
-        	// representation in cache
-            good_already_stored_chunk =
-                    subcaches[old_representation-1]->data_lookup_receiving_data(chunk_id);
-            #ifdef SEVERE_DEBUG
-                if (good_already_stored_chunk ==NULL)
-                {
-                    std::stringstream ermsg;
-                    ermsg<<"quality_map said that a good chunk was stored in the cache partition of level "
-                            <<old_representation<<" but looking into it I get a NULL pointer. This is an "
-                            <<"error";
-                    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-                }
-            #endif
-        }
     }
     return good_already_stored_chunk;
 }
@@ -170,6 +168,9 @@ void partitioned_cache::remove_from_cache(cache_item_descriptor* descr)
 	// All chunks must be indexed only based on object_id, chunk_number
 	__srepresentation_mask(chunk_id, 0x0000);
 
+	#ifdef SEVERE_DEBUG
+		check_if_correct();
+	#endif
  	subcaches[representation-1]->remove_from_cache(descr);
 
  	quality_map.erase(chunk_id);
@@ -216,7 +217,8 @@ void partitioned_cache::check_if_correct()
 	if (stored_chunks != quality_map.size() )
 	{
 		std::stringstream ermsg;
-		ermsg<<"stored_chunks="<<stored_chunks<<" while quality_map.size()="<<quality_map.size();
+		ermsg<<"stored_chunks="<<stored_chunks<<" while quality_map.size()="<<quality_map.size()<<
+				"; cache dump = "<< dump();
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
 
@@ -234,17 +236,18 @@ void partitioned_cache::check_if_correct()
 	//} CHECK quality_map CONSISTENCY
 }
 
-void partitioned_cache::dump()
+const char* partitioned_cache::dump()
 {
-	cout<<"caches: ";
+	std::stringstream str;
+	str<<"caches: ";
 	for (unsigned short i=0; i<num_of_partitions; i++)
-		cout<<subcaches[i]->get_cache_content()<<" ; ";
-	cout<<endl;
+		str<<subcaches[i]->get_cache_content()<<" ; ";
 
-	cout<<"quality map: ";
+	str<<". ### quality map: ";
 	for (unordered_map<chunk_t, unsigned short>::iterator it = quality_map.begin(); it != quality_map.end(); it++ )
-		cout<<__id(it->first)<<":"<<__chunk(it->first)<<":"<<__representation_mask(it->first)<<" ;";
-	cout<<endl;
+		str<<__id(it->first)<<":"<<__chunk(it->first)<<":"<<__representation_mask(it->first)<<" ;";
+	str<<endl;
+	return str.str().c_str();
 }
 
 void partitioned_cache::check_representation_compatibility(){}
