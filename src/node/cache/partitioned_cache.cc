@@ -63,10 +63,9 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 		if (old == NULL)
 		{
 			// No chunk with the same [object_id, chunk_num] is in cache
-			lru_cache* subcache = subcaches[incoming_repr-1];
-
 			#ifdef SEVERE_DEBUG
-				unsigned occupied_before = subcache->get_occupied_slots();
+				unsigned occupied_before = 
+					subcaches[incoming_repr-1]->get_occupied_slots();
 			#endif
 
 			accept_new_chunk = subcaches[incoming_repr-1]->handle_data(data_msg, evicted);
