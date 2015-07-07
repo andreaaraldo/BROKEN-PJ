@@ -112,9 +112,9 @@ void  core_layer::initialize()
 		}
 	//} RETRIEVE CLIENT INTERFACES
 
-	gate_size = strlen("face$o");
+	for (unsigned j=0; j<strlen("face$o") ; j++)
+		gates.push_bach( gate(gatename, j) );
 	//</aa>
-
 }
 
 //<aa>
@@ -237,15 +237,14 @@ void core_layer::finish()
     recordScalar (name, data);
 
 	//<aa>
-	const char* gatename = "face$o";
-	for (unsigned j=0; j<gate_size; j++)
+	for (unsigned j=0; j<gates.size(); j++)
 	{
-		const char* this_gate = gate(gatename, j)->getFullName();
-		cModule* attached_module = gate(gatename, j)->getNextGate()->getOwnerModule();
+		const char* this_gate = gates[j]->getFullName();
+		cModule* attached_module = gates[j]->getNextGate()->getOwnerModule();
 		if (attached_module == getParentModule() )
 		{
 			// this_gate is attached to a border gate of the node
-			cGate* border_gate_of_this_node = gate(gatename, j)->getNextGate();
+			cGate* border_gate_of_this_node = gates[j]->getNextGate();
 			const char* other_node = border_gate_of_this_node->getNextGate()->
 												getOwnerModule()->getFullName();
 			sprintf ( name, "megabytes_sent[%s->%s]", this_gate, other_node);
