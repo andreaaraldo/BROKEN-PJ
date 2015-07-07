@@ -112,7 +112,7 @@ void  core_layer::initialize()
 		}
 	//} RETRIEVE CLIENT INTERFACES
 
-	for (unsigned j=0; j<gateSize("face$o") ; j++)
+	for (int j=0; j<gateSize("face$o") ; j++)
 		gates.push_back( gate("face$o", j) );
 	//</aa>
 }
