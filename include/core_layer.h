@@ -83,6 +83,7 @@ class core_layer : public abstract_node
 		//<aa> See ned file
 		bool interest_aggregation;
 		bool transparent_to_hops;
+		unsigned gate_size; //number of ports of core_layer
 
 		void add_to_pit(chunk_t chunk, int gate);
 		iface_stats_t* iface_stats; //An array of per-interface statistics

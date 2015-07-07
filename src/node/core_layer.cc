@@ -111,6 +111,8 @@ void  core_layer::initialize()
 				is_face_to_client[i] = false;
 		}
 	//} RETRIEVE CLIENT INTERFACES
+
+	gate_size = strlen("face$o");
 	//</aa>
 
 }
@@ -236,8 +238,7 @@ void core_layer::finish()
 
 	//<aa>
 	const char* gatename = "face$o";
-	cout <<"strlen(gatename)="<<strlen(gatename)<<endl;
-	for (int j=0; j<gateSize(gatename); j++)
+	for (int j=0; j<gate_size; j++)
 	{
 		const char* this_gate = gate(gatename, j)->getFullName();
 		cModule* attached_module = gate(gatename, j)->getNextGate()->getOwnerModule();
