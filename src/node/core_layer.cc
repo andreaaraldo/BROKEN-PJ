@@ -113,7 +113,7 @@ void  core_layer::initialize()
 	//} RETRIEVE CLIENT INTERFACES
 
 	for (unsigned j=0; j<strlen("face$o") ; j++)
-		gates.push_bach( gate(gatename, j) );
+		gates.push_bach( gate("face$o", j) );
 	//</aa>
 }
 
