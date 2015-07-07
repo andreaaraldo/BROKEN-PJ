@@ -236,6 +236,7 @@ void core_layer::finish()
 
 	//<aa>
 	const char* gatename = "face$o";
+	cout <<"strlen(gatename)="<<gatename<<endl;
 	for (int j=0; j<gateSize(gatename); j++)
 	{
 		const char* this_gate = gate(gatename, j)->getFullName();
