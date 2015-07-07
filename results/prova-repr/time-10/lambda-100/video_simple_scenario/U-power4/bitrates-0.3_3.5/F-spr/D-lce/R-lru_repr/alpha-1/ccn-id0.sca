@@ -1,5 +1,5 @@
 version 2
-run General-0-20150707-11:37:12-22352
+run General-0-20150707-12:52:54-14110
 attr D lce
 attr F spr
 attr R lru_repr
@@ -7,7 +7,7 @@ attr U power4
 attr a 1
 attr brates 0.3_3.5
 attr configname General
-attr datetime 20150707-11:37:12
+attr datetime 20150707-12:52:54
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=video_simple_scenario, $rep=0, $lambda=100, $a=1, $brates=0.3_3.5, $U=power4, $F=spr, $ttl=1000, $D=lce, $R=lru_repr, $window=60, $variance=0.05, $mytime=10"
@@ -17,7 +17,7 @@ attr measurement "$net=video_simple_scenario, $rep=0, $lambda=100, $a=1, $brates
 attr mytime 10
 attr net video_simple_scenario
 attr network networks.${net=video_simple_scenario}_network
-attr processid 22352
+attr processid 14110
 attr rep 0
 attr repetition 0
 attr replication #0
@@ -54,16 +54,3 @@ scalar video_simple_scenario_network.node[0].core_layer 	interests[0] 	1215
 scalar video_simple_scenario_network.node[0].core_layer 	repo_load[0] 	837
 scalar video_simple_scenario_network.node[0].core_layer 	data[0] 	0
 scalar video_simple_scenario_network.node[0].core_layer 	megabytes_sent[face$o[1]->client[0]] 	3597
-scalar video_simple_scenario_network.node[0].content_store 	p_hit[0] 	0.31111111111111
-scalar video_simple_scenario_network.node[0].content_store 	hits[0] 	378
-scalar video_simple_scenario_network.node[0].content_store 	misses[0] 	837
-scalar video_simple_scenario_network.node[0].content_store 	decision_yes[0] 	837
-scalar video_simple_scenario_network.node[0].content_store 	decision_no[0] 	0
-scalar video_simple_scenario_network.node[0].content_store 	decision_ratio[0] 	1
-scalar video_simple_scenario_network.node[0].content_store 	"representation_breakdown[0] 22:8:" 	0
-scalar video_simple_scenario_network.node[0].proactive_component 	hdistance[0].proactive_component 	1
-scalar video_simple_scenario_network.node[0].proactive_component 	downloads[0].proactive_component 	980
-scalar video_simple_scenario_network.node[0].proactive_component 	avg_time[0].proactive_component 	0
-scalar video_simple_scenario_network.client[0] 	hdistance[0].real 	0.64573570759138
-scalar video_simple_scenario_network.client[0] 	downloads[0].real 	1067
-scalar video_simple_scenario_network.client[0] 	avg_time[0].real 	0
