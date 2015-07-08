@@ -161,13 +161,6 @@ const char* RepresentationHandler::dump_bitrates()
 	return result.str().c_str();
 }
 
-const char* RepresentationHandler::dump_utilities()
-{
-	std::stringstream str;
-	for (unsigned i=0; i < representation_bitrates.size(); i++)
-		str<<utilities[i]<<":";
-	return str.str().c_str();
-}
 
 // Check if the representation mask denotes one and only one representation
 void RepresentationHandler::check_representation_mask(chunk_t chunk_id, unsigned pkt_type) const
@@ -252,13 +245,11 @@ void RepresentationHandler::check_representation_mask(chunk_t chunk_id, unsigned
 
 void RepresentationHandler::check_if_correct()
 {
-	if ( 	utilities.size()!=representation_bitrates.size() ||
-			representation_storage_space.size()!=representation_bitrates.size()
+	if ( 	representation_storage_space.size()!=representation_bitrates.size()
 	){
 		std::stringstream ermsg;
 		ermsg<<"representation_bitrates.size()="<<representation_bitrates.size()<<
-				"; utilities.size()="<<utilities.size()<<"; representation_storage_space.size()="<<
-				representation_storage_space.size();
+			"; representation_storage_space.size()="<<representation_storage_space.size();
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str());
 	}
 

@@ -32,6 +32,7 @@
 //<aa>
 #include "error_handling.h"
 #include "repository/Repository.h"
+#include "RepresentationAwareClient.h"
 //</aa>
 
 
@@ -230,10 +231,7 @@ void statistics::finish(){
     //<aa>
     uint32_t global_repo_load = 0;
 	long total_cost = 0;
-
-	unsigned short num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
-	unsigned long repr_downloaded[num_of_repr];
-    //</aa>
+	//</aa>
 
     double global_avg_distance = 0;
     simtime_t global_avg_time = 0;
@@ -302,9 +300,6 @@ void statistics::finish(){
 		global_tot_downloads += clients[i]->get_tot_downloads();
 		global_avg_time  += clients[i]->get_avg_time();
 		
-		//<aa>
-		for (unsigned short repr=0; repr<num_of_repr; repr++)
-			repr_downloaded[repr] += clients[i]->get_repr_downloaded()[repr];
 
 		#ifdef SEVERE_DEBUG
 		global_interests_sent += clients[i]->get_interests_sent();
@@ -336,11 +331,27 @@ void statistics::finish(){
     cout<<"total_replicas: "<<total_replicas<<endl;
 
     //<aa>
-    std:stringstream repr_downloaded_str;
-    for (unsigned short repr=0; repr<num_of_repr; repr++)
-    	repr_downloaded[repr]<<":";
-    sprintf ( name, "representations_downloaded %s", repr_downloaded.str().c_str() );
-    recordScalar(name,global_utility/global_tot_downloads);
+    //{ REPRESENTATION STUFF
+	if (strcmp(getAncestorPar("client_type").stringValue(), "RepresentationAwareClient") ==0 )
+	{
+		unsigned short num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
+		float* repr_downloaded = (float*)calloc(num_of_repr, sizeof(float) );
+
+		for (int i = 0;i<num_clients;i++)
+		{
+				for (unsigned short repr=0; repr<num_of_repr; repr++)
+					repr_downloaded[repr] +=
+						( (RepresentationAwareClient*)clients[i] )->get_repr_downloaded()[repr] /
+						(float) global_tot_downloads;
+		}
+		std::stringstream repr_downloaded_str;
+			for (unsigned short repr=0; repr<num_of_repr; repr++)
+				repr_downloaded_str<<	repr_downloaded[repr]<<":";
+			sprintf ( name, "representations_downloaded %s", repr_downloaded_str.str().c_str() );
+			recordScalar(name,0);
+	}
+    //} RERPRESENTATION STUFF
+
 
     // It is the fraction of traffic that is satisfied by some cache inside
     // the network and thus does not exit the network </aa>
