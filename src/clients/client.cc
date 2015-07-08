@@ -520,11 +520,6 @@ bool client::is_active(){
 	return active;
 }
 
-const float client::get_utility() const
-{
-	return 1;
-}
-
 #ifdef SEVERE_DEBUG
 unsigned int client::get_interests_sent(){
 	return interests_sent;

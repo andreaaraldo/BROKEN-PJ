@@ -11,7 +11,6 @@ simple content_distribution like IContentDistribution
 
 		// {MEANINGFUL ONLY WHEN OBJECT REPRESENTATION IS CONSIDERED
 		string representation_bitrates = default("1"); // in Mbps
-		string utility_function = default("linear");
 		// }MEANINGFUL ONLY WHEN OBJECT REPRESENTATION IS CONSIDERED
 
 	@display("i=block/browser;is=l");

@@ -41,26 +41,34 @@ Register_Class (RepresentationAwareClient);
 void RepresentationAwareClient::initialize()
 {
 	client::initialize();
+	unsigned short num_of_repr =
+		content_distribution::get_repr_h()->get_num_of_representations( );
+	repr_downloaded = (unsigned long*) calloc(num_of_repr, sizeof(unsigned long) );
 }
 
 bool RepresentationAwareClient::handle_incoming_chunk(ccn_data *data_message)
 {
 	bool is_chunk_expected = client::handle_incoming_chunk (data_message);
 	if (is_chunk_expected)
-		utility += content_distribution::get_repr_h()->get_utility(data_message->getChunk() );
+	{
+		unsigned repr = content_distribution::get_repr_h()->get_representation_number(data_message->getChunk() );
+		repr_downloaded[repr-1]++;
+	}
 	return is_chunk_expected;
 }
 
 void RepresentationAwareClient::clear_stat()
 {
 	client::clear_stat();
-	utility = 0;
+	unsigned short num_of_repr =
+		content_distribution::get_repr_h()->get_num_of_representations( );
+	memset( repr_downloaded, 0, num_of_repr * sizeof(unsigned long) );
 }
 
 
-const float RepresentationAwareClient::get_utility() const
+const unsigned long* RepresentationAwareClient::get_repr_downloaded() const
 {
-	return utility;
+	return repr_downloaded;
 }
 //</aa>
 

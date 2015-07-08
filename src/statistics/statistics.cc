@@ -220,7 +220,7 @@ bool statistics::stable(int n)
 
 void statistics::finish(){
 
-    char name[30];
+    char name[40];
 
     uint32_t global_hit = 0;
     uint32_t global_miss = 0;
@@ -230,7 +230,9 @@ void statistics::finish(){
     //<aa>
     uint32_t global_repo_load = 0;
 	long total_cost = 0;
-	float global_utility = 0; //sum of utilities perceived by users 
+
+	unsigned short num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
+	unsigned long repr_downloaded[num_of_repr];
     //</aa>
 
     double global_avg_distance = 0;
@@ -301,7 +303,9 @@ void statistics::finish(){
 		global_avg_time  += clients[i]->get_avg_time();
 		
 		//<aa>
-		global_utility += clients[i]->get_utility();
+		for (unsigned short repr=0; repr<num_of_repr; repr++)
+			repr_downloaded[repr] += clients[i]->get_repr_downloaded()[repr];
+
 		#ifdef SEVERE_DEBUG
 		global_interests_sent += clients[i]->get_interests_sent();
 		#endif
@@ -332,7 +336,10 @@ void statistics::finish(){
     cout<<"total_replicas: "<<total_replicas<<endl;
 
     //<aa>
-    sprintf ( name, "avg_utility");
+    std:stringstream repr_downloaded_str;
+    for (unsigned short repr=0; repr<num_of_repr; repr++)
+    	repr_downloaded[repr]<<":";
+    sprintf ( name, "representations_downloaded %s", repr_downloaded.str().c_str() );
     recordScalar(name,global_utility/global_tot_downloads);
 
     // It is the fraction of traffic that is satisfied by some cache inside

@@ -34,13 +34,14 @@ class RepresentationAwareClient : public client
 {
 	public:
 		virtual void clear_stat();
-		const virtual float get_utility() const; // Returns the sum of the utilities perceived by the client
+		const virtual long unsigned* get_repr_downloaded() const;
 
 	protected:
 		virtual void initialize();
 		virtual bool handle_incoming_chunk (ccn_data *data_message);
 
 	private:
-		float utility;
+		long unsigned* repr_downloaded;	// repr_downloaded[i] counts the number of objects downloaded
+											// at representation i+1
 };
 #endif

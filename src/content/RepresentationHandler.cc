@@ -31,7 +31,7 @@
 #include <core_layer.h>
 #include "ccn_data.h"
 
-RepresentationHandler::RepresentationHandler(const char* bitrates, const char* utility_function)
+RepresentationHandler::RepresentationHandler(const char* bitrates)
 {
 	representation_bitrates = cStringTokenizer(bitrates,"_").asDoubleVector();
 
@@ -47,19 +47,6 @@ RepresentationHandler::RepresentationHandler(const char* bitrates, const char* u
 
 	possible_representation_mask = ( (0xFFFF << get_num_of_representations() ) & 0xFFFF);
 	possible_representation_mask = (~possible_representation_mask);
-
-	// {COMPUTE UTILITIES
-	if (strcmp(utility_function, "linear")==0 )
-	{
-		for (unsigned i=0; i < representation_bitrates.size(); i++)
-			utilities.push_back( (float) (i+1) / (float) representation_bitrates.size() );
-	}else if (strcmp(utility_function, "power4")==0 )
-		for (unsigned i=0; i < representation_bitrates.size(); i++)
-			utilities.push_back( 	pow( (float)(i+1),1.0/4) /
-									pow( (float)representation_bitrates.size(), 1.0/4) );
-	else
-		severe_error(__FILE__,__LINE__,"utility function not recognized");
-	// }COMPUTE UTILITIES
 
 	#ifdef SEVERE_DEBUG
 			check_if_correct();
@@ -139,11 +126,6 @@ const unsigned RepresentationHandler::get_storage_space_of_representation(unsign
 const unsigned short RepresentationHandler::get_num_of_representations() 
 {
 	return representation_storage_space.size();
-}
-
-const float RepresentationHandler::get_utility(chunk_t chunk_id) const
-{
-	return utilities[ get_representation_number(chunk_id) -1];
 }
 
 const representation_mask_t RepresentationHandler::set_bit_to_zero(representation_mask_t mask, unsigned short position)
@@ -289,12 +271,6 @@ void RepresentationHandler::check_if_correct()
 	}
 
 
-	if (utilities[0]==0 || utilities[representation_bitrates.size()-1]!=1 )
-	{
-		std::stringstream ermsg;
-		ermsg<<"Utility vector "<<dump_utilities()<<" is incorrect";
-		severe_error(__FILE__,__LINE__,ermsg.str().c_str());
-	}
 }
 
 const char* RepresentationHandler::dump_chunk(chunk_t cid)

@@ -85,7 +85,6 @@ class client : public cSimpleModule
 		bool is_waiting_for (name_t content);
 		unsigned int get_interests_sent();
 		#endif
-		const virtual float get_utility() const; // Returns the sum of the utilities perceived by the client
 		//</aa>
 
 	//</aa>
