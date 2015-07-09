@@ -17,8 +17,9 @@ void lru_repr_cache::initialize()
 
 void lru_repr_cache::initialize_cache_slots(unsigned chunks_at_highest_representation)
 {
-    unsigned highest_representation_space = content_distribution::get_repr_h()->get_storage_space_of_representation(
-		content_distribution::get_repr_h()->get_num_of_representations() );
+    unsigned highest_representation_space =
+    		content_distribution::get_repr_h()->get_storage_space_of_representation(
+    				content_distribution::get_repr_h()->get_num_of_representations() );
 	cache_slots = (unsigned) chunks_at_highest_representation * highest_representation_space;
 }
 

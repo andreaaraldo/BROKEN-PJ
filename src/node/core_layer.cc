@@ -247,8 +247,8 @@ void core_layer::finish()
 			cGate* border_gate_of_this_node = gates[j]->getNextGate();
 			const char* other_node = border_gate_of_this_node->getNextGate()->
 												getOwnerModule()->getFullName();
-			sprintf ( name, "megabytes_sent[%s->%s]", this_gate, other_node);
-			recordScalar(name, iface_stats[j].megabytes_sent );
+			sprintf ( name, "slots_sent[%s->%s]", this_gate, other_node);
+			recordScalar(name, iface_stats[j].slots_sent );
 		}
 			
 		#ifdef SEVERE_DEBUG
@@ -582,7 +582,7 @@ bool core_layer::check_ownership(vector<int> repositories){
 ccn_data* core_layer::compose_data(chunk_t chunk_id)
 {
     ccn_data* data = new ccn_data("data",CCN_D);
-	data->setMegabyteLength( content_distribution::get_repr_h()->get_storage_space_of_chunk(chunk_id) );
+	data->setSlotLength( content_distribution::get_repr_h()->get_storage_space_of_chunk(chunk_id) );
     data -> setChunk (chunk_id);
     data -> setHops(0);
     data->setTimestamp(simTime());
@@ -726,7 +726,7 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 	//}CHECKS
 
 
-	iface_stats[gateindex].megabytes_sent += msg->getMegabyteLength();
+	iface_stats[gateindex].slots_sent += msg->getSlotLength();
 
 	return send (msg, gatename, gateindex);
 }

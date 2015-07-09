@@ -50,8 +50,9 @@ class base_cache;
 
 
 //<aa>
-typedef struct iface_stats{
-	double megabytes_sent; //Bytes sent on the interface
+typedef struct iface_stats
+{
+	double slots_sent; // slots sent on the interface. slots are the unity of measure of the cache
 } iface_stats_t;
 //</aa>
 

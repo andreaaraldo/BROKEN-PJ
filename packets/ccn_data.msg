@@ -35,6 +35,7 @@ packet ccn_data{
 	//The price of the external link this data msg passes through
 	double price = 0;
 
-	int megabyteLength;
+	int slotLength; // how many slots the chunk is composed of. Slots are the unity of
+					// measure of the cache space.
 	//</aa>
 }

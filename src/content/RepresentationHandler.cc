@@ -36,13 +36,19 @@ RepresentationHandler::RepresentationHandler(const char* bitrates)
 	representation_bitrates = cStringTokenizer(bitrates,"_").asDoubleVector();
 
 	// {COMPUTE STORAGE
-	for (unsigned i=0 ; i < representation_bitrates.size() ; i++)
-	{
-		// The slots needed for a certain representation are denotes as a multiple of the slots
-		// needed for the lowest representation.
-		representation_storage_space.push_back(
-				round( representation_bitrates[i] / representation_bitrates[0] ) );
-	}
+		// I impose that the lowest representation occupies 100 slots, in order to
+		// guarantee the double
+		// decimal precision when computing the other storage spaces
+		unsigned low_repr_slots = 100;
+		representation_storage_space.push_back(low_repr_slots);
+
+		for (unsigned i=1 ; i < representation_bitrates.size() ; i++)
+		{
+			// The slots needed for a certain representation are denoted as a multiple of the slots
+			// needed for the lowest representation.
+			representation_storage_space.push_back(
+				round( representation_bitrates[i]*low_repr_slots / (float)representation_bitrates[0] ) );
+		}
 	// }COMPUTE STORAGE
 
 	possible_representation_mask = ( (0xFFFF << get_num_of_representations() ) & 0xFFFF);
@@ -252,15 +258,6 @@ void RepresentationHandler::check_if_correct()
 			"; representation_storage_space.size()="<<representation_storage_space.size();
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str());
 	}
-
-	if ( representation_storage_space[0] != 1)
-	{
-		std::stringstream ermsg;
-		ermsg<<"The lowest representation has "<<representation_storage_space[0]<<
-				" while it should be 0";
-		severe_error(__FILE__,__LINE__,ermsg.str().c_str());
-	}
-
 
 }
 
