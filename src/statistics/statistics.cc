@@ -332,9 +332,10 @@ void statistics::finish(){
 
     //<aa>
     //{ REPRESENTATION STUFF
-	if (strcmp(getAncestorPar("client_type").stringValue(), "RepresentationAwareClient") ==0 )
+    unsigned short num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
+
+    if (strcmp(getAncestorPar("client_type").stringValue(), "RepresentationAwareClient") ==0 )
 	{
-		unsigned short num_of_repr = content_distribution::get_repr_h()->get_num_of_representations();
 		float* repr_downloaded = (float*)calloc(num_of_repr, sizeof(float) );
 
 		for (int i = 0;i<num_clients;i++)
@@ -350,6 +351,15 @@ void statistics::finish(){
 			sprintf ( name, "representations_downloaded %s", repr_downloaded_str.str().c_str() );
 			recordScalar(name,0);
 	}
+
+
+    // Each representation occupies a certain number of slots in the cache
+	std::stringstream repr_slots_str;
+	for (unsigned short repr=1; repr<=num_of_repr; repr++)
+		repr_slots_str<<content_distribution::get_repr_h()->get_storage_space_of_representation(repr)
+		<<":";
+	sprintf ( name, "slots_per_representation %s", repr_slots_str.str().c_str() );
+	recordScalar(name,0);
     //} RERPRESENTATION STUFF
 
 

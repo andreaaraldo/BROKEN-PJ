@@ -51,4 +51,7 @@ simple lru_repr_cache extends lru_cache
 simple partitioned_cache extends base_cache{
     @class(partitioned_cache);
 }
+simple always_highq_cache extends partitioned_cache{
+    @class(always_highq_cache);
+}
 //</aa>

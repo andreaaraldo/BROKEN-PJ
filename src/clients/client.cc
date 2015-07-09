@@ -291,8 +291,8 @@ void client::request_file()
 void client::request_specific_chunk_from_another_class(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)
 {
 	Enter_Method("Requesting a chunk"); // If you do not add this invocation and you call this 
-										// method from another C++ class, an error will raise.
-										// Search the manual for "Enter_Method" for more information
+											// method from another C++ class, an error will raise.
+											// Search the manual for "Enter_Method" for more information
 	request_specific_chunk(object_id, chunk_num, repr_mask);
 }
 
@@ -306,7 +306,7 @@ void client::request_specific_chunk(name_t object_id, cnumber_t chunk_num, repre
 
     current_downloads.insert(pair<name_t, download >(object_id, new_download ) );
 	int toward = -1;
-    send_interest(object_id, chunk_num ,repr_mask, toward);
+	send_interest(object_id, chunk_num ,repr_mask, toward);
 }
 
 void client::resend_interest(name_t name,cnumber_t number, representation_mask_t repr_mask, int toward)
@@ -337,7 +337,7 @@ void client::resend_interest(name_t name,cnumber_t number, representation_mask_t
 
 void client::send_interest(name_t name,cnumber_t number, representation_mask_t repr_mask, int toward)
 {
-    chunk_t chunk = 0;
+	chunk_t chunk = 0;
     ccn_interest* interest = new ccn_interest("interest",CCN_I);
 
     __sid(chunk, name);

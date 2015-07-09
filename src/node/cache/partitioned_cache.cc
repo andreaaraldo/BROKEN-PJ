@@ -208,8 +208,12 @@ void partitioned_cache::check_if_correct()
 
 	for (unsigned short i=0; i<num_of_partitions; i++)
 	{
-	    subcaches[i]->check_if_correct();
-	    stored_chunks += subcaches[i]->get_occupied_slots();
+	    if (subcaches[i]!= NULL)
+	    {
+	        // subcache is active
+            subcaches[i]->check_if_correct();
+            stored_chunks += subcaches[i]->get_occupied_slots();
+	    }
 	}
 
 	//{ CHECK quality_map CONSISTENCY
@@ -240,7 +244,11 @@ const char* partitioned_cache::dump()
 	std::stringstream str;
 	str<<"caches: ";
 	for (unsigned short i=0; i<num_of_partitions; i++)
-		str<<subcaches[i]->get_cache_content()<<" ; ";
+	{
+		str<<
+		(subcaches[i]==NULL ? "_" : subcaches[i]->get_cache_content() )
+		<<" ; ";
+	}
 
 	str<<". ### quality map: ";
 	for (unordered_map<chunk_t, unsigned short>::iterator it = quality_map.begin(); it != quality_map.end(); it++ )

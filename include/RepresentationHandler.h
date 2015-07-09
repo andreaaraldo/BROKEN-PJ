@@ -42,9 +42,10 @@ class RepresentationHandler
 		const double get_bitrate(unsigned short representation);
 		const unsigned get_storage_space_of_representation(unsigned short representation);
 
-		const unsigned get_storage_space_of_chunk(chunk_t chunk_id);	// Check what is the representation of 
-																			// the chunk and returns the required
-																			// storage space
+		const unsigned get_storage_space_of_chunk(chunk_t chunk_id);	// Check what is the representation
+																		// of the chunk and returns the
+																		// required storage space in terms
+																		// of slots
 
 		unsigned short get_representation_number(chunk_t chunk_id) const;
 		const representation_mask_t set_bit_to_zero(representation_mask_t mask, unsigned short position);
