@@ -97,6 +97,9 @@ class core_layer : public abstract_node
 									// attached to a client
 		unsigned face_cardinality;// The number of interfaces (including the one connected
 								  // to the proactive component)
+
+		bool cache_if_in_repo;	// if yes, the cache can store a chunk
+								// that is served by the attached repo
 		//</aa>
 
 		//Custom functions

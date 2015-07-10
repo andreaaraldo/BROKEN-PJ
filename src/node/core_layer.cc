@@ -52,7 +52,8 @@ void  core_layer::initialize()
 	#endif
 	interest_aggregation = par("interest_aggregation");
 	transparent_to_hops = par("transparent_to_hops");
-	// Notice that repo_price has been initialized by WeightedContentDistribution
+	// Notice that repo_price has been initalized by WeightedContentDistribution
+	cache_if_in_repo = getAncestorPar("cache_if_in_repo");
 	//</aa>
  
 	double RTT = par("RTT");
@@ -362,8 +363,7 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
 			// Store the chunk in the local cache
 			chunk_t evicted = 0;
-			bool is_it_possible_to_cache = true; // There are no reasons, at the moment, to avoid this
-		    bool decision = ContentStore->handle_data(data_msg, evicted, is_it_possible_to_cache);
+		    bool decision = ContentStore->handle_data(data_msg, evicted, cache_if_in_repo);
 		    // decision indicates whether the incoming chunk has been cached
 		    ContentStore->after_handle_data(decision);
 
