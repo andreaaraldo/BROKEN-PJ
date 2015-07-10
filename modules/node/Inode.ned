@@ -9,6 +9,10 @@ moduleinterface Inode
 
 	int level;
 	double betweenness;
+	
+	//<aa>if yes, the cache can store a chunk that is served by the attached repo
+	bool cache_if_in_repo; 
+	//</aa>
 
     gates:
 	inout face[];	
