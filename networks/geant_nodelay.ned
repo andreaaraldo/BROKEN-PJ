@@ -1,6 +1,6 @@
 package networks;
 
-network geant_network extends base_network{
+network geant_nodelay_network extends base_network{
 
     parameters:
         //Number of ccn nodes
