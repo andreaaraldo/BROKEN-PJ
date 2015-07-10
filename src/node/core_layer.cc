@@ -290,7 +290,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 	#endif
 	//</aa>
 
- 
    chunk_t chunk = int_msg->getChunk();
 
    double int_btw = int_msg->getBtw();
@@ -307,9 +306,6 @@ void core_layer::handle_interest(ccn_interest *int_msg)
     												// cacheable flag inside the PIT will be set to '0'.
     			cacheable = false;
     }
-
-
-	
 
     chunk_t chunk_id_to_deliver = 0;
 	cache_item_descriptor* cache_item = NULL;
@@ -367,7 +363,9 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 			// Store the chunk in the local cache
 			chunk_t evicted = 0;
 			bool is_it_possible_to_cache = true; // There are no reasons, at the moment, to avoid this
-		    ContentStore->handle_data(data_msg, evicted, is_it_possible_to_cache);
+		    bool decision = ContentStore->handle_data(data_msg, evicted, is_it_possible_to_cache);
+		    // decision indicates whether the incoming chunk has been cached
+		    ContentStore->after_handle_data(decision);
 
 			//<aa> I transformed send in send_data</aa>
 			send_data(data_msg,"face$o",int_msg->getArrivalGate()->getIndex(),__LINE__);
@@ -468,7 +466,9 @@ void core_layer::handle_data(ccn_data *data_msg)
     	{	// Cache the content only if the cacheable bit is set.
     		chunk_t evicted = 0;
     		bool is_it_possible_to_cache = true; // There are no reasons, at the moment, to avoid this
-    		ContentStore->handle_data(data_msg, evicted, is_it_possible_to_cache);
+    		bool decision = ContentStore->handle_data(data_msg, evicted, is_it_possible_to_cache);
+    		// decision indicates whether the incoming chunk has been cached
+    		ContentStore->after_handle_data(decision);
     	}
 
     	interfaces = pentry.interfaces;	// Get incoming interfaces.
@@ -500,7 +500,8 @@ void core_layer::handle_data(ccn_data *data_msg)
 }
 
 
-void core_layer::handle_decision(bool* decision,ccn_interest *interest){
+void core_layer::handle_decision(bool* decision,ccn_interest *interest)
+{
 	//<aa>
 	#ifdef SEVERE_DEBUG
 		bool interest_has_been_forwarded = false;
@@ -649,8 +650,8 @@ void core_layer::check_if_correct(int line)
 					std::stringstream ermsg; 
 					ermsg<<"caches["<<getIndex()<<"]->decision_yes="<<ContentStore->get_decision_yes()<<
 						"; caches[i]->decision_no="<< ContentStore->get_decision_no()<<
-						"; cores[i]->data="<< data<<
-						"; cores[i]->repo_load="<< get_attached_repository()->get_repo_load()<<
+						"; cores[i]->data="<< data
+						<<"; cores[i]->repo_load="<< get_attached_repository()->get_repo_load()<<
 						"; cores[i]->unsolicited_data="<< unsolicited_data<<
 						". The sum of "<< "decision_yes + decision_no + unsolicited_data must be data";
 					severe_error(__FILE__,line,ermsg.str().c_str() );
@@ -730,8 +731,9 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 
 	iface_stats[gateindex].slots_sent += msg->getSlotLength();
 
-    cout<<"ciao: core_layer["<<getIndex()<<"]: sending data to port "<<gateindex<<endl;
-	return send (msg, gatename, gateindex);
+    int ret_value = send (msg, gatename, gateindex);
+    ContentStore->after_sending_data(msg);
+    return ret_value;
 }
 
 #ifdef SEVERE_DEBUG

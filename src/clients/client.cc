@@ -52,10 +52,11 @@ void client::initialize()
     if (find(	content_distribution::clients , 
 				content_distribution::clients + num_clients ,getNodeIndex()
 			) != content_distribution::clients + num_clients
-		|| is_it_proactive_component_	// If I am a proactive_component,
-										// I always activate
-	){
-
+		|| 	// If I am a proactive_component, activate it only if there is some cache space
+		(	is_it_proactive_component_ &&
+			getParentModule()->getSubmodule("content_store")->par("C").longValue()>0
+		)
+    ){
 		active = true;
 
 		//Parameters initialization
@@ -86,6 +87,9 @@ void client::initialize()
 			scheduleAt( simTime() + check_time, timer  );
 		}
     }
+
+
+
 }
 
 
@@ -153,7 +157,10 @@ void client::handleMessage(cMessage *in)
 }
 
 int client::getNodeIndex(){
-    return gate("client_port$o")->getNextGate()->getOwnerModule()->getIndex();
+	if (!is_it_proactive_component_)
+		return gate("client_port$o")->getNextGate()->getOwnerModule()->getIndex();
+	else
+		return getParentModule()->getIndex();
 
 }
 
@@ -221,8 +228,9 @@ void client::handle_timers(cMessage *timer){
 			scheduleAt( simTime() + exponential(1/lambda), arrival );
 			break;
 		case TIMER:
-			for (multimap<name_t, download >::iterator i = current_downloads.begin();i != current_downloads.end();i++)
-			{
+			for (	multimap<name_t, download >::iterator i =
+					current_downloads.begin();i != current_downloads.end();i++
+			){
 				if ( simTime() - i->second.last > RTT )
 				{
 					//<aa>
@@ -296,16 +304,20 @@ void client::request_specific_chunk_from_another_class(name_t object_id, cnumber
 	request_specific_chunk(object_id, chunk_num, repr_mask);
 }
 
-void client::request_specific_chunk(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)
+void client::request_specific_chunk(name_t object_id, cnumber_t chunk_num,
+		representation_mask_t repr_mask)
 {
 	struct download new_download = download (0,simTime(), repr_mask );
 	
 	#ifdef SEVERE_DEBUG
 		new_download.serial_number = interests_sent;
+
+		if(!active)
+			severe_error(__FILE__,__LINE__,"An inactive client cannot request anything");
 	#endif
 
     current_downloads.insert(pair<name_t, download >(object_id, new_download ) );
-	int toward = -1;
+    int toward = -1;
 	send_interest(object_id, chunk_num ,repr_mask, toward);
 }
 
@@ -358,7 +370,7 @@ void client::send_interest(name_t name,cnumber_t number, representation_mask_t r
 	#endif
 	//</aa>
 
-    send(interest, "client_port$o");
+	send(interest, "client_port$o");
 }
 
 
@@ -373,12 +385,16 @@ bool client::handle_incoming_chunk (ccn_data *data_message)
 
 	//<aa>
 	#ifdef SEVERE_DEBUG
-		if ( !is_waiting_for(object_id) )
+		if (!active || !is_waiting_for(object_id) )
 		{
 			std::stringstream ermsg; 
 			ermsg<<"Client of type "<< getModuleType() <<" attached to node "<< getNodeIndex() <<
 				" is receiving chunk "<<object_id<<":"<<chunk_num<<":"<<repr_mask<<
-				" but it is not waiting for it" <<endl;
+				". It is active? "<<active<<"; Is it waiting for the object? "<<
+				is_waiting_for(object_id) <<". Current downloads "<< dump_downloads() <<endl;
+			if(is_it_proactive_component_ )
+				ermsg <<"Cache attached "<<
+				getParentModule()->getSubmodule("content_store")->par("C").longValue()<<endl;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 		
@@ -462,6 +478,11 @@ bool client::handle_incoming_chunk (ccn_data *data_message)
         ++it;
     }
     tot_chunks++;
+
+	#ifdef SEVERE_DEBUG
+    	check_if_correct();
+	#endif
+
 	return is_chunk_expected;
 }
 
@@ -529,6 +550,29 @@ bool client::is_waiting_for(name_t object_id)
 {
 	multimap<name_t, download>::iterator it = current_downloads.find(object_id);
 	return it != current_downloads.end();
+}
+
+const char* client::dump_downloads()
+{
+	std::stringstream str;
+	str<<getModuleType() <<" of "<< getNodeIndex() <<" contains ";
+	multimap<name_t, download>::iterator it;
+	for (it = current_downloads.begin(); it != current_downloads.end(); it++)
+	{
+		str<< it->first <<":"<< it->second.repr_mask<< "; ";
+	}
+	check_if_correct();
+	return str.str().c_str();
+}
+
+void client::check_if_correct()
+{
+	multimap<name_t, download>::iterator it;
+	for (it = current_downloads.begin(); it != current_downloads.end(); it++)
+		if (	it->second.repr_mask &&
+				content_distribution::get_repr_h()->get_possible_representation_mask() == 0
+		)
+			severe_error(__FILE__,__LINE__,"Trying to download an impossible content");
 }
 #endif
 //</aa>

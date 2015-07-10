@@ -145,6 +145,7 @@ class base_cache : public abstract_node
 		int get_size(); //deprecated
 
 		//<aa>
+		virtual void after_handle_data(bool was_data_accepted);
 		virtual void initialize_(std::string decision_policy, unsigned cache_slots);
 		unsigned  get_slots() { return cache_slots; }
 		void set_slots(unsigned);
@@ -165,7 +166,8 @@ class base_cache : public abstract_node
 
 		void clear_stat();
 
-		//<aa>
+		//<aa>.
+		virtual void after_sending_data(ccn_data* data_msg);
 		virtual uint32_t get_decision_yes();
 		virtual uint32_t get_decision_no();
 		virtual void set_decision_yes(uint32_t n);

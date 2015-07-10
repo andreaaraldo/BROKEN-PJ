@@ -16,6 +16,9 @@ class ProactiveComponent:public client
 		void proactively_catch_a_chunk(chunk_t object_id, cnumber_t chunk_num,
 		        representation_mask_t repr_mask);
 
+    protected:
+		virtual void request_specific_chunk(name_t object_id, cnumber_t chunk_num,
+		        representation_mask_t repr_mask);
 };
 #endif
 //</aa>

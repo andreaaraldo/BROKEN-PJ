@@ -81,9 +81,11 @@ class client : public cSimpleModule
 									representation_mask_t repr_mask);
 		bool is_it_proactive_component();
 		#ifdef SEVERE_DEBUG
-		// Returns true iff the content is among the current_downloads
-		bool is_waiting_for (name_t content);
-		unsigned int get_interests_sent();
+			// Returns true iff the content is among the current_downloads
+			bool is_waiting_for (name_t content);
+			unsigned int get_interests_sent();
+			const char* dump_downloads();
+			void check_if_correct();
 		#endif
 		//</aa>
 
@@ -101,17 +103,21 @@ class client : public cSimpleModule
 		void send_interest(name_t, cnumber_t, representation_mask_t, int);
 		void resend_interest(name_t,cnumber_t, representation_mask_t,int);
 		//<aa>
-		void request_specific_chunk(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask);
+		virtual void request_specific_chunk(name_t object_id, cnumber_t chunk_num,
+		        representation_mask_t repr_mask);
 		bool is_it_proactive_component_;
 		//</aa>
 
+		//List of current downloads for a given file
+		multimap < name_t, download > current_downloads;
+
+		//Set if the client actively sends interests for files
+		bool active;
 
     private:
 		cMessage *timer;
 		cMessage *arrival;
 
-		//List of current downloads for a given file
-		multimap < name_t, download > current_downloads;
 
 		//Single file statistics
 		client_stat_entry* client_stats;
@@ -136,7 +142,5 @@ class client : public cSimpleModule
 		double RTT;
 		simtime_t check_time;
 
-		//Set if the client actively sends interests for files
-		bool active;
 };
 #endif

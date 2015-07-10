@@ -15,21 +15,22 @@ void always_highq_cache::initialize()
 		proactive_component = NULL;
 }
 
-bool always_highq_cache::handle_data(ccn_data* data_msg, chunk_t& evicted, bool is_it_possible_to_cache)
+bool always_highq_cache::handle_data(ccn_data* data_msg, chunk_t& evicted,
+        bool is_it_possible_to_cache)
 {
-    bool accept_new_chunk = false;
-    if (is_it_possible_to_cache)
+	bool accept_new_chunk = is_it_possible_to_cache;
+    if (accept_new_chunk)
     {
 		chunk_t chunk_id = data_msg->get_chunk_id();
 		unsigned short incoming_repr = content_distribution::get_repr_h()->get_representation_number(chunk_id);
 
 		// I can cache the chunkn only if it is at the highest representation
 		accept_new_chunk =
-				( incoming_repr == content_distribution::get_repr_h()->get_num_of_representations() );
-
-		accept_new_chunk = lru_cache::handle_data(data_msg, evicted, accept_new_chunk);
-
+				( incoming_repr == content_distribution::get_repr_h()->get_num_of_representations() )
+		    &&
+		        lru_cache::handle_data(data_msg, evicted, accept_new_chunk);
     }
+
 	#ifdef SEVERE_DEBUG
 		check_if_correct();
 		content_distribution::get_repr_h()->check_representation_mask(data_msg->get_chunk_id(), CCN_D);
@@ -39,21 +40,18 @@ bool always_highq_cache::handle_data(ccn_data* data_msg, chunk_t& evicted, bool 
 
 cache_item_descriptor* always_highq_cache::data_lookup_receiving_interest(chunk_t requested_chunk_id)
 {
-    unsigned short num_of_representations =
-            content_distribution::get_repr_h()->get_num_of_representations();
-	cache_item_descriptor* stored = lru_cache::data_lookup_receiving_interest(requested_chunk_id);
+    cache_item_descriptor* stored = lru_cache::data_lookup_receiving_interest(requested_chunk_id);
 	if (stored==NULL && cache_slots>0)
 	{
-	    // No chunk has been found. I retrieve it at the highest representation, but only if I have
+		// No chunk has been found. I retrieve it at the highest representation, but only if I have
 	    // some cache slots where to store it
-	    proactive_component->proactively_catch_a_chunk(
-	    							__id(requested_chunk_id), __chunk(requested_chunk_id),
-	    							0x0001 << (num_of_representations-1) );
 	}
 	#ifdef SEVERE_DEBUG
 	else if (stored!=NULL)
 	{
-	    if (	content_distribution::get_repr_h()->get_representation_number(stored->k) !=
+		unsigned short num_of_representations =
+		            content_distribution::get_repr_h()->get_num_of_representations();
+		if (	content_distribution::get_repr_h()->get_representation_number(stored->k) !=
 	            num_of_representations
 	    )
 	        severe_error(__FILE__,__LINE__,"Found a chunk that is not at the highest representation");
@@ -64,6 +62,22 @@ cache_item_descriptor* always_highq_cache::data_lookup_receiving_interest(chunk_
 	#endif
 
 	return stored;
+}
+
+void always_highq_cache::after_sending_data(ccn_data* data_msg)
+{
+	if (cache_slots>0)
+	{
+		unsigned short num_of_representations =
+				content_distribution::get_repr_h()->get_num_of_representations();
+		representation_mask_t max_mask = 0x0001 << (num_of_representations-1);
+		chunk_t chunk_id = data_msg->getChunk();
+		if ( (max_mask & __representation_mask(chunk_id) ) == 0 )
+			// The data that we were able to provide was not the maximum. I try to retrieve the
+			// maximum representation
+			proactive_component->proactively_catch_a_chunk(__id(chunk_id), __chunk(chunk_id),
+									0x0001 << (num_of_representations-1) );
+	}
 }
 
 #ifdef SEVERE_DEBUG

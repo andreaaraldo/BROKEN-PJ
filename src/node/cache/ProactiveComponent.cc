@@ -75,8 +75,20 @@ void ProactiveComponent::proactively_catch_a_chunk(chunk_t object_id, cnumber_t 
     Enter_Method_Silent(); // If you do not add this invocation and you call this
 										// method from another C++ class, an error will raise.
 										// Search the manual for "Enter_Method" for more information
-    cout<<"ciao: proactively catching a chunk "<<endl;
     request_specific_chunk(object_id, chunk_num, repr_mask);
 }
+
+void ProactiveComponent::request_specific_chunk(name_t object_id, cnumber_t chunk_num,
+		representation_mask_t repr_mask)
+{
+	multimap < name_t, download>::iterator it = current_downloads.find(object_id);
+	if (	it == current_downloads.end() ||
+			it->second.repr_mask != repr_mask
+	){
+		// I request a chunk only if I am not currently already waiting for it
+	    client::request_specific_chunk(object_id, chunk_num, repr_mask);
+	}
+}
+
 //</aa>
 

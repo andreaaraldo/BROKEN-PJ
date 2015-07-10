@@ -12,7 +12,6 @@ void lru_repr_cache::initialize()
 		proactive_component = (ProactiveComponent*) getParentModule()->getSubmodule("proactive_component");
 	else
 		proactive_component = NULL;
-
 }
 
 void lru_repr_cache::initialize_cache_slots(unsigned chunks_at_highest_representation)

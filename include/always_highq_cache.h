@@ -36,15 +36,17 @@ class always_highq_cache: public lru_cache
 {
     public:
         virtual cache_item_descriptor* data_lookup_receiving_interest(chunk_t requested_chunk_id);
+        virtual void after_sending_data(ccn_data* data_msg);
 		#ifdef SEVERE_DEBUG
 			virtual void check_representation_compatibility();
+	        virtual void check_if_correct();
 		#endif
 
     protected:
 		ProactiveComponent* proactive_component;
 		void initialize();
         bool handle_data(ccn_data* data_msg, chunk_t& evicted, bool is_it_possible_to_cache);
-        virtual void check_if_correct();
+
 
     private:
 };
