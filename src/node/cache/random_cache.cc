@@ -34,9 +34,9 @@ void random_cache::initialize(){
     base_cache::initialize();
 }
 
-bool random_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
+bool random_cache::handle_data(ccn_data* data_msg, chunk_t& evicted, bool is_it_possible_to_cache)
 {
-	bool return_value= base_cache::handle_data(data_msg, evicted);
+	bool return_value= base_cache::handle_data(data_msg, evicted,is_it_possible_to_cache);
 	chunk_t chunk = data_msg->get_chunk_id();
 
 	#ifdef SEVERE_DEBUG

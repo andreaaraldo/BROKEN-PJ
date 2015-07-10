@@ -48,7 +48,7 @@ class partitioned_cache: public base_cache
     protected:
         void initialize();
         virtual void finish();
-        bool handle_data(ccn_data* data_msg, chunk_t& evicted);
+        bool handle_data(ccn_data* data_msg, chunk_t& evicted, bool is_it_possible_to_cache);
         void remove_from_cache(cache_item_descriptor* descr);
         ProactiveComponent* proactive_component;
         lru_cache** subcaches;

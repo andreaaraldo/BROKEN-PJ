@@ -67,5 +67,16 @@ void ProactiveComponent::try_to_improve(chunk_t stored, chunk_t requested_chunk_
 		request_specific_chunk(object_id, chunk_num, improving_mask);
 	}
 }
+
+
+void ProactiveComponent::proactively_catch_a_chunk(chunk_t object_id, cnumber_t chunk_num,
+        representation_mask_t repr_mask)
+{
+    Enter_Method_Silent(); // If you do not add this invocation and you call this
+										// method from another C++ class, an error will raise.
+										// Search the manual for "Enter_Method" for more information
+    cout<<"ciao: proactively catching a chunk "<<endl;
+    request_specific_chunk(object_id, chunk_num, repr_mask);
+}
 //</aa>
 

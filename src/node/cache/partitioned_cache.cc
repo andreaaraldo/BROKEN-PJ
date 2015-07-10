@@ -1,6 +1,10 @@
 //<aa>
 #include "partitioned_cache.h"
 #include "ccnsim.h"
+#include <stdlib.h>
+#include <iostream>   // std::cout
+#include <string>     // std::string, std::to_string
+
 Register_Class(partitioned_cache);
 
 void partitioned_cache::initialize()
@@ -35,9 +39,9 @@ void partitioned_cache::initialize()
 		proactive_component = NULL;
 }
 
-bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
+bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted, bool is_it_possible_to_cache)
 {
-	bool accept_new_chunk = base_cache::handle_data(data_msg, evicted);
+	bool accept_new_chunk = base_cache::handle_data(data_msg, evicted, is_it_possible_to_cache);
 	chunk_t chunk_id = data_msg->get_chunk_id();
 	unsigned short incoming_repr = content_distribution::get_repr_h()->get_representation_number(chunk_id);
 	#ifdef SEVERE_DEBUG
@@ -68,7 +72,7 @@ bool partitioned_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
 					subcaches[incoming_repr-1]->get_occupied_slots();
 			#endif
 
-			accept_new_chunk = subcaches[incoming_repr-1]->handle_data(data_msg, evicted);
+			accept_new_chunk = subcaches[incoming_repr-1]->handle_data(data_msg, evicted, accept_new_chunk);
 
 		    #ifdef SEVERE_DEBUG
 		    	if (occupied_before == 0 && evicted!=0)
@@ -180,7 +184,7 @@ void partitioned_cache::remove_from_cache(cache_item_descriptor* descr)
 bool partitioned_cache::full()
 {
     for (unsigned short i=0; i<num_of_partitions; i++)
-        if (!subcaches[i]->full() )
+        if (subcaches[i]!=NULL && !subcaches[i]->full() )
             return false;
     return true;
 }
@@ -193,7 +197,15 @@ void partitioned_cache::finish()
 
 	std::stringstream breakdown_str;
 	for (unsigned i = 0; i < num_of_repr; i++)
-		breakdown_str << subcaches[i]->get_occupied_slots()<<":";
+	{
+	    std::stringstream tmp;
+	    if ( subcaches[i] == NULL )
+	        tmp << "_";
+	    else
+	        tmp<<subcaches[i]->get_occupied_slots();
+		breakdown_str <<tmp<<":";
+	}
+
     char name [60];
     sprintf ( name, "representation_breakdown[%d] %s", getIndex(), breakdown_str.str().c_str());
     recordScalar (name, 0);

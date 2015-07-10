@@ -13,6 +13,8 @@ class ProactiveComponent:public client
     public:
 		virtual void initialize();
 		void try_to_improve(chunk_t stored, chunk_t requested_chunk_id);
+		void proactively_catch_a_chunk(chunk_t object_id, cnumber_t chunk_num,
+		        representation_mask_t repr_mask);
 
 };
 #endif

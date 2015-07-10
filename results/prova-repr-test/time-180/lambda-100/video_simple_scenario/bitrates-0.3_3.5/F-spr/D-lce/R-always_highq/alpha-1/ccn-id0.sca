@@ -1,12 +1,12 @@
 version 2
-run General-0-20150709-16:59:15-15603
+run General-0-20150709-21:03:15-26281
 attr D lce
 attr F spr
 attr R always_highq
 attr a 1
 attr brates 0.3_3.5
 attr configname General
-attr datetime 20150709-16:59:15
+attr datetime 20150709-21:03:15
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=video_simple_scenario, $rep=0, $lambda=100, $a=1, $brates=0.3_3.5, $F=spr, $ttl=1000, $D=lce, $R=always_highq, $window=60, $variance=0.05, $mytime=180"
@@ -16,7 +16,7 @@ attr measurement "$net=video_simple_scenario, $rep=0, $lambda=100, $a=1, $brates
 attr mytime 180
 attr net video_simple_scenario
 attr network networks.${net=video_simple_scenario}_network
-attr processid 15603
+attr processid 26281
 attr rep 0
 attr repetition 0
 attr replication #0
@@ -36,5 +36,5 @@ scalar . 	variance 	0.05
 scalar . 	window 	60
 scalar video_simple_scenario_network.content_distribution 	repo-0 	0
 scalar video_simple_scenario_network.content_distribution 	client-0 	1
-scalar video_simple_scenario_network.content_distribution 	repo-0_card 	100
+scalar video_simple_scenario_network.content_distribution 	repo-0_card 	1
 scalar video_simple_scenario_network.content_distribution 	repo-0_price 	0

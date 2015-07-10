@@ -136,9 +136,10 @@ class base_cache : public abstract_node
 		virtual void remove_from_cache(cache_item_descriptor* descr);
 
 		//Inteface function (depending by internal data structures of each cache)
-		virtual bool handle_data(ccn_data*, chunk_t& last_evicted_chunk) = 0;// Decides whether to store the new chunk. If stored, it
-																			// evicts some stored chunks, if needed, and returns the last
-																			// evicted one
+		// Decides whether to store the new chunk. If stored, it evicts some stored chunks, if
+		// needed, and returns the last evicted one
+		virtual bool handle_data(ccn_data*, chunk_t& last_evicted_chunk,
+		            bool is_it_possible_to_cache) = 0;
 
 		//Outside function behaviour
 		int get_size(); //deprecated

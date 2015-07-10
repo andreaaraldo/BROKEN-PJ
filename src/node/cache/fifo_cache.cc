@@ -28,10 +28,10 @@
 
 Register_Class(fifo_cache);
 
-bool fifo_cache::handle_data(ccn_data* data_msg, chunk_t& evicted)
+bool fifo_cache::handle_data(ccn_data* data_msg, chunk_t& evicted, bool is_it_possible_to_cache)
 {
 	bool return_value = true;
-	base_cache::handle_data(data_msg, evicted);
+	base_cache::handle_data(data_msg, evicted, is_it_possible_to_cache);
 	chunk_t chunk = data_msg->get_chunk_id();
 	#ifdef SEVERE_DEBUG
 	if( content_distribution::get_repr_h()->get_num_of_representations() != 1 )

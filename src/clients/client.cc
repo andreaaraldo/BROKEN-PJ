@@ -377,8 +377,8 @@ bool client::handle_incoming_chunk (ccn_data *data_message)
 		{
 			std::stringstream ermsg; 
 			ermsg<<"Client of type "<< getModuleType() <<" attached to node "<< getNodeIndex() <<
-				" is receiving object "
-				<<object_id<<" but it is not waiting for it" <<endl;
+				" is receiving chunk "<<object_id<<":"<<chunk_num<<":"<<repr_mask<<
+				" but it is not waiting for it" <<endl;
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 		

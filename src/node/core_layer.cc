@@ -366,7 +366,8 @@ void core_layer::handle_interest(ccn_interest *int_msg)
 
 			// Store the chunk in the local cache
 			chunk_t evicted = 0;
-		    ContentStore->handle_data(data_msg, evicted);
+			bool is_it_possible_to_cache = true; // There are no reasons, at the moment, to avoid this
+		    ContentStore->handle_data(data_msg, evicted, is_it_possible_to_cache);
 
 			//<aa> I transformed send in send_data</aa>
 			send_data(data_msg,"face$o",int_msg->getArrivalGate()->getIndex(),__LINE__);
@@ -466,7 +467,8 @@ void core_layer::handle_data(ccn_data *data_msg)
     	if (pentry.cacheable.test(0))
     	{	// Cache the content only if the cacheable bit is set.
     		chunk_t evicted = 0;
-    		ContentStore->handle_data(data_msg, evicted);
+    		bool is_it_possible_to_cache = true; // There are no reasons, at the moment, to avoid this
+    		ContentStore->handle_data(data_msg, evicted, is_it_possible_to_cache);
     	}
 
     	interfaces = pentry.interfaces;	// Get incoming interfaces.
@@ -728,6 +730,7 @@ int	core_layer::send_data(ccn_data* msg, const char *gatename, int gateindex, in
 
 	iface_stats[gateindex].slots_sent += msg->getSlotLength();
 
+    cout<<"ciao: core_layer["<<getIndex()<<"]: sending data to port "<<gateindex<<endl;
 	return send (msg, gatename, gateindex);
 }
 
