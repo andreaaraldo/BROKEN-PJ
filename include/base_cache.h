@@ -136,14 +136,16 @@ class base_cache : public abstract_node
 		virtual void remove_from_cache(cache_item_descriptor* descr);
 
 		//Inteface function (depending by internal data structures of each cache)
-		virtual bool handle_data(ccn_data*, chunk_t& last_evicted_chunk) = 0;// Decides whether to store the new chunk. If stored, it
-																			// evicts some stored chunks, if needed, and returns the last
-																			// evicted one
+		// Decides whether to store the new chunk. If stored, it evicts some stored chunks, if
+		// needed, and returns the last evicted one
+		virtual bool handle_data(ccn_data*, chunk_t& last_evicted_chunk,
+		            bool is_it_possible_to_cache) = 0;
 
 		//Outside function behaviour
 		int get_size(); //deprecated
 
 		//<aa>
+		virtual void after_handle_data(bool was_data_accepted);
 		virtual void initialize_(std::string decision_policy, unsigned cache_slots);
 		unsigned  get_slots() { return cache_slots; }
 		void set_slots(unsigned);
@@ -164,7 +166,8 @@ class base_cache : public abstract_node
 
 		void clear_stat();
 
-		//<aa>
+		//<aa>.
+		virtual void after_sending_data(ccn_data* data_msg);
 		virtual uint32_t get_decision_yes();
 		virtual uint32_t get_decision_no();
 		virtual void set_decision_yes(uint32_t n);

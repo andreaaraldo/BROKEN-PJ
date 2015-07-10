@@ -343,23 +343,18 @@ void base_cache::finish(){
 
 // Decides whether to store the new chunk. If storing, evicts some chunk, if needed,
 // and returns the last evicted chunk_id
-bool base_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted)
+// is_it_possible_to_cache: if false, the chunk cannot be cached
+bool base_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted, bool is_it_possible_to_cache)
 {
-	bool should_i_cache;
+	return is_it_possible_to_cache && cache_slots>0 && decisor->data_to_cache(data_msg );
+}
 
-    if (cache_slots>0 && decisor->data_to_cache(data_msg ) )
-	{
-    	decision_yes++;
-		should_i_cache = true; 	// data_ store is an interface funtion:
-							// each caching node should reimplement
-							// that function
-	}
-	else{
-		decision_no++;
-		should_i_cache = false;
-	}
-
-	return should_i_cache;
+void base_cache::after_handle_data(bool was_data_accepted)
+{
+    if (was_data_accepted)
+        decision_yes++;
+    else
+        decision_no++;
 }
 
 
@@ -382,7 +377,9 @@ void base_cache::store_name(chunk_t elem)
 
 	ccn_data* fake_data = new ccn_data(); fake_data->setChunk(elem);
 	chunk_t evicted;
-	handle_data(fake_data, evicted);  // Store the content ID inside the Name Cache.
+
+	bool is_it_possible_to_cache = true; // As for now, there are no reasons to say no
+	handle_data(fake_data, evicted, is_it_possible_to_cache);  // Store the content ID inside the Name Cache.
 }
 
 /*
@@ -478,6 +475,8 @@ void base_cache::set_slots(unsigned slots_)
 
 
 //<aa>
+void base_cache::after_sending_data(ccn_data* data_msg){}
+
 cache_item_descriptor* base_cache::data_lookup_receiving_data (chunk_t data_chunk_id)
 {	return (cache_item_descriptor*) data_lookup(data_chunk_id);
 }

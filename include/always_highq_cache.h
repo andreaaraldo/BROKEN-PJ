@@ -25,20 +25,28 @@
 #ifndef ALWAYS_HIGHQ_CACHE_H_
 #define ALWAYS_HIGHQ_CACHE_H_
 
-#include "partitioned_cache.h"
+#include "lru_cache.h"
+#include "client.h"
 #include "ProactiveComponent.h"
 
 using namespace boost;
 using namespace std;
 
-class always_highq_cache: public partitioned_cache
+class always_highq_cache: public lru_cache
 {
     public:
         virtual cache_item_descriptor* data_lookup_receiving_interest(chunk_t requested_chunk_id);
+        virtual void after_sending_data(ccn_data* data_msg);
+		#ifdef SEVERE_DEBUG
+			virtual void check_representation_compatibility();
+	        virtual void check_if_correct();
+		#endif
 
     protected:
-        void initialize();
-        bool handle_data(ccn_data* data_msg, chunk_t& evicted);
+		ProactiveComponent* proactive_component;
+		void initialize();
+        bool handle_data(ccn_data* data_msg, chunk_t& evicted, bool is_it_possible_to_cache);
+
 
     private:
 };

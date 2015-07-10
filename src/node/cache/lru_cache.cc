@@ -151,9 +151,11 @@ void lru_cache::remove_from_cache(cache_item_descriptor* descr)
 //</aa>
 
 // Decides whether to store the new chunk. If storing, evicts lru object if needed
-bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk)
+bool lru_cache::handle_data(ccn_data* data_msg, chunk_t& last_evicted_chunk,
+        bool is_it_possible_to_cache)
 {
-	bool accept_new_chunk = base_cache::handle_data(data_msg, last_evicted_chunk);
+	bool accept_new_chunk = base_cache::handle_data(data_msg, last_evicted_chunk,
+	        is_it_possible_to_cache);
 	chunk_t chunk_id = data_msg->get_chunk_id();
 
 	#ifdef SEVERE_DEBUG
