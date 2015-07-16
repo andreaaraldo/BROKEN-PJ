@@ -29,6 +29,7 @@
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <vector>
+#include <ctime>
 
 
 class client;
@@ -66,25 +67,26 @@ class statistics : public cSimpleModule{
 	//</aa>
 
     protected:
-	virtual void initialize();
-	//Handle message deals with timers for checking cache states and stable
-	//time. No statistics are retained from this class during the
-	//simulation.  Indeed, at the end it pings each component a gather the
-	//final statistics(look at the method finish, below)
-	virtual void handleMessage(cMessage *);
-	virtual void finish();
+		virtual void initialize();
+		//Handle message deals with timers for checking cache states and stable
+		//time. No statistics are retained from this class during the
+		//simulation.  Indeed, at the end it pings each component a gather the
+		//final statistics(look at the method finish, below)
+		virtual void handleMessage(cMessage *);
+		virtual void finish();
 
-	//Stable checks if the system is in a stable state.
-	//<aa>It checks if that cache has a stable hit rate</aa>
-	virtual bool stable(int);
+		//Stable checks if the system is in a stable state.
+		//<aa>It checks if that cache has a stable hit rate</aa>
+		virtual bool stable(int);
 
-	//Ask each worth component (e.g., clients or caches)  to clear
-	//its internal statistics
-	void clear_stat();
+		//Ask each worth component (e.g., clients or caches)  to clear
+		//its internal statistics
+		void clear_stat();
 	
-	//<aa> Perform the operations to do after having reached the stability
-	void stability_has_been_reached();
-	//</aa>
+		//<aa> Perform the operations to do after having reached the stability
+		void stability_has_been_reached();
+		time_t start_time;
+		//</aa>
 
 
     private:

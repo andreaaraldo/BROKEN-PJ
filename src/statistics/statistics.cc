@@ -144,7 +144,8 @@ void statistics::initialize()
 
     //Start checking for full
     scheduleAt(simTime() + ts, full_check);
-    
+
+	start_time = time(0);    
 }
 
 
@@ -371,7 +372,7 @@ void statistics::finish(){
     #ifdef SEVERE_DEBUG
 	if (global_tot_downloads == 0)
 	{
-	       	std::stringstream ermsg;
+       	std::stringstream ermsg;
 		ermsg<<"global_tot_downloads == 0";
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 	}
@@ -389,6 +390,10 @@ void statistics::finish(){
 			debug_message(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 	#endif
+
+	time_t execution_time = time(0) - start_time;
+    sprintf ( name, "execution_time");
+    recordScalar(name,execution_time);
     //</aa>
 
     
