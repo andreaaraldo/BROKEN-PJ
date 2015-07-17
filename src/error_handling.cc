@@ -26,6 +26,7 @@
 
 //<aa>
 #include "error_handling.h"
+#include "statistics.h"
 #include <sstream>
 #include<iostream>
 #include <cstdlib>
@@ -35,10 +36,13 @@
 using namespace std;
 
 void generic_message(const char* source_file_name, int code_line, const char* tag,
-			const char* message){
-	cout << source_file_name << " " << code_line <<": "<< tag<<" : " 
+			const char* message)
+{
+	std::ofstream ofs;
+	ofs.open(statistics::logfile,  std::ofstream::out | std::ofstream::app);
+	ofs << source_file_name << " " << code_line <<": "<< tag<<" : " 
 			<< message << endl;
-	cout.flush();
+	ofs.close();
 }
 
 void severe_error(const char* source_file_name, int code_line, 

@@ -61,6 +61,8 @@ class statistics : public cSimpleModule{
 		// “Design and Evaluation of Cost-aware Information Centric Routers”, 
 		// in ACM SIGCOMM ICN 2014 
 		static const bool record_cache_value = false;
+
+		static char* logfile;
 	//</aa>
 
     protected:
@@ -87,38 +89,38 @@ class statistics : public cSimpleModule{
 
 
     private:
-	cMessage *full_check;
-	cMessage *stable_check;
-	cMessage *end;
+		cMessage *full_check;
+		cMessage *stable_check;
+		cMessage *end;
 
-	//Vector for accessing different modules statistics
-	client** clients;
-	core_layer** cores;
-	base_cache** caches;
+		//Vector for accessing different modules statistics
+		client** clients;
+		core_layer** cores;
+		base_cache** caches;
 	
 
-	//Network infos
-	int num_nodes;
-	int num_clients;
+		//Network infos
+		int num_nodes;
+		int num_clients;
 
-	//Stabilization parameters
-	double ts;
-	double window;
-	double partial_n;
-	double time_steady;
-	double stabilization_time;
-	//<aa>
-	double variance_threshold;
-	//</aa>
+		//Stabilization parameters
+		double ts;
+		double window;
+		double partial_n;
+		double time_steady;
+		double stabilization_time;
+		//<aa>
+		double variance_threshold;
+		//</aa>
 
-	//Stabilization samples
-	vector< vector <double> > samples;
-	unordered_map <int, unordered_set <int> > level_union;
-	unordered_map <int, int> level_same;
+		//Stabilization samples
+		vector< vector <double> > samples;
+		unordered_map <int, unordered_set <int> > level_union;
+		unordered_map <int, int> level_same;
 
-	//<aa>
-	int total_replicas;
-	//</aa>
+		//<aa>
+		int total_replicas;
+		//</aa>
 
 };
 
