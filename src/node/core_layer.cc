@@ -460,7 +460,6 @@ void core_layer::handle_data(ccn_data *data_msg)
 
     if ( pentry.interfaces!=0 )
 	{
-
 		// A pit entry for this chunk was found
     	if (pentry.cacheable.test(0))
     	{	// Cache the content only if the cacheable bit is set.

@@ -431,16 +431,4 @@ void statistics::stability_has_been_reached(){
 	clear_stat();
 }
 
-void statistics::registerIcnChannel(cChannel* icn_channel){
-	#ifdef SEVERE_DEBUG
-	if ( std::find(icn_channels.begin(), icn_channels.end(), icn_channel)
-			!=icn_channels.end()
-	){
-        std::stringstream ermsg; 
-		ermsg<<"Trying to add to statistics object an icn channel already added"<<endl;
-	    severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
-	#endif
-	icn_channels.push_back(icn_channel);
-}
 //</aa>

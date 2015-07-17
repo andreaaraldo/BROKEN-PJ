@@ -35,7 +35,6 @@
 class client;
 class core_layer;
 class base_cache;
-//class IcnChannel;
 
 using namespace std;
 using namespace boost;
@@ -52,8 +51,6 @@ class statistics : public cSimpleModule{
 
 	//<aa>
 	public:
-		virtual void registerIcnChannel(cChannel* icn_channel);
-
 		// Enable it only if you want to record, at the end of the simulation, an indication of 
 		// the value (in terms of monetary cost) of the content stored in each cache, in the
 		// resulting sca file.
@@ -98,9 +95,6 @@ class statistics : public cSimpleModule{
 	client** clients;
 	core_layer** cores;
 	base_cache** caches;
-	//<aa>
-	vector<cChannel*> icn_channels;
-	//</aa>
 	
 
 	//Network infos
