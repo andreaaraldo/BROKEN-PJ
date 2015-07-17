@@ -1,0 +1,18 @@
+#
+# This makefile was generated with the following command:
+# /home/araldo/omnetpp-4.3/bin/opp_runall --export filename -j2 ./ccnSim -u Cmdenv -r 0..2
+#
+
+.PHONY:  r0 r1 r2
+
+all:  r0 r1 r2
+
+r0:
+	./ccnSim -u Cmdenv -r 0
+
+r1:
+	./ccnSim -u Cmdenv -r 1
+
+r2:
+	./ccnSim -u Cmdenv -r 2
+
