@@ -9,6 +9,7 @@ simple statistics{
 		double partial_n = default(10);
 		//<aa>
 		double variance_threshold = default(0.05);
+		string runid;
 		//</aa>
 
 		int CEXPL = default(3);

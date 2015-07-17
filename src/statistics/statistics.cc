@@ -30,6 +30,7 @@
 #include "lru_cache.h"
 
 //<aa>
+#include <stdio.h>
 #include "error_handling.h"
 #include "repository/Repository.h"
 #include "RepresentationAwareClient.h"
@@ -37,6 +38,8 @@
 
 
 Register_Class(statistics);
+
+char* statistics::logfile;
 
 
 using namespace std;
@@ -49,6 +52,13 @@ void statistics::initialize()
 
 	//<aa>
 	const char* client_type = getAncestorPar("client_type");
+
+	//{ PREPARING LOGFILE
+	logfile = (char*) malloc(100*sizeof(char) );
+	sprintf(logfile,"/tmp/ccnsim-%s.log", par("runid").stringValue() );	
+	remove(logfile);
+	cout<<"Error and debug messages in "<<logfile<<endl;
+	//} PREPARING LOGFILE
 	//</aa>
 
    

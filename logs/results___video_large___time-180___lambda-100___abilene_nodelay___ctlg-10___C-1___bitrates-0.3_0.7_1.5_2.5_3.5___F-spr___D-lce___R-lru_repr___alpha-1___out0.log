@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Loading NED files from .: 56
 
 Preparing for running configuration General, run #0...
@@ -1437,3 +1438,5 @@ Running simulation...
 
 
 Calling finish() at end of Run #0...
+=======
+>>>>>>> 3136b8682b5636f4f7cccf5f2c5f1f3ce821f2f1
