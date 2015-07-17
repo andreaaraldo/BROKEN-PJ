@@ -42,7 +42,7 @@ Repository::Repository(int attached_node_index_, int repo_index_, double price_)
 	clear_stat();
 
 	#ifdef SEVERE_DEBUG
-	if( (unsigned)repo_index > sizeof(bitmask) )
+	if( (unsigned)repo_index > sizeof(bitmask)*8 )
 	{
 		std::stringstream msg; 
 		msg<<"Trying to consider the "<<repo_index_<< "-th repository, while the maximum number can only be "<<
