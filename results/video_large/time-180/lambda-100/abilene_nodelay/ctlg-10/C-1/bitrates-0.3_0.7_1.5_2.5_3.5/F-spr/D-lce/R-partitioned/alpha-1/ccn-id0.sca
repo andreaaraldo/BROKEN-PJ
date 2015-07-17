@@ -1,5 +1,5 @@
 version 2
-run General-1-20150717-17:59:57-11144
+run General-1-20150717-19:04:37-11390
 attr C 1
 attr D lce
 attr F spr
@@ -8,7 +8,7 @@ attr a 1
 attr brates 0.3_0.7_1.5_2.5_3.5
 attr configname General
 attr ctlg 10
-attr datetime 20150717-17:59:57
+attr datetime 20150717-19:04:37
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=10, $brates=0.3_0.7_1.5_2.5_3.5, $F=spr, $ttl=1000, $D=lce, $R=partitioned, $C=1, $window=60, $variance=0.05, $mytime=180"
@@ -18,7 +18,7 @@ attr measurement "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=10, $br
 attr mytime 180
 attr net abilene_nodelay
 attr network networks.${net=abilene_nodelay}_network
-attr processid 11144
+attr processid 11390
 attr rep 0
 attr repetition 0
 attr replication #0
