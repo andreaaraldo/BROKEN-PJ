@@ -1,13 +1,8 @@
 package networks;
-network ws1_network extends base_network{
+network ws100_nodes_network extends base_network{
     parameters:
         //Number of ccn nodes
     	n = 100;
-		int priceratio;
-		double kappa;
-		int cachesize;
-		int single_cachesize = ceil(cachesize / n );
-		node[0..21].content_store.C = single_cachesize;
 
     connections allowunconnected:
     node[0].face++<-->node[1].face++;
