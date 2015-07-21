@@ -1,14 +1,24 @@
 version 2
+<<<<<<< HEAD:results/video_large/time-1800/lambda-100/abilene_nodelay/ctlg-1e6/C-1e4/bitrates-0.3_0.7_1.5_2.5_3.5/F-spr/D-lce/R-always_highq/alpha-1/ccn-id0.sca
+run General-1-20150720-18:57:15-13270
+attr C 1e4
+=======
 run General-3-20150720-15:47:44-14998
 attr C 1e6
+>>>>>>> 7c8e198944fab3e942805bad2ef9366d73a1e164:results/video_large/time-1800/lambda-100/abilene_nodelay/ctlg-1e8/C-1e6/bitrates-0.3_0.7_1.5_2.5_3.5/F-spr/D-lce/R-always_highq/alpha-1/ccn-id0.sca
 attr D lce
 attr F spr
 attr R always_highq
 attr a 1
 attr brates 0.3_0.7_1.5_2.5_3.5
 attr configname General
+<<<<<<< HEAD:results/video_large/time-1800/lambda-100/abilene_nodelay/ctlg-1e6/C-1e4/bitrates-0.3_0.7_1.5_2.5_3.5/F-spr/D-lce/R-always_highq/alpha-1/ccn-id0.sca
+attr ctlg 1e6
+attr datetime 20150720-18:57:15
+=======
 attr ctlg 1e8
 attr datetime 20150720-15:47:44
+>>>>>>> 7c8e198944fab3e942805bad2ef9366d73a1e164:results/video_large/time-1800/lambda-100/abilene_nodelay/ctlg-1e8/C-1e6/bitrates-0.3_0.7_1.5_2.5_3.5/F-spr/D-lce/R-always_highq/alpha-1/ccn-id0.sca
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=1e8, $brates=0.3_0.7_1.5_2.5_3.5, $F=spr, $ttl=1000, $D=lce, $R=always_highq, $C=1e6, $window=60, $variance=0.05, $mytime=1800"
@@ -18,7 +28,11 @@ attr measurement "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=1e8, $b
 attr mytime 1800
 attr net abilene_nodelay
 attr network networks.${net=abilene_nodelay}_network
+<<<<<<< HEAD:results/video_large/time-1800/lambda-100/abilene_nodelay/ctlg-1e6/C-1e4/bitrates-0.3_0.7_1.5_2.5_3.5/F-spr/D-lce/R-always_highq/alpha-1/ccn-id0.sca
+attr processid 13270
+=======
 attr processid 14998
+>>>>>>> 7c8e198944fab3e942805bad2ef9366d73a1e164:results/video_large/time-1800/lambda-100/abilene_nodelay/ctlg-1e8/C-1e6/bitrates-0.3_0.7_1.5_2.5_3.5/F-spr/D-lce/R-always_highq/alpha-1/ccn-id0.sca
 attr rep 0
 attr repetition 0
 attr replication #0
@@ -93,6 +107,24 @@ scalar abilene_nodelay_network.statistics 	total_cost 	0
 scalar abilene_nodelay_network.statistics 	total_replicas 	100000000
 scalar abilene_nodelay_network.statistics 	"representations_downloaded 0.360928:0:0:0:0.639072:" 	0
 scalar abilene_nodelay_network.statistics 	"slots_per_representation 100:233:500:833:1167:" 	0
+<<<<<<< HEAD:results/video_large/time-1800/lambda-100/abilene_nodelay/ctlg-1e6/C-1e4/bitrates-0.3_0.7_1.5_2.5_3.5/F-spr/D-lce/R-always_highq/alpha-1/ccn-id0.sca
+scalar abilene_nodelay_network.statistics 	inner_hit 	2168.1011494114
+scalar abilene_nodelay_network.statistics 	execution_time 	147
+scalar abilene_nodelay_network.node[0].core_layer 	interests[0] 	437017
+scalar abilene_nodelay_network.node[0].core_layer 	repo_load[0] 	209212
+scalar abilene_nodelay_network.node[0].core_layer 	data[0] 	133614
+scalar abilene_nodelay_network.node[0].core_layer 	slots_sent[face$o[1]->client[0]] 	130566697
+scalar abilene_nodelay_network.node[0].core_layer 	slots_sent[face$o[2]->node[1]] 	59745385
+scalar abilene_nodelay_network.node[0].core_layer 	slots_sent[face$o[3]->node[10]] 	17267943
+scalar abilene_nodelay_network.node[0].content_store 	p_hit[0] 	0.21553166123972
+scalar abilene_nodelay_network.node[0].content_store 	hits[0] 	94191
+scalar abilene_nodelay_network.node[0].content_store 	misses[0] 	342826
+scalar abilene_nodelay_network.node[0].content_store 	decision_yes[0] 	72457
+scalar abilene_nodelay_network.node[0].content_store 	decision_no[0] 	270369
+scalar abilene_nodelay_network.node[0].content_store 	decision_ratio[0] 	0.21135211448373
+scalar abilene_nodelay_network.node[0].proactive_component 	hdistance[0].proactive_component 	2.2972759748047
+scalar abilene_nodelay_network.node[0].proactive_component 	downloads[0].proactive_component 	158442
+=======
 scalar abilene_nodelay_network.statistics 	inner_hit 	0.0078163533074488
 scalar abilene_nodelay_network.statistics 	execution_time 	2673
 scalar abilene_nodelay_network.node[0].core_layer 	interests[0] 	379582
@@ -109,6 +141,7 @@ scalar abilene_nodelay_network.node[0].content_store 	decision_no[0] 	213891
 scalar abilene_nodelay_network.node[0].content_store 	decision_ratio[0] 	0.21004638725975
 scalar abilene_nodelay_network.node[0].proactive_component 	hdistance[0].proactive_component 	2.2768750231483
 scalar abilene_nodelay_network.node[0].proactive_component 	downloads[0].proactive_component 	2024975
+>>>>>>> 7c8e198944fab3e942805bad2ef9366d73a1e164:results/video_large/time-1800/lambda-100/abilene_nodelay/ctlg-1e8/C-1e6/bitrates-0.3_0.7_1.5_2.5_3.5/F-spr/D-lce/R-always_highq/alpha-1/ccn-id0.sca
 scalar abilene_nodelay_network.node[0].proactive_component 	avg_time[0].proactive_component 	0
 scalar abilene_nodelay_network.node[1].core_layer 	interests[1] 	715622
 scalar abilene_nodelay_network.node[1].core_layer 	repo_load[1] 	187990
