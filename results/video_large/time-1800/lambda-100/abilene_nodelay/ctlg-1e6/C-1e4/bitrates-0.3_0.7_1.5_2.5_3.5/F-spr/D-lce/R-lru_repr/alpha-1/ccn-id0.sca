@@ -1,5 +1,5 @@
 version 2
-run General-0-20150720-14:47:52-13987
+run General-0-20150720-18:57:15-13269
 attr C 1e4
 attr D lce
 attr F spr
@@ -8,7 +8,7 @@ attr a 1
 attr brates 0.3_0.7_1.5_2.5_3.5
 attr configname General
 attr ctlg 1e6
-attr datetime 20150720-14:47:52
+attr datetime 20150720-18:57:15
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=1e6, $brates=0.3_0.7_1.5_2.5_3.5, $F=spr, $ttl=1000, $D=lce, $R=lru_repr, $C=1e4, $window=60, $variance=0.05, $mytime=1800"
@@ -18,7 +18,7 @@ attr measurement "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=1e6, $b
 attr mytime 1800
 attr net abilene_nodelay
 attr network networks.${net=abilene_nodelay}_network
-attr processid 13987
+attr processid 13269
 attr rep 0
 attr repetition 0
 attr replication #0
@@ -94,7 +94,7 @@ scalar abilene_nodelay_network.statistics 	total_replicas 	1000000
 scalar abilene_nodelay_network.statistics 	"representations_downloaded 0.388157:0.0330207:0.0235821:0.0198551:0.535385:" 	0
 scalar abilene_nodelay_network.statistics 	"slots_per_representation 100:233:500:833:1167:" 	0
 scalar abilene_nodelay_network.statistics 	inner_hit 	0.55454051257593
-scalar abilene_nodelay_network.statistics 	execution_time 	868
+scalar abilene_nodelay_network.statistics 	execution_time 	1535
 scalar abilene_nodelay_network.node[0].core_layer 	interests[0] 	256705
 scalar abilene_nodelay_network.node[0].core_layer 	repo_load[0] 	74220
 scalar abilene_nodelay_network.node[0].core_layer 	data[0] 	66002
