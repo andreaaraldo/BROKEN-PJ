@@ -17,7 +17,8 @@ void partitioned_cache::initialize()
 	// cache_slots is the number of chunk that we can store at high quality.
 	unsigned possible_lowest_repr_chunks = cache_slots*
 		content_distribution::get_repr_h()->get_storage_space_of_representation(num_of_partitions);
-	unsigned subcache_size[num_of_partitions];
+	unsigned subcache_size[num_of_partitions];	// Number of objects at the relative quality that each subcache
+												// can host
 
 	const char* equality = par("equality");
 	if ( strcmp(equality, "space")==0 ) 
@@ -36,7 +37,7 @@ void partitioned_cache::initialize()
 		for (unsigned short i=0; i<num_of_partitions; i++)
 			subcache_size[i] = 	(possible_lowest_repr_chunks * 
 								content_distribution::get_repr_h()->get_storage_space_of_representation(i+1)
-								)/ denominator;
+								)/ (denominator * content_distribution::get_repr_h()->get_storage_space_of_representation(i+1) );
 	}else
 		severe_error(__FILE__,__LINE__,"Equality parameter not recognized");
 
