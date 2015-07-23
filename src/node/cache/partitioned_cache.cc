@@ -17,13 +17,34 @@ void partitioned_cache::initialize()
 	// cache_slots is the number of chunk that we can store at high quality.
 	unsigned possible_lowest_repr_chunks = cache_slots*
 		content_distribution::get_repr_h()->get_storage_space_of_representation(num_of_partitions);
-
 	unsigned subcache_size[num_of_partitions];
+
+	const char* equality = par("equality");
+	if ( strcmp(equality, "space")==0 ) 
+	{	// All partitions must have the same space (in MB)
+		for (unsigned short i=0; i<num_of_partitions; i++)
+			subcache_size[i] = (possible_lowest_repr_chunks / num_of_partitions)/
+				content_distribution::get_repr_h()->get_storage_space_of_representation(i+1);
+
+	} else 	if ( strcmp(equality, "number_of_objects")==0 ) 
+	{	// All partitions must have the same number of objects
+		unsigned denominator = 0;
+		for (unsigned short i=0; i<num_of_partitions; i++)
+			denominator += content_distribution::get_repr_h()->get_storage_space_of_representation(i+1);
+
+
+		for (unsigned short i=0; i<num_of_partitions; i++)
+			subcache_size[i] = 	(possible_lowest_repr_chunks * 
+								content_distribution::get_repr_h()->get_storage_space_of_representation(i+1)
+								)/ denominator;
+	}else
+		severe_error(__FILE__,__LINE__,"Equality parameter not recognized");
+
+	cout<< "partitions: ";
 	for (unsigned short i=0; i<num_of_partitions; i++)
-	{
-		subcache_size[i] = (possible_lowest_repr_chunks / num_of_partitions)/
-			content_distribution::get_repr_h()->get_storage_space_of_representation(i+1);
-	}
+		cout << subcache_size[i]<<":";
+	cout<<endl;
+	throw 1;
 
 	for (unsigned short i=0; i<num_of_partitions; i++)
 	{

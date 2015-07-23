@@ -48,9 +48,21 @@ simple lru_repr_cache extends lru_cache
 {
     @class(lru_repr_cache);
 }    
+
 simple partitioned_cache extends base_cache{
     @class(partitioned_cache);
+	string equality;
 }
+simple partitionedn_cache extends base_cache{
+    @class(partitioned_cache);
+	string equality="number_of_objects";
+}
+
+simple partitioneds_cache extends base_cache{
+    @class(partitioned_cache);
+	string equality="space";
+}
+
 simple always_highq_cache extends lru_cache{
     @class(always_highq_cache);
 }
