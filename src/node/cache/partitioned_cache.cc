@@ -40,13 +40,6 @@ void partitioned_cache::initialize()
 	}else
 		severe_error(__FILE__,__LINE__,"Equality parameter not recognized");
 
-	cout << "possible lowest representation: "<< possible_lowest_repr_chunks <<endl;
-	cout<< "partitions: ";
-	for (unsigned short i=0; i<num_of_partitions; i++)
-		cout << subcache_size[i]<<":";
-	cout<<endl;
-	throw 1;
-
 	for (unsigned short i=0; i<num_of_partitions; i++)
 	{
 	    subcaches[i] = new lru_cache();
