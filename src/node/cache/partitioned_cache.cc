@@ -29,13 +29,13 @@ void partitioned_cache::initialize()
 
 	} else 	if ( strcmp(equality, "number_of_objects")==0 ) 
 	{	// All partitions must have the same number of objects
-		unsigned denominator = 0;
+		float denominator = 0;
 		for (unsigned short i=0; i<num_of_partitions; i++)
-			denominator += content_distribution::get_repr_h()->get_storage_space_of_representation(i+1);
-
+			denominator += content_distribution::get_repr_h()->get_storage_space_of_representation(i+1)/
+				content_distribution::get_repr_h()->get_storage_space_of_representation(num_of_partitions);
 
 		for (unsigned short i=0; i<num_of_partitions; i++)
-			subcache_size[i] = 	possible_lowest_repr_chunks / denominator;
+			subcache_size[i] = 	cache_slots / denominator;
 	}else
 		severe_error(__FILE__,__LINE__,"Equality parameter not recognized");
 
