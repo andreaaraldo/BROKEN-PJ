@@ -33,7 +33,6 @@ void partitioned_cache::initialize()
 		for (unsigned short i=0; i<num_of_partitions; i++)
 			denominator += content_distribution::get_repr_h()->get_storage_space_of_representation(i+1)/
 				(float)content_distribution::get_repr_h()->get_storage_space_of_representation(num_of_partitions);
-		cout<<"denominator "<<denominator<<endl;
 
 		for (unsigned short i=0; i<num_of_partitions; i++)
 			subcache_size[i] = 	cache_slots / denominator;
