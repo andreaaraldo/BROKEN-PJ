@@ -339,6 +339,7 @@ const char* lru_cache::dump()
 {
 	std::stringstream ret;
 	ret<<get_cache_content();
+	cout<<ret<<endl;
 	return ret.str().c_str();
 }
 
