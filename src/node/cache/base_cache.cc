@@ -337,6 +337,7 @@ void base_cache::finish(){
         hit_vector.recordWithTimestamp(f, cache_stats[f].rate() );
 
 
+	dump();
 }
 
 
