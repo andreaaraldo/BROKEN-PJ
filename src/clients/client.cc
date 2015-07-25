@@ -87,7 +87,7 @@ void client::initialize()
 			scheduleAt( simTime() + check_time, timer  );
 		}
     }
-
+	requests = {};
 }
 
 

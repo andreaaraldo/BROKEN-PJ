@@ -114,7 +114,7 @@ class client : public cSimpleModule
 		//Set if the client actively sends interests for files
 		bool active;
 
-		unsigned long requests[10000] = {};//REMOVE IT
+		unsigned long requests[10000];//REMOVE IT
 
     private:
 		cMessage *timer;
