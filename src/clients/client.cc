@@ -88,8 +88,6 @@ void client::initialize()
 		}
     }
 
-
-
 }
 
 
@@ -217,6 +215,10 @@ void client::finish()
 		for (name_t f = 1; f <= __file_bulk; f++)
 			distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
     }
+
+	//REMOVE IT
+	for (unsigned i=0; i<10000; i++)
+		cout<< (i+1) << " "<< requests[i] <<", ";
 }
 
 
@@ -294,6 +296,8 @@ void client::request_file()
 	// We fill the representation mask with all 1s, meaning that, when the client requests some object, it accepts
 	// all the possible representations
 	request_specific_chunk(object_id, chunk_num, repr_mask);
+
+	requests[object_id-1]++;//REMOVE IT
 }
 
 void client::request_specific_chunk_from_another_class(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)
