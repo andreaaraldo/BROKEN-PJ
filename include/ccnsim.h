@@ -13,6 +13,8 @@
 // enable it for some runs, just to check that there are not erroneous things happening.
 // This does not affect in any way the results.
 //#define SEVERE_DEBUG
+#define ADDITIONAL_INFO
+
 
 #define UNDEFINED_VALUE -1
 //</aa>
@@ -30,6 +32,9 @@
 #define FULL_CHECK 2000
 #define STABLE_CHECK 3000
 #define END 4000
+//<aa>
+#define CACHE_DUMP 5000
+//</aa>
 
 //Typedefs
 // {CATALOG FIELDS

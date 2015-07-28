@@ -9,9 +9,11 @@ void lru_repr_cache::initialize()
 
 	if (get_slots() > 0)
 		// Retrieve the proactive component
-		proactive_component = (ProactiveComponent*) getParentModule()->getSubmodule("proactive_component");
+		proactive_component = (ProactiveComponent*) 
+				getParentModule()->getSubmodule("proactive_component");
 	else
 		proactive_component = NULL;
+
 }
 
 void lru_repr_cache::initialize_cache_slots(unsigned chunks_at_highest_representation)
@@ -81,6 +83,7 @@ void lru_repr_cache::finish()
     sprintf ( name, "representation_breakdown[%d] %s", getIndex(), breakdown_str.str().c_str());
     recordScalar (name, 0);
 	//} COMPUTE REPRESENTATION BREAKDOWN
+
 }
 
 chunk_t lru_repr_cache::shrink()
@@ -108,6 +111,7 @@ void lru_repr_cache::update_occupied_slots(chunk_t chunk_id, operation op)
     int increment = (op == insertion)? storage_space : -1*storage_space;
     occupied_slots += increment;
 }
+
 
 #ifdef SEVERE_DEBUG
 void lru_repr_cache::check_representation_compatibility(){}

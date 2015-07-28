@@ -87,7 +87,11 @@ void client::initialize()
 			scheduleAt( simTime() + check_time, timer  );
 		}
     }
-	requests = {};
+
+	#ifdef ADDITIONAL_INFO
+	requests = (unsigned long*) malloc( content_distribution::zipf.get_cardinality()*
+						sizeof(unsigned long) );
+	#endif
 }
 
 
@@ -216,9 +220,13 @@ void client::finish()
 			distance_vector.recordWithTimestamp(f, client_stats[f].avg_distance);
     }
 
-	//REMOVE IT
+	#ifdef ADDITIONAL_INFO
+	char req_f_name[500]; sprintf(req_f_name, "%s.req",statistics::logfile);
+	ofstream req_f; req_f.open(req_f_name);
 	for (unsigned i=0; i<10000; i++)
-		cout<< (i+1) << " "<< requests[i] <<", ";
+		req_f<< (i+1) << " "<< requests[i] <<endl;
+	req_f.close();
+	#endif
 }
 
 
@@ -297,7 +305,9 @@ void client::request_file()
 	// all the possible representations
 	request_specific_chunk(object_id, chunk_num, repr_mask);
 
-	requests[object_id-1]++;//REMOVE IT
+	#ifdef ADDITIONAL_INFO
+		requests[object_id-1]++;
+	#endif
 }
 
 void client::request_specific_chunk_from_another_class(name_t object_id, cnumber_t chunk_num, representation_mask_t repr_mask)

@@ -72,6 +72,7 @@ void base_cache::initialize()
 	#ifdef SEVERE_DEBUG
 		check_representation_compatibility();
 	#endif
+
 }
 
 //Initialization function
@@ -184,6 +185,12 @@ void base_cache::initialize_(std::string decision_policy, unsigned cache_slots)
     cache_stats = new cache_stat_entry[__file_bulk + 1];
 
 	//<aa>
+	//{INTIALIZE DUMP
+	sprintf(dump_filename,"%s.cache-%d", statistics::logfile, getIndex());
+	ofstream out_f; out_f.open (dump_filename, std::ofstream::out);
+	out_f<<""<<endl; out_f.close();
+	//}INTIALIZE DUMP
+
 	#ifdef SEVERE_DEBUG
     	initialized = true;
 		check_if_correct();
@@ -335,9 +342,6 @@ void base_cache::finish(){
     cOutVector hit_vector(name);
     for (uint32_t f = 1; f <= __file_bulk; f++)
         hit_vector.recordWithTimestamp(f, cache_stats[f].rate() );
-
-
-	dump();
 }
 
 

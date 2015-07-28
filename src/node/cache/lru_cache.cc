@@ -317,30 +317,25 @@ cache_item_descriptor* lru_cache::data_lookup(chunk_t chunk_id)
 	}
 }
 
-const char* lru_cache::get_cache_content()
+const char* lru_cache::get_cache_content(const char* line_initiator, const char* separator)
 {
 	std::stringstream content_str;
 	cache_item_descriptor *it = get_mru();
     while (it)
 	{
-		content_str<< __id(it->k)<<":"<<__chunk(it->k)<<":"<<__representation_mask(it->k)<<", ";
+		content_str<< line_initiator<<":"<<__id(it->k)<<":"<<
+				__chunk(it->k)<<":"<<__representation_mask(it->k)<<	separator;
 		it = it->older;
     }
-	if (it!= NULL)
-	{
-		std::stringstream ermsg; 
-		ermsg<<"cache content is already "<<content_str.str().c_str();
-		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
 	return content_str.str().c_str();
 }
 
 const char* lru_cache::dump()
 {
-	std::stringstream ret;
-	ret<<get_cache_content();
-	cout<<ret.str().c_str()<<endl;
-	return ret.str().c_str();
+	ofstream out_f; out_f.open (dump_filename, std::ofstream::out | std::ofstream::app);
+	out_f<<get_cache_content(SIMTIME_STR(simTime())  ,"\n")<<endl;
+	out_f.close();
+	return "ciao";
 }
 
 //<aa>

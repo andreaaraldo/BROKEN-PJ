@@ -10,6 +10,7 @@ simple statistics{
 		//<aa>
 		double variance_threshold = default(0.05);
 		string runid;
+		double cache_dump_interval = default(0);
 		//</aa>
 
 		int CEXPL = default(3);

@@ -65,7 +65,9 @@ class lru_cache:public base_cache{
 		cache_item_descriptor* get_lru();
 		const cache_item_descriptor* get_eviction_candidate();
 		bool is_it_empty() const;
-		virtual const char* get_cache_content(); // Print the cache content from the mru to the lru
+		virtual const char* get_cache_content( 	// Print the cache content
+				const char* line_initiator,	  	// from the mru to the lru
+				const char* separator); 
 		
 		#ifdef SEVERE_DEBUG
 		virtual void check_if_correct();
@@ -87,9 +89,8 @@ class lru_cache:public base_cache{
 		virtual chunk_t shrink(); // Removes last element if needed and returns its chunk_id
 		virtual void remove_from_cache(chunk_t chunk_id, unsigned storage_space); //deprecated
 		virtual void insert_into_cache(cache_item_descriptor* descr);
+		virtual const char* dump();
 		//</aa>
-
-		const char* dump();
 
 		cache_item_descriptor* lru_; //least recently used item
 		cache_item_descriptor* mru_; //most recently used item

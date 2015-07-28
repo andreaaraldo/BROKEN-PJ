@@ -30,7 +30,8 @@ using namespace std;
 
 //Initialize the vector representing the zipf cdf distribution. As this vector can be of really high dimension 
 //the initialization is done just one time for every request generator who needs it
-void zipf_distribution::zipf_initialize(){
+void zipf_distribution::zipf_initialize()
+{
     //Return if the Zipf cdf has been already initialized
     if (cdfZipf.size() != 0)
 	return;
@@ -73,8 +74,8 @@ double zipf_distribution::get_normalization_constant(){
 
 
 //Binary search zipf
-unsigned int zipf_distribution::value(double p){
-
+unsigned int zipf_distribution::value(double p)
+{
     unsigned int upper, lower,atry, last_try;
     
     lower = -1;
@@ -98,5 +99,9 @@ unsigned int zipf_distribution::value(double p){
     }
 
     return upper;
+}
 
+int zipf_distribution::get_cardinality()
+{
+	return F;
 }

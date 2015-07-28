@@ -41,6 +41,7 @@ class zipf_distribution{
 
 		//<aa>
 		double get_normalization_constant();
+		int get_cardinality();
 		//</aa> 
 		
 

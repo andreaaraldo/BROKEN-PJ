@@ -69,6 +69,7 @@ void statistics::initialize()
     partial_n 	= par("partial_n");
 	//<aa>
 	variance_threshold = par("variance_threshold");
+	cache_dump_interval = par ("cache_dump_interval");
 	//</aa>
 
     if (partial_n == -1)
@@ -150,6 +151,10 @@ void statistics::initialize()
     stable_check = new cMessage("stable_check",STABLE_CHECK);
     end = new cMessage("end",END);
 
+	//<aa>
+    cache_dump = new cMessage("cache_dump", CACHE_DUMP);
+	//</aa>
+
 	cout<<endl;
 
     //Start checking for full
@@ -183,7 +188,6 @@ void statistics::handleMessage(cMessage *in){
             break;
 
         case STABLE_CHECK:
-
             for (int i = 0;i<num_nodes;i++)
                 stables += (int) stable(i);
 
@@ -195,9 +199,22 @@ void statistics::handleMessage(cMessage *in){
             } else 
         		scheduleAt(simTime() + ts, in);
 		    break;
+
+		case CACHE_DUMP:
+            for (int i = 0; i < num_nodes;i++)
+                caches[i]->dump();
+			scheduleAt(simTime() + cache_dump_interval, in);
+            break;
+			
+
         case END:
             delete in;
             endSimulation();
+
+		#ifdef SEVERE_DEBUG
+		default:
+			severe_error(__FILE__,__LINE__,"Message not recognised");
+		#endif
     }
 
 }
@@ -436,6 +453,12 @@ void statistics::stability_has_been_reached(){
 	sprintf (name, "stabilization_time");
 	recordScalar(name,stabilization_time);
 	cout<<"stabilization_time: "<< stabilization_time <<endl;
+
+	if (cache_dump_interval > 0)
+	{
+		// Start collecting cache content after stability
+		scheduleAt(simTime() + cache_dump_interval, cache_dump);
+	}
 	//</aa>
 
 	clear_stat();

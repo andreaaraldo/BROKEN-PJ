@@ -111,6 +111,7 @@ class statistics : public cSimpleModule{
 		double stabilization_time;
 		//<aa>
 		double variance_threshold;
+		double cache_dump_interval;
 		//</aa>
 
 		//Stabilization samples
@@ -120,6 +121,7 @@ class statistics : public cSimpleModule{
 
 		//<aa>
 		int total_replicas;
+		cMessage *cache_dump;
 		//</aa>
 
 };

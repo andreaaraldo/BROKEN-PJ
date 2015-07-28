@@ -220,6 +220,10 @@ void partitioned_cache::finish()
 		breakdown_str <<tmp<<":";
 	}
 
+	//{REMOVE IT
+	dump();
+	//}REMOVE IT
+
     char name [150];
     sprintf ( name, "representation_breakdown[%d] %s", getIndex(), breakdown_str.str().c_str());
     recordScalar (name, 0);
@@ -268,19 +272,15 @@ void partitioned_cache::check_if_correct()
 const char* partitioned_cache::dump()
 {
 	std::stringstream str;
-	str<<"caches: ";
 	for (unsigned short i=0; i<num_of_partitions; i++)
 	{
-		str<<
-		(subcaches[i]==NULL ? "_" : subcaches[i]->get_cache_content() )
-		<<" ; ";
+		if (subcaches[i]==NULL) 
+		{
+			char out_filename[500]; sprintf(out_filename,"%s.cache_%u", statistics::logfile,i);
+			subcaches[i]->dump(out_filename);
+		}
 	}
-
-	str<<". ### quality map: ";
-	for (unordered_map<chunk_t, unsigned short>::iterator it = quality_map.begin(); it != quality_map.end(); it++ )
-		str<<__id(it->first)<<":"<<__chunk(it->first)<<":"<<__representation_mask(it->first)<<" ;";
-	str<<endl;
-	return str.str().c_str();
+	return "ciao";
 }
 
 void partitioned_cache::check_representation_compatibility(){}

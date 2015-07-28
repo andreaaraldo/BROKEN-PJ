@@ -129,6 +129,8 @@ class base_cache : public abstract_node
 		virtual cache_item_descriptor* find_in_cache(chunk_t chunk_id) const; //NULL if not found
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::const_iterator end_of_cache() const;
 		virtual unordered_map<chunk_t,cache_item_descriptor *>::const_iterator beginning_of_cache() const;
+
+		char dump_filename[500]; // Cache content will be dumped here
 		//</aa>
 	
     public:
