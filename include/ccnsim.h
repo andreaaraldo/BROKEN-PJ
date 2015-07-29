@@ -13,7 +13,7 @@
 // enable it for some runs, just to check that there are not erroneous things happening.
 // This does not affect in any way the results.
 //#define SEVERE_DEBUG
-#define ADDITIONAL_INFO
+//#define ADDITIONAL_INFO
 
 
 #define UNDEFINED_VALUE -1

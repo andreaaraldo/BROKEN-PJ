@@ -32,6 +32,7 @@ Register_Class(ProactiveComponent);
 void ProactiveComponent::initialize()
 {
 	client::initialize();
+	proactive_probability = par("proactive_probability");
 }
 
 void ProactiveComponent::try_to_improve(chunk_t stored, chunk_t requested_chunk_id)
@@ -40,31 +41,34 @@ void ProactiveComponent::try_to_improve(chunk_t stored, chunk_t requested_chunk_
 											// method from another C++ class, an error will raise.
 											// Search the manual for "Enter_Method" for more information
 
-	unsigned short representation_found =
-		content_distribution::get_repr_h()->get_representation_number(stored);
-
-	// Try to retrieve a better representation of this chunk
-	representation_mask_t request_mask = __representation_mask(requested_chunk_id);
-	representation_mask_t improving_mask = (0xFFFF << representation_found );
-	improving_mask = (improving_mask & request_mask);
-
-	#ifdef SEVERE_DEBUG
-	representation_mask_t stored_mask = __representation_mask(stored);
-	if( (improving_mask & 0x0001) != 0 )
+	if ( dblrand() <= proactive_probability)
 	{
-		std::stringstream ermsg;
-		ermsg<< "An improving mask cannot ask for repr 1. This would not be an improvement."<<
-			"request_mask="<<request_mask<<"; stored_mask="<<stored_mask<<"; representation_found="<<
-			representation_found;
-		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
-	}
-	#endif
+		unsigned short representation_found =
+			content_distribution::get_repr_h()->get_representation_number(stored);
 
-	if (improving_mask != 0x0000)
-	{	// There exists a higher representation and I want to retrieve it
-		name_t object_id = __id(stored);
-		cnumber_t chunk_num = __chunk(stored);
-		request_specific_chunk(object_id, chunk_num, improving_mask);
+		// Try to retrieve a better representation of this chunk
+		representation_mask_t request_mask = __representation_mask(requested_chunk_id);
+		representation_mask_t improving_mask = (0xFFFF << representation_found );
+		improving_mask = (improving_mask & request_mask);
+
+		#ifdef SEVERE_DEBUG
+		representation_mask_t stored_mask = __representation_mask(stored);
+		if( (improving_mask & 0x0001) != 0 )
+		{
+			std::stringstream ermsg;
+			ermsg<< "An improving mask cannot ask for repr 1. This would not be an improvement."<<
+				"request_mask="<<request_mask<<"; stored_mask="<<stored_mask<<"; representation_found="<<
+				representation_found;
+			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
+		}
+		#endif
+
+		if (improving_mask != 0x0000)
+		{	// There exists a higher representation and I want to retrieve it
+			name_t object_id = __id(stored);
+			cnumber_t chunk_num = __chunk(stored);
+			request_specific_chunk(object_id, chunk_num, improving_mask);
+		}
 	}
 }
 
