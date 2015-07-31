@@ -1,0 +1,70 @@
+version 2
+run General-2-20150730-13:32:00-3755
+attr C 1e4
+attr D lce
+attr F spr
+attr R partitionedn
+attr a 1
+attr brates 0.3_0.7_1.5_2.5_3.5
+attr configname General
+attr ctlg 1e6
+attr datetime 20150730-13:32:00
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=1e6, $brates=0.3_0.7_1.5_2.5_3.5, $F=spr, $ttl=1000, $D=lce, $R=partitionedn, $proactiveprob=0.01, $C=1e4, $window=60, $variance=0.05, $mytime=1800000"
+attr iterationvars2 "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=1e6, $brates=0.3_0.7_1.5_2.5_3.5, $F=spr, $ttl=1000, $D=lce, $R=partitionedn, $proactiveprob=0.01, $C=1e4, $window=60, $variance=0.05, $mytime=1800000, $repetition=0"
+attr lambda 100
+attr measurement "$net=abilene_nodelay, $rep=0, $lambda=100, $a=1, $ctlg=1e6, $brates=0.3_0.7_1.5_2.5_3.5, $F=spr, $ttl=1000, $D=lce, $R=partitionedn, $proactiveprob=0.01, $C=1e4, $window=60, $variance=0.05, $mytime=1800000"
+attr mytime 1800000
+attr net abilene_nodelay
+attr network networks.${net=abilene_nodelay}_network
+attr proactiveprob 0.01
+attr processid 3755
+attr rep 0
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 2
+attr seedset 0
+attr ttl 1000
+attr variance 0.05
+attr window 60
+
+scalar . 	C 	1e4
+scalar . 	a 	1
+scalar . 	ctlg 	1e6
+scalar . 	lambda 	100
+scalar . 	mytime 	1800000
+scalar . 	proactiveprob 	0.01
+scalar . 	rep 	0
+scalar . 	ttl 	1000
+scalar . 	variance 	0.05
+scalar . 	window 	60
+scalar abilene_nodelay_network.content_distribution 	repo-0 	5
+scalar abilene_nodelay_network.content_distribution 	client-0 	8
+scalar abilene_nodelay_network.content_distribution 	repo-0_card 	1000000
+scalar abilene_nodelay_network.content_distribution 	repo-0_price 	0
+scalar abilene_nodelay_network.statistics 	stabilization_time 	36060
+scalar abilene_nodelay_network.statistics 	p_hit 	0.30739498918811
+scalar abilene_nodelay_network.statistics 	interests 	34070853.181818
+scalar abilene_nodelay_network.statistics 	data 	17698232.727273
+scalar abilene_nodelay_network.statistics 	hdistance 	1.4395651150481
+scalar abilene_nodelay_network.statistics 	avg_time 	0
+scalar abilene_nodelay_network.statistics 	downloads 	179977715
+scalar abilene_nodelay_network.statistics 	total_cost 	0
+scalar abilene_nodelay_network.statistics 	total_replicas 	1000000
+scalar abilene_nodelay_network.statistics 	"representations_downloaded 0.378276:0.0173052:0.01632:0.0152295:0.572869:" 	0
+scalar abilene_nodelay_network.statistics 	"slots_per_representation 100:233:500:833:1167:" 	0
+scalar abilene_nodelay_network.statistics 	inner_hit 	0.63943580459392
+scalar abilene_nodelay_network.statistics 	execution_time 	7824
+scalar abilene_nodelay_network.node[0].core_layer 	interests[0] 	0
+scalar abilene_nodelay_network.node[0].core_layer 	data[0] 	0
+scalar abilene_nodelay_network.node[0].core_layer 	slots_sent[face$o[1]->client[0]] 	0
+scalar abilene_nodelay_network.node[0].core_layer 	slots_sent[face$o[2]->node[1]] 	0
+scalar abilene_nodelay_network.node[0].core_layer 	slots_sent[face$o[3]->node[10]] 	0
+scalar abilene_nodelay_network.node[0].content_store 	p_hit[0] 	-nan
+scalar abilene_nodelay_network.node[0].content_store 	hits[0] 	0
+scalar abilene_nodelay_network.node[0].content_store 	misses[0] 	0
+scalar abilene_nodelay_network.node[0].content_store 	decision_yes[0] 	0
+scalar abilene_nodelay_network.node[0].content_store 	decision_no[0] 	0
+scalar abilene_nodelay_network.node[0].content_store 	decision_ratio[0] 	0
