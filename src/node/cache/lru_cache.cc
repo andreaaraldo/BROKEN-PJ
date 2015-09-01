@@ -427,7 +427,7 @@ void lru_cache::check_if_correct()
 		{
 			std::stringstream ermsg; 
 			ermsg<<"The chunk "<<__id(chunk_id)<<":"<<__chunk(chunk_id)<<" has been stored more than once"
-				<<". Cache content is "<<get_cache_content();
+				<<". Cache content is "<<get_cache_content("","; ");
 			severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
 		}
 		newer = it;
