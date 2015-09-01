@@ -276,8 +276,7 @@ const char* partitioned_cache::dump()
 	{
 		if (subcaches[i]==NULL) 
 		{
-			char out_filename[500]; sprintf(out_filename,"%s.cache_%u", statistics::logfile,i);
-			subcaches[i]->dump(out_filename);
+			subcaches[i]->dump();
 		}
 	}
 	return "ciao";
