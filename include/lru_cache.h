@@ -78,6 +78,7 @@ class lru_cache:public base_cache{
 									// in the cache. </aa>
 		double get_average_price();
         virtual void remove_from_cache(cache_item_descriptor* descr);
+		virtual const char* dump();
 		
 
     protected:		
@@ -89,7 +90,6 @@ class lru_cache:public base_cache{
 		virtual chunk_t shrink(); // Removes last element if needed and returns its chunk_id
 		virtual void remove_from_cache(chunk_t chunk_id, unsigned storage_space); //deprecated
 		virtual void insert_into_cache(cache_item_descriptor* descr);
-		virtual const char* dump();
 		//</aa>
 
 		cache_item_descriptor* lru_; //least recently used item
