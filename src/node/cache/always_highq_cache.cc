@@ -112,7 +112,7 @@ void always_highq_cache::check_if_correct()
 		std::stringstream ermsg;
 		ermsg<<"error in the computation of the occupied slots. occupied_slots_tmp="<<occupied_slots_tmp<<
 			"; occupied_slots="<<occupied_slots <<"; get_slots()="<<get_slots()<<"; breakdown_str="<<
-			breakdown_str.str()<< "; content_str="<<get_cache_content() << "; requested storage per repr="<<
+			breakdown_str.str()<< "; content_str="<<get_cache_content("", "; ") << "; requested storage per repr="<<
 			content_distribution::get_repr_h()->dump_storage()<<"; bitrates="<<
 			content_distribution::get_repr_h()->dump_storage();
 		severe_error(__FILE__,__LINE__,ermsg.str().c_str() );
