@@ -12,7 +12,7 @@
 // ccnSim source code, it is advisable to 
 // enable it for some runs, just to check that there are not erroneous things happening.
 // This does not affect in any way the results.
-//#define SEVERE_DEBUG
+#define SEVERE_DEBUG
 //#define ADDITIONAL_INFO
 
 
