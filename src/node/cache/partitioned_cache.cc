@@ -220,10 +220,6 @@ void partitioned_cache::finish()
 		breakdown_str <<tmp<<":";
 	}
 
-	//{REMOVE IT
-	dump();
-	//}REMOVE IT
-
     char name [150];
     sprintf ( name, "representation_breakdown[%d] %s", getIndex(), breakdown_str.str().c_str());
     recordScalar (name, 0);
