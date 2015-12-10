@@ -1,5 +1,3 @@
-
-Thank you for joining the ccnSim community!
 My secret project
 
 You can freely download ccnSim from the project site: http://www.enst.fr/~drossi/ccnSim .
